@@ -19,6 +19,23 @@ docs/
 └── materials/          ← Research materials, screenshots
 plans/
 └── reports/            ← Validation reports
+assets/
+├── facebook/           ← Facebook posts & media
+├── instagram/          ← Instagram posts & stories
+├── tiktok/             ← TikTok content
+├── youtube/            ← YouTube thumbnails, scripts
+├── twitter/            ← Twitter/X posts
+└── linkedin/           ← LinkedIn articles
+```
+
+### Assets Naming Convention
+
+```
+assets/{platform}/{YYMMDD}-{slug}/
+├── post.txt            ← Main content
+├── image-prompts.txt   ← AI image generation prompts
+├── images/             ← Generated/final images
+└── README.txt          ← Package summary
 ```
 
 ---
