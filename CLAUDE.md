@@ -14,10 +14,14 @@ Character profile documentation for storytelling and content creation.
 
 ```
 docs/
-├── character-a/     ← Nhân vật A profile (13 files)
-├── character-b/     ← Nhân vật B profile (10 files)
-├── character-c/  ← Nhân vật C profile (9 files)
+├── profiles/           ← Character psychological and historical profiles
+│   ├── character-a/
+│   ├── character-b/
+│   └── character-c/
 ├── materials/          ← Research materials, source docs
+│   ├── character-a/
+│   ├── character-b/
+│   └── character-c/
 ├── references/         ← Clinical Psychology Theory Library (29 files)
 └── RULES.md            ← System directive for profile generation
 plans/
@@ -48,7 +52,7 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ## Character Profiles
 
-### Nhân vật A (`docs/character-a/`)
+### Nhân vật A (`docs/profiles/character-a/`)
 
 | File              | Content                               |
 | ----------------- | ------------------------------------- |
@@ -66,7 +70,7 @@ assets/{platform}/{YYMMDD}-{slug}/
 | WRITING-VOICE.md  | Tone, themes                          |
 | INSPIRATION.md    | Transformation arc                    |
 
-### Nhân vật B (`docs/character-b/`)
+### Nhân vật B (`docs/profiles/character-b/`)
 
 | File              | Content                            |
 | ----------------- | ---------------------------------- |
@@ -81,7 +85,7 @@ assets/{platform}/{YYMMDD}-{slug}/
 | MILESTONES.md     | Key milestones                     |
 | CONVERSATION.md   | Messenger conversations (OCR)      |
 
-### Nhân vật C (`docs/character-c/`)
+### Nhân vật C (`docs/profiles/character-c/`)
 
 | File              | Content                               |
 | ----------------- | ------------------------------------- |
