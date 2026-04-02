@@ -18,6 +18,7 @@ docs/
 ├── character-b/     ← Nhân vật B profile (10 files)
 ├── character-c/  ← Nhân vật C profile (9 files)
 ├── materials/          ← Research materials, source docs
+├── references/         ← Clinical Psychology Theory Library (29 files)
 └── RULES.md            ← System directive for profile generation
 plans/
 ├── 260331-1820-chien-support-reveal/ ← Nhân vật C support reveal plan
@@ -29,7 +30,8 @@ assets/
 ├── tiktok/             ← TikTok content
 ├── youtube/            ← YouTube thumbnails, scripts
 ├── twitter/            ← Twitter/X posts
-└── linkedin/           ← LinkedIn articles
+├── linkedin/           ← LinkedIn articles
+└── RULES.md            ← Media Assets Rules (Input/Output standards)
 ```
 
 ### Assets Naming Convention
@@ -99,6 +101,11 @@ assets/{platform}/{YYMMDD}-{slug}/
 - `character-b/` - Source materials and logs for Nhân vật B
 - `character-c/` - Source materials, news, and letters for Nhân vật C
 
+### Clinical Reference Library (`docs/references/`)
+
+- `INDEX.md` - Master index of 29 clinical psychological theories (Attachment, Defense Mechanisms, Clinical Intervention, etc.)
+- Focus: Ensuring clinical-grade character analysis without exposing raw psychiatric terms in social media content. Mapped to character actions and communication styles.
+
 ---
 
 ## Key Facts
@@ -111,4 +118,4 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ---
 
-_Updated: 2026-04-01_
+_Updated: 2026-04-02_
