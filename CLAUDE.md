@@ -87,17 +87,17 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ### Nhân vật C (`docs/profiles/character-c/`)
 
-| File              | Content                               |
-| ----------------- | ------------------------------------- |
-| INDEX.md          | Quick reference                       |
-| IDENTITY.md       | Basic info, education, family         |
-| SOUL.md           | Inner wounds, psychological traits    |
-| CHARACTERISTIC.md | Personality, behavioral patterns      |
-| TIMELINE.md       | Events 2007-2026                      |
-| RELATIONSHIPS.md  | Family tree, relationship with Nhân vật A   |
-| DARKNESS.md       | Trauma documentation                  |
-| LIGHT.md          | Sources of hope, growth signs         |
-| MILESTONES.md     | Key milestones                        |
+| File              | Content                             |
+| ----------------- | ----------------------------------- |
+| INDEX.md          | Quick reference                     |
+| IDENTITY.md       | Basic info, education, family       |
+| SOUL.md           | Inner wounds, psychological traits  |
+| CHARACTERISTIC.md | Personality, behavioral patterns    |
+| TIMELINE.md       | Events 2007-2026                    |
+| RELATIONSHIPS.md  | Family tree, relationship with Nhân vật A |
+| DARKNESS.md       | Trauma documentation                |
+| LIGHT.md          | Sources of hope, growth signs       |
+| MILESTONES.md     | Key milestones                      |
 
 ### Research Materials (`docs/materials/`)
 
