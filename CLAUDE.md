@@ -22,8 +22,8 @@ docs/
 │   ├── character-a/
 │   ├── character-b/
 │   └── character-c/
-├── references/         ← Clinical Psychology Theory Library (29 files)
-└── RULES.md            ← System directive for profile generation
+├── references/         ← Clinical Psychology Theory Library (62 theories)
+└── rules/              ← Modular rules (10 files: profile, clinical, content, materials, etc.)
 plans/
 ├── 260331-1820-chien-support-reveal/ ← Nhân vật C support reveal plan
 ├── reports/            ← Validation reports
@@ -34,8 +34,7 @@ assets/
 ├── tiktok/             ← TikTok content
 ├── youtube/            ← YouTube thumbnails, scripts
 ├── twitter/            ← Twitter/X posts
-├── linkedin/           ← LinkedIn articles
-└── RULES.md            ← Media Assets Rules (Input/Output standards)
+└── linkedin/           ← LinkedIn articles
 ```
 
 ### Assets Naming Convention
@@ -107,7 +106,7 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ### Clinical Reference Library (`docs/references/`)
 
-- `INDEX.md` - Master index of 29 clinical psychological theories (Attachment, Defense Mechanisms, Clinical Intervention, etc.)
+- `INDEX.md` - Master index of 62 clinical psychological theories (Attachment, Defense Mechanisms, Clinical Intervention, etc.)
 - Focus: Ensuring clinical-grade character analysis without exposing raw psychiatric terms in social media content. Mapped to character actions and communication styles.
 
 ---
@@ -122,4 +121,86 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ---
 
-_Updated: 2026-04-02_
+## Rules (`docs/rules/`)
+
+| #   | File                       | Scope                                             |
+| --- | -------------------------- | ------------------------------------------------- |
+| 01  | profile-structure          | Required files, schemas, size limits              |
+| 02  | clinical-reference-usage   | Show-don't-tell, mandatory citation               |
+| 03  | content-creation-pipeline  | 7-stage pipeline, platform guidelines             |
+| 04  | materials-ingestion        | Source priority P1-P4, ingestion process          |
+| 05  | wave-pipeline              | 3-wave protocol (Foundation→Deep Dive→Validation) |
+| 06  | crisis-protocol            | Mental health crisis, DSM-5, risk levels          |
+| 07  | narrative-twist-protocol   | Handling revealed falsehoods                      |
+| 08  | cross-validation           | 4-dimension consistency, report format            |
+| 09  | confidentiality-protocol   | Privacy tags, content boundaries                  |
+| 10  | reference-library-standard | Reference schema, scientific rigor                |
+
+---
+
+## Lucas Skills (`.claude/skills/lucas-*`)
+
+Project-specific skills for character profile management and content creation.
+
+| Skill                   | Purpose                                                           |
+| ----------------------- | ----------------------------------------------------------------- |
+| `lucas:bootstrap`       | Load project context (--quick/--full/--character/--lite/--intent) |
+| `lucas:session-state`   | Track session mode, phase, profiles touched                       |
+| `lucas:classify`        | Risk classification (tiny/normal/high_risk)                       |
+| `lucas:intake`          | Route work type → skill chain                                     |
+| `lucas:exploring`       | 7-question exploration → CONTEXT.md                               |
+| `lucas:post-writer`     | End-to-end content creation pipeline                              |
+| `lucas:prompt-leverage` | 5-layer prompt strengthening                                      |
+| `lucas:crossref`        | Cross-character validation (4 dimensions)                         |
+| `lucas:ref-audit`       | Profile → reference accuracy check + --discover blind spots       |
+| `lucas:ref-scan`        | Reference → profile coverage mapping                              |
+| `lucas:ref-create`      | Create new reference files with mandatory schema                  |
+| `lucas:materials`       | Smart material loading + extraction + --ingest pipeline           |
+| `lucas:profile-lite`    | Compress profiles (~95% reduction)                                |
+| `lucas:compounding`     | Extract session learnings → memory                                |
+| `lucas:dream`           | Periodic memory consolidation                                     |
+| `lucas:decisions`       | Append-only decision records                                      |
+| `lucas:agent-memory`    | Per-agent calibration memory                                      |
+| `lucas:git`             | Project-aware git operations                                      |
+| `lucas:wave`            | 3-wave orchestration (Foundation→Deep Dive→Validation)            |
+| `lucas:crisis-assess`   | DSM-5/ICD-11 crisis assessment + risk levels                      |
+| `lucas:narrative-twist` | Handle revealed falsehoods, strikethrough + cascade               |
+| `lucas:privacy-guard`   | Pre-publish privacy/confidentiality scan                          |
+| `lucas:hypothesis`      | Predict character behavior given hypothetical events              |
+| `lucas:repurpose`       | Adapt content across platforms                                    |
+| `lucas:voice-audit`     | Audit content voice/tone consistency against WRITING-VOICE.md     |
+| `lucas:arc-tracker`     | Track character growth trajectories, hypothesis vs reality        |
+
+---
+
+## Scripts Infrastructure
+
+26 lucas skills share a Python utility library and 50+ supportive scripts.
+
+### Shared Library (`.claude/skills/lucas-shared/lib/`)
+
+| Module               | Purpose                                         |
+| -------------------- | ----------------------------------------------- |
+| `paths.py`           | Project root, character name resolution, paths  |
+| `clinical_terms.py`  | 80+ regex patterns, term scanning, ref indexing |
+| `markdown_parser.py` | Section extraction, frontmatter, dates, links   |
+| `profile_stats.py`   | File inventory, git hash cache validation       |
+| `formatters.py`      | Markdown tables, JSON output, severity badges   |
+
+### Running Scripts
+
+```bash
+# Python scripts (use project venv)
+$HOME/.claude/skills/.venv/bin/python3 .claude/skills/lucas-{skill}/scripts/{script}.py [args]
+
+# Shell scripts
+bash .claude/skills/lucas-{skill}/scripts/{script}.sh [args]
+```
+
+### Design Principle
+
+Scripts do **DETERMINISTIC GATHERING**; LLM does **HEURISTIC JUDGMENT**. Scripts may over-flag (false positives expected) — better to over-gather than miss genuine findings.
+
+---
+
+_Updated: 2026-05-13_
