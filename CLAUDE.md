@@ -113,7 +113,7 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ## Key Facts
 
-**Nhân vật A**: Born 24/09/1997, Senior SE at One Mount Group (08/2020-present)
+**Nhân vật A**: Born 24/09/1997, Senior AI Engineer at VinSmart Future (06/2026~), prev. One Mount Group (08/2020-05/2026)
 **Nhân vật B**: Born 18/02/2008, Grade 12 student, Tỉnh X
 **Nhân vật C**: Born 14/05/2007, IT-E6 student at ĐHBK Hà Nội, Scholarship X F15 scholar
 **Relationship (Nhân vật A - Nhân vật B)**: Sworn brothers (kết nghĩa) since 09/2025, 11-year age gap
@@ -177,7 +177,7 @@ Project-specific skills for character profile management and content creation.
 
 26 lucas skills share a Python utility library and 50+ supportive scripts.
 
-### Shared Library (`.claude/skills/lucas-shared/lib/`)
+### Shared Library (`.claude/scripts/lucas_lib/`)
 
 | Module               | Purpose                                         |
 | -------------------- | ----------------------------------------------- |
@@ -203,4 +203,4 @@ Scripts do **DETERMINISTIC GATHERING**; LLM does **HEURISTIC JUDGMENT**. Scripts
 
 ---
 
-_Updated: 2026-05-13_
+_Updated: 2026-05-16_
