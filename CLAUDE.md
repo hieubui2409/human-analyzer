@@ -10,22 +10,42 @@ Character profile documentation for storytelling and content creation.
 
 ---
 
+## Framework Architecture
+
+Four integrated frameworks with event-driven orchestration:
+
+```
+MAT (Input) → PSY (Analysis) → CRE (Output)
+                    ↑ MPC (Orchestration) ↑
+```
+
+| Framework | Domain             | Directory                                             | Purpose                            |
+| --------- | ------------------ | ----------------------------------------------------- | ---------------------------------- |
+| **MAT**   | Materials          | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
+| **PSY**   | Psychology         | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
+| **CRE**   | Content            | `assets/`                                             | Platform content creation          |
+| **MPC**   | Meta-orchestration | `.claude/`                                            | Event routing, domain coordination |
+
+Event flow: `MAT.integrated` → `PSY.refresh` → `CRE.recalibrate`
+
+---
+
 ## Directory Structure
 
 ```
 docs/
-├── profiles/           ← Character psychological and historical profiles
+├── profiles/           ← Character profiles (universal nested structure)
 │   ├── character-a/
 │   ├── character-b/
 │   └── character-c/
-├── materials/          ← Research materials, source docs
+├── materials/          ← MAT framework: source materials with evidence tiers
 │   ├── character-a/
 │   ├── character-b/
 │   └── character-c/
 ├── references/         ← Clinical Psychology Theory Library (62 theories)
-└── rules/              ← Modular rules (10 files: profile, clinical, content, materials, etc.)
+├── graph/              ← Cross-character relational dynamics
+└── rules/              ← Modular rules (14 files)
 plans/
-├── 260331-1820-chien-support-reveal/ ← Nhân vật C support reveal plan
 ├── reports/            ← Validation reports
 └── templates/          ← Plan templates
 assets/
@@ -49,65 +69,60 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ---
 
-## Character Profiles
+## Character Profiles — Universal Nested Structure
 
-### Nhân vật A (`docs/profiles/character-a/`)
+Each character has **21 files** in a standardized nested structure (same for all 3 characters):
 
-| File              | Content                               |
-| ----------------- | ------------------------------------- |
-| INDEX.md          | Quick reference                       |
-| IDENTITY.md       | Basic info, education, career, family |
-| SOUL.md           | Inner wounds, coping, Savior Complex  |
-| CHARACTERISTIC.md | Personality, behavioral patterns      |
-| TIMELINE.md       | Events 1997-2026                      |
-| RELATIONSHIPS.md  | Family tree, relationship with Nhân vật B    |
-| DARKNESS.md       | Trauma documentation                  |
-| LIGHT.md          | Sources of hope                       |
-| MILESTONES.md     | Key milestones                        |
-| ACHIEVEMENTS.md   | Academic, scholarships, awards        |
-| MEDIA-COVERAGE.md | Press timeline                        |
-| WRITING-VOICE.md  | Tone, themes                          |
-| INSPIRATION.md    | Transformation arc                    |
+```
+docs/profiles/{character}/
+├── INDEX.md                          ← Quick reference
+├── CURRENT-STATE.md                  ← Current psychological state snapshot
+├── milestones.md                     ← Key life milestones
+├── identity/
+│   ├── core.md                       ← Basic info, education, career, family
+│   ├── writing-voice.md              ← Tone, themes (Nhân vật A has richest)
+│   ├── achievements.md               ← Academic, scholarships, awards
+│   └── media-coverage.md             ← Press timeline
+├── psychology/
+│   ├── formulation.md                ← 5 Ps case formulation (clinical core)
+│   ├── defense-mechanisms.md         ← Defense hierarchy: Mature→Neurotic→Immature
+│   ├── attachment-style.md           ← Attachment patterns + relationship dynamics
+│   ├── growth-edges.md               ← Active growth areas + therapeutic windows
+│   ├── core-wounds.md                ← Core wound patterns
+│   ├── diagnostics.md                ← Big Five + ICD-11 dimensional scores
+│   ├── cultural-formulation.md       ← Cultural context factors
+│   └── archetype.md                  ← Jungian + Pia Melody mapping
+├── relationships/
+│   └── family.md                     ← Family tree, key relationships
+├── timeline/
+│   ├── overview.md                   ← Timeline summary
+│   └── state-timeline.md            ← Longitudinal ICD-11 phases with severity
+├── darkness/
+│   └── traumas.md                    ← Trauma documentation
+├── light/
+│   └── strengths-hope.md            ← Sources of hope, resilience
+└── evidence/
+    └── conversations.md             ← Key conversation evidence
+```
 
-### Nhân vật B (`docs/profiles/character-b/`)
+**Characters:** Nhân vật A (`character-a`), Nhân vật B (`character-b`), Nhân vật C (`character-c`)
 
-| File              | Content                            |
-| ----------------- | ---------------------------------- |
-| INDEX.md          | Quick reference                    |
-| IDENTITY.md       | Basic info (DOB: 18/02/2008)       |
-| SOUL.md           | Inner wounds, psychological traits |
-| CHARACTERISTIC.md | Personality, behavioral patterns   |
-| TIMELINE.md       | Events 2008-2025                   |
-| RELATIONSHIPS.md  | Family, relationship with Nhân vật A     |
-| DARKNESS.md       | Trauma, self-destructive behaviors |
-| LIGHT.md          | Sources of hope, growth signs      |
-| MILESTONES.md     | Key milestones                     |
-| CONVERSATION.md   | Messenger conversations (OCR)      |
+### Research Materials — MAT Framework (`docs/materials/`)
 
-### Nhân vật C (`docs/profiles/character-c/`)
+Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, processing status).
 
-| File              | Content                             |
-| ----------------- | ----------------------------------- |
-| INDEX.md          | Quick reference                     |
-| IDENTITY.md       | Basic info, education, family       |
-| SOUL.md           | Inner wounds, psychological traits  |
-| CHARACTERISTIC.md | Personality, behavioral patterns    |
-| TIMELINE.md       | Events 2007-2026                    |
-| RELATIONSHIPS.md  | Family tree, relationship with Nhân vật A |
-| DARKNESS.md       | Trauma documentation                |
-| LIGHT.md          | Sources of hope, growth signs       |
-| MILESTONES.md     | Key milestones                      |
-
-### Research Materials (`docs/materials/`)
-
-- `character-a/` - Source materials and logs for Nhân vật A
-- `character-b/` - Source materials and logs for Nhân vật B
-- `character-c/` - Source materials, news, and letters for Nhân vật C
+- `character-a/` — Transcripts, clinical notes, personal logs
+- `character-b/` — Conversation logs, family context
+- `character-c/` — Interview transcripts, letters, news articles
 
 ### Clinical Reference Library (`docs/references/`)
 
-- `INDEX.md` - Master index of 62 clinical psychological theories (Attachment, Defense Mechanisms, Clinical Intervention, etc.)
-- Focus: Ensuring clinical-grade character analysis without exposing raw psychiatric terms in social media content. Mapped to character actions and communication styles.
+- `INDEX.md` — Master index of 62 clinical psychological theories
+- Focus: Clinical-grade character analysis without exposing raw psychiatric terms in content
+
+### Cross-Character Graph (`docs/graph/`)
+
+- `relational-dynamics.md` — Cross-character relationship dynamics, attachment interactions
 
 ---
 
@@ -123,61 +138,87 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ## Rules (`docs/rules/`)
 
-| #   | File                       | Scope                                             |
-| --- | -------------------------- | ------------------------------------------------- |
-| 01  | profile-structure          | Required files, schemas, size limits              |
-| 02  | clinical-reference-usage   | Show-don't-tell, mandatory citation               |
-| 03  | content-creation-pipeline  | 7-stage pipeline, platform guidelines             |
-| 04  | materials-ingestion        | Source priority P1-P4, ingestion process          |
-| 05  | wave-pipeline              | 3-wave protocol (Foundation→Deep Dive→Validation) |
-| 06  | crisis-protocol            | Mental health crisis, DSM-5, risk levels          |
-| 07  | narrative-twist-protocol   | Handling revealed falsehoods                      |
-| 08  | cross-validation           | 4-dimension consistency, report format            |
-| 09  | confidentiality-protocol   | Privacy tags, content boundaries                  |
-| 10  | reference-library-standard | Reference schema, scientific rigor                |
+| #   | File                       | Scope                                                      |
+| --- | -------------------------- | ---------------------------------------------------------- |
+| 01  | profile-structure          | Required files, schemas, size limits                       |
+| 02  | clinical-reference-usage   | Show-don't-tell, mandatory citation                        |
+| 03  | content-creation-pipeline  | 7-stage pipeline, platform guidelines                      |
+| 04  | materials-ingestion        | Source priority P1-P4, ingestion process                   |
+| 05  | wave-pipeline              | 3-wave protocol (Foundation→Deep Dive→Validation)          |
+| 06  | crisis-protocol            | Mental health crisis, DSM-5, risk levels                   |
+| 07  | narrative-twist-protocol   | Handling revealed falsehoods                               |
+| 08  | cross-validation           | 4-dimension consistency, report format                     |
+| 09  | confidentiality-protocol   | Privacy tags, content boundaries                           |
+| 10  | reference-library-standard | Reference schema, scientific rigor                         |
+| 11  | mat-pipeline               | MAT 5-stage pipeline, evidence tiers, CRAAP test           |
+| 12  | mpc-orchestration          | Event system, domain boundaries, trigger routing           |
+| 13  | mpc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE)                   |
+| 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation |
 
 ---
 
-## Lucas Skills (`.claude/skills/lucas-*`)
+## Skills (`.claude/skills/`)
 
-Project-specific skills for character profile management and content creation.
+### MPC — Orchestration Skills
 
-| Skill                   | Purpose                                                           |
-| ----------------------- | ----------------------------------------------------------------- |
-| `lucas:bootstrap`       | Load project context (--quick/--full/--character/--lite/--intent) |
-| `lucas:session-state`   | Track session mode, phase, profiles touched                       |
-| `lucas:classify`        | Risk classification (tiny/normal/high_risk)                       |
-| `lucas:intake`          | Route work type → skill chain                                     |
-| `lucas:exploring`       | 7-question exploration → CONTEXT.md                               |
-| `lucas:post-writer`     | End-to-end content creation pipeline                              |
-| `lucas:prompt-leverage` | 5-layer prompt strengthening                                      |
-| `lucas:crossref`        | Cross-character validation (4 dimensions)                         |
-| `lucas:ref-audit`       | Profile → reference accuracy check + --discover blind spots       |
-| `lucas:ref-scan`        | Reference → profile coverage mapping                              |
-| `lucas:ref-create`      | Create new reference files with mandatory schema                  |
-| `lucas:materials`       | Smart material loading + extraction + --ingest pipeline           |
-| `lucas:profile-lite`    | Compress profiles (~95% reduction)                                |
-| `lucas:compounding`     | Extract session learnings → memory                                |
-| `lucas:dream`           | Periodic memory consolidation                                     |
-| `lucas:decisions`       | Append-only decision records                                      |
-| `lucas:agent-memory`    | Per-agent calibration memory                                      |
-| `lucas:git`             | Project-aware git operations                                      |
-| `lucas:wave`            | 3-wave orchestration (Foundation→Deep Dive→Validation)            |
-| `lucas:crisis-assess`   | DSM-5/ICD-11 crisis assessment + risk levels                      |
-| `lucas:narrative-twist` | Handle revealed falsehoods, strikethrough + cascade               |
-| `lucas:privacy-guard`   | Pre-publish privacy/confidentiality scan                          |
-| `lucas:hypothesis`      | Predict character behavior given hypothetical events              |
-| `lucas:repurpose`       | Adapt content across platforms                                    |
-| `lucas:voice-audit`     | Audit content voice/tone consistency against WRITING-VOICE.md     |
-| `lucas:arc-tracker`     | Track character growth trajectories, hypothesis vs reality        |
+| Skill               | Purpose                                                           |
+| ------------------- | ----------------------------------------------------------------- |
+| `mpc:bootstrap`     | Load project context (--quick/--full/--character/--lite/--intent) |
+| `mpc:session-state` | Track session state, framework domains, event queue               |
+| `mpc:classify`      | Risk classification (tiny/normal/high_risk) + MAT gates           |
+| `mpc:intake`        | Route work type → skill chain (MAT/PSY/CRE routing)               |
+| `mpc:compounding`   | Extract session learnings → memory                                |
+| `mpc:dream`         | Periodic memory consolidation                                     |
+| `mpc:decisions`     | Append-only decision records                                      |
+| `mpc:agent-memory`  | Per-agent calibration memory                                      |
+
+### COM — Common Skills
+
+| Skill     | Purpose                      |
+| --------- | ---------------------------- |
+| `com:git` | Project-aware git operations |
+
+### MAT — Material Framework Skills
+
+| Skill           | Purpose                                                             |
+| --------------- | ------------------------------------------------------------------- |
+| `mat:loader`    | Stage 1-2: ingest, classify, CRAAP score, frontmatter injection     |
+| `mat:indexer`   | Stage 3-4: contradiction detection, coverage gaps, integration gate |
+| `mat:materials` | Legacy material loading (use mat:loader for new ingestions)         |
+
+### PSY — Psychology Framework Skills
+
+| Skill                 | Purpose                                                     |
+| --------------------- | ----------------------------------------------------------- |
+| `psy:crossref`        | Cross-character validation (4 dimensions)                   |
+| `psy:ref-audit`       | Profile → reference accuracy check + --discover blind spots |
+| `psy:ref-scan`        | Reference → profile coverage mapping                        |
+| `psy:ref-create`      | Create new reference files with mandatory schema            |
+| `psy:profile-lite`    | Compress profiles (~95% reduction)                          |
+| `psy:wave`            | 3-wave orchestration (Foundation→Deep Dive→Validation)      |
+| `psy:crisis-assess`   | DSM-5/ICD-11 crisis assessment + risk levels                |
+| `psy:narrative-twist` | Handle revealed falsehoods, strikethrough + cascade         |
+| `psy:hypothesis`      | Predict character behavior given hypothetical events        |
+| `psy:arc-tracker`     | Track character growth trajectories, hypothesis vs reality  |
+
+### CRE — Content Creation Skills
+
+| Skill                 | Purpose                                                       |
+| --------------------- | ------------------------------------------------------------- |
+| `cre:exploring`       | 7-question exploration → CONTEXT.md                           |
+| `cre:post-writer`     | End-to-end content creation pipeline                          |
+| `cre:prompt-leverage` | 5-layer prompt strengthening                                  |
+| `cre:privacy-guard`   | Pre-publish privacy/confidentiality scan                      |
+| `cre:repurpose`       | Adapt content across platforms                                |
+| `cre:voice-audit`     | Audit content voice/tone consistency against WRITING-VOICE.md |
 
 ---
 
 ## Scripts Infrastructure
 
-26 lucas skills share a Python utility library and 50+ supportive scripts.
+26 skills (mpc/mat/psy/cre/com) share a Python utility library and 50+ supportive scripts.
 
-### Shared Library (`.claude/scripts/lucas_lib/`)
+### Shared Library (`.claude/scripts/platform_lib/`)
 
 | Module               | Purpose                                         |
 | -------------------- | ----------------------------------------------- |
@@ -191,10 +232,10 @@ Project-specific skills for character profile management and content creation.
 
 ```bash
 # Python scripts (use project venv)
-$HOME/.claude/skills/.venv/bin/python3 .claude/skills/lucas-{skill}/scripts/{script}.py [args]
+$HOME/.claude/skills/.venv/bin/python3 .claude/skills/{framework}-{skill}/scripts/{script}.py [args]
 
 # Shell scripts
-bash .claude/skills/lucas-{skill}/scripts/{script}.sh [args]
+bash .claude/skills/{framework}-{skill}/scripts/{script}.sh [args]
 ```
 
 ### Design Principle
@@ -203,4 +244,4 @@ Scripts do **DETERMINISTIC GATHERING**; LLM does **HEURISTIC JUDGMENT**. Scripts
 
 ---
 
-_Updated: 2026-05-16_
+_Updated: 2026-05-18_
