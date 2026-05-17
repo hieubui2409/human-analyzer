@@ -87,14 +87,14 @@ Index organization: grouped by category (Disorders, Attachment, Defense Mechanis
 
 Every clinical term in profiles should trace to a reference file:
 
-- `lucas:ref-audit` scans profiles for clinical terms
+- `psy:ref-audit` scans profiles for clinical terms
 - Classifies: ACCURATE, UNREFERENCED, MISAPPLIED, INFORMAL
 
 ### References → Profiles (ref-scan direction)
 
 Every reference file should be applied to at least one character:
 
-- `lucas:ref-scan` maps theories to profile applications
+- `psy:ref-scan` maps theories to profile applications
 - Flags orphaned theories (in library but never referenced)
 - Flags gaps (theories that should apply but aren't linked)
 

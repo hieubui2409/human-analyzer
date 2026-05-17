@@ -78,5 +78,6 @@ Content creators MUST specify privacy level before drafting. The level determine
 ## Audit
 
 - Before publishing any content, verify no `[PRIVATE]`/`[CONFIDENTIAL]` content leaked
-- `lucas:post-writer` includes sensitivity scan in quality check phase
-- `lucas:prompt-leverage` applies sensitivity scan layer
+- `cre:post-writer` includes sensitivity scan in quality check phase (Gate 2 of 3-gate quality check)
+- `cre:prompt-leverage` applies sensitivity scan layer
+- `mpc:privacy-guard` pre-publish privacy scan across all MPC framework outputs

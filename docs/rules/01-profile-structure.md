@@ -2,23 +2,64 @@
 
 Standards for character profile files in `docs/profiles/{character}/`.
 
-## Required Files
+Schema definition: `docs/references/universal-profile-schema.yaml`
 
-Every character MUST have these files:
+## Directory Layout (Universal Schema)
 
-| File              | Purpose                                             | Required                       |
-| ----------------- | --------------------------------------------------- | ------------------------------ |
-| INDEX.md          | Quick reference (~50-80 lines)                      | MANDATORY                      |
-| IDENTITY.md       | Basic info, DOB, family, education, career          | MANDATORY                      |
-| SOUL.md           | Inner wounds, coping mechanisms, psychological core | MANDATORY                      |
-| CHARACTERISTIC.md | Personality traits, behavioral patterns             | MANDATORY                      |
-| TIMELINE.md       | Chronological events                                | MANDATORY                      |
-| RELATIONSHIPS.md  | Family tree, key relationships                      | MANDATORY                      |
-| DARKNESS.md       | Trauma documentation                                | MANDATORY                      |
-| LIGHT.md          | Sources of hope, growth signs                       | MANDATORY                      |
-| MILESTONES.md     | Key life milestones                                 | MANDATORY                      |
-| WRITING-VOICE.md  | Tone, themes, language patterns                     | Optional (Nhân vật A only currently) |
-| CONVERSATION.md   | Messenger/chat transcripts                          | Optional                       |
+Every character MUST follow this nested directory structure:
+
+```
+docs/profiles/{character}/
+├── INDEX.md                        ← Quick reference (~50-80 lines) [MANDATORY]
+├── CURRENT-STATE.md                ← Live status snapshot [MANDATORY]
+├── milestones.md                   ← Key life milestones [MANDATORY]
+├── identity/
+│   ├── core.md                     ← Basic info + personality traits [MANDATORY]
+│   ├── writing-voice.md            ← Tone, themes, language patterns [MANDATORY]
+│   ├── achievements.md             ← Academic, career, awards [Optional]
+│   └── media-coverage.md           ← Press timeline [Optional]
+├── psychology/
+│   ├── core-wounds.md              ← Inner wounds, coping, psychological core [MANDATORY]
+│   ├── defense-mechanisms.md       ← Defense patterns with behavioral examples [MANDATORY]
+│   ├── attachment-style.md         ← Attachment theory mapping [MANDATORY]
+│   ├── growth-edges.md             ← Growth trajectory, transformation arc [MANDATORY]
+│   ├── formulation.md              ← Clinical case formulation [Optional]
+│   ├── diagnostics.md              ← DSM-5/ICD-11 differential [Optional]
+│   ├── cultural-formulation.md     ← Vietnamese cultural context [Optional]
+│   ├── archetype.md                ← Jungian or narrative archetype [Optional]
+│   └── case-studies/               ← Theory-to-character applied studies [Optional]
+├── relationships/
+│   ├── family.md                   ← Family tree + family dynamics [MANDATORY]
+│   └── {other-character}.md        ← Per-relationship deep profiles [As needed]
+├── timeline/
+│   ├── overview.md                 ← Chronological events [MANDATORY]
+│   └── state-timeline.md           ← Psychological state over time [MANDATORY]
+├── darkness/
+│   └── traumas.md                  ← Trauma documentation [MANDATORY]
+├── light/
+│   └── strengths-hope.md           ← Sources of hope, growth signs [MANDATORY]
+└── evidence/
+    └── conversations.md            ← Messenger/chat transcripts [Optional]
+```
+
+## Path Migration Map
+
+Old flat-file paths → new nested paths:
+
+| Old Path          | New Path                   |
+| ----------------- | -------------------------- |
+| SOUL.md           | psychology/core-wounds.md  |
+| IDENTITY.md       | identity/core.md           |
+| CHARACTERISTIC.md | identity/core.md (merged)  |
+| DARKNESS.md       | darkness/traumas.md        |
+| LIGHT.md          | light/strengths-hope.md    |
+| RELATIONSHIPS.md  | relationships/family.md    |
+| TIMELINE.md       | timeline/overview.md       |
+| MILESTONES.md     | milestones.md              |
+| ACHIEVEMENTS.md   | identity/achievements.md   |
+| WRITING-VOICE.md  | identity/writing-voice.md  |
+| INSPIRATION.md    | psychology/growth-edges.md |
+| CONVERSATION.md   | evidence/conversations.md  |
 
 ## Section Ordering
 
@@ -30,18 +71,18 @@ Each file should follow consistent section order:
 2. Current situation (1-2 sentences)
 3. Key relationships (bullet list)
 4. Psychological snapshot (3-5 bullet points)
-5. File map (links to other profile files)
+5. File map (links to nested profile files)
 
-### SOUL.md
+### psychology/core-wounds.md
 
 1. Core wound summary
-2. Attachment style + evidence
-3. Defense mechanisms (list with behavioral examples)
+2. Attachment style + evidence (link to psychology/attachment-style.md)
+3. Defense mechanisms overview (link to psychology/defense-mechanisms.md)
 4. Coping patterns
 5. Inner conflicts
 6. Clinical theory anchors (link to docs/references/)
 
-### TIMELINE.md
+### timeline/overview.md
 
 1. Format: `YYYY-MM` or `YYYY-MM-DD` — event description
 2. Group by life phase (early life, adolescence, recent)
@@ -49,16 +90,17 @@ Each file should follow consistent section order:
 4. Uncertain dates marked with `[~approximate]`
 5. Contradicted dates marked with `[DISPUTED: source A says X, source B says Y]`
 
-### RELATIONSHIPS.md
+### relationships/family.md
 
 1. Family members (one section per person)
 2. Key non-family relationships (one section per person)
 3. Each section: relationship nature, key events, current dynamics, psychological analysis
-4. Cross-reference: "See also: docs/profiles/{other}/RELATIONSHIPS.md"
+4. Cross-reference: "See also: docs/profiles/{other}/relationships/family.md"
 
 ## Naming Conventions
 
-- File names: UPPERCASE with .md extension
+- Directory files: kebab-case with .md extension (subdirectories and files)
+- Root profile files (INDEX.md, CURRENT-STATE.md, milestones.md): UPPERCASE for backward compat
 - Character directory: kebab-case Vietnamese name without diacritics
 - Cross-references: use relative paths from project root
 
@@ -67,7 +109,7 @@ Each file should follow consistent section order:
 When referencing other characters or files:
 
 ```markdown
-<!-- Cross-ref: docs/profiles/character-b/TIMELINE.md — same event -->
+<!-- Cross-ref: docs/profiles/character-b/timeline/overview.md — same event -->
 ```
 
 ## Factual Tagging
@@ -79,7 +121,8 @@ When referencing other characters or files:
 
 ## Output Schemas
 
-Recommended YAML-style structure for key profile files (from original system directive):
+Recommended YAML-style structure for key profile files.
+Full schema: `docs/references/universal-profile-schema.yaml`
 
 ### INDEX.md
 
@@ -95,7 +138,7 @@ Sources_Used: [{ P1 }, { P2... }]
 Last_Updated: "{YYYY-MM-DD}"
 ```
 
-### SOUL.md
+### psychology/core-wounds.md
 
 ```yaml
 Core_Essence: "{Brief description}"
@@ -111,7 +154,7 @@ Coping_Mechanisms:
     Type: "{Healthy/Unhealthy}"
 ```
 
-### TIMELINE.md
+### timeline/overview.md
 
 ```yaml
 Events:
@@ -120,17 +163,17 @@ Events:
     Event_Name: "{Short title}"
     Description: "{What happened}"
     Impact: "{Psychological or physical effect}"
-    Source: "{P1/P2/P3/P4}"
+    Source: "{Tier 1-5}"
 ```
 
 Rule: Must strictly follow chronological order. Verify age calculations against DOB.
 
-### DARKNESS.md
+### darkness/traumas.md
 
 ```yaml
 Primary_Trauma:
   Type: "{Discrete (PTSD) or Prolonged/Inescapable (C-PTSD)}"
-  Event_Link: "{Reference to Timeline event}"
+  Event_Link: "{Reference to timeline/overview.md event}"
   Sensory_Triggers:
     - Trigger: "{e.g., specific smell}"
       Mechanism: "{e.g., Olfactory-Amygdala direct response}"
@@ -142,7 +185,7 @@ Symptoms_&_Manifestations:
 
 Rule: Link directly to clinical frameworks if trauma is severe. See `06-crisis-protocol.md`.
 
-### LIGHT.md
+### light/strengths-hope.md
 
 ```yaml
 Sources_of_Hope:
@@ -152,12 +195,12 @@ Protective_Factors:
   - Factor: "{Internal trait or external support system}"
 Growth_Milestones:
   - Milestone: "{Healing moment}"
-    Date_Link: "{Timeline reference}"
+    Date_Link: "{timeline/overview.md reference}"
 ```
 
 Rule: If Suicidal Ideation present, Protective Factors MUST be documented. See `06-crisis-protocol.md`.
 
-### RELATIONSHIPS.md
+### relationships/family.md
 
 ```yaml
 Family_Tree:
@@ -184,13 +227,13 @@ Log discrepancies found during Wave 3 validation. See `08-cross-validation.md`.
 
 ## Size Guidelines
 
-| File                | Target         | Warning threshold |
-| ------------------- | -------------- | ----------------- |
-| INDEX.md            | 50-80 lines    | >100 lines        |
-| SOUL.md             | 200-400 lines  | >500 lines        |
-| TIMELINE.md         | 150-350 lines  | >400 lines        |
-| RELATIONSHIPS.md    | 200-400 lines  | >500 lines        |
-| Others              | 100-300 lines  | >400 lines        |
-| Total per character | 800-2500 lines | >3000 lines       |
+| File                   | Target         | Warning threshold |
+| ---------------------- | -------------- | ----------------- |
+| INDEX.md               | 50-80 lines    | >100 lines        |
+| psychology/core-wounds | 200-400 lines  | >500 lines        |
+| timeline/overview      | 150-350 lines  | >400 lines        |
+| relationships/family   | 200-400 lines  | >500 lines        |
+| Others                 | 100-300 lines  | >400 lines        |
+| Total per character    | 800-2500 lines | >3000 lines       |
 
 When a file exceeds threshold → consider splitting or extracting to sub-files.

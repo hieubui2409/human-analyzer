@@ -26,11 +26,11 @@ Extract objective facts to build/update the character's base.
 - **Timeline**: Chronological events (verify ages align with DOB)
 - **Relationships**: Family tree, key connections
 
-**Outputs:** `IDENTITY.md`, `TIMELINE.md`, `RELATIONSHIPS.md`
+**Outputs:** `identity/core.md`, `timeline/overview.md`, `relationships/family.md`
 
 **Process:**
 
-1. Intake raw sources → classify by priority (P1-P4, see `04-materials-ingestion.md`)
+1. Intake raw sources → classify by evidence tier (1-5, see `04-materials-ingestion.md`)
 2. Store raw materials in `docs/materials/{character}/`
 3. Extract identity facts, timeline events, relationship cards
 4. Tag confidential info with `[PRIVATE]` or `[CONFIDENTIAL]`
@@ -47,7 +47,7 @@ Analyze behavioral patterns, trauma, and voice.
 - **Coping & Growth**: Healthy/unhealthy coping mechanisms, growth edges
 - **Crisis Assessment**: If applicable, document risk level per `06-crisis-protocol.md`
 
-**Outputs:** `SOUL.md`, `DARKNESS.md`, `LIGHT.md`, `CHARACTERISTIC.md`, `MILESTONES.md`
+**Outputs:** `psychology/core-wounds.md`, `darkness/traumas.md`, `light/strengths-hope.md`, `identity/core.md` (traits), `milestones.md`
 
 **Mandatory Clinical Referencing (NGUYÊN TẮC TỐI THƯỢNG):**
 
@@ -97,6 +97,6 @@ plans/{date}-{slug}/
 
 ## Automation
 
-- `lucas:wave` skill orchestrates the 3-wave process
-- `lucas:crossref` validates cross-character consistency (Wave 3)
-- `lucas:ref-audit` ensures clinical references are accurate (Wave 2-3)
+- `psy:wave` skill orchestrates the 3-wave process
+- `psy:crossref` validates cross-character consistency (Wave 3)
+- `psy:ref-audit` ensures clinical references are accurate (Wave 2-3)

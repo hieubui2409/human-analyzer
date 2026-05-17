@@ -7,7 +7,8 @@ Standards for validating consistency across character profiles and within indivi
 - After Wave 3 of any major profile update
 - After integrating new materials that affect multiple characters
 - After any cross-character event update (events involving ≥2 characters)
-- Periodically as maintenance (run `lucas:crossref`)
+- After PSY.refresh event triggered by MAT integration
+- Periodically as maintenance (run `psy:crossref`)
 
 ## 4 Consistency Dimensions
 
@@ -24,15 +25,15 @@ Every validation MUST check these dimensions:
 
 ### Relationship Symmetry
 
-For every relationship documented in character A's `RELATIONSHIPS.md`:
+For every relationship documented in character A's `relationships/family.md` or `relationships/{character}.md`:
 
-1. Character B's `RELATIONSHIPS.md` MUST have a corresponding section
+1. Character B's corresponding relationship file MUST have a matching section
 2. Key facts MUST match: dates, events, role descriptions
 3. Psychological assessments may differ (each character's perspective)
 
 ### Shared Timeline Events
 
-Events involving multiple characters MUST appear in ALL participants' `TIMELINE.md`:
+Events involving multiple characters MUST appear in ALL participants' `timeline/overview.md`:
 
 - Same date (or both marked `[~approximate]`)
 - Same factual description (may differ in perspective/impact)
@@ -41,7 +42,7 @@ Events involving multiple characters MUST appear in ALL participants' `TIMELINE.
 Format:
 
 ```markdown
-<!-- Cross-ref: docs/profiles/{other}/TIMELINE.md — same event -->
+<!-- Cross-ref: docs/profiles/{other}/timeline/overview.md — same event -->
 ```
 
 ### Age/Date Calculation Rules
@@ -56,14 +57,15 @@ Format:
 
 ### File-to-File Consistency
 
-| Check                         | Files involved                    |
-| ----------------------------- | --------------------------------- |
-| Status tags match             | INDEX ↔ all other files           |
-| Timeline events referenced    | TIMELINE ↔ SOUL, DARKNESS, LIGHT  |
-| Relationship names consistent | RELATIONSHIPS ↔ IDENTITY          |
-| Clinical references accurate  | SOUL, DARKNESS ↔ docs/references/ |
-| Milestones subset of timeline | MILESTONES ↔ TIMELINE             |
-| Coping mechanisms documented  | SOUL ↔ CHARACTERISTIC             |
+| Check                         | Files involved                                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------- |
+| Status tags match             | INDEX.md ↔ all other files                                                            |
+| Timeline events referenced    | timeline/overview.md ↔ psychology/core-wounds, darkness/traumas, light/strengths-hope |
+| Relationship names consistent | relationships/family.md ↔ identity/core.md                                            |
+| Clinical references accurate  | psychology/core-wounds, darkness/traumas ↔ docs/references/                           |
+| Milestones subset of timeline | milestones.md ↔ timeline/overview.md                                                  |
+| Coping mechanisms documented  | psychology/core-wounds.md ↔ psychology/defense-mechanisms.md                          |
+| State phases consistent       | timeline/state-timeline.md ↔ CURRENT-STATE.md                                         |
 
 ### Source Priority Compliance
 
@@ -94,6 +96,6 @@ Required sections:
 
 ## Automation
 
-- `lucas:crossref` runs automated cross-validation
-- `lucas:crossref --pair hieu chien` validates specific character pair
-- `lucas:crossref --full` validates all characters against each other
+- `psy:crossref` runs automated cross-validation
+- `psy:crossref --pair hieu chien` validates specific character pair
+- `psy:crossref --full` validates all characters against each other

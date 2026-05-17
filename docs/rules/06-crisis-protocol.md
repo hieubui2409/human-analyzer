@@ -35,7 +35,7 @@ Assess PTSD core symptoms + Disturbances in Self-Organization (DSO):
 
 | Type    | Definition                                 | Documentation Required           |
 | ------- | ------------------------------------------ | -------------------------------- |
-| Passive | Wishing to disappear, not wanting to exist | Note in DARKNESS.md              |
+| Passive | Wishing to disappear, not wanting to exist | Note in darkness/traumas.md      |
 | Active  | Intent + plan                              | Risk level HIGH, safety contract |
 
 ### Sensory Triggers
@@ -87,13 +87,14 @@ Add to affected files:
 
 ## File-Specific Rules
 
-| File        | Crisis content requirements                            |
-| ----------- | ------------------------------------------------------ |
-| DARKNESS.md | Primary location for trauma + crisis docs              |
-| LIGHT.md    | Protective factors MUST be documented if SI present    |
-| TIMELINE.md | Crisis events with exact dates                         |
-| INDEX.md    | Current status tag: `CRISIS` / `RECOVERING` / `STABLE` |
-| SOUL.md     | Coping mechanisms updated                              |
+| File                       | Crisis content requirements                            |
+| -------------------------- | ------------------------------------------------------ |
+| darkness/traumas.md        | Primary location for trauma + crisis docs              |
+| light/strengths-hope.md    | Protective factors MUST be documented if SI present    |
+| timeline/overview.md       | Crisis events with exact dates                         |
+| INDEX.md                   | Current status tag: `CRISIS` / `RECOVERING` / `STABLE` |
+| psychology/core-wounds.md  | Coping mechanisms updated                              |
+| timeline/state-timeline.md | Phase updated to `crisis` / `stabilizing`              |
 
 ## Confidentiality
 

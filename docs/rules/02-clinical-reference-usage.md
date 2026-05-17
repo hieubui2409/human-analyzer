@@ -16,6 +16,7 @@ Clinical terms ARE allowed in profiles — they're internal documentation:
 - Always link to reference file: `(See: docs/references/{theory}.md)`
 - Explain how theory manifests in THIS character specifically
 - Distinguish between confirmed patterns and hypotheses
+- File locations use new nested schema (e.g., `psychology/attachment-style.md`)
 
 Example:
 
@@ -86,7 +87,7 @@ See `10-reference-library-standard.md` for full NGUYÊN TẮC TỐI THƯỢNG ru
 
 ## Validation
 
-- `lucas:ref-audit` checks profile clinical accuracy
-- `lucas:ref-scan` maps theories to profile applications
-- `lucas:ref-audit --discover` finds clinical terms in materials/assets not yet in library
+- `psy:ref-audit` checks profile clinical accuracy
+- `psy:ref-scan` maps theories to profile applications
+- `psy:ref-audit --discover` finds clinical terms in materials/assets not yet in library
 - Content review must verify "show don't tell" compliance before publishing

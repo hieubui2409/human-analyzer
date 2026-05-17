@@ -54,17 +54,18 @@ Add entries showing BOTH:
 Check ALL profile files for references to the invalidated fact:
 
 - INDEX.md — update summary
-- RELATIONSHIPS.md — add/modify relationship card
-- SOUL.md — update psychological analysis if twist affects core wound
-- LIGHT.md / DARKNESS.md — adjust if protective factors or trauma changed
-- MILESTONES.md — add revelation as milestone if significant
+- relationships/family.md or relationships/{character}.md — add/modify relationship card
+- psychology/core-wounds.md — update psychological analysis if twist affects core wound
+- light/strengths-hope.md / darkness/traumas.md — adjust if protective factors or trauma changed
+- milestones.md — add revelation as milestone if significant
+- timeline/state-timeline.md — update psychological phase if twist changes current state
 
 ### Step 5: Cross-Character Impact
 
 If the twist affects other characters' profiles:
 
-1. Update their RELATIONSHIPS.md with the new information
-2. Add timeline entries for when THEY learned the truth
+1. Update their `relationships/{character}.md` with the new information
+2. Add timeline entries in `timeline/overview.md` for when THEY learned the truth
 3. Document psychological impact on them (e.g., Nhân vật A's response to Nhân vật C's revelation)
 
 ## Formatting Rules
