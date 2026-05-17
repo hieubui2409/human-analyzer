@@ -244,4 +244,24 @@ Scripts do **DETERMINISTIC GATHERING**; LLM does **HEURISTIC JUDGMENT**. Scripts
 
 ---
 
+## Subagent API Error Retry
+
+When a subagent (Agent tool) returns output containing API error patterns, **auto-retry once** with the same prompt.
+
+**Retry patterns** (case-insensitive match on tool result):
+
+- `API Error`, `JSON Parse error`, `Unexpected EOF`
+- `Internal Server Error`, `Service Unavailable`, `ECONNRESET`, `socket hang up`
+
+**Never retry** if result contains: `rate_limit`, `Rate limit`, `429`, `credit`, `billing`, `context_length_exceeded`, `invalid_api_key`
+
+**Protocol:**
+
+1. Detect error pattern in Agent tool result
+2. Log: `"⚠️ Subagent API error — retrying (attempt 2/2)..."`
+3. Re-spawn Agent with identical prompt
+4. If retry also fails → report error to user, stop
+
+---
+
 _Updated: 2026-05-18_
