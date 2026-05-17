@@ -1,0 +1,109 @@
+# Material Schema — MAT Framework
+# Standardized YAML frontmatter for ALL material files in docs/materials/
+# Same fields for ALL characters, no exceptions.
+
+version: "1.0"
+created: "2026-05-17"
+
+# Mandatory YAML frontmatter fields for every material .md file
+frontmatter:
+  required:
+    - material_id # Unique ID: {CHARACTER_SLUG}_MAT_{NNN}
+    - character # kebab-case slug (e.g., character-a)
+    - material_type # See material_types below
+    - title # Human-readable title
+    - source_category # primary|secondary|tertiary|contextual|auxiliary
+    - source_reliability # high|medium|low
+    - source_creator # Who created the source material
+    - captured_date # ISO 8601 date when material was captured/created
+    - processing_status # raw|extracted|analyzed|validated|integrated|archived
+    - confidentiality # public|shared|private|restricted
+    - last_updated # ISO 8601 date
+    - updated_by # skill/agent that last modified
+  optional:
+    - source_channel # messenger|email|interview|news|social_media|document|other
+    - creator_role # subject|clinician|family|journalist|observer|researcher
+    - datetime_confidence # exact|approximate|year_only|unknown
+    - event_date # ISO date if material references a different date
+    - ingestion_method # manual_copy|ocr|screenshot|download|transcription
+    - ocr_confidence # excellent|good|fair|poor
+    - content_tags # array of kebab-case tags
+    - psychology_constructs # array of construct slugs
+    - references # array of reference slugs from docs/references/
+    - cross_characters # array of character slugs mentioned
+    - related_materials # array of material IDs
+    - affects_profiles # array of profile file paths this material updates
+    - llm_summary # 2-3 sentence summary for LLM context efficiency
+    - quality_score # 0-10 overall quality rating
+    - contradiction_flags # array of {field, existing_value, new_value, severity}
+
+# Material types (8 categories)
+material_types:
+  - conversation_log # Messenger, chat, SMS transcripts
+  - letter # Personal letters, emails
+  - interview # Structured or unstructured interviews
+  - news_article # Press coverage, media reports
+  - screenshot # Screen captures of social media, apps
+  - clinical_note # Professional assessments, evaluations
+  - observation # Third-party behavioral observations
+  - document # Official documents, certificates, records
+
+# Evidence tiers (maps to source_category)
+evidence_tiers:
+  primary:
+    tier: 1
+    confidence: high
+    weight: 1.0
+    examples: "direct testimony, interviews, personal letters, diary entries"
+  secondary:
+    tier: 2
+    confidence: high
+    weight: 0.9
+    examples: "professional assessments, clinical evaluations, psychological reports"
+  tertiary:
+    tier: 3
+    confidence: medium
+    weight: 0.7
+    examples: "news articles, social media posts, messenger conversations"
+  contextual:
+    tier: 4
+    confidence: medium-low
+    weight: 0.5
+    examples: "third-party accounts, family testimony, hearsay"
+  auxiliary:
+    tier: 5
+    confidence: low
+    weight: 0.3
+    examples: "inference from metadata, timestamps, circumstantial data"
+
+# Processing states lifecycle
+processing_states:
+  raw: "Ingested but unprocessed. Original format preserved."
+  extracted: "Key entities, dates, names extracted. Structure identified."
+  analyzed: "LLM analysis complete. Psychological constructs mapped."
+  validated: "Cross-validated against existing profiles. Contradictions resolved."
+  integrated: "Findings merged into profile files. References linked."
+  archived: "Superseded by newer material or fully integrated. Read-only."
+
+# Source reliability assessment (CRAAP test)
+craap_test:
+  currency: "Publication/capture date relevance"
+  relevance: "Direct relevance to character profile sections"
+  authority: "Creator credentials and proximity to subject"
+  accuracy: "Cross-referenceability and internal consistency"
+  purpose: "Stated intent (clinical note vs. social media post)"
+
+# Confidentiality levels
+confidentiality_levels:
+  public: "Can appear in published content"
+  shared: "Can be referenced but not quoted directly"
+  private: "Internal analysis only, no public exposure"
+  restricted: "Requires explicit permission for any use"
+
+# Privacy flags (checked by pmc:privacy-guard)
+privacy_flags:
+  - contains_personal_addresses
+  - contains_financial_data
+  - contains_medical_data
+  - contains_minor_data
+  - contains_third_party_pii

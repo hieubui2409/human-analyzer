@@ -1,0 +1,150 @@
+# Universal Profile Schema — PMC Framework
+# Same structure for ALL characters, no exceptions.
+# Empty skeleton = valid state.
+
+version: "1.0"
+created: "2026-05-17"
+
+# Mandatory YAML frontmatter fields for every .md file
+frontmatter:
+  required:
+    - character        # kebab-case slug (e.g., character-a)
+    - domain           # identity|psychology|relationships|timeline|darkness|light|evidence|root
+    - type             # analysis|narrative|data|index|snapshot
+    - tags             # array of kebab-case tags
+    - references       # array of reference slugs from docs/references/
+    - cross_characters # array of character slugs mentioned
+    - last_updated     # ISO 8601 date
+    - updated_by       # skill that last modified (e.g., psy:wave)
+    - confidence       # high|medium|low|unverified
+  optional:
+    - period           # YYYY-MM for temporal content
+    - llm_summary      # 2-3 sentence summary for LLM context efficiency
+
+# Domain enum values
+domains:
+  - root
+  - identity
+  - psychology
+  - relationships
+  - timeline
+  - darkness
+  - light
+  - evidence
+
+# Type enum values
+types:
+  - analysis    # LLM-generated psychological analysis
+  - narrative   # Human-written or LLM-assisted narrative
+  - data        # Structured data (timelines, achievements, metrics)
+  - index       # Navigation/module map
+  - snapshot    # Point-in-time state capture
+
+# Confidence levels
+confidence_levels:
+  - high        # Multiple corroborating sources, Tier 1-2 evidence
+  - medium      # Single source or Tier 3 evidence
+  - low         # Inference-based, Tier 4 evidence
+  - unverified  # Newly created, awaiting validation
+
+# Directory structure (all subdirs created even if empty)
+structure:
+  root_files:
+    - INDEX.md
+    - CURRENT-STATE.md
+    - milestones.md
+
+  identity:
+    - core.md
+    - writing-voice.md
+    - achievements.md
+    - media-coverage.md
+
+  psychology:
+    - core-wounds.md
+    - defense-mechanisms.md
+    - attachment-style.md
+    - growth-edges.md
+    - formulation.md
+    - diagnostics.md
+    - cultural-formulation.md
+    - archetype.md
+    subdirs:
+      case-studies: "{YYYY-MM-slug}.md"
+
+  relationships:
+    - family.md
+    dynamic: "{other-character-slug}.md"
+
+  timeline:
+    - overview.md
+    - state-timeline.md
+    dynamic: "{period-slug}.md"
+
+  darkness:
+    - traumas.md
+
+  light:
+    - strengths-hope.md
+
+  evidence:
+    - conversations.md
+
+# Project-level files (NOT per-character)
+project_level:
+  "docs/graph/":
+    - relational-dynamics.md
+    dynamic: "{dyad-slug}.md"
+
+# Standardized assessment fields (in diagnostics.md)
+assessment_fields:
+  personality_big_five:
+    openness: { min: 1, max: 10 }
+    conscientiousness: { min: 1, max: 10 }
+    extraversion: { min: 1, max: 10 }
+    agreeableness: { min: 1, max: 10 }
+    neuroticism: { min: 1, max: 10 }
+
+  attachment:
+    primary_style: [secure, anxious-preoccupied, dismissive-avoidant, fearful-avoidant]
+    anxiety_score: { min: 1, max: 10 }
+    avoidance_score: { min: 1, max: 10 }
+
+  trauma_inventory_icd11:
+    intrusion: { min: 0, max: 100 }
+    avoidance: { min: 0, max: 100 }
+    hyperarousal: { min: 0, max: 100 }
+    negative_self_concept: { min: 0, max: 100 }
+
+  protective_factors:
+    internal_resources: { min: 1, max: 10 }
+    external_resources: { min: 1, max: 10 }
+    resilience: { min: 1, max: 10 }
+
+  risk_assessment:
+    suicide_risk: [none, passive_ideation, active_ideation, high_risk]
+    self_harm_risk: [none, low, moderate, high]
+    harm_to_others: [none, low, moderate, high]
+
+# Evidence tiers for formulation.md
+evidence_tiers:
+  1: { label: "Primary", confidence: "high", weight: 1.0, examples: "direct testimony, interviews, letters" }
+  2: { label: "Secondary", confidence: "high", weight: 0.9, examples: "professional assessment, evaluations" }
+  3: { label: "Tertiary", confidence: "medium", weight: 0.7, examples: "news articles, social media, messenger" }
+  4: { label: "Contextual", confidence: "medium-low", weight: 0.5, examples: "third-party accounts, hearsay" }
+  5: { label: "Auxiliary", confidence: "low", weight: 0.3, examples: "inference from metadata, timestamps" }
+
+# Defense mechanism hierarchy (in defense-mechanisms.md)
+defense_hierarchy:
+  mature: [sublimation, humor, altruism, anticipation, suppression]
+  neurotic: [intellectualization, repression, reaction_formation, displacement, undoing]
+  immature: [projection, denial, passive_aggression, acting_out, splitting]
+  psychotic: [delusional_projection, psychotic_denial, distortion]
+
+# 5 Ps formulation sections (in formulation.md)
+formulation_5ps:
+  - presenting    # Current difficulties, symptoms, functional impact
+  - predisposing  # Long-standing vulnerabilities
+  - precipitating # Recent triggers
+  - perpetuating  # What maintains the problem now
+  - protective    # Internal strengths, external resources
