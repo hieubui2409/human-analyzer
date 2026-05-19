@@ -47,6 +47,18 @@ Interactive mode — ask character, platform, topic via `AskUserQuestion`.
 
 ## Pipeline
 
+### Phase 0: Stale Voice Gate (MANDATORY)
+
+Before any content generation, check freshness:
+
+1. Read `last_psy_refresh` and `last_material_integration` from session state (`.claude/session-state/state.json`)
+2. If `last_material_integration` > `last_psy_refresh` → voice data is STALE
+   - **BLOCK** content generation
+   - Run `cre:voice-audit --character <name>` first
+   - If voice-audit finds HIGH drift → require `PSY.refresh` before proceeding
+   - If voice-audit finds LOW/MEDIUM drift → proceed with warning
+3. If timestamps unavailable → proceed with warning "freshness unknown"
+
 ### Phase 1: Context Loading (5 seconds)
 
 1. Load character lite profile (`psy:profile-lite --character <name>`)

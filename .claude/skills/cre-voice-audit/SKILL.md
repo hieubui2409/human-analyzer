@@ -1,6 +1,6 @@
 ---
 name: cre:voice-audit
-description: "Audit published content for voice/tone consistency against character WRITING-VOICE.md profiles. Detects tone drift, vocabulary mismatches, and persona breaks across posts. Use after batch content creation, periodic quality checks, or when voice feels 'off'. Triggers: 'voice check', 'tone audit', 'voice consistency', 'writing style check', 'persona drift', 'tone drift'."
+description: "Audit published content for voice/tone consistency against character identity/writing-voice.md profiles. Detects tone drift, vocabulary mismatches, and persona breaks across posts. Use after batch content creation, periodic quality checks, or when voice feels 'off'. Triggers: 'voice check', 'tone audit', 'voice consistency', 'writing style check', 'persona drift', 'tone drift'."
 argument-hint: "[--character <name>|--platform <platform>|--file <path>|--report]"
 metadata:
   author: hieubt
@@ -12,7 +12,7 @@ metadata:
 
 # Voice Consistency Audit
 
-Scan published content (assets/) for tone/voice drift against character WRITING-VOICE.md profiles.
+Scan published content (assets/) for tone/voice drift against character identity/writing-voice.md profiles.
 
 ## When to Use
 
@@ -47,7 +47,7 @@ Scan published content (assets/) for tone/voice drift against character WRITING-
 
 1. List `assets/{platform}/*/post.md` and `post.txt` files
 2. For each post, analyze:
-   - Tone alignment with WRITING-VOICE.md dimensions
+   - Tone alignment with identity/writing-voice.md dimensions
    - Vocabulary consistency (signature phrases present? foreign words?)
    - Structural patterns match
    - Thematic alignment
@@ -74,7 +74,7 @@ Flag these drift types:
 **Posts scanned:** {N}
 **Platform(s):** {list}
 
-### Voice Profile Summary (from WRITING-VOICE.md)
+### Voice Profile Summary (from identity/writing-voice.md)
 
 - Tone: {summary}
 - Signature elements: {list}

@@ -23,8 +23,8 @@ CHAR_ALIASES = {
 
 
 def get_cross_events(char_slug: str, target_slug: str) -> list[dict]:
-    """Get events from char's TIMELINE that mention target."""
-    timeline = character_dir(char_slug) / "TIMELINE.md"
+    """Get events from char's timeline/overview.md that mention target."""
+    timeline = character_dir(char_slug) / "timeline/overview.md"
     target_names = CHAR_ALIASES.get(target_slug, [])
     refs = find_cross_references(timeline, target_names)
     events = extract_timeline_events(timeline)

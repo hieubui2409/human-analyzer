@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parse LIGHT.md for protective factors: support network, coping strategies, future goals, resilience.
+"""Parse light/strengths-hope.md for protective factors: support network, coping strategies, future goals, resilience.
 Categorizes internal vs external factors for LLM risk assessment."""
 import os
 import sys
@@ -49,10 +49,10 @@ def classify_line(line: str) -> list[str]:
 def extract_factors(char_slug: str) -> dict:
     cdir = character_dir(char_slug)
     display = CHAR_DISPLAY.get(char_slug, char_slug)
-    light_file = cdir / "LIGHT.md"
+    light_file = cdir / "light/strengths-hope.md"
 
     if not light_file.exists():
-        return {"character": display, "slug": char_slug, "error": "LIGHT.md not found", "factors": []}
+        return {"character": display, "slug": char_slug, "error": "light/strengths-hope.md not found", "factors": []}
 
     sections = extract_sections(light_file, level=2)
     factors = []
@@ -94,7 +94,7 @@ def extract_factors(char_slug: str) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Extract protective factors from LIGHT.md (internal vs external categorization)"
+        description="Extract protective factors from light/strengths-hope.md (internal vs external categorization)"
     )
     parser.add_argument("--character", help="Character alias or canonical name")
     parser.add_argument("--all", dest="all_chars", action="store_true", help="Process all characters")
@@ -121,7 +121,7 @@ def main():
         if args.summary:
             continue
         if not r["factors"]:
-            print("  No bullet-point factors found in LIGHT.md")
+            print("  No bullet-point factors found in light/strengths-hope.md")
             continue
         headers = ["L#", "Section", "Categories", "Content (truncated)"]
         rows = [[str(f["line_no"]), f["section"][:25], ",".join(f["categories"]), f["content"][:70]] for f in r["factors"]]

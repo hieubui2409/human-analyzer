@@ -77,7 +77,7 @@ TEMPLATE_HEADER = """\
 |----|-----------|--------|----------------------|
 """
 
-TEMPLATE_ROW = "| {id} | {en} | [ ] NOT_ASSESSED | _(fill from DARKNESS.md / SOUL.md)_ |\n"
+TEMPLATE_ROW = "| {id} | {en} | [ ] NOT_ASSESSED | _(fill from darkness/traumas.md / psychology/formulation.md)_ |\n"
 
 TEMPLATE_FOOTER = """
 ---
@@ -118,7 +118,7 @@ def main():
 
     content = TEMPLATE_HEADER.format(character=display, date=today)
     for crit_id, en_text, vi_text in DSM5_MDD_CRITERIA:
-        content += f"| {crit_id} | **{en_text}** / {vi_text} | [ ] NOT_ASSESSED | _(fill from DARKNESS.md / SOUL.md)_ |\n"
+        content += f"| {crit_id} | **{en_text}** / {vi_text} | [ ] NOT_ASSESSED | _(fill from darkness/traumas.md / psychology/formulation.md)_ |\n"
     content += TEMPLATE_FOOTER
 
     if args.output:

@@ -10,17 +10,17 @@ from platform_lib.markdown_parser import extract_sections, extract_tags
 from platform_lib.formatters import print_json
 
 WAVE1_REQUIRED_SECTIONS = {
-    "IDENTITY.md": ["Thông tin cơ bản", "Học vấn", "Nghề nghiệp"],
-    "TIMELINE.md": [],  # just needs to be non-empty
+    "identity/core.md": ["Thông tin cơ bản", "Học vấn", "Nghề nghiệp"],
+    "timeline/overview.md": [],  # just needs to be non-empty
 }
-WAVE1_CONFIDENTIAL_FILES = ["IDENTITY.md", "RELATIONSHIPS.md"]
+WAVE1_CONFIDENTIAL_FILES = ["identity/core.md", "relationships/family.md"]
 
 WAVE2_REQUIRED_SECTIONS = {
-    "SOUL.md": [],
-    "DARKNESS.md": [],
-    "LIGHT.md": [],
+    "psychology/formulation.md": [],
+    "darkness/traumas.md": [],
+    "light/strengths-hope.md": [],
 }
-WAVE2_CLINICAL_REFS_FILES = ["SOUL.md", "DARKNESS.md", "CHARACTERISTIC.md"]
+WAVE2_CLINICAL_REFS_FILES = ["psychology/formulation.md", "darkness/traumas.md", "psychology/defense-mechanisms.md"]
 
 
 def check_wave1(char_dir_path):
@@ -79,7 +79,7 @@ def check_wave2(char_dir_path):
 def check_wave3(char_dir_path):
     issues = []
     # Wave 3 gate: wave 2 complete + cross-validation done
-    required = ["SOUL.md", "DARKNESS.md", "LIGHT.md", "MILESTONES.md", "CHARACTERISTIC.md"]
+    required = ["psychology/formulation.md", "darkness/traumas.md", "light/strengths-hope.md", "milestones.md", "psychology/defense-mechanisms.md"]
     for fname in required:
         fpath = char_dir_path / fname
         if not fpath.exists():

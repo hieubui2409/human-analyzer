@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Scan DARKNESS.md + SOUL.md for crisis-related keywords AND behavioral patterns.
+"""Scan darkness/traumas.md + psychology/core-wounds.md for crisis-related keywords AND behavioral patterns.
 Default: deep mode (keywords + behavioral clusters). Use --quick for keywords only.
 Gathering only — LLM classifies risk level from output."""
 import os
@@ -43,7 +43,7 @@ CRISIS_KEYWORDS = [
     r"\bthôi\s+sống\b",
 ]
 
-TARGET_FILES = ["DARKNESS.md", "SOUL.md"]
+TARGET_FILES = ["darkness/traumas.md", "psychology/core-wounds.md"]
 
 COMPILED = [(kw, re.compile(kw, re.IGNORECASE)) for kw in CRISIS_KEYWORDS]
 
@@ -112,7 +112,7 @@ def scan_character(char_slug: str, quick: bool = False) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Scan DARKNESS.md + SOUL.md for crisis keywords + behavioral clusters (gathering for LLM risk classification)"
+        description="Scan darkness/traumas.md + psychology/core-wounds.md for crisis keywords + behavioral clusters (gathering for LLM risk classification)"
     )
     parser.add_argument("--character", help="Character alias (hieu, hoa, chien) or 'all'")
     parser.add_argument("--all", dest="all_chars", action="store_true", help="Scan all characters")
@@ -137,7 +137,7 @@ def main():
         print(f"Total hits: {r['total_hits']} (keyword: {r['keyword_hits']}, behavioral: {r['behavioral_hits']})")
         if not r["hits"]:
             print("  ⚠ No explicit or behavioral patterns found.")
-            print("  → LLM MUST independently re-read DARKNESS.md + SOUL.md for implicit crisis indicators.")
+            print("  → LLM MUST independently re-read darkness/traumas.md + psychology/core-wounds.md for implicit crisis indicators.")
             continue
         headers = ["File", "Line", "Source", "Pattern", "Text (truncated)"]
         rows = []

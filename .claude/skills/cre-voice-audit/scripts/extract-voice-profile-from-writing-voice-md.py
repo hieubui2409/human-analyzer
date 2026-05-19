@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parse WRITING-VOICE.md into structured JSON voice dimensions."""
+"""Parse identity/writing-voice.md into structured JSON voice dimensions."""
 import argparse
 import os
 import re
@@ -36,7 +36,7 @@ def extract_bullet_points(text: str) -> list[str]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract structured voice profile from WRITING-VOICE.md")
+    parser = argparse.ArgumentParser(description="Extract structured voice profile from identity/writing-voice.md")
     parser.add_argument("--character", default="hieu", help="Character name (default: hieu)")
     args = parser.parse_args()
 
@@ -44,9 +44,9 @@ def main():
     cdir = character_dir(args.character)
     display = CHAR_DISPLAY.get(slug, slug)
 
-    voice_path = cdir / "WRITING-VOICE.md"
+    voice_path = cdir / "identity" / "writing-voice.md"
     if not voice_path.exists():
-        print_json({"error": f"WRITING-VOICE.md not found for {display} at {voice_path}"})
+        print_json({"error": f"identity/writing-voice.md not found for {display} at {voice_path}"})
         sys.exit(1)
 
     sections_h2 = extract_sections(voice_path, level=2)

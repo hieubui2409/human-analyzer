@@ -70,23 +70,23 @@ Add entries showing BOTH perspectives:
 
 Check ALL profile files for the affected character:
 
-| File              | What to check                                              |
-| ----------------- | ---------------------------------------------------------- |
-| INDEX.md          | Summary reflects new truth                                 |
-| IDENTITY.md       | Facts corrected                                            |
-| SOUL.md           | Psychological analysis updated if twist affects core wound |
-| CHARACTERISTIC.md | Behavioral patterns adjusted                               |
-| TIMELINE.md       | Event history includes both old belief and revelation      |
-| RELATIONSHIPS.md  | Relationship nature corrected                              |
-| DARKNESS.md       | Trauma updated if twist reveals new wound                  |
-| LIGHT.md          | Protective factors adjusted if twist changes them          |
-| MILESTONES.md     | Revelation added as milestone if significant               |
+| File                               | What to check                                              |
+| ---------------------------------- | ---------------------------------------------------------- |
+| INDEX.md                           | Summary reflects new truth                                 |
+| `identity/core.md`                 | Facts corrected                                            |
+| `psychology/formulation.md`        | Psychological analysis updated if twist affects core wound |
+| `psychology/defense-mechanisms.md` | Behavioral patterns adjusted                               |
+| `timeline/overview.md`             | Event history includes both old belief and revelation      |
+| `relationships/family.md`          | Relationship nature corrected                              |
+| `darkness/traumas.md`              | Trauma updated if twist reveals new wound                  |
+| `light/strengths-hope.md`          | Protective factors adjusted if twist changes them          |
+| `milestones.md`                    | Revelation added as milestone if significant               |
 
 ### Step 5: Cross-Character Impact
 
 For each other character affected:
 
-1. Update their RELATIONSHIPS.md
+1. Update their `relationships/family.md`
 2. Add timeline entry for when THEY learned the truth
 3. Document psychological impact on them
 4. Run `psy:crossref --pair {char1} {char2}` to validate symmetry
@@ -131,8 +131,8 @@ Grep all profiles for `⚠️ TWIST` markers. Output:
 
 ```
 ## Existing Narrative Twists
-1. [Nhân vật C] Mẹ kế narrative → abandoned at 11 (TIMELINE.md:L45)
-2. [Nhân vật C] Huyền = mentor only → mentor + lover (RELATIONSHIPS.md:L120)
+1. [Nhân vật C] Mẹ kế narrative → abandoned at 11 (timeline/overview.md:L45)
+2. [Nhân vật C] Huyền = mentor only → mentor + lover (relationships/family.md:L120)
 ...
 ```
 

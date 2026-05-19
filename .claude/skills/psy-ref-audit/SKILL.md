@@ -107,7 +107,7 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 
 ### Direction 3: Profile → Ref implicit gaps (PURE HEURISTIC)
 
-1. LLM reads each character's SOUL.md + DARKNESS.md + LIGHT.md carefully
+1. LLM reads each character's psychology/formulation.md + darkness/traumas.md + light/strengths-hope.md carefully
 2. Identify psychology-related DESCRIPTIONS that don't use formal terms:
    - Behavioral patterns that map to known theories
    - Coping strategies that match clinical defense mechanisms

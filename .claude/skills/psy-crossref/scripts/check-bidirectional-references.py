@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify shared events appear in BOTH profiles' TIMELINE.md and RELATIONSHIPS.md."""
+"""Verify shared events appear in BOTH profiles' timeline/overview.md and relationships/family.md."""
 import os
 import sys
 import argparse
@@ -21,7 +21,7 @@ CHAR_ALIASES = {
     "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật C"],
 }
 
-CHECK_FILES = ["TIMELINE.md", "RELATIONSHIPS.md"]
+CHECK_FILES = ["timeline/overview.md", "relationships/family.md"]
 
 
 def check_pair(char1: str, char2: str) -> list[dict]:

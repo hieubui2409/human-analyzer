@@ -141,7 +141,7 @@ Files to read before executing:
 
 After writing, verify:
 
-- [ ] Voice matches WRITING-VOICE.md
+- [ ] Voice matches `identity/writing-voice.md`
 - [ ] Clinical terms used accurately
 - [ ] Platform format constraints met
 - [ ] Facts match profile files

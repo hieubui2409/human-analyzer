@@ -80,7 +80,7 @@ Implement `docs/rules/10-reference-library-standard.md` — scaffold and populat
 ```
 
 3. **Update INDEX**: Add entry to `docs/references/INDEX.md` in correct category
-4. **Link in profile**: Add reference link in character's SOUL.md/DARKNESS.md where applicable
+4. **Link in profile**: Add reference link in character's psychology/formulation.md or darkness/traumas.md where applicable
 5. **Verify**: Run `psy:ref-scan --theory {name}` to confirm linkage
 
 ### --from-behavior (Reverse Engineering)

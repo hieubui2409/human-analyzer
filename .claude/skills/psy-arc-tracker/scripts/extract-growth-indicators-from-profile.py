@@ -49,8 +49,8 @@ def main():
 
     result = {"character": display}
 
-    # SOUL.md coping mechanisms
-    soul_path = cdir / "SOUL.md"
+    # psychology/formulation.md coping mechanisms
+    soul_path = cdir / "psychology" / "formulation.md"
     if soul_path.exists():
         soul_text = soul_path.read_text(encoding="utf-8")
         result["coping_adaptive"] = count_pattern_matches(soul_text, ADAPTIVE_COPING)
@@ -59,8 +59,8 @@ def main():
         result["coping_adaptive"] = []
         result["coping_maladaptive"] = []
 
-    # DARKNESS.md crisis frequency
-    dark_path = cdir / "DARKNESS.md"
+    # darkness/traumas.md crisis frequency
+    dark_path = cdir / "darkness" / "traumas.md"
     if dark_path.exists():
         dark_text = dark_path.read_text(encoding="utf-8")
         result["crisis_keywords_found"] = count_pattern_matches(dark_text, CRISIS_KEYWORDS)
@@ -69,8 +69,8 @@ def main():
         result["crisis_keywords_found"] = []
         result["crisis_event_count"] = 0
 
-    # LIGHT.md protective factors
-    light_path = cdir / "LIGHT.md"
+    # light/strengths-hope.md protective factors
+    light_path = cdir / "light" / "strengths-hope.md"
     if light_path.exists():
         light_text = light_path.read_text(encoding="utf-8")
         result["protective_factors"] = count_pattern_matches(light_text, PROTECTIVE_KEYWORDS)
@@ -79,8 +79,8 @@ def main():
         result["protective_factors"] = []
         result["protective_factor_strength"] = 0
 
-    # MILESTONES.md achievement count
-    milestones_path = cdir / "MILESTONES.md"
+    # milestones.md achievement count
+    milestones_path = cdir / "milestones.md"
     milestones = extract_milestones(milestones_path)
     achieved = [m for m in milestones if m.get("status") == "ACHIEVED"]
     result["milestone_count"] = len(milestones)

@@ -37,19 +37,19 @@ Predict how a character would respond to hypothetical events based on their psyc
 
 Load via `mpc:bootstrap --intent "psychology"`:
 
-- SOUL.md (core wounds, coping mechanisms, inner conflicts)
-- DARKNESS.md (triggers, trauma patterns)
-- LIGHT.md (protective factors, growth edges)
-- CHARACTERISTIC.md (behavioral patterns)
-- RELATIONSHIPS.md (dynamics with others)
+- `psychology/formulation.md` (core wounds, coping mechanisms, inner conflicts)
+- `darkness/traumas.md` (triggers, trauma patterns)
+- `light/strengths-hope.md` (protective factors, growth edges)
+- `psychology/defense-mechanisms.md` (behavioral patterns)
+- `relationships/family.md` (dynamics with others)
 
 ### Step 2: Map Scenario to Existing Patterns
 
 Analyze the hypothetical event against:
 
-1. **Trigger matching**: Does this scenario activate known triggers from DARKNESS.md?
-2. **Coping prediction**: Which coping mechanisms from SOUL.md would activate?
-3. **Defense mechanism**: Which defense patterns from CHARACTERISTIC.md would engage?
+1. **Trigger matching**: Does this scenario activate known triggers from `darkness/traumas.md`?
+2. **Coping prediction**: Which coping mechanisms from `psychology/formulation.md` would activate?
+3. **Defense mechanism**: Which defense patterns from `psychology/defense-mechanisms.md` would engage?
 4. **Attachment response**: How would attachment style (from references) shape reaction?
 
 ### Step 3: Generate Behavioral Prediction
@@ -68,7 +68,7 @@ Structured analysis:
 ### Immediate Response (0-24h)
 
 - **Emotional state**: {predicted emotion + intensity}
-- **Primary defense**: {mechanism from SOUL.md}
+- **Primary defense**: {mechanism from `psychology/formulation.md`}
 - **Behavioral manifestation**: {observable actions}
 - **Clinical parallel**: {reference theory link}
 
@@ -80,8 +80,8 @@ Structured analysis:
 
 ### Long-term Trajectory (weeks-months)
 
-- **Growth potential**: {based on LIGHT.md growth edges}
-- **Regression risk**: {based on DARKNESS.md patterns}
+- **Growth potential**: {based on `light/strengths-hope.md` growth edges}
+- **Regression risk**: {based on `darkness/traumas.md` patterns}
 - **Relationship impact**: {on key relationships}
 
 ### Clinical Rationale
@@ -105,7 +105,7 @@ Full clinical analysis: adds DSM-5/ICD-11 implications, risk level assessment, r
 If --multi flag:
 
 1. Predict primary character's response (steps 2-3)
-2. For each related character in RELATIONSHIPS.md:
+2. For each related character in `relationships/family.md`:
    - How would they perceive/react to primary's response?
    - Would this trigger THEIR patterns?
    - What relationship dynamic shifts would occur?

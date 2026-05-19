@@ -84,22 +84,55 @@ CLINICAL_PROFILE_FILES = [
     "relationships/family.md",
 ]
 
-# Maps legacy flat filenames → new nested paths (used by migration script)
+# Semantic key → nested profile path (single source of truth for all skills)
+PROFILE_BY_CONCEPT = {
+    "identity": "identity/core.md",
+    "writing_voice": "identity/writing-voice.md",
+    "achievements": "identity/achievements.md",
+    "media_coverage": "identity/media-coverage.md",
+    "formulation": "psychology/formulation.md",
+    "defense_mechanisms": "psychology/defense-mechanisms.md",
+    "attachment_style": "psychology/attachment-style.md",
+    "growth_edges": "psychology/growth-edges.md",
+    "core_wounds": "psychology/core-wounds.md",
+    "diagnostics": "psychology/diagnostics.md",
+    "cultural_formulation": "psychology/cultural-formulation.md",
+    "archetype": "psychology/archetype.md",
+    "family": "relationships/family.md",
+    "timeline": "timeline/overview.md",
+    "state_timeline": "timeline/state-timeline.md",
+    "traumas": "darkness/traumas.md",
+    "strengths_hope": "light/strengths-hope.md",
+    "conversations": "evidence/conversations.md",
+    "milestones": "milestones.md",
+    "index": "INDEX.md",
+    "current_state": "CURRENT-STATE.md",
+}
+
+# Legacy flat filenames → primary new nested path
 LEGACY_TO_NEW_MAP = {
     "INDEX.md": "INDEX.md",
+    "CURRENT-STATE.md": "CURRENT-STATE.md",
     "IDENTITY.md": "identity/core.md",
-    "SOUL.md": "psychology/core-wounds.md",
-    "CHARACTERISTIC.md": "identity/core.md",
-    "TIMELINE.md": "timeline/overview.md",
-    "RELATIONSHIPS.md": "relationships/family.md",
+    "SOUL.md": "psychology/formulation.md",
     "DARKNESS.md": "darkness/traumas.md",
     "LIGHT.md": "light/strengths-hope.md",
+    "CHARACTERISTIC.md": "psychology/defense-mechanisms.md",
+    "TIMELINE.md": "timeline/overview.md",
+    "RELATIONSHIPS.md": "relationships/family.md",
     "MILESTONES.md": "milestones.md",
+    "WRITING-VOICE.md": "identity/writing-voice.md",
     "ACHIEVEMENTS.md": "identity/achievements.md",
     "MEDIA-COVERAGE.md": "identity/media-coverage.md",
-    "WRITING-VOICE.md": "identity/writing-voice.md",
     "INSPIRATION.md": "psychology/growth-edges.md",
     "CONVERSATION.md": "evidence/conversations.md",
+}
+
+# Old files that split into multiple new files (for skills needing both)
+LEGACY_SPLIT_MAP = {
+    "SOUL.md": ["psychology/formulation.md", "psychology/core-wounds.md"],
+    "CHARACTERISTIC.md": ["psychology/defense-mechanisms.md", "psychology/attachment-style.md"],
+    "TIMELINE.md": ["timeline/overview.md", "timeline/state-timeline.md"],
 }
 
 

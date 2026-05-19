@@ -169,7 +169,7 @@ Force regeneration regardless of cache state. Useful after major profile overhau
 2. **Compress narrative** — multi-paragraph backstory → 2-3 sentences
 3. **Prioritize recency** — recent timeline events over old ones
 4. **Keep clinical anchors** — theory names + how they apply, drop lengthy explanations
-5. **Maintain voice cues** — enough to write in character, not full WRITING-VOICE.md
+5. **Maintain voice cues** — enough to write in character, not full identity/writing-voice.md
 6. **Flag contradictions** — if source has inconsistencies, note them explicitly
 7. **Include cross-refs** — mark where characters intersect
 

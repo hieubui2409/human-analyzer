@@ -23,7 +23,7 @@ OCCUPATION_PATTERN = re.compile(
 
 def extract_identity_facts(cdir) -> dict:
     facts = {}
-    id_path = cdir / "IDENTITY.md"
+    id_path = cdir / "identity/core.md"
     if not id_path.exists():
         return facts
     text = id_path.read_text(encoding='utf-8')
@@ -61,7 +61,7 @@ def extract_identity_facts(cdir) -> dict:
 
 
 def extract_relationship_status(cdir) -> dict:
-    rel_path = cdir / "RELATIONSHIPS.md"
+    rel_path = cdir / "relationships/family.md"
     if not rel_path.exists():
         return {}
     text = rel_path.read_text(encoding='utf-8')
@@ -75,7 +75,7 @@ def extract_relationship_status(cdir) -> dict:
 
 
 def extract_recent_timeline(cdir) -> list[dict]:
-    tl_path = cdir / "TIMELINE.md"
+    tl_path = cdir / "timeline/overview.md"
     events = extract_timeline_events(tl_path)
     # Return last 5 events as "current state"
     return events[-5:] if events else []

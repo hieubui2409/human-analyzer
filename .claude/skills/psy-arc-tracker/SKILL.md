@@ -27,7 +27,7 @@ Track character growth trajectories. Compare predictions vs reality. Verify mile
 | ----------------------------- | ---------------------------------------------------- |
 | `--character <name>`          | Target character (required)                          |
 | `--compare <hypothesis-date>` | Compare hypothesis from date against current profile |
-| `--milestones`                | Review MILESTONES.md progress against growth model   |
+| `--milestones`                | Review `milestones.md` progress against growth model |
 | `--trajectory`                | Generate growth trajectory analysis                  |
 | `--report`                    | Save report to plans/reports/                        |
 
@@ -37,11 +37,11 @@ Track character growth trajectories. Compare predictions vs reality. Verify mile
 
 1. Load character profile via `mpc:bootstrap --character {name} --intent psychology`
 2. Extract growth indicators from:
-   - SOUL.md: coping mechanism evolution (less/more adaptive over time?)
-   - DARKNESS.md: are crisis patterns reducing in frequency/severity?
-   - LIGHT.md: are protective factors strengthening?
-   - TIMELINE.md: event pattern trajectory (escalation vs stabilization)
-   - MILESTONES.md: milestones achieved, timing
+   - `psychology/formulation.md`: coping mechanism evolution (less/more adaptive over time?)
+   - `darkness/traumas.md`: are crisis patterns reducing in frequency/severity?
+   - `light/strengths-hope.md`: are protective factors strengthening?
+   - `timeline/overview.md`: event pattern trajectory (escalation vs stabilization)
+   - `milestones.md`: milestones achieved, timing
 3. Map to growth model:
 
    ```
@@ -68,7 +68,7 @@ Track character growth trajectories. Compare predictions vs reality. Verify mile
 
 ### --milestones
 
-1. Read MILESTONES.md for character
+1. Read `milestones.md` for character
 2. For each milestone:
    - Status: ACHIEVED / IN_PROGRESS / NOT_STARTED / REGRESSED
    - Date achieved (if applicable)

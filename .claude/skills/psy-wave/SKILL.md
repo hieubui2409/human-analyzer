@@ -7,8 +7,7 @@ metadata:
   version: "1.0.0"
   category: "workflow"
   position: "profile-pipeline"
-  dependencies:
-    ["mpc:bootstrap", "psy:crossref", "psy:ref-audit", "mat:materials"]
+  dependencies: ["mpc:bootstrap", "psy:crossref", "psy:ref-audit", "mat:loader"]
 ---
 
 # 3-Wave Profile Pipeline
@@ -49,14 +48,14 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 
 **Steps:**
 
-1. Load source materials via `mat:materials --character <name>`
+1. Load source materials via `mat:loader --character <name>`
 2. Extract facts:
    - **Identity**: Name, DOB, Origins, Career, Education
    - **Timeline**: Chronological events (verify ages align with DOB)
    - **Relationships**: Family tree, key connections
 3. Tag confidential info: `[PRIVATE]`, `[CONFIDENTIAL: {person}]`
 4. Tag uncertain data: `[UNCERTAIN]`, `[DISPUTED: ...]`
-5. Update files: `IDENTITY.md`, `TIMELINE.md`, `RELATIONSHIPS.md`
+5. Update files: `identity/core.md`, `timeline/overview.md`, `relationships/family.md`
 6. For cross-character events → update OTHER character's files too
 
 **Gate check before Wave 2:**
@@ -66,7 +65,7 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 - [ ] Relationships updated with new connections
 - [ ] Confidentiality tags applied
 
-**Outputs:** Updated IDENTITY.md, TIMELINE.md, RELATIONSHIPS.md
+**Outputs:** Updated identity/core.md, timeline/overview.md, relationships/family.md
 
 ### Wave 2: Deep Dive (Psychological Analysis)
 
@@ -74,7 +73,7 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 
 **Steps:**
 
-1. Load SOUL.md + DARKNESS.md + LIGHT.md for character
+1. Load `psychology/formulation.md` + `psychology/core-wounds.md` + `darkness/traumas.md` + `light/strengths-hope.md` for character
 2. Analyze from Wave 1 facts:
    - **Soul & Wound**: Core wounds, triggers, dominant/hidden emotions
    - **Duality**: External Mask vs. Internal Reality
@@ -84,7 +83,18 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
    - If no theory exists → flag for `psy:ref-create` or create inline
 4. If crisis indicators detected → run `psy:crisis-assess`
 5. If narrative twist detected → run `psy:narrative-twist`
-6. Update files: `SOUL.md`, `DARKNESS.md`, `LIGHT.md`, `CHARACTERISTIC.md`, `MILESTONES.md`
+6. Update files: `psychology/formulation.md`, `psychology/core-wounds.md`, `darkness/traumas.md`, `light/strengths-hope.md`, `psychology/defense-mechanisms.md`, `milestones.md`
+7. Also check/update these additional psychology files if applicable:
+   - `psychology/attachment-style.md` — attachment patterns + relationship dynamics
+   - `psychology/growth-edges.md` — active growth areas + therapeutic windows
+   - `psychology/diagnostics.md` — Big Five + ICD-11 dimensional scores
+   - `psychology/cultural-formulation.md` — cultural context factors
+   - `psychology/archetype.md` — Jungian + Pia Melody mapping
+   - `identity/achievements.md` — academic, scholarships, awards
+   - `identity/media-coverage.md` — press timeline
+   - `identity/writing-voice.md` — tone, themes (if voice evolution observed)
+   - `evidence/conversations.md` — key conversation evidence
+   - `timeline/state-timeline.md` — longitudinal ICD-11 phases with severity
 
 **Gate check before Wave 3:**
 
@@ -94,7 +104,7 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 - [ ] All clinical terms linked to docs/references/
 - [ ] Crisis protocol applied if needed (risk level documented)
 
-**Outputs:** Updated SOUL.md, DARKNESS.md, LIGHT.md, CHARACTERISTIC.md, MILESTONES.md
+**Outputs:** Updated `psychology/formulation.md`, `psychology/core-wounds.md`, `darkness/traumas.md`, `light/strengths-hope.md`, `psychology/defense-mechanisms.md`, `milestones.md` (+ applicable files from step 7)
 
 ### Wave 3: Synthesis & Validation
 
@@ -102,20 +112,21 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 
 **Steps:**
 
-1. Run `psy:crossref --character <name>` → check 4 dimensions:
-   - Temporal: dates don't conflict, ages match DOB
-   - Relational: symmetric references between characters
-   - Psychological: mechanisms stem from mapped trauma
-   - Factual: numbers, names, places consistent
+1. Run `psy:crossref --character <name> --extended` → check 10 dimensions:
+   - Core (automated): Temporal, Relational, Psychological, Factual
+   - Extended (LLM): Evidential, Developmental, Cultural, Systemic, Narrative, Linguistic
 2. Run `psy:ref-audit --character <name>` → verify clinical accuracy
 3. Fix all CRITICAL and MAJOR issues found
-4. Update `INDEX.md` with current status
-5. Generate validation report → `plans/reports/wave3-{date}-{slug}.md`
+4. Run `psy:propagate --character <name>` → detect cross-character cascade needs
+   - If other characters affected → update their files symmetrically
+5. Update `INDEX.md` with current status
+6. Generate validation report → `plans/reports/wave3-{date}-{slug}.md`
 
 **Gate check (final):**
 
-- [ ] All 4 dimensions validated
+- [ ] All 10 dimensions validated (4 core + 6 extended)
 - [ ] No CRITICAL inconsistencies remaining
+- [ ] Cross-character cascade applied (psy:propagate)
 - [ ] INDEX.md reflects current state
 - [ ] Validation report generated
 

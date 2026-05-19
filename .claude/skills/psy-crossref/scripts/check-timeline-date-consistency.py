@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Parse TIMELINE.md for all characters, check date consistency:
-- Ages align with DOB from IDENTITY.md
+"""Parse timeline/overview.md for all characters, check date consistency:
+- Ages align with DOB from identity/core.md
 - No future dates
 - Chronological ordering
 - Cross-character events have matching dates
@@ -19,7 +19,7 @@ from platform_lib.formatters import print_json, print_table
 
 TODAY = date.today()
 
-# DOB from IDENTITY.md — fallback hardcoded since we parse IDENTITY.md dynamically
+# DOB fallback — hardcoded since we parse identity/core.md dynamically
 DOB_FALLBACK = {
     "character-a": date(1997, 9, 24),
     "character-b": date(2008, 2, 18),
@@ -28,7 +28,7 @@ DOB_FALLBACK = {
 
 
 def parse_dob_from_identity(char_dir: Path) -> date | None:
-    identity = char_dir / "IDENTITY.md"
+    identity = char_dir / "identity/core.md"
     if not identity.exists():
         return None
     text = identity.read_text(encoding="utf-8")
@@ -64,11 +64,11 @@ def check_character_timeline(slug: str) -> list[dict]:
     issues = []
     cdir = character_dir(slug)
     display = CHAR_DISPLAY[slug]
-    timeline_file = cdir / "TIMELINE.md"
+    timeline_file = cdir / "timeline/overview.md"
 
     if not timeline_file.exists():
         return [{"slug": slug, "character": display, "type": "MISSING_FILE",
-                 "file": "TIMELINE.md", "line": 0, "detail": "TIMELINE.md not found"}]
+                 "file": "timeline/overview.md", "line": 0, "detail": "timeline/overview.md not found"}]
 
     dob = parse_dob_from_identity(cdir) or DOB_FALLBACK.get(slug)
     events = extract_timeline_events(timeline_file)
@@ -91,7 +91,7 @@ def check_character_timeline(slug: str) -> list[dict]:
         if ev_date > TODAY:
             issues.append({
                 "slug": slug, "character": display, "type": "FUTURE_DATE",
-                "file": "TIMELINE.md", "line": line_no,
+                "file": "timeline/overview.md", "line": line_no,
                 "detail": f"Date {ev['date']} is in the future ({ev['event'][:60]})",
             })
 
@@ -101,7 +101,7 @@ def check_character_timeline(slug: str) -> list[dict]:
             if ev_date.year >= dob.year - 30:
                 issues.append({
                     "slug": slug, "character": display, "type": "BEFORE_DOB",
-                    "file": "TIMELINE.md", "line": line_no,
+                    "file": "timeline/overview.md", "line": line_no,
                     "detail": f"Date {ev['date']} is before DOB {dob} ({ev['event'][:60]})",
                 })
 
@@ -114,7 +114,7 @@ def check_character_timeline(slug: str) -> list[dict]:
         if curr_date < prev_date:
             issues.append({
                 "slug": slug, "character": display, "type": "OUT_OF_ORDER",
-                "file": "TIMELINE.md", "line": curr_line,
+                "file": "timeline/overview.md", "line": curr_line,
                 "detail": f"Date {curr_date} appears after {prev_date} (line {prev_line})",
             })
 
@@ -132,7 +132,7 @@ def check_cross_character_date_alignment() -> list[dict]:
     }
 
     for slug in ALL_CHARS:
-        tf = character_dir(slug) / "TIMELINE.md"
+        tf = character_dir(slug) / "timeline/overview.md"
         char_events[slug] = extract_timeline_events(tf) if tf.exists() else []
 
     pairs = [
@@ -161,7 +161,7 @@ def check_cross_character_date_alignment() -> list[dict]:
                     if not found_match:
                         issues.append({
                             "slug": c1, "character": CHAR_DISPLAY[c1], "type": "CROSS_EVENT_UNMATCHED",
-                            "file": "TIMELINE.md", "line": 0,
+                            "file": "timeline/overview.md", "line": 0,
                             "detail": f"{ev['date']}: '{ev['event'][:60]}' mentions {CHAR_DISPLAY[c2]} but no matching event in {CHAR_DISPLAY[c2]}'s timeline",
                         })
                     break
@@ -171,7 +171,7 @@ def check_cross_character_date_alignment() -> list[dict]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Check TIMELINE.md date consistency across all characters"
+        description="Check timeline/overview.md date consistency across all characters"
     )
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     parser.add_argument("--skip-cross", action="store_true", help="Skip cross-character alignment check")

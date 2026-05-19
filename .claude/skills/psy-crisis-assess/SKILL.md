@@ -36,7 +36,7 @@ Implement `docs/rules/06-crisis-protocol.md` — structured clinical crisis docu
 
 ### Step 1: Load Context
 
-1. Read character's DARKNESS.md + SOUL.md + TIMELINE.md
+1. Read character's `darkness/traumas.md` + `psychology/core-wounds.md` + `timeline/overview.md`
 2. Read recent materials (last added) for crisis indicators
 3. Load relevant references: `major-depressive-disorder.md`, `complex-ptsd.md`, `suicidal-ideation.md`
 
@@ -45,7 +45,7 @@ Implement `docs/rules/06-crisis-protocol.md` — structured clinical crisis docu
 1. Run `scripts/scan-crisis-keywords-in-profile.py --character <name>` → keyword hits + behavioral cluster hits
 2. Default **deep mode**: scans both explicit crisis keywords (24 patterns) AND behavioral clusters for crisis-adjacent theories (suicidal-ideation, existential-void, complex-ptsd, somatization, flight-response)
 3. With `--quick`: keyword scan only (skips behavioral clusters — faster but may miss metaphorical/implicit crisis indicators)
-4. If 0 total hits from both passes: **LLM MUST independently re-read DARKNESS.md + SOUL.md** for implicit crisis indicators not caught by regex
+4. If 0 total hits from both passes: **LLM MUST independently re-read `darkness/traumas.md` + `psychology/core-wounds.md`** for implicit crisis indicators not caught by regex
 
 ### Step 3: DSM-5 MDD Checklist (--full)
 
@@ -127,7 +127,7 @@ Apply "Nhịn" (endurance/suppression) assessment:
 
 Update profile files:
 
-**DARKNESS.md:**
+**`darkness/traumas.md`:**
 
 ```markdown
 ## Crisis Assessment [{date}]
@@ -140,7 +140,7 @@ Update profile files:
   > **Trigger Warning**: {type}
 ```
 
-**LIGHT.md:**
+**`light/strengths-hope.md`:**
 
 ```markdown
 ## Protective Factors [{date}]
@@ -153,7 +153,7 @@ Update profile files:
 **INDEX.md:**
 Update status tag: `CRISIS` / `RECOVERING` / `STABLE`
 
-**TIMELINE.md:**
+**`timeline/overview.md`:**
 Add crisis event entries with exact dates.
 
 ## --quick (Rapid Assessment)

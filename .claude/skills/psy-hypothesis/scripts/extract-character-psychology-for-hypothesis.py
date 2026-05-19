@@ -47,8 +47,8 @@ def main():
 
     result = {"character": display}
 
-    # Triggers from DARKNESS.md
-    dark_path = cdir / "DARKNESS.md"
+    # Triggers from darkness/traumas.md
+    dark_path = cdir / "darkness/traumas.md"
     if dark_path.exists():
         dark_text = dark_path.read_text(encoding='utf-8')
         result["triggers"] = extract_keyword_lines(dark_text, TRIGGER_KEYWORDS)
@@ -60,8 +60,8 @@ def main():
         result["triggers"] = []
         result["crisis_patterns"] = []
 
-    # Coping mechanisms from SOUL.md
-    soul_path = cdir / "SOUL.md"
+    # Coping mechanisms from psychology/formulation.md
+    soul_path = cdir / "psychology/formulation.md"
     if soul_path.exists():
         soul_text = soul_path.read_text(encoding='utf-8')
         soul_terms = scan_file_for_clinical_terms(soul_path)
@@ -72,9 +72,9 @@ def main():
         result["defense_mechanisms"] = []
         result["coping_lines"] = []
 
-    # Attachment from RELATIONSHIPS.md + CHARACTERISTIC.md
+    # Attachment from relationships/family.md + psychology/defense-mechanisms.md
     attachment_lines = []
-    for fname in ["RELATIONSHIPS.md", "CHARACTERISTIC.md"]:
+    for fname in ["relationships/family.md", "psychology/defense-mechanisms.md"]:
         fpath = cdir / fname
         if fpath.exists():
             text = fpath.read_text(encoding='utf-8')

@@ -53,8 +53,8 @@ Start from clinical theories → find where they apply in character profiles. Di
 
 ### Enrichment Opportunities
 
-1. **Nhân vật B + Parentification**: Nhân vật B shows signs (caring for siblings, parentified role) but SOUL.md doesn't reference this theory. Consider adding section.
-2. **Nhân vật C + Defense Mechanisms**: DARKNESS.md describes reactive behaviors that map to specific defense mechanisms. Currently unlabeled.
+1. **Nhân vật B + Parentification**: Nhân vật B shows signs (caring for siblings, parentified role) but psychology/formulation.md doesn't reference this theory. Consider adding section.
+2. **Nhân vật C + Defense Mechanisms**: darkness/traumas.md describes reactive behaviors that map to specific defense mechanisms. Currently unlabeled.
 ```
 
 ### --theory `<name>`

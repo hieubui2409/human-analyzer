@@ -73,7 +73,7 @@ Scopes (inferred from changed files):
 Examples:
 
 ```
-docs(profile): update Nhân vật B SOUL.md with attachment theory analysis
+docs(profile): update Nhân vật B psychology/formulation.md with attachment theory analysis
 content(assets): add LinkedIn post on mentoring philosophy
 feat(config): add mpc-classify skill for risk classification
 ```
