@@ -138,22 +138,22 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ## Rules (`docs/rules/`)
 
-| #   | File                       | Scope                                                      |
-| --- | -------------------------- | ---------------------------------------------------------- |
-| 01  | profile-structure          | Required files, schemas, size limits                       |
-| 02  | clinical-reference-usage   | Show-don't-tell, mandatory citation                        |
-| 03  | content-creation-pipeline  | 7-stage pipeline, platform guidelines                      |
-| 04  | materials-ingestion        | Source priority P1-P4, ingestion process                   |
-| 05  | wave-pipeline              | 3-wave protocol (Foundation→Deep Dive→Validation)          |
-| 06  | crisis-protocol            | Mental health crisis, DSM-5, risk levels                   |
-| 07  | narrative-twist-protocol   | Handling revealed falsehoods                               |
-| 08  | cross-validation           | 4-dimension consistency, report format                     |
-| 09  | confidentiality-protocol   | Privacy tags, content boundaries                           |
-| 10  | reference-library-standard | Reference schema, scientific rigor                         |
-| 11  | mat-pipeline               | MAT 5-stage pipeline, evidence tiers, CRAAP test           |
-| 12  | mpc-orchestration          | Event system, domain boundaries, trigger routing           |
-| 13  | mpc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE)                   |
-| 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation |
+| #   | File                       | Scope                                                         |
+| --- | -------------------------- | ------------------------------------------------------------- |
+| 01  | profile-structure          | Required files, schemas, size limits                          |
+| 02  | clinical-reference-usage   | Show-don't-tell, mandatory citation                           |
+| 03  | content-creation-pipeline  | 7-stage pipeline, platform guidelines                         |
+| 04  | materials-ingestion        | Source priority P1-P4, ingestion process                      |
+| 05  | wave-pipeline              | 3-wave protocol (Foundation→Deep Dive→Validation)             |
+| 06  | crisis-protocol            | Mental health crisis, DSM-5, risk levels                      |
+| 07  | narrative-twist-protocol   | Handling revealed falsehoods                                  |
+| 08  | cross-validation           | 10-dimension consistency (4 core + 6 extended), report format |
+| 09  | confidentiality-protocol   | Privacy tags, content boundaries                              |
+| 10  | reference-library-standard | Reference schema, scientific rigor                            |
+| 11  | mat-pipeline               | MAT 5-stage pipeline, evidence tiers, CRAAP test              |
+| 12  | mpc-orchestration          | Event system, domain boundaries, trigger routing              |
+| 13  | mpc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE)                      |
+| 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
 
 ---
 
@@ -171,6 +171,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `mpc:dream`         | Periodic memory consolidation                                     |
 | `mpc:decisions`     | Append-only decision records                                      |
 | `mpc:agent-memory`  | Per-agent calibration memory                                      |
+| `mpc:event-log`     | Persistent event audit logging (JSONL append + query)             |
 
 ### COM — Common Skills
 
@@ -180,17 +181,18 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ### MAT — Material Framework Skills
 
-| Skill           | Purpose                                                             |
-| --------------- | ------------------------------------------------------------------- |
-| `mat:loader`    | Stage 1-2: ingest, classify, CRAAP score, frontmatter injection     |
-| `mat:indexer`   | Stage 3-4: contradiction detection, coverage gaps, integration gate |
-| `mat:materials` | Legacy material loading (use mat:loader for new ingestions)         |
+| Skill         | Purpose                                                             |
+| ------------- | ------------------------------------------------------------------- |
+| `mat:loader`  | Stage 1-2: ingest, classify, CRAAP score, frontmatter injection     |
+| `mat:indexer` | Stage 3-4: contradiction detection, coverage gaps, integration gate |
+| `mat:archive` | Material soft-delete/archival with audit trail (dry-run default)    |
+| `mat:rescore` | Identify materials needing CRAAP re-evaluation                      |
 
 ### PSY — Psychology Framework Skills
 
 | Skill                 | Purpose                                                     |
 | --------------------- | ----------------------------------------------------------- |
-| `psy:crossref`        | Cross-character validation (4 dimensions)                   |
+| `psy:crossref`        | Cross-character validation (10 dimensions: 4 core + 6 ext)  |
 | `psy:ref-audit`       | Profile → reference accuracy check + --discover blind spots |
 | `psy:ref-scan`        | Reference → profile coverage mapping                        |
 | `psy:ref-create`      | Create new reference files with mandatory schema            |
@@ -200,6 +202,11 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `psy:narrative-twist` | Handle revealed falsehoods, strikethrough + cascade         |
 | `psy:hypothesis`      | Predict character behavior given hypothetical events        |
 | `psy:arc-tracker`     | Track character growth trajectories, hypothesis vs reality  |
+| `psy:propagate`       | Cross-character event cascade orchestration                 |
+| `psy:timeline-sync`   | Cross-character timeline date validation + fix suggestions  |
+| `psy:health-check`    | Profile completeness scoring (21 files × quality)           |
+| `psy:profile-compare` | Side-by-side dimension comparison across characters         |
+| `psy:ref-maintain`    | Reference library cleanup (orphans, outdated, duplicates)   |
 
 ### CRE — Content Creation Skills
 
@@ -216,7 +223,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ## Scripts Infrastructure
 
-26 skills (mpc/mat/psy/cre/com) share a Python utility library and 50+ supportive scripts.
+34 skills (mpc/mat/psy/cre/com) share a Python utility library and 60+ supportive scripts.
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 
@@ -227,6 +234,8 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `markdown_parser.py` | Section extraction, frontmatter, dates, links   |
 | `profile_stats.py`   | File inventory, git hash cache validation       |
 | `formatters.py`      | Markdown tables, JSON output, severity badges   |
+| `env_utils.py`       | .env loading, API key resolution (standardized) |
+| `csv_search.py`      | BM25 text search over CSV data                  |
 
 ### Running Scripts
 

@@ -71,7 +71,7 @@ Cross-reference all generated/updated files.
 
 **Process:**
 
-1. Validate every updated file against all 4 dimensions
+1. Validate every updated file against all 10 dimensions (4 core + 6 extended)
 2. Check cross-character references (see `08-cross-validation.md`)
 3. Resolve inconsistencies found
 4. Compile/update `INDEX.md`
@@ -89,11 +89,11 @@ plans/{date}-{slug}/
 
 ## Success Criteria per Wave
 
-| Wave | Minimum outputs                                                     |
-| ---- | ------------------------------------------------------------------- |
-| 1    | Raw sources stored, ≥N timeline events, relationship cards updated  |
-| 2    | ≥5 triggers, ≥3 coping mechanisms, inner conflict documented        |
-| 3    | All 4 dimensions validated, inconsistencies resolved, INDEX updated |
+| Wave | Minimum outputs                                                      |
+| ---- | -------------------------------------------------------------------- |
+| 1    | Raw sources stored, ≥N timeline events, relationship cards updated   |
+| 2    | ≥5 triggers, ≥3 coping mechanisms, inner conflict documented         |
+| 3    | All 10 dimensions validated, inconsistencies resolved, INDEX updated |
 
 ## Automation
 

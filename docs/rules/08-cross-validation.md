@@ -10,16 +10,38 @@ Standards for validating consistency across character profiles and within indivi
 - After PSY.refresh event triggered by MAT integration
 - Periodically as maintenance (run `psy:crossref`)
 
-## 4 Consistency Dimensions
+## 10 Consistency Dimensions
 
-Every validation MUST check these dimensions:
+Every validation MUST check these dimensions. Dimensions 1-4 have automated script support; dimensions 5-10 require LLM judgment.
 
-| Dimension     | Description                                                  | Example Check                                    |
-| ------------- | ------------------------------------------------------------ | ------------------------------------------------ |
-| Temporal      | Dates don't conflict, ages match DOB, event order is logical | Nhân vật C can't be 18 in 2024 if born 14/05/2007     |
-| Relational    | Character A's view of B matches B's view of A                | If Nhân vật A says "kết nghĩa 09/2025", Nhân vật B must agree |
-| Psychological | Defense mechanisms logically stem from documented trauma     | Avoidance must trace to a specific wound         |
-| Factual       | Numbers, names, places are identical across all files        | Debt amount "1 tỷ" must be same in all files     |
+### Core Dimensions (Automated)
+
+| #   | Dimension     | Description                                                  | Example Check                                    |
+| --- | ------------- | ------------------------------------------------------------ | ------------------------------------------------ |
+| 1   | Temporal      | Dates don't conflict, ages match DOB, event order is logical | Nhân vật C can't be 18 in 2024 if born 14/05/2007     |
+| 2   | Relational    | Character A's view of B matches B's view of A                | If Nhân vật A says "kết nghĩa 09/2025", Nhân vật B must agree |
+| 3   | Psychological | Defense mechanisms logically stem from documented trauma     | Avoidance must trace to a specific wound         |
+| 4   | Factual       | Numbers, names, places are identical across all files        | Debt amount "1 tỷ" must be same in all files     |
+
+### Extended Dimensions (LLM Judgment)
+
+| #   | Dimension     | Description                                                      | Example Check                                              |
+| --- | ------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- |
+| 5   | Evidential    | Profile claims backed by material evidence ≥T3                   | "Avoidant attachment" claim must trace to T2+ material     |
+| 6   | Developmental | Growth trajectory plausible given timeline + milestones          | Recovery claim in 2025 must follow documented intervention |
+| 7   | Cultural      | Cultural context consistent across characters from same milieu   | Vietnamese family dynamics consistent for Tỉnh X       |
+| 8   | Systemic      | Family system dynamics balance (parentification ↔ role reversal) | If Nhân vật A is parentified, sibling roles must reflect this    |
+| 9   | Narrative     | Story arcs across characters form coherent threads               | Mentor-mentee arc must progress logically across timelines |
+| 10  | Linguistic    | Voice consistency when characters describe shared events         | Same event described in compatible (not identical) tone    |
+
+### When to Validate Extended Dimensions
+
+- **Evidential (5)**: After `MAT.integrated` — new material may support or contradict claims
+- **Developmental (6)**: After profile updates to `growth-edges.md` or `milestones.md`
+- **Cultural (7)**: When adding new character or updating `cultural-formulation.md`
+- **Systemic (8)**: After any `relationships/family.md` update
+- **Narrative (9)**: After `psy:arc-tracker` detects trajectory shift
+- **Linguistic (10)**: Before `cre:post-writer` when content references shared events
 
 ## Cross-Character Validation
 
@@ -80,7 +102,7 @@ Required sections:
 
 1. **Executive Summary** — scope, files checked, issues found
 2. **Inconsistencies Found** — table with file, before, after, root cause
-3. **Consistency Matrix** — per-file check across all 4 dimensions
+3. **Consistency Matrix** — per-file check across all 10 dimensions
 4. **Cross-Reference Validation** — narrative thread consistency
 5. **Source Priority Compliance** — P1-P4 adherence
 6. **Unresolved Items** — items requiring human review
