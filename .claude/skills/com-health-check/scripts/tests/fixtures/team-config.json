@@ -1,0 +1,32 @@
+{
+  "name": "test-team",
+  "description": "Test team",
+  "createdAt": 1779163769082,
+  "leadAgentId": "team-lead@test-team",
+  "leadSessionId": "parent-uuid",
+  "members": [
+    {
+      "agentId": "team-lead@test-team",
+      "name": "team-lead",
+      "agentType": "team-lead",
+      "model": "claude-opus-4-6",
+      "joinedAt": 1779163769082,
+      "tmuxPaneId": "",
+      "cwd": "/home/user/project",
+      "subscriptions": []
+    },
+    {
+      "agentId": "test-scout@test-team",
+      "name": "test-scout",
+      "color": "blue",
+      "joinedAt": 1779163782279,
+      "tmuxPaneId": "%1",
+      "subscriptions": [],
+      "model": "claude-opus-4-6",
+      "prompt": "test prompt",
+      "planModeRequired": false,
+      "cwd": "/home/user/project",
+      "backendType": "tmux"
+    }
+  ]
+}
