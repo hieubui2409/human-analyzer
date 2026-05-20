@@ -72,6 +72,8 @@ Check: relationships/family.md × relationships/family.md
 Method: Extract sections about each other, compare facts + framing
 ```
 
+> Cross-character relationship files (e.g. `relationships/character-b.md`) are also checked for mirror pair symmetry — discovered dynamically via `list_relationship_files()`.
+
 ### 3. Psychological Consistency
 
 Character descriptions should be compatible:

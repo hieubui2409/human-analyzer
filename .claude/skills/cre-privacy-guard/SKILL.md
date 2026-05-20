@@ -41,7 +41,7 @@ Grep assets/ for these patterns:
 
 Check for restricted names in assets/:
 
-1. Load all `[CONFIDENTIAL: {person}]` tags from profiles (scan `docs/profiles/*/identity/core.md`, `docs/profiles/*/relationships/family.md`, `docs/profiles/*/darkness/traumas.md`)
+1. Load all `[CONFIDENTIAL: {person}]` tags from profiles (scan `docs/profiles/*/identity/core.md`, `docs/profiles/*/relationships/family.md`, cross-character files via `list_relationship_files()`, `docs/profiles/*/darkness/traumas.md`)
 2. Extract person names
 3. Grep assets/ for those names
 4. Flag any matches as CRITICAL violations

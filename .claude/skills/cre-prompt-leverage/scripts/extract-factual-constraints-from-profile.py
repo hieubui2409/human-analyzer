@@ -6,7 +6,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import resolve_character, character_dir, CHAR_DISPLAY
+from platform_lib.paths import resolve_character, character_dir, CHAR_DISPLAY, list_relationship_files
 from platform_lib.markdown_parser import extract_sections, extract_timeline_events
 from platform_lib.formatters import print_json
 
@@ -61,16 +61,18 @@ def extract_identity_facts(cdir) -> dict:
 
 
 def extract_relationship_status(cdir) -> dict:
-    rel_path = cdir / "relationships/family.md"
-    if not rel_path.exists():
-        return {}
-    text = rel_path.read_text(encoding='utf-8')
-    sections = extract_sections(rel_path, level=2)
+    rel_files = [cdir / "relationships/family.md"]
+    slug = cdir.name
+    rel_files.extend(list_relationship_files(slug))
     summary = {}
-    for heading, content in sections.items():
-        if any(k in heading.lower() for k in ['status', 'tình trạng', 'summary', 'tóm tắt', 'current']):
-            bullets = [re.match(r'\s*[-*]\s+(.+)', l) for l in content.splitlines()]
-            summary[heading] = [b.group(1).strip()[:100] for b in bullets if b][:5]
+    for rel_path in rel_files:
+        if not rel_path.exists():
+            continue
+        sections = extract_sections(rel_path, level=2)
+        for heading, content in sections.items():
+            if any(k in heading.lower() for k in ['status', 'tình trạng', 'summary', 'tóm tắt', 'current']):
+                bullets = [re.match(r'\s*[-*]\s+(.+)', l) for l in content.splitlines()]
+                summary[heading] = [b.group(1).strip()[:100] for b in bullets if b][:5]
     return summary
 
 

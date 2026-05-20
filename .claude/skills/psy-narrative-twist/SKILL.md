@@ -70,17 +70,18 @@ Add entries showing BOTH perspectives:
 
 Check ALL profile files for the affected character:
 
-| File                               | What to check                                              |
-| ---------------------------------- | ---------------------------------------------------------- |
-| INDEX.md                           | Summary reflects new truth                                 |
-| `identity/core.md`                 | Facts corrected                                            |
-| `psychology/formulation.md`        | Psychological analysis updated if twist affects core wound |
-| `psychology/defense-mechanisms.md` | Behavioral patterns adjusted                               |
-| `timeline/overview.md`             | Event history includes both old belief and revelation      |
-| `relationships/family.md`          | Relationship nature corrected                              |
-| `darkness/traumas.md`              | Trauma updated if twist reveals new wound                  |
-| `light/strengths-hope.md`          | Protective factors adjusted if twist changes them          |
-| `milestones.md`                    | Revelation added as milestone if significant               |
+| File                                 | What to check                                                      |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| INDEX.md                             | Summary reflects new truth                                         |
+| `identity/core.md`                   | Facts corrected                                                    |
+| `psychology/formulation.md`          | Psychological analysis updated if twist affects core wound         |
+| `psychology/defense-mechanisms.md`   | Behavioral patterns adjusted                                       |
+| `timeline/overview.md`               | Event history includes both old belief and revelation              |
+| `relationships/family.md`            | Relationship nature corrected                                      |
+| `relationships/{other-character}.md` | Cross-character files — discovered via `list_relationship_files()` |
+| `darkness/traumas.md`                | Trauma updated if twist reveals new wound                          |
+| `light/strengths-hope.md`            | Protective factors adjusted if twist changes them                  |
+| `milestones.md`                      | Revelation added as milestone if significant                       |
 
 ### Step 5: Cross-Character Impact
 

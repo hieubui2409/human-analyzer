@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILE_FILES, PROFILES, resolve_character
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILE_FILES, PROFILES, resolve_character, list_relationship_files
 
 
 # Sections expected per file category (H2 markers to check)
@@ -96,15 +96,32 @@ def assess_character(slug: str) -> dict:
             "lines": lines,
             "status": status,
         })
+
+    # Score cross-relationship files (bonus, not penalized if missing)
+    cross_rel_files = list_relationship_files(slug)
+    for fpath in cross_rel_files:
+        rel_path = f"relationships/{fpath.name}"
+        score, lines, status = score_file(char_dir, rel_path)
+        files.append({
+            "file": rel_path,
+            "score": score,
+            "lines": lines,
+            "status": status,
+        })
+
+    base_count = len(PROFILE_FILES)
     present = sum(1 for f in files if f["score"] > 0)
-    overall = round(sum(f["score"] for f in files) / len(files))
+    overall = round(sum(f["score"] for f in files) / len(files)) if files else 0
     return {
         "slug": slug,
         "display": CHAR_DISPLAY.get(slug, slug),
         "overall": overall,
         "grade": grade(overall),
         "files_present": present,
-        "files_missing": len(PROFILE_FILES) - present,
+        "files_total": len(files),
+        "files_base": base_count,
+        "files_cross_rel": len(cross_rel_files),
+        "files_missing": base_count - sum(1 for f in files[:base_count] if f["score"] > 0),
         "files": files,
     }
 
@@ -133,7 +150,8 @@ def main():
     print(f"  {'Character':<12s} {'Score':<8s} {'Present':<10s} {'Missing':<8s} {'Grade'}")
     print(f"  {'-'*12} {'-'*8} {'-'*10} {'-'*8} {'-'*5}")
     for a in assessments:
-        print(f"  {a['display']:<12s} {a['overall']}/100   {a['files_present']}/21      "
+        total_str = f"{a['files_present']}/{a['files_total']}"
+        print(f"  {a['display']:<12s} {a['overall']}/100   {total_str:<10s}  "
               f"{a['files_missing']:<8d} {a['grade']}")
 
     # Per-character detail

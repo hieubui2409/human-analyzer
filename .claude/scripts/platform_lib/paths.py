@@ -47,7 +47,9 @@ CHARACTERS = {
 ALL_CHARS = ["character-a", "character-b", "character-c"]
 CHAR_DISPLAY = {"character-a": "Nhân vật A", "character-b": "Nhân vật B", "character-c": "Nhân vật C"}
 
-# Universal profile schema — nested structure
+# Universal profile schema — nested structure (21 base files, same for all characters).
+# Per-character relationship files (e.g. relationships/character-a.md) are NOT listed
+# here — use list_relationship_files() or list_all_profile_files() for those.
 PROFILE_FILES = [
     "INDEX.md",
     "CURRENT-STATE.md",
@@ -133,6 +135,13 @@ LEGACY_SPLIT_MAP = {
     "SOUL.md": ["psychology/formulation.md", "psychology/core-wounds.md"],
     "CHARACTERISTIC.md": ["psychology/defense-mechanisms.md", "psychology/attachment-style.md"],
     "TIMELINE.md": ["timeline/overview.md", "timeline/state-timeline.md"],
+    "RELATIONSHIPS.md": [
+        "relationships/family.md",
+        "relationships/character-a.md",
+        "relationships/character-b.md",
+        "relationships/character-c.md",
+        "relationships/network.md",
+    ],
 }
 
 
@@ -153,6 +162,30 @@ def materials_dir(name: str) -> Path:
 
 
 def list_profile_files(name: str) -> list[Path]:
-    """List all existing profile files for a character."""
+    """List all existing universal profile files for a character (21 base)."""
     cdir = character_dir(name)
     return [cdir / f for f in PROFILE_FILES if (cdir / f).exists()]
+
+
+def list_relationship_files(name: str) -> list[Path]:
+    """Discover per-character relationship files beyond family.md.
+
+    Only includes .md files in relationships/ that have 'relationship:'
+    in their YAML frontmatter (first 500 bytes).
+    """
+    rel_dir = character_dir(name) / "relationships"
+    if not rel_dir.exists():
+        return []
+    results = []
+    for f in sorted(rel_dir.glob("*.md")):
+        if f.name == "family.md":
+            continue
+        head = f.read_text(encoding="utf-8")[:500]
+        if "relationship:" in head:
+            results.append(f)
+    return results
+
+
+def list_all_profile_files(name: str) -> list[Path]:
+    """List universal profile files + per-character relationship files."""
+    return list_profile_files(name) + list_relationship_files(name)

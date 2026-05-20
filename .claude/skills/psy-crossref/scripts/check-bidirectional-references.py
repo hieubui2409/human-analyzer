@@ -5,7 +5,7 @@ import sys
 import argparse
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import CHAR_DISPLAY, character_dir
+from platform_lib.paths import CHAR_DISPLAY, character_dir, list_relationship_files
 from platform_lib.markdown_parser import find_cross_references
 from platform_lib.formatters import print_table, print_json
 
@@ -56,6 +56,33 @@ def check_pair(char1: str, char2: str) -> list[dict]:
     return results
 
 
+def check_mirror_relationships(char1: str, char2: str) -> list[dict]:
+    """Check that cross-relationship mirror files both exist and reference each other."""
+    results = []
+    file1 = character_dir(char1) / f"relationships/{char2}.md"
+    file2 = character_dir(char2) / f"relationships/{char1}.md"
+    aliases1 = CHAR_ALIASES.get(char1, [])
+    aliases2 = CHAR_ALIASES.get(char2, [])
+
+    f1_exists = file1.exists()
+    f2_exists = file2.exists()
+    c1_refs = find_cross_references(file1, aliases2) if f1_exists else []
+    c2_refs = find_cross_references(file2, aliases1) if f2_exists else []
+
+    results.append({
+        "file": f"relationships/{{mirror}}",
+        "char1": CHAR_DISPLAY[char1],
+        "char2": CHAR_DISPLAY[char2],
+        "char1_mentions_char2": len(c1_refs) > 0,
+        "char2_mentions_char1": len(c2_refs) > 0,
+        "bidirectional": f1_exists and f2_exists and len(c1_refs) > 0 and len(c2_refs) > 0,
+        "char1_ref_count": len(c1_refs),
+        "char2_ref_count": len(c2_refs),
+        "detail": f"{char1}/relationships/{char2}.md ↔ {char2}/relationships/{char1}.md",
+    })
+    return results
+
+
 def main():
     parser = argparse.ArgumentParser(description="Check bidirectional references between character profiles")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
@@ -65,6 +92,7 @@ def main():
     all_results = []
     for c1, c2 in PAIRS:
         all_results.extend(check_pair(c1, c2))
+        all_results.extend(check_mirror_relationships(c1, c2))
 
     if args.only_issues:
         all_results = [r for r in all_results if not r["bidirectional"]]

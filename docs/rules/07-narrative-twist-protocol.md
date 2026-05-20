@@ -28,7 +28,7 @@ Add twist marker immediately after the strikethrough:
 
 ```markdown
 ~~Nhân vật C chưa từng có người yêu trong suốt thời đại học~~
-⚠️ TWIST: Nhân vật C đã yêu Huyền (mentor/người giới thiệu Scholarship X) hơn 1 năm, giữ bí mật hoàn toàn. [Source: P1, 30/03/2026]
+⚠️ TWIST: Nhân vật C đã yêu Huyền (mentor/người giới thiệu Scholarship X) hơn 1 năm, giữ bí mật hoàn toàn. [Source: T1, 30/03/2026]
 ```
 
 ### Step 3: Update Timeline
@@ -72,7 +72,7 @@ If the twist affects other characters' profiles:
 
 - Old narrative: `~~strikethrough~~`
 - New truth: `⚠️ TWIST: {description}`
-- Source: `[Source: P{N}, {date}]`
+- Source: `[Source: T{N}, {date}]`
 - If twist is confidential: Add `[PRIVATE]` tag
 
 ## Examples from Project
@@ -81,12 +81,12 @@ If the twist affects other characters' profiles:
 
 ```markdown
 ~~Mẹ kế là người chăm sóc, nuôi dưỡng~~
-⚠️ TWIST: Mẹ kế bỏ đi khi Nhân vật C 11 tuổi, chiếm đất ông bà [Source: P1]
+⚠️ TWIST: Mẹ kế bỏ đi khi Nhân vật C 11 tuổi, chiếm đất ông bà [Source: T1]
 ```
 
 ### Nhân vật C-Huyền Relationship
 
 ```markdown
 ~~Huyền = mentor/người viết thư giới thiệu Scholarship X~~ [public narrative]
-⚠️ TWIST: Huyền = mentor + người yêu bí mật >1 năm [Source: P1, 30/03/2026]
+⚠️ TWIST: Huyền = mentor + người yêu bí mật >1 năm [Source: T1, 30/03/2026]
 ```

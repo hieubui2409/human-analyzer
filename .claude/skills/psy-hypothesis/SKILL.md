@@ -42,6 +42,7 @@ Load via `mpc:bootstrap --intent "psychology"`:
 - `light/strengths-hope.md` (protective factors, growth edges)
 - `psychology/defense-mechanisms.md` (behavioral patterns)
 - `relationships/family.md` (dynamics with others)
+- `relationships/{other-character}.md` — cross-character files discovered via `list_relationship_files()`
 
 ### Step 2: Map Scenario to Existing Patterns
 

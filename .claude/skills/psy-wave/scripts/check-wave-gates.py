@@ -5,7 +5,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import resolve_character, character_dir, CHAR_DISPLAY
+from platform_lib.paths import resolve_character, character_dir, CHAR_DISPLAY, list_relationship_files
 from platform_lib.markdown_parser import extract_sections, extract_tags
 from platform_lib.formatters import print_json
 
@@ -38,8 +38,12 @@ def check_wave1(char_dir_path):
             if sec not in extracted and not any(sec.lower() in k.lower() for k in extracted):
                 issues.append(f"MISSING_SECTION: {fname} → {sec}")
 
-    # Check confidential tags applied
-    for fname in WAVE1_CONFIDENTIAL_FILES:
+    # Check confidential tags applied (base + cross-relationship files)
+    slug = char_dir_path.name
+    confidential_files = list(WAVE1_CONFIDENTIAL_FILES)
+    for rf in list_relationship_files(slug):
+        confidential_files.append(f"relationships/{rf.name}")
+    for fname in confidential_files:
         fpath = char_dir_path / fname
         if not fpath.exists():
             continue

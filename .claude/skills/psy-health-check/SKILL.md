@@ -44,6 +44,8 @@ light/strengths-hope.md
 evidence/conversations.md
 ```
 
+> Cross-character relationship files (e.g. `relationships/character-b.md`) are scored dynamically via `list_relationship_files()` and added to the per-character count.
+
 ## Scoring Rubric (per file)
 
 | Condition                     | Score |

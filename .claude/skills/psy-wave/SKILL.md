@@ -56,7 +56,7 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 3. Tag confidential info: `[PRIVATE]`, `[CONFIDENTIAL: {person}]`
 4. Tag uncertain data: `[UNCERTAIN]`, `[DISPUTED: ...]`
 5. Update files: `identity/core.md`, `timeline/overview.md`, `relationships/family.md`
-6. For cross-character events → update OTHER character's files too
+6. For cross-character events → update OTHER character's files too (including `relationships/{other-character}.md` — discovered via `list_relationship_files()`)
 
 **Gate check before Wave 2:**
 

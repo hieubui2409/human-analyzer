@@ -91,7 +91,7 @@ Format:
 
 ### Source Priority Compliance
 
-Verify that no P3/P4 source overrides a P1/P2 source on the same fact.
+Verify that no T3/T4 source overrides a T1/T2 source on the same fact.
 See `04-materials-ingestion.md` for full priority hierarchy.
 
 ## Validation Report Format
@@ -104,7 +104,7 @@ Required sections:
 2. **Inconsistencies Found** — table with file, before, after, root cause
 3. **Consistency Matrix** — per-file check across all 10 dimensions
 4. **Cross-Reference Validation** — narrative thread consistency
-5. **Source Priority Compliance** — P1-P4 adherence
+5. **Source Priority Compliance** — T1-T5 adherence
 6. **Unresolved Items** — items requiring human review
 
 ### Severity Classification

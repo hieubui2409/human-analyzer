@@ -94,6 +94,38 @@ class TestPaths:
         assert "formulation" in paths_mod.PROFILE_BY_CONCEPT
         assert "attachment_style" in paths_mod.PROFILE_BY_CONCEPT
 
+    def test_legacy_split_map_has_relationships(self):
+        """LEGACY_SPLIT_MAP should include RELATIONSHIPS.md split."""
+        import platform_lib.paths as paths_mod
+        assert "RELATIONSHIPS.md" in paths_mod.LEGACY_SPLIT_MAP
+        rel_files = paths_mod.LEGACY_SPLIT_MAP["RELATIONSHIPS.md"]
+        assert "relationships/family.md" in rel_files
+        assert len(rel_files) >= 2
+
+    def test_list_relationship_files_returns_list(self):
+        """list_relationship_files should return a list of Paths."""
+        import platform_lib.paths as paths_mod
+        result = paths_mod.list_relationship_files("hieu")
+        assert isinstance(result, list)
+        for item in result:
+            assert isinstance(item, Path)
+            assert item.suffix == ".md"
+            assert item.name != "family.md"
+
+    def test_list_relationship_files_per_character(self):
+        """Each character should have correct cross-relationship files."""
+        import platform_lib.paths as paths_mod
+        hieu_rels = [f.name for f in paths_mod.list_relationship_files("hieu")]
+        assert "character-b.md" in hieu_rels
+        assert "character-c.md" in hieu_rels
+
+    def test_list_all_profile_files_superset(self):
+        """list_all_profile_files should return more files than list_profile_files."""
+        import platform_lib.paths as paths_mod
+        base = paths_mod.list_profile_files("hieu")
+        total = paths_mod.list_all_profile_files("hieu")
+        assert len(total) >= len(base)
+
 
 class TestClinicalTerms:
     """Test clinical_terms.py module."""

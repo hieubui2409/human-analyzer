@@ -163,7 +163,7 @@ After automated gates pass, verify content doesn't contradict profiles:
 
 1. **Factual alignment** — cross-check claims against `timeline/state-timeline.md`, `identity/core.md` (dates, events, relationships)
 2. **Psychological alignment** — verify emotional framing matches `psychology/formulation.md`, `psychology/defense-mechanisms.md` (no contradictory coping portrayals)
-3. **Relationship alignment** — if post mentions cross-character dynamics, verify against `relationships/family.md` + `docs/graph/{dyad}.md`
+3. **Relationship alignment** — if post mentions cross-character dynamics, verify against `relationships/family.md`, cross-character files (e.g. `relationships/character-b.md`, discovered via `list_relationship_files()`), and `docs/graph/{dyad}.md`
 4. **Evidence alignment** — verify claims are backed by T1-T3 evidence (MAT framework). T4-T5 claims must be explicitly qualified
 5. If ANY contradiction found → fix before output, don't just flag
 

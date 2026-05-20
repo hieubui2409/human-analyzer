@@ -30,21 +30,22 @@ Prompt for dimension and characters to compare.
 
 Maps to profile file paths under `docs/profiles/{character}/`:
 
-| Dimension arg          | File Path                            |
-| ---------------------- | ------------------------------------ |
-| `defense-mechanisms`   | `psychology/defense-mechanisms.md`   |
-| `attachment-style`     | `psychology/attachment-style.md`     |
-| `core-wounds`          | `psychology/core-wounds.md`          |
-| `formulation`          | `psychology/formulation.md`          |
-| `diagnostics`          | `psychology/diagnostics.md`          |
-| `archetype`            | `psychology/archetype.md`            |
-| `growth-edges`         | `psychology/growth-edges.md`         |
-| `cultural-formulation` | `psychology/cultural-formulation.md` |
-| `traumas`              | `darkness/traumas.md`                |
-| `strengths-hope`       | `light/strengths-hope.md`            |
-| `family`               | `relationships/family.md`            |
-| `timeline`             | `timeline/overview.md`               |
-| `writing-voice`        | `identity/writing-voice.md`          |
+| Dimension arg          | File Path                                                                         |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `defense-mechanisms`   | `psychology/defense-mechanisms.md`                                                |
+| `attachment-style`     | `psychology/attachment-style.md`                                                  |
+| `core-wounds`          | `psychology/core-wounds.md`                                                       |
+| `formulation`          | `psychology/formulation.md`                                                       |
+| `diagnostics`          | `psychology/diagnostics.md`                                                       |
+| `archetype`            | `psychology/archetype.md`                                                         |
+| `growth-edges`         | `psychology/growth-edges.md`                                                      |
+| `cultural-formulation` | `psychology/cultural-formulation.md`                                              |
+| `traumas`              | `darkness/traumas.md`                                                             |
+| `strengths-hope`       | `light/strengths-hope.md`                                                         |
+| `family`               | `relationships/family.md`                                                         |
+| `relationships/<char>` | `relationships/{other-character}.md` — discovered via `list_relationship_files()` |
+| `timeline`             | `timeline/overview.md`                                                            |
+| `writing-voice`        | `identity/writing-voice.md`                                                       |
 
 ## Workflow
 

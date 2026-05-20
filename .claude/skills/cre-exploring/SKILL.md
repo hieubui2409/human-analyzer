@@ -63,7 +63,7 @@ For character content, derive angles from:
 - Recent `timeline/state-timeline.md` events and phase transitions
 - Unresolved `darkness/traumas.md` themes
 - Growth signals in `light/strengths-hope.md` and `psychology/growth-edges.md`
-- Relationship dynamics in `relationships/family.md` and `docs/graph/*.md`
+- Relationship dynamics in `relationships/family.md`, cross-character files (discovered via `list_relationship_files()`), and `docs/graph/*.md`
 - Defense mechanism patterns in `psychology/defense-mechanisms.md`
 - Clinical formulation insights in `psychology/formulation.md` (5P model)
 - MAT materials with evidence tier T1-T2 (highest reliability source angles)

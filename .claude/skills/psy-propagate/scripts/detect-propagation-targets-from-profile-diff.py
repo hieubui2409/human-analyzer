@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, GRAPH, PROFILES, resolve_character
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, GRAPH, PROFILES, resolve_character, list_relationship_files
 
 # Section → affected sections in connected characters (by connection strength)
 PROPAGATION_MAP = {
@@ -68,6 +68,44 @@ def load_graph_context() -> str:
     return ""
 
 
+def _mirror_relationship_targets(source_slug: str, section: str | None) -> list[dict]:
+    """When a cross-relationship file changes, propagate to the mirror file in the other character."""
+    targets = []
+    if section and section.startswith("relationships/") and section != "relationships/family.md":
+        target_slug_hint = section.replace("relationships/", "").replace(".md", "")
+        if target_slug_hint in ALL_CHARS:
+            mirror_file = f"relationships/{source_slug}.md"
+            mirror_path = PROFILES / target_slug_hint / mirror_file
+            targets.append({
+                "priority": "HIGH",
+                "target_character": target_slug_hint,
+                "target_display": CHAR_DISPLAY.get(target_slug_hint, target_slug_hint),
+                "file": mirror_file,
+                "file_exists": mirror_path.exists(),
+                "source_section": section,
+                "connection_strength": "high",
+                "reason": f"{CHAR_DISPLAY.get(source_slug, source_slug)} {section} changed → review mirror {mirror_file}",
+            })
+    elif section is None:
+        # Check all cross-relationship files for this character
+        for rel_file in list_relationship_files(source_slug):
+            rel_name = rel_file.stem  # e.g. "character-b"
+            if rel_name in ALL_CHARS:
+                mirror_file = f"relationships/{source_slug}.md"
+                mirror_path = PROFILES / rel_name / mirror_file
+                targets.append({
+                    "priority": "HIGH",
+                    "target_character": rel_name,
+                    "target_display": CHAR_DISPLAY.get(rel_name, rel_name),
+                    "file": mirror_file,
+                    "file_exists": mirror_path.exists(),
+                    "source_section": f"relationships/{rel_name}.md",
+                    "connection_strength": "high",
+                    "reason": f"{CHAR_DISPLAY.get(source_slug, source_slug)} relationships/{rel_name}.md → review mirror {mirror_file}",
+                })
+    return targets
+
+
 def get_targets(source_slug: str, section: str | None) -> list[dict]:
     """Return propagation targets for a source character and optional section."""
     connections = CONNECTIONS.get(source_slug, {})
@@ -93,6 +131,9 @@ def get_targets(source_slug: str, section: str | None) -> list[dict]:
                     "connection_strength": strength,
                     "reason": f"{CHAR_DISPLAY.get(source_slug, source_slug)} {sec} changed → review {affected_file}",
                 })
+
+    # Cross-relationship mirror propagation
+    targets.extend(_mirror_relationship_targets(source_slug, section))
 
     # Deduplicate by (target, file)
     seen = set()
