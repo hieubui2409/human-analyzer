@@ -175,9 +175,10 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ### COM — Common Skills
 
-| Skill     | Purpose                      |
-| --------- | ---------------------------- |
-| `com:git` | Project-aware git operations |
+| Skill              | Purpose                                                 |
+| ------------------ | ------------------------------------------------------- |
+| `com:git`          | Project-aware git operations                            |
+| `com:health-check` | Session health monitoring — stall/error/death detection |
 
 ### MAT — Material Framework Skills
 
@@ -273,4 +274,15 @@ When a subagent (Agent tool) returns output containing API error patterns, **aut
 
 ---
 
-_Updated: 2026-05-18_
+## Auto-Monitoring Policy
+
+LLM should auto-invoke `com:health-check` for subagents/team agents ONLY when:
+
+1. User explicitly confirms monitoring, OR
+2. A health-check Monitor is already running for the main agent
+
+Never auto-spawn health monitor without user awareness.
+
+---
+
+_Updated: 2026-05-19_
