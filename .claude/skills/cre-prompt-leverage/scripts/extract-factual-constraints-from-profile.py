@@ -21,6 +21,18 @@ OCCUPATION_PATTERN = re.compile(
 )
 
 
+TABLE_ROW = re.compile(r'\|\s*\*?\*?(.+?)\*?\*?\s*\|\s*(.+?)\s*\|')
+
+def _extract_table_field(text: str, keys: list[str]) -> str | None:
+    for line in text.splitlines():
+        m = TABLE_ROW.match(line.strip())
+        if m:
+            label = m.group(1).strip().strip("*").lower()
+            if any(k in label for k in keys):
+                return m.group(2).strip()
+    return None
+
+
 def extract_identity_facts(cdir) -> dict:
     facts = {}
     id_path = cdir / "identity/core.md"
@@ -28,23 +40,38 @@ def extract_identity_facts(cdir) -> dict:
         return facts
     text = id_path.read_text(encoding='utf-8')
 
-    m = DOB_PATTERN.search(text)
-    if m:
+    dob = _extract_table_field(text, ["ngày sinh", "dob", "born"])
+    if dob:
+        facts["dob"] = dob
+    elif (m := DOB_PATTERN.search(text)):
         facts["dob"] = m.group(1)
 
-    m = AGE_PATTERN.search(text)
-    if m:
+    age = _extract_table_field(text, ["tuổi", "age"])
+    if age:
+        facts["age"] = re.sub(r'[^\d]', '', age)[:3]
+    elif (m := AGE_PATTERN.search(text)):
         facts["age"] = m.group(1) or m.group(2)
 
-    locs = LOCATION_PATTERN.findall(text)
-    if locs:
+    loc = _extract_table_field(text, ["quê", "nơi ở", "location", "địa chỉ"])
+    if loc:
+        facts["location"] = loc[:60]
+    elif (locs := LOCATION_PATTERN.findall(text)):
         facts["location"] = locs[0].strip()
 
-    occs = OCCUPATION_PATTERN.findall(text)
-    if occs:
-        facts["occupation"] = occs[0].strip()[:80]
+    occ = _extract_table_field(text, ["nghề", "vị trí", "chức vụ", "occupation", "job"])
+    if occ and "|" not in occ:
+        facts["occupation"] = occ[:80]
+    else:
+        career_pat = re.compile(r'\|\s*[\d/\-]+present\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|')
+        student_pat = re.compile(r'\|\s*\d{4}-\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|')
+        cm = career_pat.search(text)
+        if cm:
+            facts["occupation"] = f"{cm.group(1).strip()} @ {cm.group(2).strip()}"[:80]
+        elif (sm := student_pat.search(text)):
+            facts["occupation"] = f"{sm.group(2).strip()} @ {sm.group(1).strip()}"[:80]
+        elif re.search(r'học sinh|sinh viên|student', text, re.IGNORECASE):
+            facts["occupation"] = "Học sinh/Sinh viên"
 
-    # Extract key facts section if present
     sections = extract_sections(id_path, level=2)
     for heading, content in sections.items():
         if any(k in heading.lower() for k in ['thông tin', 'basic', 'key fact', 'tóm tắt']):
@@ -65,14 +92,25 @@ def extract_relationship_status(cdir) -> dict:
     slug = cdir.name
     rel_files.extend(list_relationship_files(slug))
     summary = {}
+    keywords = ['status', 'tình trạng', 'summary', 'tóm tắt', 'current', 'mối quan hệ', 'vai trò']
     for rel_path in rel_files:
         if not rel_path.exists():
             continue
-        sections = extract_sections(rel_path, level=2)
-        for heading, content in sections.items():
-            if any(k in heading.lower() for k in ['status', 'tình trạng', 'summary', 'tóm tắt', 'current']):
-                bullets = [re.match(r'\s*[-*]\s+(.+)', l) for l in content.splitlines()]
-                summary[heading] = [b.group(1).strip()[:100] for b in bullets if b][:5]
+        for level in (2, 3):
+            sections = extract_sections(rel_path, level=level)
+            for heading, content in sections.items():
+                if any(k in heading.lower() for k in keywords):
+                    items = []
+                    for line in content.splitlines():
+                        bm = re.match(r'\s*[-*]\s+(.+)', line)
+                        if bm:
+                            items.append(bm.group(1).strip()[:100])
+                        tm = TABLE_ROW.match(line.strip())
+                        if tm and not line.strip().startswith("| ---"):
+                            items.append(f"{tm.group(1).strip()}: {tm.group(2).strip()}"[:100])
+                    if items:
+                        label = f"{heading} ({rel_path.stem})" if level == 3 else heading
+                        summary[label] = items[:5]
     return summary
 
 

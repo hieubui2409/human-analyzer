@@ -85,17 +85,19 @@ def find_cross_references(filepath: Path, target_names: list[str]) -> list[dict]
 
 
 def extract_timeline_events(filepath: Path) -> list[dict]:
-    """Parse TIMELINE.md → list of {date, event, section}."""
+    """Parse timeline → list of {date, event, section}. Handles bullet and table formats."""
     sections = extract_sections(filepath, level=2)
     events = []
-    date_pattern = re.compile(r"[-•*]\s*\*?\*?(\d{2}/\d{2}/\d{4}|\d{2}/\d{4}|\d{4})\*?\*?\s*[-:–]?\s*(.*)")
+    bullet_pat = re.compile(r"[-•*]\s*\*?\*?(\d{2}/\d{2}/\d{4}|\d{2}/\d{4}|\d{4})\*?\*?\s*[-:–]?\s*(.*)")
+    table_pat = re.compile(r"\|\s*\*?\*?(\d{2}/\d{2}/\d{4}|\d{2}/\d{4}|\d{4})\*?\*?\s*\|\s*(.*?)\s*\|")
     for section_name, content in sections.items():
         for line in content.splitlines():
-            m = date_pattern.match(line.strip())
+            stripped = line.strip()
+            m = bullet_pat.match(stripped) or table_pat.search(stripped)
             if m:
                 events.append({
                     "date": m.group(1),
-                    "event": m.group(2).strip(),
+                    "event": m.group(2).strip().rstrip("|").strip(),
                     "section": section_name,
                 })
     return events
