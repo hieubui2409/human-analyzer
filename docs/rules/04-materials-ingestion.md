@@ -3,7 +3,7 @@
 Standards for adding new source materials to `docs/materials/`.
 
 Full pipeline specification: `docs/rules/11-mat-pipeline.md`
-Material schema: `docs/references/material-schema.yaml`
+Material schema: `.claude/schemas/material-schema.yaml`
 
 ## MAT Framework Overview
 

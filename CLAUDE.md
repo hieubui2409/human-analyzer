@@ -71,7 +71,7 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ## Character Profiles — Universal Nested Structure
 
-Each character has **21 files** in a standardized nested structure (same for all 3 characters):
+Each character has **21 universal files** in a standardized nested structure, plus **optional per-character cross-relationship files** discovered dynamically via `list_relationship_files()` in `paths.py`:
 
 ```
 docs/profiles/{character}/
@@ -93,7 +93,9 @@ docs/profiles/{character}/
 │   ├── cultural-formulation.md       ← Cultural context factors
 │   └── archetype.md                  ← Jungian + Pia Melody mapping
 ├── relationships/
-│   └── family.md                     ← Family tree, key relationships
+│   ├── family.md                     ← Family tree, key relationships
+│   ├── {other-character}.md          ← Cross-relationship file (optional, per character)
+│   └── network.md                    ← Extended network (Nhân vật A only)
 ├── timeline/
 │   ├── overview.md                   ← Timeline summary
 │   └── state-timeline.md            ← Longitudinal ICD-11 phases with severity
@@ -104,6 +106,8 @@ docs/profiles/{character}/
 └── evidence/
     └── conversations.md             ← Key conversation evidence
 ```
+
+Cross-relationship files per character: Nhân vật A (3: character-b.md, character-c.md, network.md), Nhân vật B (2: character-a.md, character-c.md), Nhân vật C (2: character-a.md, character-b.md). Mirror pairs are bidirectional.
 
 **Characters:** Nhân vật A (`character-a`), Nhân vật B (`character-b`), Nhân vật C (`character-c`)
 
