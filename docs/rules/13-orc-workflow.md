@@ -25,8 +25,11 @@ User Prompt
     ├── Work type = profile update?
     │       └──→ [PSY TRACK] (see below)
     │
-    └── Work type = content creation?
-            └──→ [CRE TRACK] (see below)
+    ├── Work type = content creation?
+    │       └──→ [CRE TRACK] (see below)
+    │
+    └── Work type = growth/career analysis?
+            └──→ [GRO TRACK] (see below)
 ```
 
 ### MAT Track — Materials Ingestion
@@ -70,34 +73,56 @@ Quality gate between PSY.5 and PSY.6: psy:propagate cascade must complete — al
 
 Quality gate between CRE.3 and CRE.4: if voice architecture stale (last PSY refresh after last material integration) → force CRE.recalibrate before proceeding.
 
+### GRO Track — Career & Growth Analysis
+
+```
+[GRO.1] orc:intake           → identify character + growth work type
+[GRO.2] orc:bootstrap        → load character context + growth/ files
+[GRO.3] gro:career-path      → career trajectory analysis (or gro:competency-map, gro:learning-profile)
+[GRO.4] gro:validate         → cross-check growth data consistency
+[GRO.5] GRO.assessed event   → triggers CRE.recalibrate if content angle affected
+```
+
+GRO→PSY cascade: `GRO.mentored` → `PSY.refresh` (mentoring reveals psychological insights)
+GRO→CRE cascade: `GRO.assessed` / `GRO.profiled` → `CRE.recalibrate` (career data informs content)
+
 ## Skill Prefix Routing Table
 
-| User intent                              | First skill           | Full chain                                               |
-| ---------------------------------------- | --------------------- | -------------------------------------------------------- |
-| "Add new material / chat log / letter"   | `orc:intake`          | orc:intake → mat:loader → mat:indexer → (PSY auto)       |
-| "Update profile with new info"           | `orc:intake`          | orc:intake → psy:bootstrap → profile edit → psy:crossref |
-| "Write a post for [platform]"            | `orc:classify`        | orc:classify → psy:profile-lite → cre:post-writer        |
-| "Repurpose this content for [platform]"  | `cre:repurpose`       | cre:repurpose → orc:privacy-guard                        |
-| "Validate profile consistency"           | `psy:crossref`        | psy:bootstrap → psy:crossref → psy:ref-audit             |
-| "Check clinical theory coverage"         | `psy:ref-scan`        | psy:ref-scan → psy:ref-audit                             |
-| "Assess crisis risk in this material"    | `psy:crisis-assess`   | psy:bootstrap → psy:crisis-assess → (06-crisis-protocol) |
-| "Track character growth trajectory"      | `psy:arc-tracker`     | psy:bootstrap → psy:arc-tracker                          |
-| "Predict behavior in scenario X"         | `psy:hypothesis`      | psy:bootstrap → psy:hypothesis                           |
-| "Start new session / catch me up"        | `psy:bootstrap`       | psy:bootstrap → orc:session-state                        |
-| "Compress profiles for token efficiency" | `psy:profile-lite`    | psy:profile-lite (standalone)                            |
-| "Record this decision"                   | `orc:decisions`       | orc:decisions (standalone, append-only)                  |
-| "Consolidate session learnings"          | `orc:compounding`     | orc:compounding → orc:dream (if full consolidation)      |
-| "Archive old materials"                  | `mat:archive`         | mat:archive (standalone, dry-run default)                |
-| "Re-score CRAAP on materials"            | `mat:rescore`         | mat:rescore → mat:loader (for each flagged file)         |
-| "Propagate changes to other characters"  | `psy:propagate`       | psy:propagate → psy:crossref (verify after cascade)      |
-| "Sync timelines across characters"       | `psy:timeline-sync`   | psy:timeline-sync (standalone fix suggestions)           |
-| "Check profile completeness"             | `psy:health-check`    | psy:health-check (standalone scoring)                    |
-| "Compare characters side-by-side"        | `psy:profile-compare` | psy:profile-compare --dimension <dim>                    |
-| "Clean up reference library"             | `psy:ref-maintain`    | psy:ref-maintain (standalone audit)                      |
-| "Show event history / audit trail"       | `orc:event-log`       | orc:event-log --query (standalone)                       |
-| "Audit voice/tone consistency"           | `orc:voice-audit`     | orc:voice-audit (reads identity/writing-voice.md)        |
-| "Handle revealed falsehood / new truth"  | `orc:narrative-twist` | orc:narrative-twist → psy:crossref → (cascade updates)   |
-| "Privacy scan before publishing"         | `orc:privacy-guard`   | orc:privacy-guard (standalone gate)                      |
+| User intent                              | First skill            | Full chain                                               |
+| ---------------------------------------- | ---------------------- | -------------------------------------------------------- |
+| "Add new material / chat log / letter"   | `orc:intake`           | orc:intake → mat:loader → mat:indexer → (PSY auto)       |
+| "Update profile with new info"           | `orc:intake`           | orc:intake → psy:bootstrap → profile edit → psy:crossref |
+| "Write a post for [platform]"            | `orc:classify`         | orc:classify → psy:profile-lite → cre:post-writer        |
+| "Repurpose this content for [platform]"  | `cre:repurpose`        | cre:repurpose → orc:privacy-guard                        |
+| "Validate profile consistency"           | `psy:crossref`         | psy:bootstrap → psy:crossref → psy:ref-audit             |
+| "Check clinical theory coverage"         | `psy:ref-scan`         | psy:ref-scan → psy:ref-audit                             |
+| "Assess crisis risk in this material"    | `psy:crisis-assess`    | psy:bootstrap → psy:crisis-assess → (06-crisis-protocol) |
+| "Track character growth trajectory"      | `psy:arc-tracker`      | psy:bootstrap → psy:arc-tracker                          |
+| "Predict behavior in scenario X"         | `psy:hypothesis`       | psy:bootstrap → psy:hypothesis                           |
+| "Start new session / catch me up"        | `psy:bootstrap`        | psy:bootstrap → orc:session-state                        |
+| "Compress profiles for token efficiency" | `psy:profile-lite`     | psy:profile-lite (standalone)                            |
+| "Record this decision"                   | `orc:decisions`        | orc:decisions (standalone, append-only)                  |
+| "Consolidate session learnings"          | `orc:compounding`      | orc:compounding → orc:dream (if full consolidation)      |
+| "Archive old materials"                  | `mat:archive`          | mat:archive (standalone, dry-run default)                |
+| "Re-score CRAAP on materials"            | `mat:rescore`          | mat:rescore → mat:loader (for each flagged file)         |
+| "Propagate changes to other characters"  | `psy:propagate`        | psy:propagate → psy:crossref (verify after cascade)      |
+| "Sync timelines across characters"       | `psy:timeline-sync`    | psy:timeline-sync (standalone fix suggestions)           |
+| "Check profile completeness"             | `psy:health-check`     | psy:health-check (standalone scoring)                    |
+| "Compare characters side-by-side"        | `psy:profile-compare`  | psy:profile-compare --dimension <dim>                    |
+| "Clean up reference library"             | `psy:ref-maintain`     | psy:ref-maintain (standalone audit)                      |
+| "Show event history / audit trail"       | `orc:event-log`        | orc:event-log --query (standalone)                       |
+| "Audit voice/tone consistency"           | `orc:voice-audit`      | orc:voice-audit (reads identity/writing-voice.md)        |
+| "Handle revealed falsehood / new truth"  | `orc:narrative-twist`  | orc:narrative-twist → psy:crossref → (cascade updates)   |
+| "Privacy scan before publishing"         | `orc:privacy-guard`    | orc:privacy-guard (standalone gate)                      |
+| "Analyze career path / trajectory"       | `gro:career-path`      | orc:bootstrap → gro:career-path → gro:validate           |
+| "Map competencies / skills gap"          | `gro:competency-map`   | orc:bootstrap → gro:competency-map → gro:validate        |
+| "Build learning profile"                 | `gro:learning-profile` | orc:bootstrap → gro:learning-profile                     |
+| "Document mentoring session"             | `gro:mentoring-track`  | orc:bootstrap → gro:mentoring-track → (PSY auto)         |
+| "Forecast career trajectory"             | `gro:career-forecast`  | orc:bootstrap → gro:career-forecast [FORECAST]           |
+| "Compare careers across characters"      | `gro:compare`          | gro:compare (standalone comparison)                      |
+| "Route domain events / what runs next"   | `orc:domain-router`    | orc:domain-router --from-diff or --event                 |
+| "Resolve event cascade chain"            | `orc:cascade`          | orc:cascade --trigger <event>                            |
+| "Audit event consistency"                | `orc:audit`            | orc:audit --domain all                                   |
 
 ## Quality Gates Between Stages
 

@@ -12,21 +12,25 @@ Character profile documentation for storytelling and content creation.
 
 ## Framework Architecture
 
-Four integrated frameworks with event-driven orchestration:
+Five integrated frameworks with event-driven orchestration:
 
 ```
 MAT (Input) → PSY (Analysis) → CRE (Output)
                     ↑ ORC (Orchestration) ↑
+              GRO (Growth) ↗ PSY + CRE
 ```
 
-| Framework | Domain        | Directory                                             | Purpose                            |
-| --------- | ------------- | ----------------------------------------------------- | ---------------------------------- |
-| **MAT**   | Materials     | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
-| **PSY**   | Psychology    | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
-| **CRE**   | Content       | `assets/`                                             | Platform content creation          |
-| **ORC**   | Orchestration | `.claude/`                                            | Event routing, domain coordination |
+| Framework | Domain           | Directory                                             | Purpose                            |
+| --------- | ---------------- | ----------------------------------------------------- | ---------------------------------- |
+| **MAT**   | Materials        | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
+| **PSY**   | Psychology       | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
+| **CRE**   | Content          | `assets/`                                             | Platform content creation          |
+| **GRO**   | Growth           | `docs/profiles/*/growth/`                             | Career + intelligence growth       |
+| **ORC**   | Orchestration    | `.claude/`                                            | Event routing, domain coordination |
+| **COM**   | Common utilities | `.claude/`                                            | Git, health-check, rules           |
 
 Event flow: `MAT.integrated` → `PSY.refresh` → `CRE.recalibrate`
+GRO events: `GRO.assessed` / `GRO.mentored` → `PSY.refresh` → `CRE.recalibrate`
 
 ---
 
@@ -155,8 +159,8 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | 09  | confidentiality-protocol   | Privacy tags, content boundaries                              |
 | 10  | reference-library-standard | Reference schema, scientific rigor                            |
 | 11  | mat-pipeline               | MAT 5-stage pipeline, evidence tiers, CRAAP test              |
-| 12  | orc-orchestration          | Event system, domain boundaries, trigger routing              |
-| 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE)                      |
+| 12  | orc-orchestration          | Event system, domain boundaries, trigger routing (5 domains)  |
+| 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)       |
 | 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
 
 ---
@@ -170,12 +174,15 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `orc:bootstrap`     | Load project context (--quick/--full/--character/--lite/--intent) |
 | `orc:session-state` | Track session state, framework domains, event queue               |
 | `orc:classify`      | Risk classification (tiny/normal/high_risk) + MAT gates           |
-| `orc:intake`        | Route work type → skill chain (MAT/PSY/CRE routing)               |
+| `orc:intake`        | Route work type → skill chain (MAT/PSY/CRE/GRO routing)           |
 | `orc:compounding`   | Extract session learnings → memory                                |
 | `orc:dream`         | Periodic memory consolidation                                     |
 | `orc:decisions`     | Append-only decision records                                      |
 | `orc:agent-memory`  | Per-agent calibration memory                                      |
 | `orc:event-log`     | Persistent event audit logging (JSONL append + query)             |
+| `orc:domain-router` | Route domain events to downstream skills (diff or explicit)       |
+| `orc:cascade`       | Resolve multi-step event cascade chains across domains            |
+| `orc:audit`         | Cross-domain event consistency verification                       |
 
 ### COM — Common Skills
 
@@ -224,11 +231,24 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `cre:repurpose`       | Adapt content across platforms                                |
 | `cre:voice-audit`     | Audit content voice/tone consistency against WRITING-VOICE.md |
 
+### GRO — Growth Framework Skills
+
+| Skill                   | Purpose                                                   |
+| ----------------------- | --------------------------------------------------------- |
+| `gro:career-path`       | Career trajectory analysis + stage mapping                |
+| `gro:competency-map`    | Skills/competency assessment + gap analysis               |
+| `gro:learning-profile`  | Learning style + knowledge acquisition patterns           |
+| `gro:validate`          | Cross-check growth/ data consistency + date alignment     |
+| `gro:mentoring-track`   | Mentoring relationship documentation + insight extraction |
+| `gro:career-forecast`   | LLM-powered career projection [FORECAST — NOT FACTUAL]    |
+| `gro:compare`           | Side-by-side career comparison across characters          |
+| `gro:milestone-tracker` | Track career milestones actual vs planned                 |
+
 ---
 
 ## Scripts Infrastructure
 
-34 skills (orc/mat/psy/cre/com) share a Python utility library and 60+ supportive scripts.
+40 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 

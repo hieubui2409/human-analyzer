@@ -44,6 +44,8 @@ If content angle has no material backing (T5-only or gap):
 | `MAT.integrated` | New material may provide fresh content angles or invalidate existing drafts          |
 | `PSY.refresh`    | Profile update may change voice, defense state, or phase — recalibrate active drafts |
 | `PSY.flag`       | Contradiction detected — halt related content until resolved                         |
+| `GRO.assessed`   | Competency data changed — may affect career-angle content                            |
+| `GRO.profiled`   | Learning profile changed — may affect content style/framing                          |
 
 **Action:** When CRE.recalibrate fires:
 

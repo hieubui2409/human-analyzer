@@ -8,7 +8,7 @@ created: "2026-05-17"
 
 ## Overview
 
-ORC (Project Management & Coordination) is the meta-framework that routes events between MAT, PSY, and CRE domains. It does not own content — it owns workflow state and inter-domain signal passing.
+ORC (Orchestrator) is the meta-framework that routes events between MAT, PSY, CRE, and GRO domains. It does not own content — it owns workflow state and inter-domain signal passing.
 
 ## Domain Boundaries
 
@@ -17,6 +17,7 @@ ORC (Project Management & Coordination) is the meta-framework that routes events
 | MAT    | `docs/materials/{character}/`                    | Raw source files only                           |
 | PSY    | `docs/profiles/{character}/`, `docs/references/` | `docs/materials/` (read-only after MAT)         |
 | CRE    | `assets/`                                        | `docs/profiles/` (read-only), `docs/materials/` |
+| GRO    | `docs/profiles/{character}/growth/`              | `docs/profiles/`, `docs/materials/` (read-only) |
 | ORC    | `.claude/` (skills, session-state, config)       | All domains (orchestration only, no edits)      |
 
 **Hard rule**: No domain writes outside its boundary. Cross-boundary changes are bugs.
@@ -40,6 +41,10 @@ Events are named `{DOMAIN}.{action}`. They are not code — they are conventions
 | `CRE.recalibrate`   | Voice/tone assumptions may be stale            | Reload 3-layer voice architecture                               |
 | `CRE.blocked`       | Defense-mechanism gating prevents content type | Route to alternate content type                                 |
 | `MAT.archived`      | Material archived via mat:archive              | Log to event-log                                                |
+| `GRO.assessed`      | Competency/skill assessment completed          | → `CRE.recalibrate` (competency data informs content angle)     |
+| `GRO.forecast`      | Career forecast generated                      | Log only (informational, no cascade)                            |
+| `GRO.mentored`      | Mentoring interaction documented               | → `PSY.refresh` (mentoring reveals psychological insights)      |
+| `GRO.profiled`      | Learning profile updated                       | → `CRE.recalibrate` (learning profile changes content style)    |
 
 ### Event Flow Diagram
 
@@ -128,12 +133,13 @@ ORC must clear `pending_events` before marking session complete.
 
 ### Skill Prefix Map
 
-| Prefix  | Domain | Skills                                                                                                                                                   | Count |
-| ------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| `psy-*` | PSY    | bootstrap, crossref, ref-audit, ref-scan, ref-create, arc-tracker, hypothesis, wave, crisis-assess                                                       | 9     |
-| `mat-*` | MAT    | loader, indexer                                                                                                                                          | 2     |
-| `cre-*` | CRE    | post-writer, explore, repurpose                                                                                                                          | 3     |
-| `orc-*` | ORC    | intake, classify, session-state, decisions, agent-memory, privacy-guard, narrative-twist, voice-audit, compounding, dream, profile-lite, prompt-leverage | 12    |
+| Prefix  | Domain | Skills                                                                                                                            | Count |
+| ------- | ------ | --------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| `psy-*` | PSY    | bootstrap, crossref, ref-audit, ref-scan, ref-create, arc-tracker, hypothesis, wave, crisis-assess                                | 9     |
+| `mat-*` | MAT    | loader, indexer                                                                                                                   | 2     |
+| `cre-*` | CRE    | post-writer, explore, repurpose                                                                                                   | 3     |
+| `gro-*` | GRO    | career-path, competency-map, learning-profile, validate, mentoring-track, career-forecast, compare, milestone-tracker             | 8     |
+| `orc-*` | ORC    | bootstrap, session-state, classify, intake, compounding, dream, decisions, agent-memory, event-log, domain-router, cascade, audit | 12    |
 
 ### Skill Activation Rules
 
