@@ -1,4 +1,4 @@
-"""Query the MPC event log with optional filters and render a formatted table."""
+"""Query the ORC event log with optional filters and render a formatted table."""
 import argparse
 import json
 import sys
@@ -74,7 +74,7 @@ def format_timestamp(ts: str) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Query the MPC event log with filters")
+    parser = argparse.ArgumentParser(description="Query the ORC event log with filters")
     parser.add_argument("--event-type", help="Filter by event type")
     parser.add_argument("--character", help="Filter by character slug")
     parser.add_argument("--source", help="Filter by source skill")
@@ -92,7 +92,7 @@ def main():
 
     if not all_events:
         print(f"No events found. Log file: {LOG_FILE}")
-        print("Use `mpc:event-log --append` to log events.")
+        print("Use `orc:event-log --append` to log events.")
         return
 
     filtered = apply_filters(

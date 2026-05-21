@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "validation"
   position: "post-publish"
-  dependencies: ["mpc:bootstrap"]
+  dependencies: ["orc:bootstrap"]
 ---
 
 # Voice Consistency Audit

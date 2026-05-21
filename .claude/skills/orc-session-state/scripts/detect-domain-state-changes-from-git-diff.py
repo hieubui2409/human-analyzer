@@ -1,4 +1,4 @@
-"""Detect domain state changes from git diff for mpc:session-state event routing."""
+"""Detect domain state changes from git diff for orc:session-state event routing."""
 import argparse
 import json
 import subprocess
@@ -17,8 +17,8 @@ DOMAIN_RULES = {
     "docs/graph/": {"event": "PSY.refresh", "domain": "PSY"},
     "assets/": {"event": "CRE.recalibrate", "domain": "CRE"},
     "docs/rules/": {"event": "COM.rules_updated", "domain": "COM"},
-    ".claude/skills/": {"event": "MPC.skill_updated", "domain": "MPC"},
-    ".claude/scripts/": {"event": "MPC.script_updated", "domain": "MPC"},
+    ".claude/skills/": {"event": "ORC.skill_updated", "domain": "ORC"},
+    ".claude/scripts/": {"event": "ORC.script_updated", "domain": "ORC"},
 }
 
 IGNORE_PATTERNS = [

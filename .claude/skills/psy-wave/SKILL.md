@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "workflow"
   position: "profile-pipeline"
-  dependencies: ["mpc:bootstrap", "psy:crossref", "psy:ref-audit", "mat:loader"]
+  dependencies: ["orc:bootstrap", "psy:crossref", "psy:ref-audit", "mat:loader"]
 ---
 
 # 3-Wave Profile Pipeline
@@ -27,7 +27,7 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 | Flag                 | Purpose                                                 |
 | -------------------- | ------------------------------------------------------- |
 | `--wave <1\|2\|3>`   | Execute specific wave only                              |
-| `--character <name>` | Target character (resolve via mpc:bootstrap name table) |
+| `--character <name>` | Target character (resolve via orc:bootstrap name table) |
 | `--all`              | Run all 3 waves sequentially with gates                 |
 | `--status`           | Show current wave progress                              |
 | `--plan <path>`      | Link to existing plan file for context                  |
@@ -136,8 +136,8 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 
 After Wave 3 completes:
 
-1. `mpc:compounding --character <name>` — extract psychological insights + patterns learned
-2. `mpc:session-state --record-profile <name>` — record profiles touched for session recovery
+1. `orc:compounding --character <name>` — extract psychological insights + patterns learned
+2. `orc:session-state --record-profile <name>` — record profiles touched for session recovery
 3. Review existing `psy:hypothesis` reports — if any predictions exist for this character, check if wave findings confirm/deny them via `psy:arc-tracker --compare`
 
 ## --status
@@ -176,4 +176,4 @@ If no plan → create lightweight tracking in session state.
 
 ## See Also
 
-psy:crossref, psy:ref-audit, mpc:classify
+psy:crossref, psy:ref-audit, orc:classify

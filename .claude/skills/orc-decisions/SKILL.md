@@ -1,5 +1,5 @@
 ---
-name: mpc:decisions
+name: orc:decisions
 description: "Record and retrieve character arc decisions. Captures why X was chosen over Y for storylines, profile interpretations, content angles. Searchable decision log prevents re-litigating settled choices. Use when making character arc choices, resolving conflicting interpretations, or checking past decisions. Triggers: 'decision', 'record decision', 'why did we choose', 'arc decision', 'check decision log'."
 argument-hint: "[--record|--search <query>|--list|--review]"
 metadata:
@@ -140,14 +140,14 @@ Each decision stored as markdown in `plans/decisions/`:
 ## Examples
 
 ```bash
-/mpc:decisions                                        # list recent
-/mpc:decisions --record                               # new decision
-/mpc:decisions --search "attachment"                   # find related
-/mpc:decisions --review                               # audit decisions
+/orc:decisions                                        # list recent
+/orc:decisions --record                               # new decision
+/orc:decisions --search "attachment"                   # find related
+/orc:decisions --review                               # audit decisions
 ```
 
 ## See Also
 
 - `/cre:exploring` — exploration often produces decisions to record
-- `/mpc:compounding` — learnings may reference or challenge past decisions
-- `/mpc:classify` — high_risk work should check decision log first
+- `/orc:compounding` — learnings may reference or challenge past decisions
+- `/orc:classify` — high_risk work should check decision log first

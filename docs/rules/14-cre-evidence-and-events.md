@@ -29,7 +29,7 @@ When writing public content that references events or facts:
 
 If content angle has no material backing (T5-only or gap):
 
-1. Flag via `mpc:classify` as risk flag #12 ("MAT evidence gap")
+1. Flag via `orc:classify` as risk flag #12 ("MAT evidence gap")
 2. Options: (a) find supporting materials via `mat:loader`, (b) reframe angle to supported territory, (c) explicitly mark as creative fiction
 3. Never present unsupported content as factual reality post
 
@@ -71,8 +71,8 @@ If content angle has no material backing (T5-only or gap):
 
 **Downstream:**
 
-- `mpc:compounding` may extract content creation learnings
-- `mpc:session-state` updates `content_created` array
+- `orc:compounding` may extract content creation learnings
+- `orc:session-state` updates `content_created` array
 - `psy:arc-tracker` may update character arc trajectory if content reveals growth
 
 ### CRE.privacy_cleared
@@ -134,4 +134,4 @@ When content involves multiple characters (cross-character dynamics):
 - `docs/rules/03-content-creation-pipeline.md` — full pipeline, platform guidelines, output standards
 - `docs/rules/09-confidentiality-protocol.md` — privacy tags and content boundaries
 - `docs/rules/11-mat-pipeline.md` — evidence tier definitions
-- `docs/rules/12-mpc-orchestration.md` — event system and domain boundaries
+- `docs/rules/12-orc-orchestration.md` — event system and domain boundaries

@@ -75,7 +75,7 @@ Examples:
 ```
 docs(profile): update Nhân vật B psychology/formulation.md with attachment theory analysis
 content(assets): add LinkedIn post on mentoring philosophy
-feat(config): add mpc-classify skill for risk classification
+feat(config): add orc-classify skill for risk classification
 ```
 
 ## Auto Mode (--auto)
@@ -273,6 +273,6 @@ Skip smart selection. Stage everything. But still:
 
 ## See Also
 
-- `/mpc:session-state` — check what was modified this session
-- `/mpc:classify` — classify before committing (high_risk may need review first)
+- `/orc:session-state` — check what was modified this session
+- `/orc:classify` — classify before committing (high_risk may need review first)
 - `/com:docs --backup` — backup docs to external git repo after committing

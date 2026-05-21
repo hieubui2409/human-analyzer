@@ -1,5 +1,5 @@
 ---
-name: mpc:bootstrap
+name: orc:bootstrap
 description: "Bootstrap project context for ck-marketing sessions. Systematically load character profiles, active arcs, recent git changes, and session state. Use at session start, when switching focus between characters, or when context feels stale. Triggers: 'bootstrap', 'load context', 'refresh context', 'catch me up'."
 argument-hint: "[--full|--character <name>|--recent|--quick|--lite|--intent <task>]"
 metadata:
@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "workflow"
   position: "session-start"
-  dependencies: ["mpc:session-state"]
+  dependencies: ["orc:session-state"]
 ---
 
 # Project Context Bootstrap
@@ -173,17 +173,17 @@ When loading profiles, read in this order (most important first):
 ## Examples
 
 ```bash
-/mpc:bootstrap                          # quick: INDEX × 3 + recent
-/mpc:bootstrap --full                   # deep: all profiles + refs
-/mpc:bootstrap --character hòa          # deep-load Nhân vật B only
-/mpc:bootstrap --character chien        # deep-load Nhân vật C only
-/mpc:bootstrap --recent                 # last 7 days activity
-/mpc:bootstrap --lite                   # lite profiles × 3 (~400 lines)
-/mpc:bootstrap --intent "write LinkedIn post about Nhân vật B"  # task-aware
+/orc:bootstrap                          # quick: INDEX × 3 + recent
+/orc:bootstrap --full                   # deep: all profiles + refs
+/orc:bootstrap --character hòa          # deep-load Nhân vật B only
+/orc:bootstrap --character chien        # deep-load Nhân vật C only
+/orc:bootstrap --recent                 # last 7 days activity
+/orc:bootstrap --lite                   # lite profiles × 3 (~400 lines)
+/orc:bootstrap --intent "write LinkedIn post about Nhân vật B"  # task-aware
 ```
 
 ## See Also
 
-- `/mpc:session-state` — state loaded during bootstrap
-- `/mpc:classify` — run after bootstrap to classify next task
+- `/orc:session-state` — state loaded during bootstrap
+- `/orc:classify` — run after bootstrap to classify next task
 - `/cre:exploring` — structured exploration after context loaded

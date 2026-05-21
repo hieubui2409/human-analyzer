@@ -1,23 +1,23 @@
 ---
-name: mpc:intake
-description: "Classify incoming work type and route to the optimal skill chain. Determines if task is content creation, profile update, arc development, research, or maintenance — then suggests the right sequence of mpc/ck skills. Use at start of any new task. Triggers: 'intake', 'new task', 'what should I do', 'route this', 'start task'. Complements mpc:classify (risk) with workflow routing."
+name: orc:intake
+description: "Classify incoming work type and route to the optimal skill chain. Determines if task is content creation, profile update, arc development, research, or maintenance — then suggests the right sequence of mpc/ck skills. Use at start of any new task. Triggers: 'intake', 'new task', 'what should I do', 'route this', 'start task'. Complements orc:classify (risk) with workflow routing."
 argument-hint: "[task description] [--auto]"
 metadata:
   author: hieubt
   version: "1.0.0"
   category: "workflow"
   position: "pre-planning"
-  dependencies: ["mpc:classify"]
+  dependencies: ["orc:classify"]
 ---
 
 # Intake — Work Type Classification & Routing
 
-Classify what KIND of work this is and route to the right skill chain. Complements `mpc:classify` which assesses risk LEVEL.
+Classify what KIND of work this is and route to the right skill chain. Complements `orc:classify` which assesses risk LEVEL.
 
 | Skill          | Answers                 |
 | -------------- | ----------------------- |
-| `mpc:classify` | How risky is this?      |
-| `mpc:intake`   | What workflow for this? |
+| `orc:classify` | How risky is this?      |
+| `orc:intake`   | What workflow for this? |
 
 ## Default (No Arguments)
 
@@ -40,7 +40,7 @@ Classify what KIND of work this is and route to the right skill chain. Complemen
 **Route:**
 
 ```
-mpc:bootstrap → cre:exploring → mpc:classify → cre:prompt-leverage → ck:plan (if normal+) → cre:post-writer → cre:privacy-guard → cre:voice-audit → mpc:compounding
+orc:bootstrap → cre:exploring → orc:classify → cre:prompt-leverage → ck:plan (if normal+) → cre:post-writer → cre:privacy-guard → cre:voice-audit → orc:compounding
 ```
 
 ### 2. Profile Update (PSY Track)
@@ -51,7 +51,7 @@ mpc:bootstrap → cre:exploring → mpc:classify → cre:prompt-leverage → ck:
 **Route:**
 
 ```
-mpc:bootstrap --character <name> → mpc:classify → ck:plan (if high_risk) → profile editing → psy:ref-audit → psy:crossref → mpc:compounding
+orc:bootstrap --character <name> → orc:classify → ck:plan (if high_risk) → profile editing → psy:ref-audit → psy:crossref → orc:compounding
 ```
 
 **PSY Domain:** psychology/ (formulation, defense-mechanisms, attachment-style, diagnostics, cultural-formulation, archetype), timeline/ (state-timeline), darkness/, light/
@@ -64,7 +64,7 @@ mpc:bootstrap --character <name> → mpc:classify → ck:plan (if high_risk) →
 **Route:**
 
 ```
-mpc:bootstrap --full → cre:exploring → mpc:classify → ck:plan → phased implementation → psy:ref-audit → psy:crossref → mpc:compounding → mpc:decisions
+orc:bootstrap --full → cre:exploring → orc:classify → ck:plan → phased implementation → psy:ref-audit → psy:crossref → orc:compounding → orc:decisions
 ```
 
 ### 4. Research
@@ -75,7 +75,7 @@ mpc:bootstrap --full → cre:exploring → mpc:classify → ck:plan → phased i
 **Route:**
 
 ```
-mpc:bootstrap --quick → research execution → mpc:compounding (if insights found)
+orc:bootstrap --quick → research execution → orc:compounding (if insights found)
 ```
 
 ### 5. Material Ingestion (MAT Track)
@@ -86,7 +86,7 @@ mpc:bootstrap --quick → research execution → mpc:compounding (if insights fo
 **Route:**
 
 ```
-mpc:bootstrap --quick → mat:loader --ingest <path> → mat:indexer --character <name> → mpc:classify → cre:privacy-guard → suggest profile updates → mpc:session-state
+orc:bootstrap --quick → mat:loader --ingest <path> → mat:indexer --character <name> → orc:classify → cre:privacy-guard → suggest profile updates → orc:session-state
 ```
 
 **MAT Pipeline:** mat:loader (Stage 1-2) → mat:indexer (Stage 3-4) → auto-emit MAT.integrated → PSY.refresh
@@ -99,7 +99,7 @@ mpc:bootstrap --quick → mat:loader --ingest <path> → mat:indexer --character
 **Route:**
 
 ```
-mpc:bootstrap --full → psy:crossref --all → psy:ref-audit --discover --cross-ref → cre:voice-audit → report
+orc:bootstrap --full → psy:crossref --all → psy:ref-audit --discover --cross-ref → cre:voice-audit → report
 ```
 
 ### 7. Reference Management
@@ -121,7 +121,7 @@ psy:ref-audit --discover → psy:ref-create <theory> → psy:ref-scan --new → 
 **Route:**
 
 ```
-mpc:dream (if memory) → direct execution → mpc:session-state --archive (if session end)
+orc:dream (if memory) → direct execution → orc:session-state --archive (if session end)
 ```
 
 ### 9. Multi-Platform Campaign
@@ -132,7 +132,7 @@ mpc:dream (if memory) → direct execution → mpc:session-state --archive (if s
 **Route:**
 
 ```
-mpc:bootstrap → cre:exploring → mpc:classify (likely high_risk) → ck:plan → cre:post-writer (per platform) → cre:repurpose → cre:privacy-guard → cre:voice-audit → mpc:compounding
+orc:bootstrap → cre:exploring → orc:classify (likely high_risk) → ck:plan → cre:post-writer (per platform) → cre:repurpose → cre:privacy-guard → cre:voice-audit → orc:compounding
 ```
 
 ## Classification Logic
@@ -175,7 +175,7 @@ From task description, extract:
 
 {numbered skill chain}
 
-### Auto-run mpc:classify?
+### Auto-run orc:classify?
 
 Risk classification is recommended. Run now?
 ```
@@ -195,7 +195,7 @@ Risk classification is recommended. Run now?
 After intake completes:
 
 - Update session state: `phase` → `"exploring"` or `"planning"`
-- If `--auto` and work type is clear → auto-run `mpc:classify`
+- If `--auto` and work type is clear → auto-run `orc:classify`
 
 ## Scripts
 
@@ -213,14 +213,14 @@ After intake completes:
 ## Examples
 
 ```bash
-/mpc:intake Write a LinkedIn post about Nhân vật A's mentoring journey
-/mpc:intake Update Nhân vật B's psychology/formulation.md with new attachment analysis
-/mpc:intake --auto
-/mpc:intake Research parentification theory for Nhân vật C's profile
+/orc:intake Write a LinkedIn post about Nhân vật A's mentoring journey
+/orc:intake Update Nhân vật B's psychology/formulation.md with new attachment analysis
+/orc:intake --auto
+/orc:intake Research parentification theory for Nhân vật C's profile
 ```
 
 ## See Also
 
-- `/mpc:classify` — risk level (complements intake's workflow routing)
+- `/orc:classify` — risk level (complements intake's workflow routing)
 - `/cre:exploring` — often the next step after intake for content work
-- `/mpc:bootstrap` — context loading recommended by most routes
+- `/orc:bootstrap` — context loading recommended by most routes

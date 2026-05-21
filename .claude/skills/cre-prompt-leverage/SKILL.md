@@ -175,5 +175,5 @@ If `--from-context` or no arguments:
 ## See Also
 
 - `/cre:exploring` — produces CONTEXT.md that prompt-leverage consumes
-- `/mpc:classify` — risk level informs how many layers to apply
-- `/mpc:bootstrap` — loads profile context referenced by leverage layers
+- `/orc:classify` — risk level informs how many layers to apply
+- `/orc:bootstrap` — loads profile context referenced by leverage layers

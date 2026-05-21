@@ -129,7 +129,7 @@ When scanning content that references materials:
 - Called by `cre:post-writer` in quality check phase
 - Called by `cre:prompt-leverage` in sensitivity scan layer
 - Can be wired as PostToolUse hook for assets/ writes
-- Emits `CRE.privacy_cleared` when scan passes (consumed by MPC orchestration)
+- Emits `CRE.privacy_cleared` when scan passes (consumed by ORC orchestration)
 
 ## Safety
 

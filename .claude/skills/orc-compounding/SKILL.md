@@ -1,5 +1,5 @@
 ---
-name: mpc:compounding
+name: orc:compounding
 description: "Extract durable learnings after content or profile work. Captures character psychology insights, effective writing patterns, audience resonance signals, and clinical accuracy notes. Feeds findings into memory system. Use after completing content creation, profile updates, or arc development. Triggers: 'compound', 'extract learnings', 'what did we learn', 'capture insights'."
 argument-hint: "[--auto|--character <name>|--content|--session]"
 metadata:
@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "workflow"
   position: "post-work"
-  dependencies: ["mpc:session-state"]
+  dependencies: ["orc:session-state"]
 ---
 
 # Compounding — Extract Durable Learnings
@@ -98,7 +98,7 @@ Same as `--session` but skip confirmation. Write all candidates to memory.
 
 ### --character `<name>`
 
-1. Resolve character name (same as mpc-bootstrap)
+1. Resolve character name (same as orc-bootstrap)
 2. Read character's profile files (psychology/formulation.md, psychology/defense-mechanisms.md, relationships/family.md, cross-character files via `list_relationship_files()`)
 3. `git log --oneline -20 -- docs/profiles/{resolved}/` — recent changes
 4. `git diff HEAD~10 -- docs/profiles/{resolved}/` — what changed
@@ -128,7 +128,7 @@ name: {category}-{slug}
 description: {one-line summary}
 metadata:
   type: project
-  source: mpc:compounding
+  source: orc:compounding
   session: {date}
 ---
 
@@ -146,7 +146,7 @@ Before writing a new memory:
 2. If related memory exists → update it (append, don't duplicate)
 3. If contradicts existing memory → flag for user decision
 4. Link related memories with `[[name]]` references
-5. After writing new learnings, check if `mpc:dream` should run (if 5+ new memories since last dream consolidation)
+5. After writing new learnings, check if `orc:dream` should run (if 5+ new memories since last dream consolidation)
 
 ## Scripts
 
@@ -164,18 +164,18 @@ Before writing a new memory:
 ## Examples
 
 ```bash
-/mpc:compounding                          # extract from current session
-/mpc:compounding --auto                   # auto-extract, no confirm
-/mpc:compounding --character hòa          # Nhân vật B-specific insights
-/mpc:compounding --content                # content pattern extraction
+/orc:compounding                          # extract from current session
+/orc:compounding --auto                   # auto-extract, no confirm
+/orc:compounding --character hòa          # Nhân vật B-specific insights
+/orc:compounding --content                # content pattern extraction
 ```
 
 ## Dream Trigger
 
-After writing ≥5 new memories in a single session, suggest running `mpc:dream --merge` to consolidate overlapping insights before they accumulate.
+After writing ≥5 new memories in a single session, suggest running `orc:dream --merge` to consolidate overlapping insights before they accumulate.
 
 ## See Also
 
-- `/mpc:session-state` — provides session context for extraction
-- `/mpc:dream` — periodic consolidation of accumulated learnings (trigger when memory count grows)
-- `/mpc:bootstrap` — loads context that compounding enriches
+- `/orc:session-state` — provides session context for extraction
+- `/orc:dream` — periodic consolidation of accumulated learnings (trigger when memory count grows)
+- `/orc:bootstrap` — loads context that compounding enriches

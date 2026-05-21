@@ -11,7 +11,7 @@ metadata:
     [
       "psy:profile-lite",
       "cre:prompt-leverage",
-      "mpc:bootstrap",
+      "orc:bootstrap",
       "cre:privacy-guard",
       "cre:voice-audit",
     ]
@@ -215,6 +215,6 @@ Q5: Any specific angle or reference? → [free text or "no"]
 - `/cre:exploring` → produces CONTEXT.md → feeds --from-context
 - `/cre:prompt-leverage` → called internally for prompt strengthening
 - `/psy:profile-lite` → loaded for token-efficient context
-- `/mpc:classify` → should run before post-writer for risk assessment
+- `/orc:classify` → should run before post-writer for risk assessment
 - `docs/rules/03-content-creation-pipeline.md` → content pipeline + platform guidelines
 - `docs/rules/09-confidentiality-protocol.md` → privacy + content boundaries

@@ -161,7 +161,7 @@ After all decisions locked, write `CONTEXT.md`:
 
 ## Next Step
 
-Run `/mpc:classify` to assess risk, then `/ck:plan` or implement directly.
+Run `/orc:classify` to assess risk, then `/ck:plan` or implement directly.
 ```
 
 ### Output Location
@@ -210,7 +210,7 @@ After completing exploration:
 
 ## See Also
 
-- `/mpc:classify` — risk classify after exploration
-- `/mpc:bootstrap` — load context before exploring
+- `/orc:classify` — risk classify after exploration
+- `/orc:bootstrap` — load context before exploring
 - `/ck:plan` — plan after decisions are locked
 - `/cre:prompt-leverage` — strengthen prompt after planning

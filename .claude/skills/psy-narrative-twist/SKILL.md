@@ -143,7 +143,7 @@ Grep all profiles for `⚠️ TWIST` markers. Output:
 - ALWAYS preserve source attribution
 - Cross-character updates are MANDATORY, not optional
 - `psy:crossref` validation after twist is MANDATORY — do not report success until crossref confirms symmetry
-- Update `mpc:session-state` with twist event for session recovery
+- Update `orc:session-state` with twist event for session recovery
 - Run `psy:ref-audit --character <name>` if twist affects SOUL/DARKNESS (clinical terms may need re-validation)
 - Scope: narrative twist management in profiles. Does NOT create content or modify references.
 

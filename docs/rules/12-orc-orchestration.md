@@ -1,14 +1,14 @@
 ---
-title: MPC Orchestration — Event-Driven Framework Coordination
+title: ORC Orchestration — Event-Driven Framework Coordination
 version: "1.0"
 created: "2026-05-17"
 ---
 
-# Rule 12: MPC Orchestration — Event-Driven Framework Coordination
+# Rule 12: ORC Orchestration — Event-Driven Framework Coordination
 
 ## Overview
 
-MPC (Project Management & Coordination) is the meta-framework that routes events between MAT, PSY, and CRE domains. It does not own content — it owns workflow state and inter-domain signal passing.
+ORC (Project Management & Coordination) is the meta-framework that routes events between MAT, PSY, and CRE domains. It does not own content — it owns workflow state and inter-domain signal passing.
 
 ## Domain Boundaries
 
@@ -17,7 +17,7 @@ MPC (Project Management & Coordination) is the meta-framework that routes events
 | MAT    | `docs/materials/{character}/`                    | Raw source files only                           |
 | PSY    | `docs/profiles/{character}/`, `docs/references/` | `docs/materials/` (read-only after MAT)         |
 | CRE    | `assets/`                                        | `docs/profiles/` (read-only), `docs/materials/` |
-| MPC    | `.claude/` (skills, session-state, config)       | All domains (orchestration only, no edits)      |
+| ORC    | `.claude/` (skills, session-state, config)       | All domains (orchestration only, no edits)      |
 
 **Hard rule**: No domain writes outside its boundary. Cross-boundary changes are bugs.
 
@@ -92,11 +92,11 @@ Low-severity contradictions (minor detail differences) do not trigger the full l
 
 ## Session State Tracking
 
-MPC tracks multi-step workflow state to enable resumption and prevent double-processing.
+ORC tracks multi-step workflow state to enable resumption and prevent double-processing.
 
 ### Session State File
 
-`.claude/session-state/state.json` — owned exclusively by MPC.
+`.claude/session-state/state.json` — owned exclusively by ORC.
 
 Key fields:
 
@@ -122,7 +122,7 @@ idle → mat-ingestion → psy-refresh → cre-recalibrate → idle
            └── contradiction detected → psy-flag → human-review → resolve → psy-refresh
 ```
 
-MPC must clear `pending_events` before marking session complete.
+ORC must clear `pending_events` before marking session complete.
 
 ## Skill Routing
 
@@ -133,12 +133,12 @@ MPC must clear `pending_events` before marking session complete.
 | `psy-*` | PSY    | bootstrap, crossref, ref-audit, ref-scan, ref-create, arc-tracker, hypothesis, wave, crisis-assess                                                       | 9     |
 | `mat-*` | MAT    | loader, indexer                                                                                                                                          | 2     |
 | `cre-*` | CRE    | post-writer, explore, repurpose                                                                                                                          | 3     |
-| `mpc-*` | MPC    | intake, classify, session-state, decisions, agent-memory, privacy-guard, narrative-twist, voice-audit, compounding, dream, profile-lite, prompt-leverage | 12    |
+| `orc-*` | ORC    | intake, classify, session-state, decisions, agent-memory, privacy-guard, narrative-twist, voice-audit, compounding, dream, profile-lite, prompt-leverage | 12    |
 
 ### Skill Activation Rules
 
-- `mpc:intake` runs first on every new task — classifies work type before any domain skill activates
-- `mpc:classify` risk-gates all content creation — must run before `cre:post-writer`
+- `orc:intake` runs first on every new task — classifies work type before any domain skill activates
+- `orc:classify` risk-gates all content creation — must run before `cre:post-writer`
 - `mat:*` skills MUST complete before `psy:*` skills consume their output
 - `psy:*` profile-modifying skills MUST complete before `cre:*` voice-dependent skills
 
@@ -151,7 +151,7 @@ MPC must clear `pending_events` before marking session complete.
 
 ## Persistent Event Logging
 
-All core events SHOULD be appended to the persistent audit log at `.claude/session-state/event-log.jsonl` via `mpc:event-log --append`.
+All core events SHOULD be appended to the persistent audit log at `.claude/session-state/event-log.jsonl` via `orc:event-log --append`.
 
 ### Log Format
 
@@ -178,27 +178,27 @@ Each event is one JSON line:
 | `PSY.updated`       | psy:wave                | Yes        |
 | `PSY.crisis`        | psy:crisis-assess       | Yes        |
 | `CRE.recalibrate`   | cre:post-writer         | Yes        |
-| `MPC.bootstrap`     | mpc:bootstrap           | Yes        |
-| `MPC.decision`      | mpc:decisions           | Yes        |
+| `ORC.bootstrap`     | orc:bootstrap           | Yes        |
+| `ORC.decision`      | orc:decisions           | Yes        |
 | `MAT.archived`      | mat:archive             | Yes        |
 
 ### Querying
 
 ```bash
 # Recent events
-/mpc:event-log --query
+/orc:event-log --query
 
 # Filter by type and date
-/mpc:event-log --query --event-type PSY.refresh --since 2026-05-01
+/orc:event-log --query --event-type PSY.refresh --since 2026-05-01
 
 # Filter by character
-/mpc:event-log --query --character hieu
+/orc:event-log --query --character hieu
 ```
 
 ### Scripts
 
-- `mpc-event-log/scripts/append-event-to-log.py` — append one event
-- `mpc-event-log/scripts/query-event-log-with-filters.py` — filter and display
+- `orc-event-log/scripts/append-event-to-log.py` — append one event
+- `orc-event-log/scripts/query-event-log-with-filters.py` — filter and display
 
 ## Failure Modes
 

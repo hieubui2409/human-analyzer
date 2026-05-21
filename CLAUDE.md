@@ -16,15 +16,15 @@ Four integrated frameworks with event-driven orchestration:
 
 ```
 MAT (Input) → PSY (Analysis) → CRE (Output)
-                    ↑ MPC (Orchestration) ↑
+                    ↑ ORC (Orchestration) ↑
 ```
 
-| Framework | Domain             | Directory                                             | Purpose                            |
-| --------- | ------------------ | ----------------------------------------------------- | ---------------------------------- |
-| **MAT**   | Materials          | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
-| **PSY**   | Psychology         | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
-| **CRE**   | Content            | `assets/`                                             | Platform content creation          |
-| **MPC**   | Meta-orchestration | `.claude/`                                            | Event routing, domain coordination |
+| Framework | Domain        | Directory                                             | Purpose                            |
+| --------- | ------------- | ----------------------------------------------------- | ---------------------------------- |
+| **MAT**   | Materials     | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
+| **PSY**   | Psychology    | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
+| **CRE**   | Content       | `assets/`                                             | Platform content creation          |
+| **ORC**   | Orchestration | `.claude/`                                            | Event routing, domain coordination |
 
 Event flow: `MAT.integrated` → `PSY.refresh` → `CRE.recalibrate`
 
@@ -155,27 +155,27 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | 09  | confidentiality-protocol   | Privacy tags, content boundaries                              |
 | 10  | reference-library-standard | Reference schema, scientific rigor                            |
 | 11  | mat-pipeline               | MAT 5-stage pipeline, evidence tiers, CRAAP test              |
-| 12  | mpc-orchestration          | Event system, domain boundaries, trigger routing              |
-| 13  | mpc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE)                      |
+| 12  | orc-orchestration          | Event system, domain boundaries, trigger routing              |
+| 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE)                      |
 | 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
 
 ---
 
 ## Skills (`.claude/skills/`)
 
-### MPC — Orchestration Skills
+### ORC — Orchestration Skills
 
 | Skill               | Purpose                                                           |
 | ------------------- | ----------------------------------------------------------------- |
-| `mpc:bootstrap`     | Load project context (--quick/--full/--character/--lite/--intent) |
-| `mpc:session-state` | Track session state, framework domains, event queue               |
-| `mpc:classify`      | Risk classification (tiny/normal/high_risk) + MAT gates           |
-| `mpc:intake`        | Route work type → skill chain (MAT/PSY/CRE routing)               |
-| `mpc:compounding`   | Extract session learnings → memory                                |
-| `mpc:dream`         | Periodic memory consolidation                                     |
-| `mpc:decisions`     | Append-only decision records                                      |
-| `mpc:agent-memory`  | Per-agent calibration memory                                      |
-| `mpc:event-log`     | Persistent event audit logging (JSONL append + query)             |
+| `orc:bootstrap`     | Load project context (--quick/--full/--character/--lite/--intent) |
+| `orc:session-state` | Track session state, framework domains, event queue               |
+| `orc:classify`      | Risk classification (tiny/normal/high_risk) + MAT gates           |
+| `orc:intake`        | Route work type → skill chain (MAT/PSY/CRE routing)               |
+| `orc:compounding`   | Extract session learnings → memory                                |
+| `orc:dream`         | Periodic memory consolidation                                     |
+| `orc:decisions`     | Append-only decision records                                      |
+| `orc:agent-memory`  | Per-agent calibration memory                                      |
+| `orc:event-log`     | Persistent event audit logging (JSONL append + query)             |
 
 ### COM — Common Skills
 
@@ -228,7 +228,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ## Scripts Infrastructure
 
-34 skills (mpc/mat/psy/cre/com) share a Python utility library and 60+ supportive scripts.
+34 skills (orc/mat/psy/cre/com) share a Python utility library and 60+ supportive scripts.
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 

@@ -1,5 +1,5 @@
 ---
-name: mpc:session-state
+name: orc:session-state
 description: "Track session state across conversations — what profiles were updated, content created, decisions made. View current state, archive history, recover on resume. Use when user says 'session state', 'what did we do', 'session recap', or automatically via hooks on SessionStart/Stop."
 argument-hint: "[--show|--archive|--reset]"
 metadata:
@@ -49,7 +49,7 @@ Location: `.claude/session-state/state.json`
 
 | Field            | Type   | Description                                       |
 | ---------------- | ------ | ------------------------------------------------- |
-| `active_domain`  | enum   | Current work domain: MAT / PSY / CRE / MPC / null |
+| `active_domain`  | enum   | Current work domain: MAT / PSY / CRE / ORC / null |
 | `mat_pipeline`   | object | MAT pipeline tracking (see below)                 |
 | `psy_updates`    | object | PSY framework update tracking (see below)         |
 | `cre_pipeline`   | object | CRE content pipeline tracking (see below)         |
@@ -97,7 +97,7 @@ Location: `.claude/session-state/state.json`
 
 #### `pending_events` Array
 
-Events emitted by domain skills, consumed by MPC orchestration:
+Events emitted by domain skills, consumed by ORC orchestration:
 
 ```json
 [
@@ -165,7 +165,7 @@ Claude should update state.json fields as work progresses:
 - After MAT ingestion → update `mat_pipeline.active_ingestions` and `mat_pipeline.files_by_status`
 - After PSY profile edit → append to `psy_updates.profiles_refreshed`, check `psy_updates.pending_refresh`
 - After CRE content creation → update `cre_pipeline.active_content`
-- After domain event → append to `pending_events` for MPC consumption
+- After domain event → append to `pending_events` for ORC consumption
 - Set `active_domain` when entering a domain workflow (MAT/PSY/CRE)
 
 Use bash to update:
@@ -190,8 +190,8 @@ with open('.claude/session-state/state.json', 'w') as f: json.dump(s, f, indent=
 
 When archiving a session (`--archive`), if `profiles_touched` or `content_created` are non-empty, suggest:
 
-- `mpc:compounding` — extract durable learnings before archiving
-- `mpc:dream` — if 5+ sessions archived since last dream, suggest memory consolidation
+- `orc:compounding` — extract durable learnings before archiving
+- `orc:dream` — if 5+ sessions archived since last dream, suggest memory consolidation
 
 ## Domain Transition Protocol
 
@@ -204,10 +204,10 @@ When switching between framework domains (MAT → PSY → CRE):
 
 ## See Also
 
-- `/mpc:classify` — risk classification writes mode to state.json
-- `/mpc:compounding` — extract learnings from session work
-- `/mpc:dream` — periodic consolidation triggered by session-state archive cadence
+- `/orc:classify` — risk classification writes mode to state.json
+- `/orc:compounding` — extract learnings from session work
+- `/orc:dream` — periodic consolidation triggered by session-state archive cadence
 - `/com:git` — project-aware git operations
 - `mat:loader` — MAT pipeline events update mat_pipeline fields
 - `mat:indexer` — emits MAT.integrated/MAT.contradiction events
-- `docs/rules/12-mpc-orchestration.md` — event system that drives pending_events
+- `docs/rules/12-orc-orchestration.md` — event system that drives pending_events

@@ -1,4 +1,4 @@
-"""Recommend downstream actions from domain events for mpc:session-state."""
+"""Recommend downstream actions from domain events for orc:session-state."""
 import argparse
 import json
 import sys
@@ -22,7 +22,7 @@ EVENT_ROUTING = {
         {"skill": "psy:propagate", "args": "", "reason": "Cascade profile changes to related characters"},
         {"skill": "psy:crossref", "args": "--extended", "reason": "Re-validate all 10 dimensions after update"},
         {"skill": "cre:voice-audit", "args": "", "reason": "Check if voice data needs recalibration"},
-        {"skill": "mpc:event-log", "args": "--append --event-type PSY.updated", "reason": "Log profile update to audit trail"},
+        {"skill": "orc:event-log", "args": "--append --event-type PSY.updated", "reason": "Log profile update to audit trail"},
     ],
     "CRE.recalibrate": [
         {"skill": "cre:privacy-guard", "args": "", "reason": "New content needs privacy scan"},
@@ -31,11 +31,11 @@ EVENT_ROUTING = {
     "COM.rules_updated": [
         {"skill": "com:rules", "args": "--validate", "reason": "Verify rule consistency after update"},
     ],
-    "MPC.skill_updated": [
-        {"skill": "mpc:bootstrap", "args": "--quick", "reason": "Refresh session context with updated skills"},
+    "ORC.skill_updated": [
+        {"skill": "orc:bootstrap", "args": "--quick", "reason": "Refresh session context with updated skills"},
     ],
-    "MPC.script_updated": [
-        {"skill": "mpc:bootstrap", "args": "--quick", "reason": "Refresh session context with updated scripts"},
+    "ORC.script_updated": [
+        {"skill": "orc:bootstrap", "args": "--quick", "reason": "Refresh session context with updated scripts"},
     ],
 }
 

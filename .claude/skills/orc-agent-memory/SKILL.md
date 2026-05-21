@@ -1,5 +1,5 @@
 ---
-name: mpc:agent-memory
+name: orc:agent-memory
 description: "Persistent memory for content-creator and copywriter agents. Stores writing style learnings, successful patterns, platform-specific insights, and character voice calibration. Agents read before writing, write after completing work. Use to view, manage, or seed agent memory. Triggers: 'agent memory', 'what has the agent learned', 'agent learnings', 'reset agent memory'."
 argument-hint: "[--show|--seed|--reset|--agent <name>]"
 metadata:
@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "workflow"
   position: "utility"
-  dependencies: ["mpc:compounding"]
+  dependencies: ["orc:compounding"]
 ---
 
 # Agent Memory — Persistent Learning for Content Agents
@@ -159,12 +159,12 @@ If something failed → add to Failures / Anti-patterns
 Update "Last updated" timestamp
 ```
 
-## Integration with mpc:compounding
+## Integration with orc:compounding
 
-`mpc:compounding` extracts session-level learnings.
-`mpc:agent-memory` stores agent-specific operational patterns.
+`orc:compounding` extracts session-level learnings.
+`orc:agent-memory` stores agent-specific operational patterns.
 
-Flow: Work completes → `mpc:compounding` extracts insights → relevant insights pushed to agent memory files.
+Flow: Work completes → `orc:compounding` extracts insights → relevant insights pushed to agent memory files.
 
 ## Scripts
 
@@ -182,15 +182,15 @@ Flow: Work completes → `mpc:compounding` extracts insights → relevant insigh
 ## Examples
 
 ```bash
-/mpc:agent-memory                           # show all
-/mpc:agent-memory --show                    # same
-/mpc:agent-memory --seed                    # initialize from profiles
-/mpc:agent-memory --agent copywriter        # show copywriter only
-/mpc:agent-memory --reset                   # clear with backup
+/orc:agent-memory                           # show all
+/orc:agent-memory --show                    # same
+/orc:agent-memory --seed                    # initialize from profiles
+/orc:agent-memory --agent copywriter        # show copywriter only
+/orc:agent-memory --reset                   # clear with backup
 ```
 
 ## See Also
 
-- `/mpc:compounding` — feeds learnings into agent memory
-- `/mpc:dream` — consolidates agent memory during maintenance
+- `/orc:compounding` — feeds learnings into agent memory
+- `/orc:dream` — consolidates agent memory during maintenance
 - `/cre:prompt-leverage` — agent memory informs prompt strengthening

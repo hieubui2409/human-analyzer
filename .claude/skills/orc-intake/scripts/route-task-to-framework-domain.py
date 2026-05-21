@@ -1,4 +1,4 @@
-"""Route task description to framework domain for mpc:intake.
+"""Route task description to framework domain for orc:intake.
 
 Hybrid approach: keyword pre-filter for fast deterministic routing,
 with AMBIGUOUS fallback when confidence is low so LLM makes final decision.

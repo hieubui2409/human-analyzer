@@ -1,18 +1,18 @@
 ---
-name: mpc:event-log
-description: "Persistent event logging and audit trail — append framework events (MAT.integrated, PSY.refresh, CRE.recalibrate, etc.) to a JSONL log and query with filters. Provides audit trail for all cross-domain MPC events. Triggers: 'log event', 'event history', 'audit trail', 'show events', 'event log'."
+name: orc:event-log
+description: "Persistent event logging and audit trail — append framework events (MAT.integrated, PSY.refresh, CRE.recalibrate, etc.) to a JSONL log and query with filters. Provides audit trail for all cross-domain ORC events. Triggers: 'log event', 'event history', 'audit trail', 'show events', 'event log'."
 argument-hint: "[--append --event-type <type> --source <skill> --character <name> --reason <text>] | [--query [--event-type <type>] [--character <name>] [--since YYYY-MM-DD] [--source <skill>]]"
 metadata:
   author: hieubt
   version: "1.0.0"
-  category: "mpc-orchestration"
+  category: "orc-orchestration"
   position: "infrastructure"
   dependencies: []
 ---
 
-# mpc:event-log — Persistent Event Logging
+# orc:event-log — Persistent Event Logging
 
-Append MPC framework events to `.claude/session-state/event-log.jsonl` and query the history with filters.
+Append ORC framework events to `.claude/session-state/event-log.jsonl` and query the history with filters.
 
 ## Default (No Arguments)
 
@@ -23,13 +23,13 @@ Append MPC framework events to `.claude/session-state/event-log.jsonl` and query
 ### Append Mode
 
 ```bash
-/mpc:event-log --append --event-type MAT.integrated --source mat:indexer --character hieu --reason "New transcript processed"
+/orc:event-log --append --event-type MAT.integrated --source mat:indexer --character hieu --reason "New transcript processed"
 ```
 
 ### Query Mode
 
 ```bash
-/mpc:event-log --query --event-type PSY.refresh --since 2026-01-01
+/orc:event-log --query --event-type PSY.refresh --since 2026-01-01
 ```
 
 ## Flags
@@ -64,8 +64,8 @@ Append MPC framework events to `.claude/session-state/event-log.jsonl` and query
 | `MAT.integrated`  | Material passes Stage 3-4 in mat:indexer |
 | `PSY.refresh`     | Profile section updated via psy: skill   |
 | `CRE.recalibrate` | Content recalibrated after PSY change    |
-| `MPC.bootstrap`   | Session bootstrapped via mpc:bootstrap   |
-| `MPC.decision`    | Decision recorded via mpc:decisions      |
+| `ORC.bootstrap`   | Session bootstrapped via orc:bootstrap   |
+| `ORC.decision`    | Decision recorded via orc:decisions      |
 | `PSY.crisis`      | Crisis assessment triggered              |
 | `MAT.archived`    | Material archived via mat:archive        |
 
@@ -130,14 +130,14 @@ Each event is one JSON line in `.claude/session-state/event-log.jsonl`:
 ## Examples
 
 ```bash
-/mpc:event-log                                                    # recent events
-/mpc:event-log --query --event-type MAT.integrated                # all integrations
-/mpc:event-log --query --character hieu --since 2026-05-01        # Nhân vật A events this month
-/mpc:event-log --append --event-type PSY.refresh --source psy:wave --character hoa --reason "Wave 1 complete"
+/orc:event-log                                                    # recent events
+/orc:event-log --query --event-type MAT.integrated                # all integrations
+/orc:event-log --query --character hieu --since 2026-05-01        # Nhân vật A events this month
+/orc:event-log --append --event-type PSY.refresh --source psy:wave --character hoa --reason "Wave 1 complete"
 ```
 
 ## See Also
 
-- `mpc:session-state` — runtime session tracking (in-memory)
-- `mpc:decisions` — decision records (separate from event log)
-- `mpc:bootstrap` — loads context (logs MPC.bootstrap event)
+- `orc:session-state` — runtime session tracking (in-memory)
+- `orc:decisions` — decision records (separate from event log)
+- `orc:bootstrap` — loads context (logs ORC.bootstrap event)

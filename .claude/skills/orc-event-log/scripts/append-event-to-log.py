@@ -1,4 +1,4 @@
-"""Append a single MPC framework event as a JSON line to the persistent event log."""
+"""Append a single ORC framework event as a JSON line to the persistent event log."""
 import argparse
 import json
 import sys
@@ -17,16 +17,16 @@ VALID_EVENT_TYPES = [
     "PSY.refresh",
     "PSY.crisis",
     "CRE.recalibrate",
-    "MPC.bootstrap",
-    "MPC.decision",
-    "MPC.classify",
-    "MPC.intake",
+    "ORC.bootstrap",
+    "ORC.decision",
+    "ORC.classify",
+    "ORC.intake",
 ]
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Append a MPC framework event to the persistent event log"
+        description="Append a ORC framework event to the persistent event log"
     )
     parser.add_argument("--event-type", required=True,
                         help=f"Event type. Known: {', '.join(VALID_EVENT_TYPES)}")

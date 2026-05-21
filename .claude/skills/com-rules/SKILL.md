@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "quality"
   position: "review"
-  dependencies: ["mpc:classify"]
+  dependencies: ["orc:classify"]
 ---
 
 # Project Rules Validation
@@ -42,8 +42,8 @@ Validate uncommitted changes against matching rules.
 | 09     | confidentiality-protocol   | Delegate → `cre:privacy-guard`                             |
 | 10     | reference-library-standard | Check reference file schema (frontmatter fields)           |
 | 11     | mat-pipeline               | Check material processing_status field                     |
-| 12     | mpc-orchestration          | Check event references valid                               |
-| 13     | mpc-workflow               | N/A (process rule, not file rule)                          |
+| 12     | orc-orchestration          | Check event references valid                               |
+| 13     | orc-workflow               | N/A (process rule, not file rule)                          |
 | 14     | cre-evidence-and-events    | Check evidence tier compliance in assets/                  |
 
 ## Validation Workflow
@@ -123,7 +123,7 @@ For each matched rule:
 
 ## See Also
 
-- `mpc:classify` — pre-task risk assessment (use BEFORE changes)
+- `orc:classify` — pre-task risk assessment (use BEFORE changes)
 - `com:rules` — post-change validation (use AFTER changes)
 - `psy:crossref`, `psy:ref-audit`, `cre:privacy-guard` — specialized validators
 - `com:git` — commit after validation passes

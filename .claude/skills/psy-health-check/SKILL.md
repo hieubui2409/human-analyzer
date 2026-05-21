@@ -129,5 +129,5 @@ Priority gaps to fill:
 ## See Also
 
 - `psy:wave` — 3-wave profiling to fill completeness gaps
-- `mpc:bootstrap --full` — load full context (uses health to prioritize)
+- `orc:bootstrap --full` — load full context (uses health to prioritize)
 - `psy:crossref` — consistency validation (run after gaps are filled)

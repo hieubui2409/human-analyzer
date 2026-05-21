@@ -1,5 +1,5 @@
 ---
-name: mpc:classify
+name: orc:classify
 description: "Classify task risk level and determine workflow ceremony before implementation. Use when starting content creation, profile updates, arc development, or asset production. Outputs mode (tiny/normal/high_risk), required ceremony, proof strategy. Should run BEFORE /ck:plan or any implementation work."
 argument-hint: "[task description] [--auto] [--show]"
 metadata:
@@ -127,8 +127,8 @@ After completing this task, check:
 
 **high_risk:**
 
-1. `mpc:bootstrap --full` — load ALL relevant character context
-2. `mpc:decisions --review` — check past decisions for this character/topic to avoid re-litigating
+1. `orc:bootstrap --full` — load ALL relevant character context
+2. `orc:decisions --review` — check past decisions for this character/topic to avoid re-litigating
 3. `/ck:plan` — detailed plan with profile cross-references
 4. Read ALL relevant profile files before starting
 5. Implement per plan phases
@@ -169,10 +169,10 @@ Verify write succeeded by re-reading `mode` field after write.
 ## Examples
 
 ```bash
-/mpc:classify Write a LinkedIn post about Nhân vật A's mentoring philosophy
-/mpc:classify Update psychology/formulation.md for Nhân vật B with new psychological insights
-/mpc:classify --auto
-/mpc:classify --show
+/orc:classify Write a LinkedIn post about Nhân vật A's mentoring philosophy
+/orc:classify Update psychology/formulation.md for Nhân vật B with new psychological insights
+/orc:classify --auto
+/orc:classify --show
 ```
 
 ## Scripts
@@ -189,8 +189,8 @@ Verify write succeeded by re-reading `mode` field after write.
 
 ## See Also
 
-- `/mpc:session-state` — classification writes mode to state.json
-- `/mpc:decisions` — review past decisions before high_risk work
+- `/orc:session-state` — classification writes mode to state.json
+- `/orc:decisions` — review past decisions before high_risk work
 - `/ck:plan` — next step after classification for normal/high_risk
 - `docs/profiles/*/INDEX.md` — quick reference for each character
 - `docs/references/INDEX.md` — clinical theory library index

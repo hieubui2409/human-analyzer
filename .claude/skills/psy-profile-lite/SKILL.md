@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "optimization"
   position: "utility"
-  dependencies: ["mpc:bootstrap"]
+  dependencies: ["orc:bootstrap"]
 ---
 
 # Profile Lite — Token-Efficient Character Summaries
@@ -175,7 +175,7 @@ Force regeneration regardless of cache state. Useful after major profile overhau
 
 ## Integration
 
-- `mpc:bootstrap --quick` can use lite profiles instead of INDEX.md for richer context at low token cost
+- `orc:bootstrap --quick` can use lite profiles instead of INDEX.md for richer context at low token cost
 - `cre:post-writer` should load lite profile by default, full only if needed
 - `cre:exploring` can reference lite profile during Q3 (angle selection)
 
@@ -197,6 +197,6 @@ Force regeneration regardless of cache state. Useful after major profile overhau
 
 ## See Also
 
-- `/mpc:bootstrap` — context loading (uses lite profiles when available)
+- `/orc:bootstrap` — context loading (uses lite profiles when available)
 - `/cre:post-writer` — content creation (loads lite by default)
 - `/psy:crossref` — needs full profiles for deep validation

@@ -288,6 +288,6 @@ For each shared reference:
 ## See Also
 
 - `/psy:ref-audit` — clinical accuracy (complementary)
-- `/mpc:classify` — cross-character work triggers high_risk
+- `/orc:classify` — cross-character work triggers high_risk
 - `plans/reports/validation-260325-cross-reference-check.md` — previous crossref report
 - `plans/reports/detect-260331-*-inconsistencies.md` — per-character inconsistency reports

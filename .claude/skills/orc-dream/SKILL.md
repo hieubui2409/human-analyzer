@@ -1,5 +1,5 @@
 ---
-name: mpc:dream
+name: orc:dream
 description: "Periodic consolidation of character insights and storytelling patterns. Scans memory, session archives, recent work to merge, update, or create durable learnings. Resolves contradictions, prunes stale memories, strengthens weak ones. Use weekly or when memory feels fragmented. Triggers: 'dream', 'consolidate', 'clean up learnings', 'memory maintenance'."
 argument-hint: "[--scan|--merge|--prune|--full]"
 metadata:
@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "workflow"
   position: "maintenance"
-  dependencies: ["mpc:compounding"]
+  dependencies: ["orc:compounding"]
 ---
 
 # Dream — Periodic Learning Consolidation
@@ -38,7 +38,7 @@ Consolidate scattered insights into coherent, up-to-date knowledge. Run periodic
    - `feedback` — behavioral guidance
    - `project` — ongoing work context
    - `reference` — external pointers
-4. Check for `source: mpc:compounding` tagged memories
+4. Check for `source: orc:compounding` tagged memories
 5. Report:
    ```
    ## Memory Health
@@ -139,8 +139,8 @@ Next dream recommended: {date}
 
 Dream should be suggested (not forced) when:
 
-- `mpc:session-state --archive` detects 5+ sessions since last dream
-- `mpc:compounding` has written 5+ new memories since last dream
+- `orc:session-state --archive` detects 5+ sessions since last dream
+- `orc:compounding` has written 5+ new memories since last dream
 - Memory scan shows 3+ broken `[[name]]` links
 
 Check last dream date via: `ls -t .claude/projects/-home-hieubt-Documents-ck-marketing/memory/.dream-backup/ | head -1`
@@ -162,14 +162,14 @@ Check last dream date via: `ls -t .claude/projects/-home-hieubt-Documents-ck-mar
 ## Examples
 
 ```bash
-/mpc:dream                    # full consolidation
-/mpc:dream --scan             # health check only
-/mpc:dream --merge            # find + execute merges
-/mpc:dream --prune            # find + remove stale
+/orc:dream                    # full consolidation
+/orc:dream --scan             # health check only
+/orc:dream --merge            # find + execute merges
+/orc:dream --prune            # find + remove stale
 ```
 
 ## See Also
 
-- `/mpc:compounding` — creates the learnings that dream consolidates
-- `/mpc:session-state` — session archives provide consolidation input
-- `/mpc:bootstrap` — benefits from clean, consolidated memory
+- `/orc:compounding` — creates the learnings that dream consolidates
+- `/orc:session-state` — session archives provide consolidation input
+- `/orc:bootstrap` — benefits from clean, consolidated memory
