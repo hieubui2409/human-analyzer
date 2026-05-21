@@ -43,6 +43,9 @@ OBJECT_KEYWORDS = {
     "crisis": ["crisis", "risk", "suicide", "self-harm", "khủng hoảng", "tự hại"],
     "privacy": ["privacy", "confidential", "real name", "tên thật", "bảo mật"],
     "voice": ["voice", "tone", "giọng", "writing style"],
+    "career": ["career", "competency", "learning profile", "mentoring", "career path",
+               "career forecast", "skill inventory", "professional development",
+               "nghề nghiệp", "năng lực", "hướng nghiệp", "sự nghiệp"],
 }
 
 PLATFORMS = ["facebook", "linkedin", "instagram", "tiktok", "youtube", "twitter", "blog"]

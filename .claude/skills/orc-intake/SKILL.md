@@ -124,6 +124,27 @@ psy:ref-audit --discover → psy:ref-create <theory> → psy:ref-scan --new → 
 orc:dream (if memory) → direct execution → orc:session-state --archive (if session end)
 ```
 
+### 10. Growth Analysis (GRO Track)
+
+**Signals:** "career analysis", "competency assessment", "learning profile", "mentoring", "career forecast", "career path", "skills gap", "growth plan"
+**Files involved:** `docs/growth/`
+
+**Route:**
+
+```
+orc:bootstrap --character <name> → orc:classify → gro:skill-chain → orc:compounding
+```
+
+**GRO Domain routing:**
+
+| Signal                  | GRO Skill            |
+| ----------------------- | -------------------- |
+| "career analysis"       | gro:career-path      |
+| "competency assessment" | gro:competency-map   |
+| "learning profile"      | gro:learning-profile |
+| "mentoring"             | gro:mentoring-track  |
+| "career forecast"       | gro:career-forecast  |
+
 ### 9. Multi-Platform Campaign
 
 **Signals:** "campaign", "across platforms", "multi-channel", "launch"

@@ -37,6 +37,16 @@ EVENT_ROUTING = {
     "ORC.script_updated": [
         {"skill": "orc:bootstrap", "args": "--quick", "reason": "Refresh session context with updated scripts"},
     ],
+    "GRO.assessed": [
+        {"skill": "cre:post-writer", "args": "--recalibrate", "reason": "Competency data changed — recalibrate content context"},
+    ],
+    "GRO.forecast": [],
+    "GRO.mentored": [
+        {"skill": "psy:crossref", "args": "--validate", "reason": "Mentoring may reveal cross-character psychological insights"},
+    ],
+    "GRO.profiled": [
+        {"skill": "cre:post-writer", "args": "--recalibrate", "reason": "Learning profile changed — recalibrate content context"},
+    ],
 }
 
 

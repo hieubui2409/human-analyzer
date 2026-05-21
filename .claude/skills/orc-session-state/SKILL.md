@@ -47,13 +47,13 @@ Location: `.claude/session-state/state.json`
 
 ### Framework Context Fields
 
-| Field            | Type   | Description                                       |
-| ---------------- | ------ | ------------------------------------------------- |
-| `active_domain`  | enum   | Current work domain: MAT / PSY / CRE / ORC / null |
-| `mat_pipeline`   | object | MAT pipeline tracking (see below)                 |
-| `psy_updates`    | object | PSY framework update tracking (see below)         |
-| `cre_pipeline`   | object | CRE content pipeline tracking (see below)         |
-| `pending_events` | array  | Unprocessed event queue from domain triggers      |
+| Field            | Type   | Description                                             |
+| ---------------- | ------ | ------------------------------------------------------- |
+| `active_domain`  | enum   | Current work domain: MAT / PSY / CRE / GRO / ORC / null |
+| `mat_pipeline`   | object | MAT pipeline tracking (see below)                       |
+| `psy_updates`    | object | PSY framework update tracking (see below)               |
+| `cre_pipeline`   | object | CRE content pipeline tracking (see below)               |
+| `pending_events` | array  | Unprocessed event queue from domain triggers            |
 
 #### `mat_pipeline` Object
 
@@ -116,7 +116,7 @@ Events emitted by domain skills, consumed by ORC orchestration:
 ]
 ```
 
-Event types: `MAT.integrated`, `MAT.contradiction`, `PSY.refresh`, `PSY.flag`, `CRE.recalibrate`, `CRE.published`
+Event types: `MAT.integrated`, `MAT.contradiction`, `PSY.refresh`, `PSY.flag`, `CRE.recalibrate`, `CRE.published`, `GRO.assessed`, `GRO.forecast`, `GRO.mentored`, `GRO.profiled`
 
 ## Hook Integration
 
@@ -166,7 +166,8 @@ Claude should update state.json fields as work progresses:
 - After PSY profile edit → append to `psy_updates.profiles_refreshed`, check `psy_updates.pending_refresh`
 - After CRE content creation → update `cre_pipeline.active_content`
 - After domain event → append to `pending_events` for ORC consumption
-- Set `active_domain` when entering a domain workflow (MAT/PSY/CRE)
+- Set `active_domain` when entering a domain workflow (MAT/PSY/CRE/GRO)
+- After GRO work on `docs/growth/` files → set `active_domain` to `GRO`
 
 Use bash to update:
 

@@ -181,6 +181,14 @@ Verify write succeeded by re-reading `mode` field after write.
 | -------------------------------------------- | ---------------------------------------------------------------------- |
 | `scripts/detect-risk-flags-from-git-diff.py` | Scan git diff output for risk flag signals to seed auto-classification |
 
+## GRO Domain Risk Notes
+
+Growth domain files (`docs/growth/`) contain factual career and competency data — not clinical content. Risk classification applies as follows:
+
+- Edits to `docs/growth/` are **normal** risk by default (factual career data, no clinical sensitivity)
+- Exception: if growth content cross-references psychology/ profiles → escalate to `high_risk` (cross-domain consistency gate)
+- Career forecasts with public-facing distribution → add flag 10 (viral/public-facing)
+
 ## Safety
 
 - READ-ONLY classification — does not modify profiles, content, or references

@@ -12,7 +12,7 @@ metadata:
 
 # Project Context Bootstrap
 
-Systematically load ck-marketing context into session. Prevents context drift across 3 complex character profiles + clinical references.
+Systematically load ck-marketing context into session. Prevents context drift across 3 complex character profiles + clinical references + GRO growth domain.
 
 ## Default (No Arguments)
 
@@ -75,8 +75,9 @@ Resolve `<name>` argument to directory:
 3. Read `docs/references/INDEX.md` (clinical theory index)
 4. Read `docs/graph/relational-dynamics.md` (cross-character dynamics)
 5. Read `docs/rules/` (13 modular rule files)
-6. Run recent git log
-7. Print summary with file count per character
+6. Read `docs/growth/` files if present (GRO domain: competency maps, career forecasts, learning profiles, mentoring tracks)
+7. Run recent git log
+8. Print summary with file count per character
 
 ### --character `<name>`
 

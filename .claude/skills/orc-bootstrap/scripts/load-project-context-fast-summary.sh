@@ -56,6 +56,18 @@ ref_count=$(find "$PROJECT_ROOT/docs/references" -name "*.md" ! -name "INDEX.md"
 echo "- $ref_count theory reference files in docs/references/"
 
 echo ""
+echo "### Growth (GRO)"
+for entry in "${CHARS[@]}"; do
+    slug="${entry%%:*}"
+    display="${entry##*:}"
+    growth_dir="$PROFILES/$slug/growth"
+    if [ -d "$growth_dir" ]; then
+        gfiles=$(find "$growth_dir" -name "*.md" | wc -l)
+        echo "- **$display**: $gfiles growth files"
+    fi
+done
+
+echo ""
 echo "### Assets"
 asset_count=$(find "$PROJECT_ROOT/assets" -type f 2>/dev/null | wc -l)
 echo "- $asset_count asset files in assets/"

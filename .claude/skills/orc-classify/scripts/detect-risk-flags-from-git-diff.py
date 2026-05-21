@@ -62,10 +62,14 @@ def parse_files(diff_files: list[str]) -> dict:
     has_assets = False
     has_rules = False
 
+    has_growth = False
+
     for f in diff_files:
         f = f.strip()
         if not f:
             continue
+        if "/growth/" in f:
+            has_growth = True
         for char in ALL_CHARS:
             if f"profiles/{char}/" in f or f"materials/{char}/" in f:
                 chars_touched.add(char)
@@ -90,6 +94,7 @@ def parse_files(diff_files: list[str]) -> dict:
         "has_assets": has_assets,
         "has_rules": has_rules,
         "has_profiles": len(chars_touched) > 0,
+        "has_growth": has_growth,
     }
 
 

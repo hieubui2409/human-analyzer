@@ -70,6 +70,19 @@ DOMAIN_KEYWORDS = {
             "cre:exploring", "cre:prompt-leverage", "cre:repurpose",
         ],
     },
+    "GRO": {
+        "keywords": [
+            "career", "competency", "learning profile", "mentoring",
+            "career forecast", "skill inventory", "career path",
+            "career trajectory", "professional development",
+            "nghề nghiệp", "năng lực", "hướng nghiệp", "phát triển",
+            "kỹ năng", "mentor", "sự nghiệp",
+        ],
+        "skills": [
+            "gro:career-path", "gro:competency-map", "gro:learning-profile",
+            "gro:mentoring-track", "gro:career-forecast",
+        ],
+    },
     "COM": {
         "keywords": [
             "rule", "git", "commit", "push", "config", "schema",
@@ -106,6 +119,11 @@ DOMAIN_PHRASES = {
         ("personal letter", 2), ("social media campaign", 3),
         ("cross platform", 2), ("voice consistency", 2),
         ("write a post", 3), ("create content", 2),
+    ],
+    "GRO": [
+        ("career path", 3), ("career analysis", 3), ("competency assessment", 3),
+        ("learning profile", 3), ("career forecast", 3), ("mentoring session", 3),
+        ("professional growth", 2), ("skill inventory", 2),
     ],
     "COM": [
         ("git commit", 2), ("coding standard", 2),

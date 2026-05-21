@@ -21,6 +21,14 @@ DOMAIN_RULES = {
     ".claude/scripts/": {"event": "ORC.script_updated", "domain": "ORC"},
 }
 
+GRO_PATH_PREFIX = "/growth/"
+
+def _refine_psy_vs_gro(filepath: str, info: dict) -> dict:
+    """Distinguish GRO (growth/) from PSY (rest of profiles/) changes."""
+    if info["domain"] == "PSY" and GRO_PATH_PREFIX in filepath:
+        return {"event": "GRO.profiled", "domain": "GRO"}
+    return info
+
 IGNORE_PATTERNS = [
     "plans/", ".claude/session-state/", ".claude/profile-cache/",
     ".claude/teams/", ".claude/tasks/", "node_modules/",
@@ -53,6 +61,7 @@ def classify_changes(files: list[str]) -> list[dict]:
 
         for prefix, info in DOMAIN_RULES.items():
             if filepath.startswith(prefix):
+                info = _refine_psy_vs_gro(filepath, info)
                 event_key = f"{info['event']}:{prefix}"
                 if event_key not in seen_events:
                     seen_events.add(event_key)

@@ -111,6 +111,14 @@ After merge + prune, identify gaps:
 2. If gaps found, suggest creating memories from current profiles
 3. Ensure cross-character memories link properly with `[[name]]`
 
+## GRO Consolidation Patterns
+
+During --full consolidation, also check GRO-domain memories:
+
+- **Career trajectory consistency:** verify career path memories align across characters (e.g., Nhân vật A's seniority arc vs Nhân vật C's student-to-professional arc)
+- **Competency growth trend correlation:** check if competency observations from separate sessions form a coherent growth curve
+- Flag contradictions between `gro:competency-map` outputs and psychology/growth-edges.md content
+
 ## Memory Quality Rules
 
 - Each memory should have ONE clear insight, not a list of everything

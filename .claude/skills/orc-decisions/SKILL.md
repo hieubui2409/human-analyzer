@@ -124,6 +124,8 @@ Each decision stored as markdown in `plans/decisions/`:
 | `content`        | Content angle or approach choice               |
 | `relationship`   | How to portray relationship dynamics           |
 | `clinical`       | Which clinical framework applies to a behavior |
+| `growth`         | Career path direction choices (GRO domain)     |
+| `forecast`       | Forecast confidence threshold decisions        |
 
 ## Scripts
 

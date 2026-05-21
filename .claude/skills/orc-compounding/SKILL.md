@@ -63,7 +63,15 @@ Notes on psychological framework usage:
 - Corrections or nuances discovered
 - Framework combinations that describe a character well
 
-### 5. Process Learnings
+### 5. Growth Development (GRO)
+
+Insights from career and competency work:
+
+- Career development patterns observed (trajectory shifts, skill acquisition pace)
+- Competency evolution observations (gaps closing, new strengths emerging)
+- Mentoring effectiveness notes (what approaches land, what falls flat)
+
+### 6. Process Learnings
 
 Workflow improvements discovered:
 

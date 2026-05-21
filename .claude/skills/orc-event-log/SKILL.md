@@ -59,15 +59,19 @@ Append ORC framework events to `.claude/session-state/event-log.jsonl` and query
 
 ## Event Types
 
-| Event Type        | Trigger                                  |
-| ----------------- | ---------------------------------------- |
-| `MAT.integrated`  | Material passes Stage 3-4 in mat:indexer |
-| `PSY.refresh`     | Profile section updated via psy: skill   |
-| `CRE.recalibrate` | Content recalibrated after PSY change    |
-| `ORC.bootstrap`   | Session bootstrapped via orc:bootstrap   |
-| `ORC.decision`    | Decision recorded via orc:decisions      |
-| `PSY.crisis`      | Crisis assessment triggered              |
-| `MAT.archived`    | Material archived via mat:archive        |
+| Event Type        | Trigger                                                |
+| ----------------- | ------------------------------------------------------ |
+| `MAT.integrated`  | Material passes Stage 3-4 in mat:indexer               |
+| `PSY.refresh`     | Profile section updated via psy: skill                 |
+| `CRE.recalibrate` | Content recalibrated after PSY change                  |
+| `GRO.assessed`    | Competency assessment completed via gro:competency-map |
+| `GRO.forecast`    | Career forecast generated via gro:career-forecast      |
+| `GRO.mentored`    | Mentoring session recorded via gro:mentoring-track     |
+| `GRO.profiled`    | Learning profile updated via gro:learning-profile      |
+| `ORC.bootstrap`   | Session bootstrapped via orc:bootstrap                 |
+| `ORC.decision`    | Decision recorded via orc:decisions                    |
+| `PSY.crisis`      | Crisis assessment triggered                            |
+| `MAT.archived`    | Material archived via mat:archive                      |
 
 ## Event Log Format
 

@@ -89,6 +89,11 @@ Last updated: {ISO date}
 
 1. {What didn't work}: {why}
 
+## Career & Growth Framing Notes
+
+- Career analysis vocabulary: {preferred terms for competency/growth discussions}
+- Forecast presentation style: {data-first vs narrative-first, confidence language preferences}
+
 ## Clinical Framing Notes
 
 - {Theory}: {how to reference accessibly}
