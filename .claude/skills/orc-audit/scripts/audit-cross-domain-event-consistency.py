@@ -19,7 +19,7 @@ SOURCE_SCRIPTS = {
     "domain_router": SKILLS_DIR / "orc-domain-router" / "scripts" / "route-domain-events-from-state.py",
 }
 
-EVENT_PATTERN = re.compile(r'["\']([A-Z]{2,4}\.\w+)["\']')
+EVENT_PATTERN = re.compile(r'["\'\`]([A-Z]{2,4}\.\w+)["\'\`]')
 RULES_FILE = "12-orc-orchestration.md"
 
 
