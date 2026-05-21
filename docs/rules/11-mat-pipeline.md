@@ -56,7 +56,7 @@ The MAT (Materials) framework standardizes how raw materials enter the system, g
 │ Stage 5: INTEGRATION                                 │
 │   → Merge findings into profile sections             │
 │   → Update cross-reference links                     │
-│   → Trigger PSY.refresh event (→ MPC orchestration)  │
+│   → Trigger PSY.refresh event (→ ORC orchestration)  │
 │   → Archive processed material                       │
 │   Output: processing_status → "integrated"           │
 └─────────────────────────────────────────────────────┘
@@ -99,7 +99,7 @@ When new material contradicts existing profile data:
 1. **Flag** — Record in `contradiction_flags` frontmatter field
 2. **Severity** — Rate: low (minor detail), medium (behavioral pattern), high (core trait), critical (safety-relevant)
 3. **Resolution** — Options: newer-supersedes, context-dependent, coexist-as-complexity, requires-investigation
-4. **Event** — Trigger `MAT.contradiction` event → MPC orchestration handles downstream
+4. **Event** — Trigger `MAT.contradiction` event → ORC orchestration handles downstream
 
 ## Material Types
 

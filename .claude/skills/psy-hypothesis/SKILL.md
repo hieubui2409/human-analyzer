@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "analysis"
   position: "arc-planning"
-  dependencies: ["mpc:bootstrap", "psy:ref-audit"]
+  dependencies: ["orc:bootstrap", "psy:ref-audit"]
 ---
 
 # Character Behavior Hypothesis
@@ -35,13 +35,14 @@ Predict how a character would respond to hypothetical events based on their psyc
 
 ### Step 1: Load Character Profile
 
-Load via `mpc:bootstrap --intent "psychology"`:
+Load via `orc:bootstrap --intent "psychology"`:
 
 - `psychology/formulation.md` (core wounds, coping mechanisms, inner conflicts)
 - `darkness/traumas.md` (triggers, trauma patterns)
 - `light/strengths-hope.md` (protective factors, growth edges)
 - `psychology/defense-mechanisms.md` (behavioral patterns)
 - `relationships/family.md` (dynamics with others)
+- `relationships/{other-character}.md` — cross-character files discovered via `list_relationship_files()`
 
 ### Step 2: Map Scenario to Existing Patterns
 

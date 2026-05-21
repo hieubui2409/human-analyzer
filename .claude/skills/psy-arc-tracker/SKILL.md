@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "analysis"
   position: "periodic"
-  dependencies: ["mpc:bootstrap", "psy:hypothesis"]
+  dependencies: ["orc:bootstrap", "psy:hypothesis"]
 ---
 
 # Character Arc Tracker
@@ -35,7 +35,7 @@ Track character growth trajectories. Compare predictions vs reality. Verify mile
 
 ### --trajectory (Default)
 
-1. Load character profile via `mpc:bootstrap --character {name} --intent psychology`
+1. Load character profile via `orc:bootstrap --character {name} --intent psychology`
 2. Extract growth indicators from:
    - `psychology/formulation.md`: coping mechanism evolution (less/more adaptive over time?)
    - `darkness/traumas.md`: are crisis patterns reducing in frequency/severity?

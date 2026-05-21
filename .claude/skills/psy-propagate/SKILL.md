@@ -49,6 +49,8 @@ When a section changes in the source character, these sections in connected char
 | CURRENT-STATE.md               | Connected → relationships/family.md     |
 | identity/core.md               | All → INDEX.md, identity/core.md        |
 
+> Cross-character relationship files (e.g. `relationships/character-b.md`) also carry mirror propagation — discovered dynamically via `list_relationship_files()`.
+
 ## Workflow
 
 ### Step 1: Load Graph

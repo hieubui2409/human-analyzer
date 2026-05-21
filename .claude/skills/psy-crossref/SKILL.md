@@ -72,6 +72,8 @@ Check: relationships/family.md × relationships/family.md
 Method: Extract sections about each other, compare facts + framing
 ```
 
+> Cross-character relationship files (e.g. `relationships/character-b.md`) are also checked for mirror pair symmetry — discovered dynamically via `list_relationship_files()`.
+
 ### 3. Psychological Consistency
 
 Character descriptions should be compatible:
@@ -286,6 +288,6 @@ For each shared reference:
 ## See Also
 
 - `/psy:ref-audit` — clinical accuracy (complementary)
-- `/mpc:classify` — cross-character work triggers high_risk
+- `/orc:classify` — cross-character work triggers high_risk
 - `plans/reports/validation-260325-cross-reference-check.md` — previous crossref report
 - `plans/reports/detect-260331-*-inconsistencies.md` — per-character inconsistency reports

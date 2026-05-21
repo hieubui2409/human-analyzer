@@ -6,7 +6,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import resolve_character, character_dir, CHAR_DISPLAY
+from platform_lib.paths import resolve_character, character_dir, CHAR_DISPLAY, list_relationship_files
 from platform_lib.markdown_parser import extract_sections
 from platform_lib.clinical_terms import scan_file_for_clinical_terms
 from platform_lib.formatters import print_json
@@ -72,9 +72,12 @@ def main():
         result["defense_mechanisms"] = []
         result["coping_lines"] = []
 
-    # Attachment from relationships/family.md + psychology/defense-mechanisms.md
+    # Attachment from relationships/family.md + cross-relationship files + defense-mechanisms
     attachment_lines = []
-    for fname in ["relationships/family.md", "psychology/defense-mechanisms.md"]:
+    rel_files = ["relationships/family.md", "psychology/defense-mechanisms.md"]
+    for rf in list_relationship_files(slug):
+        rel_files.append(str(rf.relative_to(cdir)))
+    for fname in rel_files:
         fpath = cdir / fname
         if fpath.exists():
             text = fpath.read_text(encoding='utf-8')

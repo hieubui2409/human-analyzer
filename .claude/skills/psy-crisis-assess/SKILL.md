@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   category: "clinical"
   position: "wave-2-supplement"
-  dependencies: ["mpc:bootstrap", "psy:ref-audit"]
+  dependencies: ["orc:bootstrap", "psy:ref-audit"]
 ---
 
 # Crisis Assessment Protocol
@@ -170,10 +170,10 @@ Skip full DSM-5 checklist. Output:
 - This skill documents clinical patterns for CHARACTER PROFILES, not real clinical diagnosis
 - Never diagnose a real person — this is for narrative/storytelling documentation
 - All clinical frameworks applied for CHARACTER ANALYSIS accuracy
-- After HIGH risk assessment, update `mpc:session-state` with crisis event for session recovery
+- After HIGH risk assessment, update `orc:session-state` with crisis event for session recovery
 - After any assessment, run `psy:ref-audit --character <name>` to verify clinical terms used correctly
 - Scope: crisis documentation in character profiles. Does NOT provide real clinical advice.
 
 ## See Also
 
-cre:privacy-guard, psy:wave, mpc:classify
+cre:privacy-guard, psy:wave, orc:classify

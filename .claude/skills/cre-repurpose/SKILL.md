@@ -55,7 +55,7 @@ Adapt existing content across platforms per `docs/rules/03-content-creation-pipe
 5. **Run privacy check** — `cre:privacy-guard --file` on adapted content (MANDATORY)
 6. **Run voice audit** — `cre:voice-audit --file` verify tone didn't drift during adaptation
 7. **Output** standard package in `assets/{platform}/{YYMMDD}-{slug}/`
-8. **Run compounding** — `mpc:compounding --content` extract platform adaptation learnings
+8. **Run compounding** — `orc:compounding --content` extract platform adaptation learnings
 
 ## Output
 
@@ -74,7 +74,7 @@ When repurposing content:
 - Read `psychology/cultural-formulation.md` — platform adaptation should respect cultural context (e.g., Nhân vật B's Tỉnh X gambling culture references may need contextualization for LinkedIn's professional audience)
 - Maintain evidence tier integrity — if original used T1 evidence, adapted version must not downgrade to T5 speculation
 - Cross-reference `docs/graph/{dyad}.md` for relationship-focused content — ensure adapted version preserves documented dynamics
-- Emit `CRE.published` event after successful repurpose (consumed by MPC orchestration)
+- Emit `CRE.published` event after successful repurpose (consumed by ORC orchestration)
 
 ## Safety
 

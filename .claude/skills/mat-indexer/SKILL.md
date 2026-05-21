@@ -185,4 +185,4 @@ Find materials stuck in pipeline:
 - `psy:crossref` — profile-level cross-character consistency (runs after MAT integration)
 - `docs/rules/11-mat-pipeline.md` — full pipeline documentation
 - `.claude/schemas/material-schema.yaml` — frontmatter schema
-- `docs/rules/12-mpc-orchestration.md` — event system documentation
+- `docs/rules/12-orc-orchestration.md` — event system documentation

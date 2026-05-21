@@ -2,7 +2,7 @@
 
 Standards for character profile files in `docs/profiles/{character}/`.
 
-Schema definition: `docs/references/universal-profile-schema.yaml`
+Schema definition: `.claude/schemas/universal-profile-schema.yaml`
 
 ## Directory Layout (Universal Schema)
 
@@ -122,7 +122,7 @@ When referencing other characters or files:
 ## Output Schemas
 
 Recommended YAML-style structure for key profile files.
-Full schema: `docs/references/universal-profile-schema.yaml`
+Full schema: `.claude/schemas/universal-profile-schema.yaml`
 
 ### INDEX.md
 

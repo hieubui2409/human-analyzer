@@ -12,21 +12,25 @@ Character profile documentation for storytelling and content creation.
 
 ## Framework Architecture
 
-Four integrated frameworks with event-driven orchestration:
+Five integrated frameworks with event-driven orchestration:
 
 ```
 MAT (Input) → PSY (Analysis) → CRE (Output)
-                    ↑ MPC (Orchestration) ↑
+                    ↑ ORC (Orchestration) ↑
+              GRO (Growth) ↗ PSY + CRE
 ```
 
-| Framework | Domain             | Directory                                             | Purpose                            |
-| --------- | ------------------ | ----------------------------------------------------- | ---------------------------------- |
-| **MAT**   | Materials          | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
-| **PSY**   | Psychology         | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
-| **CRE**   | Content            | `assets/`                                             | Platform content creation          |
-| **MPC**   | Meta-orchestration | `.claude/`                                            | Event routing, domain coordination |
+| Framework | Domain           | Directory                                             | Purpose                            |
+| --------- | ---------------- | ----------------------------------------------------- | ---------------------------------- |
+| **MAT**   | Materials        | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
+| **PSY**   | Psychology       | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
+| **CRE**   | Content          | `assets/`                                             | Platform content creation          |
+| **GRO**   | Growth           | `docs/profiles/*/growth/`                             | Career + intelligence growth       |
+| **ORC**   | Orchestration    | `.claude/`                                            | Event routing, domain coordination |
+| **COM**   | Common utilities | `.claude/`                                            | Git, health-check, rules           |
 
 Event flow: `MAT.integrated` → `PSY.refresh` → `CRE.recalibrate`
+GRO events: `GRO.assessed` / `GRO.mentored` → `PSY.refresh` → `CRE.recalibrate`
 
 ---
 
@@ -71,7 +75,7 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ## Character Profiles — Universal Nested Structure
 
-Each character has **21 files** in a standardized nested structure (same for all 3 characters):
+Each character has **25 universal files** in a standardized nested structure, plus **optional per-character cross-relationship files** discovered dynamically via `list_relationship_files()` in `paths.py`:
 
 ```
 docs/profiles/{character}/
@@ -93,7 +97,9 @@ docs/profiles/{character}/
 │   ├── cultural-formulation.md       ← Cultural context factors
 │   └── archetype.md                  ← Jungian + Pia Melody mapping
 ├── relationships/
-│   └── family.md                     ← Family tree, key relationships
+│   ├── family.md                     ← Family tree, key relationships
+│   ├── {other-character}.md          ← Cross-relationship file (optional, per character)
+│   └── network.md                    ← Extended network (Nhân vật A only)
 ├── timeline/
 │   ├── overview.md                   ← Timeline summary
 │   └── state-timeline.md            ← Longitudinal ICD-11 phases with severity
@@ -101,9 +107,16 @@ docs/profiles/{character}/
 │   └── traumas.md                    ← Trauma documentation
 ├── light/
 │   └── strengths-hope.md            ← Sources of hope, resilience
-└── evidence/
-    └── conversations.md             ← Key conversation evidence
+├── evidence/
+│   └── conversations.md             ← Key conversation evidence
+└── growth/
+    ├── career-path.md               ← Career history, trajectory (Super's model)
+    ├── competencies.md              ← Skill inventory (Dreyfus 7-level)
+    ├── learning-profile.md          ← Cognitive style (Kolb's model)
+    └── mentoring-map.md             ← Mentor/mentee relationships (Kram's model)
 ```
+
+Cross-relationship files per character: Nhân vật A (3: character-b.md, character-c.md, network.md), Nhân vật B (2: character-a.md, character-c.md), Nhân vật C (2: character-a.md, character-b.md). Mirror pairs are bidirectional.
 
 **Characters:** Nhân vật A (`character-a`), Nhân vật B (`character-b`), Nhân vật C (`character-c`)
 
@@ -151,27 +164,31 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | 09  | confidentiality-protocol   | Privacy tags, content boundaries                              |
 | 10  | reference-library-standard | Reference schema, scientific rigor                            |
 | 11  | mat-pipeline               | MAT 5-stage pipeline, evidence tiers, CRAAP test              |
-| 12  | mpc-orchestration          | Event system, domain boundaries, trigger routing              |
-| 13  | mpc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE)                      |
+| 12  | orc-orchestration          | Event system, domain boundaries, trigger routing (5 domains)  |
+| 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)       |
 | 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
+| 15  | gro-framework              | GRO domain boundaries, profile files, GRO↔PSY boundary        |
 
 ---
 
 ## Skills (`.claude/skills/`)
 
-### MPC — Orchestration Skills
+### ORC — Orchestration Skills
 
 | Skill               | Purpose                                                           |
 | ------------------- | ----------------------------------------------------------------- |
-| `mpc:bootstrap`     | Load project context (--quick/--full/--character/--lite/--intent) |
-| `mpc:session-state` | Track session state, framework domains, event queue               |
-| `mpc:classify`      | Risk classification (tiny/normal/high_risk) + MAT gates           |
-| `mpc:intake`        | Route work type → skill chain (MAT/PSY/CRE routing)               |
-| `mpc:compounding`   | Extract session learnings → memory                                |
-| `mpc:dream`         | Periodic memory consolidation                                     |
-| `mpc:decisions`     | Append-only decision records                                      |
-| `mpc:agent-memory`  | Per-agent calibration memory                                      |
-| `mpc:event-log`     | Persistent event audit logging (JSONL append + query)             |
+| `orc:bootstrap`     | Load project context (--quick/--full/--character/--lite/--intent) |
+| `orc:session-state` | Track session state, framework domains, event queue               |
+| `orc:classify`      | Risk classification (tiny/normal/high_risk) + MAT gates           |
+| `orc:intake`        | Route work type → skill chain (MAT/PSY/CRE/GRO routing)           |
+| `orc:compounding`   | Extract session learnings → memory                                |
+| `orc:dream`         | Periodic memory consolidation                                     |
+| `orc:decisions`     | Append-only decision records                                      |
+| `orc:agent-memory`  | Per-agent calibration memory                                      |
+| `orc:event-log`     | Persistent event audit logging (JSONL append + query)             |
+| `orc:domain-router` | Route domain events to downstream skills (diff or explicit)       |
+| `orc:cascade`       | Resolve multi-step event cascade chains across domains            |
+| `orc:audit`         | Cross-domain event consistency verification                       |
 
 ### COM — Common Skills
 
@@ -205,7 +222,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `psy:arc-tracker`     | Track character growth trajectories, hypothesis vs reality  |
 | `psy:propagate`       | Cross-character event cascade orchestration                 |
 | `psy:timeline-sync`   | Cross-character timeline date validation + fix suggestions  |
-| `psy:health-check`    | Profile completeness scoring (21 files × quality)           |
+| `psy:health-check`    | Profile completeness scoring (25 files × quality)           |
 | `psy:profile-compare` | Side-by-side dimension comparison across characters         |
 | `psy:ref-maintain`    | Reference library cleanup (orphans, outdated, duplicates)   |
 
@@ -220,11 +237,24 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `cre:repurpose`       | Adapt content across platforms                                |
 | `cre:voice-audit`     | Audit content voice/tone consistency against WRITING-VOICE.md |
 
+### GRO — Growth Framework Skills
+
+| Skill                   | Purpose                                                   |
+| ----------------------- | --------------------------------------------------------- |
+| `gro:career-path`       | Career trajectory analysis + stage mapping                |
+| `gro:competency-map`    | Skills/competency assessment + gap analysis               |
+| `gro:learning-profile`  | Learning style + knowledge acquisition patterns           |
+| `gro:validate`          | Cross-check growth/ data consistency + date alignment     |
+| `gro:mentoring-track`   | Mentoring relationship documentation + insight extraction |
+| `gro:career-forecast`   | LLM-powered career projection [FORECAST — NOT FACTUAL]    |
+| `gro:compare`           | Side-by-side career comparison across characters          |
+| `gro:milestone-tracker` | Track career milestones actual vs planned                 |
+
 ---
 
 ## Scripts Infrastructure
 
-34 skills (mpc/mat/psy/cre/com) share a Python utility library and 60+ supportive scripts.
+40 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 

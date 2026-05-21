@@ -80,4 +80,4 @@ Content creators MUST specify privacy level before drafting. The level determine
 - Before publishing any content, verify no `[PRIVATE]`/`[CONFIDENTIAL]` content leaked
 - `cre:post-writer` includes sensitivity scan in quality check phase (Gate 2 of 3-gate quality check)
 - `cre:prompt-leverage` applies sensitivity scan layer
-- `mpc:privacy-guard` pre-publish privacy scan across all MPC framework outputs
+- `orc:privacy-guard` pre-publish privacy scan across all ORC framework outputs

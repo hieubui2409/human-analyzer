@@ -95,7 +95,7 @@ Append platform rules to prompt.
    FACTUAL CONSTRAINTS:
    - Character DOB: {date} (identity/core.md)
    - Current status: {status}
-   - Key relationship: {dynamic} (relationships/family.md + docs/graph/*.md)
+   - Key relationship: {dynamic} (relationships/family.md + cross-character files via `list_relationship_files()` + docs/graph/*.md)
    - Timeline accuracy: verify against timeline/state-timeline.md
    - Evidence tier: only cite T1-T3 evidence in public content (MAT framework)
    - Formulation: content angle informed by psychology/formulation.md 5P model
@@ -175,5 +175,5 @@ If `--from-context` or no arguments:
 ## See Also
 
 - `/cre:exploring` — produces CONTEXT.md that prompt-leverage consumes
-- `/mpc:classify` — risk level informs how many layers to apply
-- `/mpc:bootstrap` — loads profile context referenced by leverage layers
+- `/orc:classify` — risk level informs how many layers to apply
+- `/orc:bootstrap` — loads profile context referenced by leverage layers

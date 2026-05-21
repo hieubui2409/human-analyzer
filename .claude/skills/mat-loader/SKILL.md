@@ -204,7 +204,7 @@ Bottleneck: 5 files stuck at 'raw' — run mat:loader --ingest to process
 ## See Also
 
 - `mat:indexer` — Stage 3-4: contradiction detection + cross-reference
-- `mpc:bootstrap` — context loading (materials complement profiles)
-- `mpc:intake` — workflow routing (material ingestion route)
+- `orc:bootstrap` — context loading (materials complement profiles)
+- `orc:intake` — workflow routing (material ingestion route)
 - `.claude/schemas/material-schema.yaml` — full frontmatter schema
 - `docs/rules/11-mat-pipeline.md` — pipeline documentation

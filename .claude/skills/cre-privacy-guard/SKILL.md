@@ -41,7 +41,7 @@ Grep assets/ for these patterns:
 
 Check for restricted names in assets/:
 
-1. Load all `[CONFIDENTIAL: {person}]` tags from profiles (scan `docs/profiles/*/identity/core.md`, `docs/profiles/*/relationships/family.md`, `docs/profiles/*/darkness/traumas.md`)
+1. Load all `[CONFIDENTIAL: {person}]` tags from profiles (scan `docs/profiles/*/identity/core.md`, `docs/profiles/*/relationships/family.md`, cross-character files via `list_relationship_files()`, `docs/profiles/*/darkness/traumas.md`)
 2. Extract person names
 3. Grep assets/ for those names
 4. Flag any matches as CRITICAL violations
@@ -129,7 +129,7 @@ When scanning content that references materials:
 - Called by `cre:post-writer` in quality check phase
 - Called by `cre:prompt-leverage` in sensitivity scan layer
 - Can be wired as PostToolUse hook for assets/ writes
-- Emits `CRE.privacy_cleared` when scan passes (consumed by MPC orchestration)
+- Emits `CRE.privacy_cleared` when scan passes (consumed by ORC orchestration)
 
 ## Safety
 

@@ -4,7 +4,7 @@ Standard workflow for creating any content in `assets/`. Governed by the CRE (Cr
 
 ## CRE Framework Integration
 
-Content creation operates within the MPC framework:
+Content creation operates within the ORC framework:
 
 - **MAT → CRE**: New integrated materials trigger `CRE.recalibrate` (voice/tone refresh)
 - **PSY → CRE**: Psychological state changes from `state-timeline.md` constrain content routing
@@ -51,9 +51,9 @@ Example (internal → external):
 
 | Stage    | Skill                         | Output                             | Required?        |
 | -------- | ----------------------------- | ---------------------------------- | ---------------- |
-| Intake   | `mpc:intake`                  | Work type + routing                | Always           |
+| Intake   | `orc:intake`                  | Work type + routing                | Always           |
 | Explore  | `cre:explore`                 | CONTEXT.md with locked decisions   | For new angles   |
-| Classify | `mpc:classify`                | Risk level (tiny/normal/high_risk) | Always           |
+| Classify | `orc:classify`                | Risk level (tiny/normal/high_risk) | Always           |
 | Plan     | `ck:plan` or inline           | Plan file or mental model          | For normal+ risk |
 | Write    | `cre:post-writer` or manual   | Draft in assets/                   | Always           |
 | Review   | Self-review or `psy:crossref` | Validated draft                    | For normal+ risk |

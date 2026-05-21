@@ -3,6 +3,7 @@ import argparse
 import json
 import re
 import sys
+import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
@@ -148,8 +149,7 @@ def main():
         total_issues += len(findings)
 
     print(f"\n  TOTAL ISSUES: {total_issues}")
-    if total_issues > 0:
-        print("  Recommendation: Add T1-T3 source materials or qualify claims with [UNCERTAIN] tag")
+    sys.exit(1 if total_issues > 0 else 0)
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, PROFILES, PROFILE_FILES
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, PROFILES, PROFILE_FILES, list_relationship_files
 from platform_lib.materials_classifier import extract_frontmatter, SOURCE_TO_TIER
 
 
@@ -33,6 +33,10 @@ SECTION_KEYWORDS = {
     "darkness/traumas.md": ["trauma", "darkness", "pain", "bóng tối"],
     "light/strengths-hope.md": ["strength", "hope", "resilience", "ánh sáng"],
     "evidence/conversations.md": ["conversation", "evidence", "quote", "bằng chứng"],
+    "growth/career-path.md": ["career path", "trajectory", "salary", "SCCT", "super's", "life-career"],
+    "growth/competencies.md": ["competency", "skill level", "dreyfus", "SFIA", "kỹ năng"],
+    "growth/learning-profile.md": ["learning", "kolb", "study", "tự học", "learning style"],
+    "growth/mentoring-map.md": ["mentor", "mentoring", "kram", "developmental network", "mentee"],
 }
 
 
@@ -69,10 +73,19 @@ def count_material_references(slug: str, section: str) -> dict:
     return {"count": count, "tiers": sorted(set(tiers)), "materials": material_names}
 
 
+CROSS_REL_KEYWORDS = ["sworn", "kết nghĩa", "mentor", "mentee", "indirect", "relationship"]
+
+
 def analyze_character(slug: str) -> list[dict]:
-    """Analyze coverage for all 21 profile sections."""
+    """Analyze coverage for all profile sections (base + cross-relationship)."""
+    sections = list(PROFILE_FILES)
+    for rf in list_relationship_files(slug):
+        rel_section = f"relationships/{rf.name}"
+        sections.append(rel_section)
+        if rel_section not in SECTION_KEYWORDS:
+            SECTION_KEYWORDS[rel_section] = CROSS_REL_KEYWORDS + [rf.stem.replace("-", " ")]
     results = []
-    for section in PROFILE_FILES:
+    for section in sections:
         refs = count_material_references(slug, section)
         if refs["count"] == 0:
             gap_status = "empty"

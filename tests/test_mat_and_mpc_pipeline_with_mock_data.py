@@ -1,4 +1,4 @@
-"""Test MAT + MPC framework scripts with mock data."""
+"""Test MAT + ORC framework scripts with mock data."""
 import subprocess
 import os
 from pathlib import Path
@@ -74,59 +74,59 @@ class TestMatRescore:
         assert r.returncode == 0
 
 
-# === MPC Pipeline ===
+# === ORC Pipeline ===
 
-class TestMpcIntake:
+class TestOrcIntake:
     def test_classify_work_type(self):
-        r = run_script("mpc-intake", "classify-work-type-from-task-description.py",
+        r = run_script("orc-intake", "classify-work-type-from-task-description.py",
                        ["--task", "Write a LinkedIn post about mentoring"])
         assert r.returncode == 0
 
     def test_route_task(self):
-        r = run_script("mpc-intake", "route-task-to-framework-domain.py",
+        r = run_script("orc-intake", "route-task-to-framework-domain.py",
                        ["Ingest new transcript for Nhân vật A"])
         assert r.returncode == 0
 
 
-class TestMpcSessionState:
+class TestOrcSessionState:
     def test_read_session_state(self):
-        r = run_script("mpc-session-state", "read-and-format-session-state.py")
+        r = run_script("orc-session-state", "read-and-format-session-state.py")
         assert r.returncode == 0
 
     def test_recommend_downstream_actions(self):
-        r = run_script("mpc-session-state", "recommend-downstream-actions-from-events.py",
+        r = run_script("orc-session-state", "recommend-downstream-actions-from-events.py",
                        ["--events-json", '[{"event": "MAT.integrated"}]'])
         assert r.returncode == 0
 
 
-class TestMpcEventLog:
+class TestOrcEventLog:
     def test_append_event(self):
-        r = run_script("mpc-event-log", "append-event-to-log.py",
+        r = run_script("orc-event-log", "append-event-to-log.py",
                        ["--event-type", "TEST.event", "--source", "test-suite"])
         assert r.returncode == 0
 
     def test_query_event_log(self):
-        r = run_script("mpc-event-log", "query-event-log-with-filters.py",
+        r = run_script("orc-event-log", "query-event-log-with-filters.py",
                        ["--event-type", "TEST.event"])
         assert r.returncode == 0
 
 
-class TestMpcClassify:
+class TestOrcClassify:
     def test_detect_risk_flags(self):
-        r = run_script("mpc-classify", "detect-risk-flags-from-git-diff.py",
+        r = run_script("orc-classify", "detect-risk-flags-from-git-diff.py",
                        ["--diff-files", "docs/profiles/character-a/psychology/formulation.md"])
         assert r.returncode == 0
 
 
-class TestMpcOther:
+class TestOrcOther:
     def test_summarize_session_changes(self):
-        r = run_script("mpc-compounding", "summarize-session-changes-from-git-diff.py")
+        r = run_script("orc-compounding", "summarize-session-changes-from-git-diff.py")
         assert r.returncode == 0 or r.returncode == 1  # may fail if no recent changes
 
     def test_inventory_memory_files(self):
-        r = run_script("mpc-dream", "inventory-project-memory-files.py")
+        r = run_script("orc-dream", "inventory-project-memory-files.py")
         assert r.returncode == 0
 
     def test_index_decisions(self):
-        r = run_script("mpc-decisions", "index-decisions-with-search.py")
+        r = run_script("orc-decisions", "index-decisions-with-search.py")
         assert r.returncode == 0 or "no decisions" in r.stderr.lower()

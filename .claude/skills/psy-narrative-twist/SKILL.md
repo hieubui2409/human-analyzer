@@ -70,17 +70,18 @@ Add entries showing BOTH perspectives:
 
 Check ALL profile files for the affected character:
 
-| File                               | What to check                                              |
-| ---------------------------------- | ---------------------------------------------------------- |
-| INDEX.md                           | Summary reflects new truth                                 |
-| `identity/core.md`                 | Facts corrected                                            |
-| `psychology/formulation.md`        | Psychological analysis updated if twist affects core wound |
-| `psychology/defense-mechanisms.md` | Behavioral patterns adjusted                               |
-| `timeline/overview.md`             | Event history includes both old belief and revelation      |
-| `relationships/family.md`          | Relationship nature corrected                              |
-| `darkness/traumas.md`              | Trauma updated if twist reveals new wound                  |
-| `light/strengths-hope.md`          | Protective factors adjusted if twist changes them          |
-| `milestones.md`                    | Revelation added as milestone if significant               |
+| File                                 | What to check                                                      |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| INDEX.md                             | Summary reflects new truth                                         |
+| `identity/core.md`                   | Facts corrected                                                    |
+| `psychology/formulation.md`          | Psychological analysis updated if twist affects core wound         |
+| `psychology/defense-mechanisms.md`   | Behavioral patterns adjusted                                       |
+| `timeline/overview.md`               | Event history includes both old belief and revelation              |
+| `relationships/family.md`            | Relationship nature corrected                                      |
+| `relationships/{other-character}.md` | Cross-character files — discovered via `list_relationship_files()` |
+| `darkness/traumas.md`                | Trauma updated if twist reveals new wound                          |
+| `light/strengths-hope.md`            | Protective factors adjusted if twist changes them                  |
+| `milestones.md`                      | Revelation added as milestone if significant                       |
 
 ### Step 5: Cross-Character Impact
 
@@ -142,7 +143,7 @@ Grep all profiles for `⚠️ TWIST` markers. Output:
 - ALWAYS preserve source attribution
 - Cross-character updates are MANDATORY, not optional
 - `psy:crossref` validation after twist is MANDATORY — do not report success until crossref confirms symmetry
-- Update `mpc:session-state` with twist event for session recovery
+- Update `orc:session-state` with twist event for session recovery
 - Run `psy:ref-audit --character <name>` if twist affects SOUL/DARKNESS (clinical terms may need re-validation)
 - Scope: narrative twist management in profiles. Does NOT create content or modify references.
 
