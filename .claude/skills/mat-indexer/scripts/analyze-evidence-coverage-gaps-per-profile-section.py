@@ -33,6 +33,10 @@ SECTION_KEYWORDS = {
     "darkness/traumas.md": ["trauma", "darkness", "pain", "bóng tối"],
     "light/strengths-hope.md": ["strength", "hope", "resilience", "ánh sáng"],
     "evidence/conversations.md": ["conversation", "evidence", "quote", "bằng chứng"],
+    "growth/career-path.md": ["career path", "trajectory", "salary", "SCCT", "super's", "life-career"],
+    "growth/competencies.md": ["competency", "skill level", "dreyfus", "SFIA", "kỹ năng"],
+    "growth/learning-profile.md": ["learning", "kolb", "study", "tự học", "learning style"],
+    "growth/mentoring-map.md": ["mentor", "mentoring", "kram", "developmental network", "mentee"],
 }
 
 
