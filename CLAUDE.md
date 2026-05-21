@@ -75,7 +75,7 @@ assets/{platform}/{YYMMDD}-{slug}/
 
 ## Character Profiles — Universal Nested Structure
 
-Each character has **21 universal files** in a standardized nested structure, plus **optional per-character cross-relationship files** discovered dynamically via `list_relationship_files()` in `paths.py`:
+Each character has **25 universal files** in a standardized nested structure, plus **optional per-character cross-relationship files** discovered dynamically via `list_relationship_files()` in `paths.py`:
 
 ```
 docs/profiles/{character}/
@@ -107,8 +107,13 @@ docs/profiles/{character}/
 │   └── traumas.md                    ← Trauma documentation
 ├── light/
 │   └── strengths-hope.md            ← Sources of hope, resilience
-└── evidence/
-    └── conversations.md             ← Key conversation evidence
+├── evidence/
+│   └── conversations.md             ← Key conversation evidence
+└── growth/
+    ├── career-path.md               ← Career history, trajectory (Super's model)
+    ├── competencies.md              ← Skill inventory (Dreyfus 7-level)
+    ├── learning-profile.md          ← Cognitive style (Kolb's model)
+    └── mentoring-map.md             ← Mentor/mentee relationships (Kram's model)
 ```
 
 Cross-relationship files per character: Nhân vật A (3: character-b.md, character-c.md, network.md), Nhân vật B (2: character-a.md, character-c.md), Nhân vật C (2: character-a.md, character-b.md). Mirror pairs are bidirectional.
@@ -162,6 +167,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | 12  | orc-orchestration          | Event system, domain boundaries, trigger routing (5 domains)  |
 | 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)       |
 | 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
+| 15  | gro-framework              | GRO domain boundaries, profile files, GRO↔PSY boundary        |
 
 ---
 
@@ -216,7 +222,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `psy:arc-tracker`     | Track character growth trajectories, hypothesis vs reality  |
 | `psy:propagate`       | Cross-character event cascade orchestration                 |
 | `psy:timeline-sync`   | Cross-character timeline date validation + fix suggestions  |
-| `psy:health-check`    | Profile completeness scoring (21 files × quality)           |
+| `psy:health-check`    | Profile completeness scoring (25 files × quality)           |
 | `psy:profile-compare` | Side-by-side dimension comparison across characters         |
 | `psy:ref-maintain`    | Reference library cleanup (orphans, outdated, duplicates)   |
 

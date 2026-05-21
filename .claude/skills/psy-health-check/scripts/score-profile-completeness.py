@@ -1,4 +1,4 @@
-"""Score completeness of character profiles against the 21-file universal nested structure."""
+"""Score completeness of character profiles against the 25-file universal nested structure."""
 import argparse
 import json
 import sys
@@ -32,6 +32,10 @@ EXPECTED_SECTIONS = {
     "darkness/traumas.md": ["Trauma", "Event", "Impact"],
     "light/strengths-hope.md": ["Strength", "Hope", "Resilience"],
     "evidence/conversations.md": ["Conversation", "Evidence", "Quote"],
+    "growth/career-path.md": ["Career Stage", "Role Salience", "Key Decisions"],
+    "growth/competencies.md": ["Technical Skills", "Soft Skills", "Domain Knowledge"],
+    "growth/learning-profile.md": ["Dominant Learning Style", "Cycle Strengths"],
+    "growth/mentoring-map.md": ["Mentoring Relationships", "Career Functions"],
 }
 
 # Category groupings for display
@@ -47,6 +51,8 @@ CATEGORIES = {
     "Timeline": ["timeline/overview.md", "timeline/state-timeline.md"],
     "Darkness/Light": ["darkness/traumas.md", "light/strengths-hope.md"],
     "Evidence": ["evidence/conversations.md"],
+    "Growth": ["growth/career-path.md", "growth/competencies.md",
+               "growth/learning-profile.md", "growth/mentoring-map.md"],
 }
 
 GRADE_MAP = [(95, "A+"), (90, "A"), (85, "A-"), (80, "B+"), (75, "B"),

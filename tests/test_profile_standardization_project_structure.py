@@ -1,7 +1,7 @@
 """Validate project structure after profile standardization (Phases 1-7).
 
 Tests cover:
-- Profile directory structure (21 base + cross-relationship files)
+- Profile directory structure (25 base + cross-relationship files)
 - Cross-relationship file integrity (frontmatter, mirror pairs)
 - paths.py constants and functions accuracy
 - No orphan relationship files
@@ -33,10 +33,10 @@ MIRROR_PAIRS = [
 
 
 class TestProfileDirectoryStructure:
-    """Every character must have the 21 base profile files."""
+    """Every character must have the 25 base profile files."""
 
     @pytest.mark.parametrize("char", ALL_CHARS)
-    def test_21_base_files_exist(self, char):
+    def test_25_base_files_exist(self, char):
         from platform_lib.paths import PROFILE_FILES
         cdir = PROFILES / char
         missing = [f for f in PROFILE_FILES if not (cdir / f).exists()]
@@ -128,7 +128,7 @@ class TestPathsPyAccuracy:
         from platform_lib.paths import list_all_profile_files
         for char in ALL_CHARS:
             total = list_all_profile_files(char)
-            base_expected = 21
+            base_expected = 25
             cross_expected = len(EXPECTED_CROSS_RELS[char])
             assert len(total) == base_expected + cross_expected, (
                 f"{char}: expected {base_expected + cross_expected}, got {len(total)}"

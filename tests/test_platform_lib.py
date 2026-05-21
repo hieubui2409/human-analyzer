@@ -13,10 +13,10 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 class TestPaths:
     """Test paths.py module."""
 
-    def test_profile_files_has_21_entries(self):
-        """PROFILE_FILES should contain exactly 21 files."""
+    def test_profile_files_has_25_entries(self):
+        """PROFILE_FILES should contain exactly 25 files (21 base + 4 growth)."""
         import platform_lib.paths as paths_mod
-        assert len(paths_mod.PROFILE_FILES) == 21
+        assert len(paths_mod.PROFILE_FILES) == 25
         # Verify some key files exist
         assert "INDEX.md" in paths_mod.PROFILE_FILES
         assert "CURRENT-STATE.md" in paths_mod.PROFILE_FILES

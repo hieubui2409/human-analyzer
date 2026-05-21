@@ -47,7 +47,7 @@ CHARACTERS = {
 ALL_CHARS = ["character-a", "character-b", "character-c"]
 CHAR_DISPLAY = {"character-a": "Nhân vật A", "character-b": "Nhân vật B", "character-c": "Nhân vật C"}
 
-# Universal profile schema — nested structure (21 base files, same for all characters).
+# Universal profile schema — nested structure (25 base files, same for all characters).
 # Per-character relationship files (e.g. relationships/character-a.md) are NOT listed
 # here — use list_relationship_files() or list_all_profile_files() for those.
 PROFILE_FILES = [
@@ -72,6 +72,17 @@ PROFILE_FILES = [
     "darkness/traumas.md",
     "light/strengths-hope.md",
     "evidence/conversations.md",
+    "growth/career-path.md",
+    "growth/competencies.md",
+    "growth/learning-profile.md",
+    "growth/mentoring-map.md",
+]
+
+GRO_PROFILE_FILES = [
+    "growth/career-path.md",
+    "growth/competencies.md",
+    "growth/learning-profile.md",
+    "growth/mentoring-map.md",
 ]
 
 CLINICAL_PROFILE_FILES = [
@@ -109,6 +120,10 @@ PROFILE_BY_CONCEPT = {
     "milestones": "milestones.md",
     "index": "INDEX.md",
     "current_state": "CURRENT-STATE.md",
+    "career_path": "growth/career-path.md",
+    "competencies": "growth/competencies.md",
+    "learning_profile": "growth/learning-profile.md",
+    "mentoring_map": "growth/mentoring-map.md",
 }
 
 # Legacy flat filenames → primary new nested path
@@ -162,7 +177,7 @@ def materials_dir(name: str) -> Path:
 
 
 def list_profile_files(name: str) -> list[Path]:
-    """List all existing universal profile files for a character (21 base)."""
+    """List all existing universal profile files for a character (25 base)."""
     cdir = character_dir(name)
     return [cdir / f for f in PROFILE_FILES if (cdir / f).exists()]
 

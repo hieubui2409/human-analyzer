@@ -1,4 +1,4 @@
-"""Validate LLM scenario routing against hybrid mpc-intake routing script.
+"""Validate LLM scenario routing against hybrid orc-intake routing script.
 
 Hybrid design: keyword+phrase pre-filter for fast routing. When confidence
 < 0.5, returns AMBIGUOUS with suggestions so LLM makes final decision.
@@ -20,7 +20,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PYTHON = str(Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3")
 SCENARIOS_FILE = PROJECT_ROOT / "tests" / "scenarios" / "llm-reasoning-scenarios.yaml"
 ROUTE_SCRIPT = (
-    PROJECT_ROOT / ".claude" / "skills" / "mpc-intake" / "scripts"
+    PROJECT_ROOT / ".claude" / "skills" / "orc-intake" / "scripts"
     / "route-task-to-framework-domain.py"
 )
 ENV = {

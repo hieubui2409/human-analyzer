@@ -1,6 +1,6 @@
 ---
 name: psy:health-check
-description: "Profile completeness scoring — check all 21 expected profile files per character, score 0-100 per file, aggregate overall health score, and surface gaps. Triggers: 'profile health', 'completeness check', 'what is missing', 'profile gaps', 'health score'."
+description: "Profile completeness scoring — check all 25 expected profile files per character, score 0-100 per file, aggregate overall health score, and surface gaps. Triggers: 'profile health', 'completeness check', 'what is missing', 'profile gaps', 'health score'."
 argument-hint: "[--character <name>|--all] [--json] [--gaps-only]"
 metadata:
   author: hieubt
@@ -12,7 +12,7 @@ metadata:
 
 # psy:health-check — Profile Completeness Scoring
 
-Score the completeness of character profiles against the 21-file universal nested structure. Surface missing files and empty sections.
+Score the completeness of character profiles against the 25-file universal nested structure. Surface missing files and empty sections.
 
 ## Default (No Arguments)
 
@@ -27,7 +27,7 @@ Score the completeness of character profiles against the 21-file universal neste
 | `--gaps-only`        | Show only files with score < 80 |
 | `--json`             | Output as JSON                  |
 
-## Expected Profile Files (21)
+## Expected Profile Files (25)
 
 Per `paths.PROFILE_FILES`:
 
@@ -42,6 +42,7 @@ timeline/overview.md, timeline/state-timeline.md
 darkness/traumas.md
 light/strengths-hope.md
 evidence/conversations.md
+growth/career-path.md, growth/competencies.md, growth/learning-profile.md, growth/mentoring-map.md
 ```
 
 > Cross-character relationship files (e.g. `relationships/character-b.md`) are scored dynamically via `list_relationship_files()` and added to the per-character count.
@@ -63,7 +64,7 @@ evidence/conversations.md
 ### Step 1: Check Files
 
 1. Run `scripts/score-profile-completeness.py`
-2. For each character: iterate 21 expected file paths
+2. For each character: iterate 25 expected file paths
 3. For each file: compute score per rubric
 
 ### Step 2: Aggregate
@@ -83,9 +84,9 @@ evidence/conversations.md
 
 | Character | Score | Files Present | Missing | Grade |
 |-----------|-------|---------------|---------|-------|
-| Nhân vật A      | 87/100 | 20/21        | 1       | B+    |
-| Nhân vật B       | 72/100 | 18/21        | 3       | C+    |
-| Nhân vật C     | 65/100 | 16/21        | 5       | C     |
+| Nhân vật A      | 87/100 | 24/25        | 1       | B+    |
+| Nhân vật B       | 72/100 | 22/25        | 3       | C+    |
+| Nhân vật C     | 65/100 | 20/25        | 5       | C     |
 
 ### Nhân vật A — Completeness Matrix
 
@@ -110,7 +111,7 @@ Priority gaps to fill:
 
 | Script                                  | Purpose                                      |
 | --------------------------------------- | -------------------------------------------- |
-| `scripts/score-profile-completeness.py` | Check 21 files per character, compute scores |
+| `scripts/score-profile-completeness.py` | Check 25 files per character, compute scores |
 
 ## Safety
 
