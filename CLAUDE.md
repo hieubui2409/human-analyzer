@@ -315,4 +315,20 @@ Never auto-spawn health monitor without user awareness.
 
 ---
 
-_Updated: 2026-05-19_
+## RTK (Token Optimization)
+
+Token-optimized CLI proxy (60-90% savings on dev operations). Hook-based — `git status` automatically becomes `rtk git status` via PreToolUse hook.
+
+Meta commands (use directly): `rtk gain`, `rtk gain --history`, `rtk discover`, `rtk proxy <cmd>`
+
+---
+
+## Infrastructure Note
+
+This project is fully self-contained. All skills, agents, hooks, rules, and scripts are local under `.claude/`.
+Global `~/.claude/` has been stripped to runtime-only (config, cache, sessions only).
+Backup: `~/.claude-backup-260522.tar.gz`
+
+---
+
+_Updated: 2026-05-23_
