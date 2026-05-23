@@ -11,6 +11,8 @@ from platform_lib.paths import ROOT
 
 SKILLS_DIR = ROOT / ".claude" / "skills"
 RULES_DIR = ROOT / "docs" / "rules"
+CLAUDE_MD = ROOT / "CLAUDE.md"
+FRAMEWORK_PREFIXES = ("com-", "cre-", "gro-", "mat-", "orc-", "psy-")
 
 SOURCE_SCRIPTS = {
     "valid_types": SKILLS_DIR / "orc-event-log" / "scripts" / "append-event-to-log.py",
@@ -89,6 +91,29 @@ def build_event_index(
     return index
 
 
+def validate_skill_count() -> dict:
+    """Assert framework skill count matches CLAUDE.md declared count."""
+    actual_skills = []
+    for d in sorted(SKILLS_DIR.iterdir()):
+        if d.is_dir() and d.name.startswith(FRAMEWORK_PREFIXES) and (d / "SKILL.md").exists():
+            actual_skills.append(d.name)
+    actual_count = len(actual_skills)
+
+    declared_count = None
+    if CLAUDE_MD.exists():
+        text = CLAUDE_MD.read_text(encoding="utf-8")
+        match = re.search(r"(\d+)\s+(?:framework\s+)?skills?\b", text, re.IGNORECASE)
+        if match:
+            declared_count = int(match.group(1))
+
+    return {
+        "actual_count": actual_count,
+        "declared_count": declared_count,
+        "actual_skills": actual_skills,
+        "match": actual_count == declared_count if declared_count else None,
+    }
+
+
 def filter_by_domain(index: dict, domain: str) -> dict:
     if domain == "all":
         return index
@@ -108,6 +133,8 @@ def main():
     script_events = {}
     for name, path in SOURCE_SCRIPTS.items():
         script_events[name] = extract_events_from_python(path)
+
+    skill_count = validate_skill_count()
 
     index = build_event_index(skill_events, rules_events, script_events)
     index = filter_by_domain(index, args.domain.upper() if args.domain != "all" else "all")
@@ -130,6 +157,7 @@ def main():
 
     result = {
         "sources_scanned": 2 + len(SOURCE_SCRIPTS),
+        "skill_count": skill_count,
         "events_by_domain": domains_found,
         "mismatches": mismatches,
         "consistent": consistent,
@@ -143,6 +171,14 @@ def main():
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return
+
+    sc = result["skill_count"]
+    if sc["match"] is True:
+        print(f"\n  ✓ Skill count assertion PASS: {sc['actual_count']} framework skills (matches CLAUDE.md)")
+    elif sc["match"] is False:
+        print(f"\n  ✗ Skill count assertion FAIL: actual={sc['actual_count']}, CLAUDE.md declares={sc['declared_count']}")
+    else:
+        print(f"\n  ? Skill count: {sc['actual_count']} framework skills found (CLAUDE.md count not parsed)")
 
     print(f"\n  Sources scanned: {result['sources_scanned']}")
     print(f"  Total events: {result['summary']['total_events']}")

@@ -196,6 +196,8 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | ------------------ | ------------------------------------------------------- |
 | `com:git`          | Project-aware git operations                            |
 | `com:health-check` | Session health monitoring — stall/error/death detection |
+| `com:kit-cleanup`  | Project cleanup utilities                               |
+| `com:rules`        | Modular rules management                                |
 
 ### MAT — Material Framework Skills
 
@@ -254,7 +256,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ## Scripts Infrastructure
 
-40 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
+49 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 

@@ -63,7 +63,7 @@ Before any content generation, check freshness:
 
 1. Load character lite profile (`psy:profile-lite --character <name>`)
    - If --quick: skip, use whatever context is already loaded
-2. If character is Nhân vật A + platform needs voice: read `identity/writing-voice.md`
+2. Read `identity/writing-voice.md` for target character. Extract `## Voice Profile (Structured)` section — inject as VOICE PROFILE context block into prompt.
 3. Read `psychology/formulation.md` for 5P context (informs content angle)
 4. Read `psychology/defense-mechanisms.md` for voice authenticity
 5. Load session state for current arc context + active domain

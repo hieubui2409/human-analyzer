@@ -227,6 +227,24 @@ def validate_staleness(slug: str) -> list[Finding]:
     return findings
 
 
+def validate_growth_file_counts() -> list:
+    """Assert all 12 growth files (4×3) exist."""
+    findings = []
+    expected_total = len(GRO_PROFILE_FILES) * len(ALL_CHARS)
+    missing = []
+    for slug in ALL_CHARS:
+        for rel in GRO_PROFILE_FILES:
+            if not (PROFILES / slug / rel).exists():
+                missing.append(f"{slug}/{rel}")
+    if missing:
+        findings.append(Finding("File Count", "FAIL",
+            f"Expected {expected_total} growth files, missing {len(missing)}: {', '.join(missing)}"))
+    else:
+        findings.append(Finding("File Count", "PASS",
+            f"All {expected_total} growth files present (4×3)"))
+    return findings
+
+
 def validate_character(slug: str) -> dict:
     """Run all validation checks for one character."""
     all_findings = []
@@ -261,11 +279,23 @@ def main():
     args = parser.parse_args()
 
     chars = [resolve_character(args.character)] if args.character else ALL_CHARS
+    file_count_findings = validate_growth_file_counts()
     results = {slug: validate_character(slug) for slug in chars}
+    has_fail = any(f.status == "FAIL" for f in file_count_findings)
 
     if args.json_out:
-        print(json.dumps(results, indent=2, ensure_ascii=False))
+        output = {
+            "file_count": [f.to_dict() for f in file_count_findings],
+            "characters": results,
+        }
+        print(json.dumps(output, indent=2, ensure_ascii=False))
+        if has_fail:
+            sys.exit(1)
         return
+
+    for f in file_count_findings:
+        icon = "✓" if f.status == "PASS" else "✗"
+        print(f"\n  {icon} {f.check}: {f.detail}")
 
     print(f"\n{'='*70}")
     print(f"  GRO Validation Report")
@@ -298,6 +328,9 @@ def main():
     print(f"\n{'='*70}")
     print(f"  Total: {len(results)} characters validated")
     print(f"{'='*70}")
+
+    if has_fail:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

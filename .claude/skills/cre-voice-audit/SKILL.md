@@ -34,14 +34,16 @@ Scan published content (assets/) for tone/voice drift against character identity
 
 ### Step 1: Load Voice Profile
 
-1. Read character's `identity/writing-voice.md` (currently: Nhân vật A only has this file)
+1. Read character's `identity/writing-voice.md`. Extract `## Voice Profile (Structured)` section for quantitative validation.
 2. Additionally read `psychology/archetype.md` for archetypal voice patterns (Nhân vật A: Wounded Healer; Nhân vật B: Lost Child/Trickster; Nhân vật C: Orphan/Seeker)
-3. Extract voice dimensions:
-   - **Tone markers**: formal/informal, emotional range, humor style
-   - **Vocabulary patterns**: signature phrases, avoided words
-   - **Structural patterns**: sentence length, paragraph style, hook patterns
-   - **Thematic constants**: recurring themes, metaphor families
-   - **Archetypal voice**: how the character's archetype influences expression
+3. Use structured dimensions as primary audit criteria:
+   - **Rhythm**: sentence length, cadence, paragraph density
+   - **Compression**: viết tắt patterns, terseness level
+   - **Emotional Register**: default tone, range, intensity ceiling
+   - **Imagery Bank**: primary domains, frequency
+   - **Hard Bans**: words/phrases character NEVER uses
+   - **Defense Gates**: how defenses manifest in writing
+   - **Growth Modifiers**: how current arc shifts voice from baseline
 
 ### Step 2: Scan Published Content
 
@@ -102,14 +104,13 @@ Voice audit can now leverage PSY profile data for richer validation:
 - `psychology/formulation.md` — perpetuating factors may influence how character "sounds" in content
 - `docs/graph/{dyad}.md` — cross-character content should reflect documented communication patterns
 
-## Scope Limitation
+## Voice Profile Coverage
 
-Currently only **Nhân vật A** has a `identity/writing-voice.md` file. For Nhân vật B and Nhân vật C:
+All 3 characters have `identity/writing-voice.md` with `## Voice Profile (Structured)` section:
 
-- No formal voice profile exists → voice audit uses archetype + defense mechanism patterns as proxy
-- If content is written _about_ them (by Nhân vật A's voice), audit against Nhân vật A's `identity/writing-voice.md`
-- If content is written _as_ them (first-person), use `psychology/archetype.md` + `identity/core.md` personality traits as baseline
-- Future: create `identity/writing-voice.md` for Nhân vật B/Nhân vật C as enough content samples accumulate
+- **Nhân vật A**: richest content — analytical/controlled tone, dense imagery, intellectualization defense gate
+- **Nhân vật B**: Messenger-based voice — high compression (viết tắt), guarded default, wide emotional range
+- **Nhân vật C**: dual-voice (public mask vs private) — warm default, future-oriented displacement
 
 ## Safety
 
