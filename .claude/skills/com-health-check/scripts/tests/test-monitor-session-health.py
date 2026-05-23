@@ -504,3 +504,91 @@ class TestEdgeCases:
         assert len(targets.discover_subagent_files(sp)) == 0
         (subdir / "agent-new.jsonl").write_text('{"type":"assistant"}\n')
         assert len(targets.discover_subagent_files(sp)) == 1
+
+
+# ---------------------------------------------------------------------------
+# Unit Tests: read_tail_jsonl_lines
+# ---------------------------------------------------------------------------
+class TestReadTailJsonlLines:
+    def test_returns_all_lines(self):
+        result = core.read_tail_jsonl_lines(FIXTURES_DIR / "session-normal.jsonl")
+        assert len(result) == 3
+        assert result[0]["type"] == "attachment"
+        assert result[-1]["type"] == "assistant"
+
+    def test_empty_file(self):
+        result = core.read_tail_jsonl_lines(FIXTURES_DIR / "session-empty.jsonl")
+        assert result == []
+
+    def test_missing_file(self):
+        result = core.read_tail_jsonl_lines(Path("/nonexistent/file.jsonl"))
+        assert result == []
+
+    def test_none_path(self):
+        result = core.read_tail_jsonl_lines(None)
+        assert result == []
+
+    def test_skips_corrupt_lines(self):
+        result = core.read_tail_jsonl_lines(FIXTURES_DIR / "session-truncated.jsonl")
+        assert all(isinstance(r, dict) for r in result)
+
+
+# ---------------------------------------------------------------------------
+# Integration Tests: buried error detection (the key fix)
+# ---------------------------------------------------------------------------
+class TestBuriedErrorDetection:
+    def test_error_buried_under_normal_lines(self, tmp_path):
+        """Error followed by ai-title/queue-operation/attachment must still be detected."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig()
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "API_ERROR" and "retryable" in e.message for e in events)
+
+    def test_uuid_dedup_across_polls(self, tmp_path):
+        """Same error UUID should not be reported twice across poll cycles."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig()
+        events1 = targets.check_main_agent(sp, config)
+        assert any(e.category == "API_ERROR" for e in events1)
+        events2 = targets.check_main_agent(sp, config)
+        assert not any(e.category == "API_ERROR" for e in events2)
+
+    def test_new_error_after_dedup(self, tmp_path):
+        """A new error with different UUID should be reported even after dedup."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig()
+        targets.check_main_agent(sp, config)
+        with open(jsonl, "a") as f:
+            f.write('{"type":"assistant","uuid":"r2","timestamp":"2026-05-19T03:01:00.000Z",'
+                    '"toolUseResult":{"content":[{"type":"text","text":"API Error: ECONNRESET"}]}}\n')
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "API_ERROR" for e in events)
+
+    def test_separate_configs_no_cross_contamination(self, tmp_path):
+        """Different MonitorConfig instances have independent seen_errors sets."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config1 = MonitorConfig()
+        config2 = MonitorConfig()
+        targets.check_main_agent(sp, config1)
+        events = targets.check_main_agent(sp, config2)
+        assert any(e.category == "API_ERROR" for e in events)
+
+    def test_subagent_buried_error(self, tmp_path):
+        """Subagent error buried under normal lines should also be detected."""
+        subdir = tmp_path / "test-uuid" / "subagents"
+        subdir.mkdir(parents=True)
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl",
+                    subdir / "agent-broken.jsonl")
+        sp = SessionPaths(jsonl=tmp_path / "test-uuid.jsonl", session_id="test-uuid")
+        (tmp_path / "test-uuid.jsonl").write_text("{}\n")
+        config = MonitorConfig()
+        events = targets.check_subagents(sp, config)
+        assert any(e.category == "API_ERROR" for e in events)

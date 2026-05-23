@@ -16,11 +16,14 @@ HealthEvent = _core.HealthEvent
 SessionPaths = _core.SessionPaths
 MonitorConfig = _core.MonitorConfig
 read_last_jsonl_line = _core.read_last_jsonl_line
+read_tail_jsonl_lines = _core.read_tail_jsonl_lines
 extract_error_text = _core.extract_error_text
 classify_error = _core.classify_error
 check_process_liveness = _core.check_process_liveness
 check_file_freshness = _core.check_file_freshness
 resolve_project_slug = _core.resolve_project_slug
+check_session_alive = _core.check_session_alive
+is_subagent_completed = _core.is_subagent_completed
 
 
 def resolve_session_paths(session_id: str | None = None, cwd: str | None = None) -> SessionPaths:
@@ -60,20 +63,37 @@ def resolve_session_paths(session_id: str | None = None, cwd: str | None = None)
     return sp
 
 
-def _check_content_errors(last_line: dict, include_429: bool, target_name: str) -> list[HealthEvent]:
-    """Check last JSONL line for error patterns. Shared by all target checkers."""
+def _check_content_errors(lines: list[dict], include_429: bool, target_name: str,
+                          seen_errors: set | None = None) -> list[HealthEvent]:
+    """Check recent JSONL lines for error patterns with UUID dedup."""
+    if seen_errors is None:
+        seen_errors = set()
     events = []
-    texts = extract_error_text(last_line)
-    err_class = classify_error(texts, include_429)
-    if err_class == ErrorClass.RETRYABLE:
-        events.append(HealthEvent(Severity.ERROR, "API_ERROR", target_name,
-                                  f'"{texts[0][:80]}" — retryable'))
-    elif err_class == ErrorClass.TIME_RETRYABLE:
-        events.append(HealthEvent(Severity.WARN, "RATE_LIMIT", target_name,
-                                  "429 detected — wait ~60s"))
-    elif err_class == ErrorClass.NON_RETRYABLE:
-        events.append(HealthEvent(Severity.ERROR, "API_ERROR", target_name,
-                                  f'"{texts[0][:80]}" — non-retryable'))
+    for line in lines:
+        uuid = line.get("uuid", "")
+        if uuid and uuid in seen_errors:
+            continue
+        texts = extract_error_text(line)
+        err_class = classify_error(texts, include_429)
+        if err_class == ErrorClass.RETRYABLE:
+            if uuid:
+                seen_errors.add(uuid)
+            events.append(HealthEvent(Severity.ERROR, "API_ERROR", target_name,
+                                      f'"{texts[0][:80]}" — retryable'))
+        elif err_class == ErrorClass.TIME_RETRYABLE:
+            if uuid:
+                seen_errors.add(uuid)
+            events.append(HealthEvent(Severity.WARN, "RATE_LIMIT", target_name,
+                                      "429 detected — wait ~60s"))
+        elif err_class == ErrorClass.NON_RETRYABLE:
+            if uuid:
+                seen_errors.add(uuid)
+            events.append(HealthEvent(Severity.ERROR, "API_ERROR", target_name,
+                                      f'"{texts[0][:80]}" — non-retryable'))
+    if len(seen_errors) > 200:
+        to_remove = len(seen_errors) - 100
+        for _ in range(to_remove):
+            seen_errors.pop()
     return events
 
 
@@ -98,11 +118,13 @@ def check_main_agent(sp: SessionPaths, config: MonitorConfig) -> list[HealthEven
         events.append(stall)
 
     if sp.jsonl:
-        last_line = read_last_jsonl_line(sp.jsonl)
-        if last_line:
-            events.extend(_check_content_errors(last_line, config.include_429, "main-agent"))
+        lines = read_tail_jsonl_lines(sp.jsonl)
+        if lines:
+            events.extend(_check_content_errors(lines, config.include_429, "main-agent",
+                                                config.seen_errors))
 
             if not events and config.verbosity.value <= Severity.INFO.value:
+                last_line = lines[-1]
                 ltype = last_line.get("type", "unknown")
                 try:
                     delta = int(time.time() - sp.jsonl.stat().st_mtime)
@@ -126,18 +148,30 @@ def discover_subagent_files(sp: SessionPaths) -> list[Path]:
 
 
 def check_subagents(sp: SessionPaths, config: MonitorConfig) -> list[HealthEvent]:
-    """Health check for all active subagents."""
+    """Health check for active subagents only.
+
+    Layer 1: parent session dead (no session file or PID dead) → skip all.
+    Layer 2: per-subagent — skip if clean exit (end_turn) or error exit (API error patterns).
+    """
+    parent_alive = check_session_alive(sp.session_id)
+    if parent_alive is False:
+        return []
+
     events = []
     for f in discover_subagent_files(sp):
         agent_name = f.stem
+        if is_subagent_completed(f, config.hard_threshold):
+            continue
+
         stall = check_file_freshness(f, config.soft_threshold, config.hard_threshold)
         if stall:
             stall.target = agent_name
             events.append(stall)
 
-        last_line = read_last_jsonl_line(f)
-        if last_line:
-            events.extend(_check_content_errors(last_line, config.include_429, agent_name))
+        lines = read_tail_jsonl_lines(f)
+        if lines:
+            events.extend(_check_content_errors(lines, config.include_429, agent_name,
+                                                config.seen_errors))
     return events
 
 
@@ -209,14 +243,18 @@ def check_team_agents(sp: SessionPaths, config: MonitorConfig) -> list[HealthEve
                                       "no JSONL found — may not be started"))
             continue
 
+        if is_subagent_completed(jsonl, config.hard_threshold):
+            continue
+
         stall = check_file_freshness(jsonl, config.soft_threshold, config.hard_threshold)
         if stall:
             stall.target = f"team:{name}"
             events.append(stall)
 
-        last_line = read_last_jsonl_line(jsonl)
-        if last_line:
-            events.extend(_check_content_errors(last_line, config.include_429, f"team:{name}"))
+        lines = read_tail_jsonl_lines(jsonl)
+        if lines:
+            events.extend(_check_content_errors(lines, config.include_429, f"team:{name}",
+                                                config.seen_errors))
 
         pid = check_team_process(config.team_name, name)
         if pid is None and jsonl:
