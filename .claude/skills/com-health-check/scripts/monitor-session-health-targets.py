@@ -101,6 +101,7 @@ def check_main_agent(sp: SessionPaths, config: MonitorConfig) -> list[HealthEven
     """Full health check for main agent session."""
     events = []
 
+    is_dead = False
     if sp.pid_file and sp.pid_file.exists():
         try:
             data = json.loads(sp.pid_file.read_text())
@@ -108,14 +109,15 @@ def check_main_agent(sp: SessionPaths, config: MonitorConfig) -> list[HealthEven
             if pid and not check_process_liveness(pid):
                 events.append(HealthEvent(Severity.ERROR, "DEAD", "main-agent",
                                           f"process {pid} not found — session terminated"))
-                return events
+                is_dead = True
         except (json.JSONDecodeError, OSError):
             pass
 
-    stall = check_file_freshness(sp.jsonl, config.soft_threshold, config.hard_threshold)
-    if stall:
-        stall.target = "main-agent"
-        events.append(stall)
+    if not is_dead:
+        stall = check_file_freshness(sp.jsonl, config.soft_threshold, config.hard_threshold)
+        if stall:
+            stall.target = "main-agent"
+            events.append(stall)
 
     if sp.jsonl:
         lines = read_tail_jsonl_lines(sp.jsonl)

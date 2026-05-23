@@ -249,12 +249,12 @@ def is_subagent_completed(path: Path, hard_threshold: int) -> bool:
         if not has_pending_tool:
             return True
 
-    # Signal 2: error exit — tail contains API error patterns
-    for line in lines:
-        texts = extract_error_text(line)
-        err_class = classify_error(texts)
-        if err_class in (ErrorClass.RETRYABLE, ErrorClass.NON_RETRYABLE):
-            return True
+    # Signal 2: error exit — LAST line contains API error (not any line in tail,
+    # because earlier errors may have been retried successfully)
+    texts = extract_error_text(last)
+    err_class = classify_error(texts)
+    if err_class in (ErrorClass.RETRYABLE, ErrorClass.NON_RETRYABLE):
+        return True
 
     return False
 
