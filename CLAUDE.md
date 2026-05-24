@@ -269,6 +269,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `formatters.py`      | Markdown tables, JSON output, severity badges   |
 | `env_utils.py`       | .env loading, API key resolution (standardized) |
 | `csv_search.py`      | BM25 text search over CSV data                  |
+| `instinct_store.py`  | Atomic learnings CRUD, confidence scoring, JSONL |
 
 ### Running Scripts
 

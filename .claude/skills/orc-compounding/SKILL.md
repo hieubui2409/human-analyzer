@@ -26,6 +26,7 @@ After content/profile work, extract insights worth remembering. Write to memory 
 | `--auto`             | Auto-extract + write to memory, no confirmation      |
 | `--character <name>` | Extract character-specific insights                  |
 | `--content`          | Extract content creation patterns from recent assets |
+| `--instincts-only`   | Extract instincts only (skip memory file writing)    |
 
 ## Learning Categories
 
@@ -156,6 +157,45 @@ Before writing a new memory:
 4. Link related memories with `[[name]]` references
 5. After writing new learnings, check if `orc:dream` should run (if 5+ new memories since last dream consolidation)
 
+## Instinct Extraction (A5)
+
+After step 9 (write selected learnings to memory), extract atomic instincts:
+
+10. For each selected learning, create atomic instinct text (≤140 chars)
+11. Assign initial confidence based on source:
+    - From git diff (code-verified): `0.75`
+    - From session state (observed): `0.5`
+    - From user confirmation: `0.85`
+12. Map learning category → instinct category:
+    - "Character Psychology" → `psychology`
+    - "Writing Patterns" → `writing`
+    - "Audience Resonance" → `audience`
+    - "Clinical Accuracy" → `clinical`
+    - "Growth Development" → `growth`
+    - "Process Learnings" → `process`
+13. Call `find_similar()` from `instinct_store` — if match found, `reinforce()` instead of creating new
+14. `append_instinct()` for new ones, print summary:
+    ```
+    ## Instincts Captured
+    New: 3 | Reinforced: 1 | Skipped (duplicate): 0
+    - [NEW psychology 0.75] Nhân vật B's avoidance intensifies under academic pressure
+    - [NEW writing 0.50] LinkedIn vulnerability-hook + resolution structure works
+    - [REINFORCED clinical 0.82] Attachment + parentification > pure rescue for Nhân vật A-Nhân vật B
+    - [NEW process 0.50] Read relationships/family.md before cross-character content
+    ```
+
+**Safety:** Instinct extraction is wrapped in try/except — failure logs warning to stderr, never breaks steps 1-9.
+
+**Import:** `from platform_lib.instinct_store import append_instinct, find_similar, reinforce, create_instinct`
+
+### --instincts-only
+
+Extract instincts without writing to memory files. Same extraction flow (steps 10-14) but skip memory writing (step 9).
+
+### Instinct scoping with --character
+
+When `--character` is used, filter instinct categories to `psychology` + `growth` only.
+
 ## Scripts
 
 | Script                                               | Purpose                                                                    |
@@ -181,6 +221,8 @@ Before writing a new memory:
 ## Dream Trigger
 
 After writing ≥5 new memories in a single session, suggest running `orc:dream --merge` to consolidate overlapping insights before they accumulate.
+
+Also suggest dream when instinct count > 20 active (`instinct_store.load_instincts(status="active")`).
 
 ## See Also
 

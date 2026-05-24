@@ -33,6 +33,11 @@ CRE domain specialist responsible for all content creation and platform strategy
 - "repurpose content" — adapt existing asset for a different platform format
 - "content brief" — structured exploration before writing begins
 
+## Agent Memory
+
+Before starting work, read `.claude/agent-memory/content-strategist.md` for accumulated insights.
+After completing work, append new learnings to the same file.
+
 ## Rules
 
 - `docs/rules/03-content-creation-pipeline.md` — 7-stage pipeline, platform-specific guidelines, asset structure

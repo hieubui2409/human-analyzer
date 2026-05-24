@@ -9,6 +9,11 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 from platform_lib.paths import ROOT, ALL_CHARS, CHAR_DISPLAY
 from platform_lib.formatters import print_json
+try:
+    from platform_lib.instinct_store import load_instincts
+    _HAS_INSTINCTS = True
+except ImportError:
+    _HAS_INSTINCTS = False
 
 FILE_CATEGORIES = {
     "profiles": re.compile(r"docs/profiles/"),
@@ -88,12 +93,33 @@ def main():
         if m:
             net_lines["deleted"] += int(m.group(1))
 
+    profile_files = len(categorized.get("profiles", []))
+    content_files = len(categorized.get("assets", []))
+    instinct_candidates = {
+        "changed_profile_files": profile_files,
+        "changed_content_files": content_files,
+    }
+    if profile_files + content_files > 0:
+        instinct_candidates["suggestion"] = (
+            f"{profile_files + content_files} files changed across "
+            f"{len(characters_affected)} character(s) — run orc:compounding to extract instincts"
+        )
+
+    active_instincts = 0
+    if _HAS_INSTINCTS:
+        try:
+            active_instincts = len(load_instincts(status="active"))
+        except Exception:
+            pass
+
     result = {
         "total_files_changed": len(all_files),
         "characters_affected": sorted(characters_affected),
         "net_lines": net_lines,
         "files_by_category": {k: v for k, v in categorized.items() if v},
         "diff_summary": diff_stat[:800] if diff_stat else "(no diff found — may already be committed)",
+        "instinct_candidates": instinct_candidates,
+        "active_instincts": active_instincts,
     }
     print_json(result)
 

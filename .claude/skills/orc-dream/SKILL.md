@@ -20,12 +20,13 @@ Consolidate scattered insights into coherent, up-to-date knowledge. Run periodic
 
 ## Flags
 
-| Flag      | Purpose                                           |
-| --------- | ------------------------------------------------- |
-| `--scan`  | Inventory current memories, report health stats   |
-| `--merge` | Find overlapping memories, propose merges         |
-| `--prune` | Identify stale/outdated memories, propose removal |
-| `--full`  | All three in sequence (default)                   |
+| Flag          | Purpose                                              |
+| ------------- | ---------------------------------------------------- |
+| `--scan`      | Inventory current memories, report health stats      |
+| `--merge`     | Find overlapping memories, propose merges            |
+| `--prune`     | Identify stale/outdated memories, propose removal    |
+| `--full`      | All phases in sequence including instincts (default) |
+| `--instincts` | Run instinct lifecycle only (skip memory phases)     |
 
 ## Workflow
 
@@ -111,6 +112,66 @@ After merge + prune, identify gaps:
 2. If gaps found, suggest creating memories from current profiles
 3. Ensure cross-character memories link properly with `[[name]]`
 
+### Phase 5: Instinct Lifecycle (--full only)
+
+After Phase 4, run instinct maintenance. Import from `platform_lib.instinct_store`.
+
+**5a. Apply Decay:**
+
+- Call `apply_decay(lambda_=0.05)` on all active, non-pinned instincts
+- Report: `Decay applied: {N} instincts updated, avg confidence {old} → {new}`
+
+**5b. Archive Stale:**
+
+- Call `archive_stale(conf_threshold=0.4, days_threshold=30)`
+- Pinned instincts (process category) are exempt — skip archive regardless of confidence
+- Report: `Archived: {N} stale instincts (conf < 0.4, 30+ days unreinforced, {P} pinned skipped)`
+- Each archived instinct shown: `[ARCHIVED] {text} (conf: {conf}, last: {date})`
+
+**5c. Cluster Active Instincts:**
+
+- Load active instincts with `confidence ≥ 0.5`
+- If sklearn available: TF-IDF + DBSCAN clustering (eps=0.3, min_samples=2)
+- If sklearn unavailable: group by `category` field (fallback), warn via stderr
+- Skip clustering entirely if < 10 active instincts — use direct listing instead
+- Report clusters:
+  ```
+  Cluster 1 (psychology, 4 instincts):
+    - [0.82] Nhân vật B's avoidance intensifies under academic pressure
+    - [0.78] Nhân vật B avoids emotional topics when stressed
+    - [0.71] Nhân vật B's attachment pattern: anxious-avoidant mix
+    - [0.65] Nhân vật B deflects with humor under confrontation
+    Core pattern: "Nhân vật B avoidance behavior under stress"
+  ```
+
+**5d. Promotion Candidates:**
+
+- Call `get_promotion_candidates(conf_min=0.80, evidence_min=3)`
+- Cap at 10 candidates per dream; show top by confidence
+- For each candidate, suggest promotion target:
+  - `psychology` → update character's `psychology/*.md` or `agent-memory/psychologist.md`
+  - `clinical` → update `agent-memory/psychologist.md` clinical insights
+  - `writing` → update `agent-memory/content-strategist.md` voice calibration
+  - `audience` → update `agent-memory/content-strategist.md` platform patterns
+  - `growth` → update `agent-memory/growth-analyst.md` career observations
+  - `process` → create/update workflow memory (no agent mapping — instinct pool only)
+
+**5e. Present Recommendations:**
+
+- Use `AskUserQuestion` with promotion candidates:
+  ```
+  Instinct promotion candidates:
+  □ PROMOTE [psychology 0.85, 4x] "Nhân vật B avoidance under stress" → update psychology/defense-mechanisms.md
+  □ PROMOTE [writing 0.82, 3x] "Vulnerability hook + resolution" → update agent-memory/content-strategist.md
+  □ HOLD [clinical 0.79, 2x] "Attachment + parentification" → needs 1 more reinforcement
+  □ ARCHIVE [process 0.35, 1x] "Read family.md first" → stale, 45 days
+  ```
+- Execute approved promotions (LLM writes the actual update)
+
+### --instincts
+
+Run instinct lifecycle only (Phase 5), skip memory phases (1-4).
+
 ## GRO Consolidation Patterns
 
 During --full consolidation, also check GRO-domain memories:
@@ -139,6 +200,9 @@ Pruned: {P}
 Created: {C} (gap-fill)
 Broken links fixed: {L}
 
+Instincts: {total} active, {decayed} decayed, {archived} archived, {promoted} promoted
+Clusters: {N} found ({M} instincts clustered, {K} singletons)
+
 Memory health: {good|needs-attention|fragmented}
 Next dream recommended: {date}
 ```
@@ -150,6 +214,7 @@ Dream should be suggested (not forced) when:
 - `orc:session-state --archive` detects 5+ sessions since last dream
 - `orc:compounding` has written 5+ new memories since last dream
 - Memory scan shows 3+ broken `[[name]]` links
+- Active instinct count > 20 (`instinct_store.load_instincts(status="active")`)
 
 Check last dream date via: `ls -t .claude/projects/-home-hieubt-Documents-ck-marketing/memory/.dream-backup/ | head -1`
 

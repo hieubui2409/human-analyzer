@@ -40,6 +40,11 @@ PSY domain specialist responsible for clinical profiling and psychological analy
 - "arc tracking" — compare predicted vs actual growth trajectory
 - "narrative twist" — character revealed something false; cascade profile updates
 
+## Agent Memory
+
+Before starting work, read `.claude/agent-memory/psychologist.md` for accumulated insights.
+After completing work, append new learnings to the same file.
+
 ## Rules
 
 - `docs/rules/02-clinical-reference-usage.md` — Show-don't-tell, mandatory citation for every clinical claim
