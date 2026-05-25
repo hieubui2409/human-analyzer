@@ -82,6 +82,18 @@ Every material MUST be assessed on 5 dimensions:
 4. **Accuracy** — Can claims be cross-referenced? Internal consistency?
 5. **Purpose** — Clinical note vs. social media post vs. personal reflection
 
+**Scoring scale (canonical):** Each dimension is scored **1-5**. The `craap_score` frontmatter is a nested mapping holding all 5 dimensions plus `total`, where `total` = sum of the 5 dimensions (range 5-25). Evidence tier (T1-T5) is derived from the total.
+
+```yaml
+craap_score:
+  currency: 5
+  relevance: 3
+  authority: 3
+  accuracy: 3
+  purpose: 3
+  total: 17
+```
+
 ## Processing States
 
 ```
