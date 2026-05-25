@@ -33,6 +33,25 @@ SESSION_STATE = ROOT / ".claude" / "session-state"
 DECISIONS = ROOT / ".claude" / "decisions"
 PROFILE_CACHE = ROOT / ".claude" / "profile-cache"
 
+# Framework-partitioned event streams (B2 memory persistence lifecycle)
+CHARACTER_EVENTS = SESSION_STATE / "character-events.jsonl"  # PSY
+MATERIAL_EVENTS = SESSION_STATE / "material-events.jsonl"  # MAT
+CONTENT_EVENTS = SESSION_STATE / "content-events.jsonl"  # CRE
+GROWTH_SIGNALS = SESSION_STATE / "growth-signals.jsonl"  # GRO
+CASCADE_EVENTS = SESSION_STATE / "cascade-events.jsonl"  # ORC
+GOVERNANCE_AUDIT = SESSION_STATE / "governance-audit.jsonl"  # COM
+
+# Route an event to a stream by its event-type prefix (e.g. "PSY.refresh" → PSY).
+# Unknown prefixes fall back to CASCADE_EVENTS.
+EVENT_STREAMS = {
+    "PSY": CHARACTER_EVENTS,
+    "MAT": MATERIAL_EVENTS,
+    "CRE": CONTENT_EVENTS,
+    "GRO": GROWTH_SIGNALS,
+    "ORC": CASCADE_EVENTS,
+    "COM": GOVERNANCE_AUDIT,
+}
+
 CHARACTERS = {
     "hieu": "character-a",
     "hiếu": "character-a",

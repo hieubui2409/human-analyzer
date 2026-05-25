@@ -12,7 +12,20 @@ metadata:
 
 # orc:event-log — Persistent Event Logging
 
-Append ORC framework events to `.claude/session-state/event-log.jsonl` and query the history with filters.
+Append framework events to **6 framework-partitioned JSONL streams** under `.claude/session-state/` and query the history with filters. Events route by event-type prefix.
+
+## Framework Streams (B2 partition)
+
+| Prefix  | Stream file              | Framework |
+| ------- | ------------------------ | --------- |
+| `PSY.*` | `character-events.jsonl` | PSY       |
+| `MAT.*` | `material-events.jsonl`  | MAT       |
+| `CRE.*` | `content-events.jsonl`   | CRE       |
+| `GRO.*` | `growth-signals.jsonl`   | GRO       |
+| `ORC.*` | `cascade-events.jsonl`   | ORC       |
+| `COM.*` | `governance-audit.jsonl` | COM       |
+
+Unknown prefixes fall back to `cascade-events.jsonl` with a WARNING. Query merges all streams by default, or targets one via `--framework`.
 
 ## Default (No Arguments)
 
@@ -46,16 +59,17 @@ Append ORC framework events to `.claude/session-state/event-log.jsonl` and query
 
 ### Query flags
 
-| Flag                  | Purpose                        |
-| --------------------- | ------------------------------ |
-| `--query`             | Switch to query mode (default) |
-| `--event-type <type>` | Filter by event type           |
-| `--character <name>`  | Filter by character            |
-| `--source <skill>`    | Filter by source skill         |
-| `--since YYYY-MM-DD`  | Events after this date         |
-| `--until YYYY-MM-DD`  | Events before this date        |
-| `--limit N`           | Max results (default: 20)      |
-| `--json`              | Raw JSON output                |
+| Flag                  | Purpose                                                      |
+| --------------------- | ------------------------------------------------------------ |
+| `--query`             | Switch to query mode (default)                               |
+| `--framework <fw>`    | Stream to query: all (default), psy, mat, cre, gro, orc, com |
+| `--event-type <type>` | Filter by event type                                         |
+| `--character <name>`  | Filter by character                                          |
+| `--source <skill>`    | Filter by source skill                                       |
+| `--since YYYY-MM-DD`  | Events after this date                                       |
+| `--until YYYY-MM-DD`  | Events before this date                                      |
+| `--limit N`           | Max results (default: 20)                                    |
+| `--json`              | Raw JSON output                                              |
 
 ## Event Types
 
@@ -72,6 +86,9 @@ Append ORC framework events to `.claude/session-state/event-log.jsonl` and query
 | `ORC.decision`    | Decision recorded via orc:decisions                    |
 | `PSY.crisis`      | Crisis assessment triggered                            |
 | `MAT.archived`    | Material archived via mat:archive                      |
+| `COM.privacy`     | Privacy/PII violation detected via cre:privacy-guard   |
+| `COM.governance`  | Governance/confidentiality audit result                |
+| `COM.commit`      | Commit scan result via com:git                         |
 
 ## Event Log Format
 
@@ -127,7 +144,7 @@ Each event is one JSON line in `.claude/session-state/event-log.jsonl`:
 ## Safety
 
 - `--query` is READ-ONLY
-- `--append` only writes to `.claude/session-state/event-log.jsonl`
+- `--append` only writes to the framework stream files under `.claude/session-state/`
 - Never modifies profile or material files
 - Domain boundary: `.claude/session-state/` only
 
