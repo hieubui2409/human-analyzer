@@ -20,10 +20,6 @@ const path = require("path");
 const { classifyFile, LEVELS } = require("./lib/sensitivity-checker.cjs");
 const { isHookEnabled } = require("./lib/ck-config-utils.cjs");
 
-if (!isHookEnabled("gateguard-profile-protect")) {
-  process.exit(0);
-}
-
 const PROJECT_DIR =
   process.env.CLAUDE_PROJECT_DIR ||
   process.env.PMC_PROJECT_ROOT ||
@@ -124,27 +120,22 @@ function formatWarning(rel, classification) {
   return `\x1b[33mGATEGUARD WARN\x1b[0m: ${classification.level} file (${classification.zone}) — ${rel}`;
 }
 
-async function main() {
-  let input = "";
-  for await (const chunk of process.stdin) {
-    input += chunk;
-  }
+/**
+ * Decide gateguard outcome for a parsed PreToolUse payload.
+ * Pure of stdin/process.exit (but keeps audit-log + approval-state side effects,
+ * which are the hook's single source of truth) so hook-dispatcher.cjs can compose it.
+ * @param {Object} hookData - { tool_name, tool_input }
+ * @returns {{block?: boolean, stderr?: string}}
+ */
+function run(hookData) {
+  if (!isHookEnabled("gateguard-profile-protect")) return {};
 
-  let hookData;
-  try {
-    hookData = JSON.parse(input);
-  } catch {
-    process.exit(0);
-  }
+  const { tool_name: toolName, tool_input: toolInput } = hookData || {};
 
-  const { tool_name: toolName, tool_input: toolInput } = hookData;
+  if (toolName !== "Edit" && toolName !== "Write") return {};
 
-  if (toolName !== "Edit" && toolName !== "Write") {
-    process.exit(0);
-  }
-
-  const filePath = toolInput?.file_path;
-  if (!filePath) process.exit(0);
+  const filePath = toolInput && toolInput.file_path;
+  if (!filePath) return {};
 
   const rel = normalizePath(filePath);
   const classification = classifyFile(rel);
@@ -153,11 +144,10 @@ async function main() {
     classification.level === LEVELS.NONE ||
     classification.level === LEVELS.LOW
   ) {
-    process.exit(0);
+    return {};
   }
 
   if (classification.level === LEVELS.MEDIUM) {
-    console.error(formatWarning(rel, classification));
     auditLog({
       file: rel,
       level: classification.level,
@@ -165,7 +155,7 @@ async function main() {
       action: "warned",
       tool: toolName,
     });
-    process.exit(0);
+    return { stderr: formatWarning(rel, classification) };
   }
 
   // CRITICAL or HIGH — check approval
@@ -180,13 +170,11 @@ async function main() {
       action: "approved",
       tool: toolName,
     });
-    console.error(`\x1b[32m✓\x1b[0m GateGuard: approved edit to ${rel}`);
-    process.exit(0);
+    return { stderr: `\x1b[32m✓\x1b[0m GateGuard: approved edit to ${rel}` };
   }
 
   // Not approved — block
   const requireApproval = getRequireUserApproval();
-  console.error(formatBlockMessage(rel, classification, requireApproval));
   auditLog({
     file: rel,
     level: classification.level,
@@ -194,11 +182,11 @@ async function main() {
     action: "blocked",
     tool: toolName,
   });
-  process.exit(2);
+  return {
+    block: true,
+    stderr: formatBlockMessage(rel, classification, requireApproval),
+  };
 }
 
-if (require.main === module) {
-  main().catch(() => process.exit(0));
-}
-
-module.exports = { normalizePath, formatBlockMessage, formatWarning };
+// Composed exclusively by hook-dispatcher.cjs — no standalone CLI entry.
+module.exports = { run, normalizePath, formatBlockMessage, formatWarning };

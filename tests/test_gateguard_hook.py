@@ -1,7 +1,9 @@
-"""Integration tests for gateguard-profile-protect.cjs hook (Batch 2 A3).
+"""Integration tests for gateguard sensitivity gating (Batch 2 A3) via the
+consolidated hook-dispatcher (Batch 5 B1).
 
-Tests hook blocking behavior via subprocess — pipes Edit/Write JSON to stdin,
-checks exit code and stderr output.
+The sub-hooks no longer have standalone CLI entries — they are composed by
+hook-dispatcher.cjs. These tests pipe Edit/Write/Read JSON to the dispatcher and
+assert the gateguard behavior (block/warn/pass) plus privacy/scout regression.
 """
 import json
 import os
@@ -12,7 +14,7 @@ from pathlib import Path
 import pytest
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
-HOOK_PATH = PROJECT_DIR / ".claude" / "hooks" / "gateguard-profile-protect.cjs"
+HOOK_PATH = PROJECT_DIR / ".claude" / "hooks" / "hook-dispatcher.cjs"
 AUDIT_LOG_DIR = PROJECT_DIR / ".claude" / "logs"
 
 
@@ -143,26 +145,13 @@ console.log(JSON.stringify(r));
 
 
 class TestRegressionExistingHooks:
+    """privacy + scout still block through the consolidated dispatcher."""
+
     def test_privacy_block_still_works(self):
-        privacy_hook = PROJECT_DIR / ".claude" / "hooks" / "privacy-block.cjs"
-        if not privacy_hook.exists():
-            pytest.skip("privacy-block.cjs not found")
-        stdin_data = json.dumps({"tool_name": "Edit", "tool_input": {"file_path": ".env"}})
-        r = subprocess.run(
-            ["node", str(privacy_hook)],
-            input=stdin_data, capture_output=True, text=True,
-            env={**os.environ, "CLAUDE_PROJECT_DIR": str(PROJECT_DIR)},
-        )
+        r = run_hook("Edit", ".env")
         assert r.returncode == 2
+        assert "PRIVACY BLOCK" in r.stderr
 
     def test_scout_block_still_works(self):
-        scout_hook = PROJECT_DIR / ".claude" / "hooks" / "scout-block.cjs"
-        if not scout_hook.exists():
-            pytest.skip("scout-block.cjs not found")
-        stdin_data = json.dumps({"tool_name": "Read", "tool_input": {"file_path": "node_modules/package/index.js"}})
-        r = subprocess.run(
-            ["node", str(scout_hook)],
-            input=stdin_data, capture_output=True, text=True,
-            env={**os.environ, "CLAUDE_PROJECT_DIR": str(PROJECT_DIR)},
-        )
+        r = run_hook("Read", "node_modules/package/index.js")
         assert r.returncode == 2

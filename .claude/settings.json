@@ -1,16 +1,4 @@
 {
-  "hooks": {
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/gateguard-profile-protect.cjs",
-            "type": "command"
-          }
-        ],
-        "matcher": "Edit|Write"
-      }
-    ]
-  },
+  "hooks": {},
   "includeCoAuthoredBy": false
 }
