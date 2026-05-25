@@ -258,7 +258,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ## Scripts Infrastructure
 
-49 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
+51 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 
