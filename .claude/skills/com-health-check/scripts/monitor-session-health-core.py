@@ -38,6 +38,8 @@ NON_RETRYABLE_PATTERNS = [
 
 VERBOSITY_MAP = {"error": Severity.ERROR, "warn": Severity.WARN, "info": Severity.INFO, "debug": Severity.DEBUG}
 
+INTERACTIVE_TOOLS = {"AskUserQuestion"}
+
 
 @dataclass
 class SessionPaths:
@@ -63,7 +65,11 @@ class MonitorConfig:
     verbosity: Severity = Severity.WARN
     poll_interval: int = 30
     team_name: str = ""
+    checks: str = "all"
     seen_errors: set = field(default_factory=set)
+    wait_detected_ts: float = 0.0
+    last_heartbeat_ts: float = 0.0
+    heartbeat_interval: int = 3600
 
 
 def resolve_project_slug(cwd: str | None = None) -> str:
@@ -197,6 +203,37 @@ def check_file_freshness(path: Path, soft: int, hard: int) -> HealthEvent | None
         return HealthEvent(Severity.WARN, "STALL", target,
                            f"no activity for {int(delta)}s (soft: {soft}s) — may be thinking")
     return None
+
+
+def is_waiting_for_user(path: Path) -> bool:
+    """Detect if LLM finished work and is waiting for user input.
+
+    True when last JSONL entry shows AskUserQuestion pending or clean end_turn.
+    """
+    last = read_last_jsonl_line(path)
+    if not last:
+        return False
+    msg = last.get("message", {})
+    if not isinstance(msg, dict):
+        return False
+    sr = msg.get("stop_reason", "")
+    content = msg.get("content", [])
+
+    if sr == "tool_use":
+        for c in content:
+            if (isinstance(c, dict) and c.get("type") == "tool_use"
+                    and c.get("name") in INTERACTIVE_TOOLS):
+                return True
+
+    if sr == "end_turn":
+        has_tool = any(
+            isinstance(c, dict) and c.get("type") == "tool_use"
+            for c in content
+        )
+        if not has_tool:
+            return True
+
+    return False
 
 
 def check_session_alive(session_id: str) -> bool | None:

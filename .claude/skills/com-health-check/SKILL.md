@@ -44,26 +44,28 @@ Monitor({
 
 ## Args Reference
 
-| Flag            | Default | Purpose                                |
-| --------------- | ------- | -------------------------------------- |
-| `--target`      | main    | main / subagent / team / all           |
-| `--soft`        | 120     | Soft stall threshold (seconds) → WARN  |
-| `--hard`        | 300     | Hard stall threshold (seconds) → ERROR |
-| `--verbosity`   | warn    | error / warn / info / debug            |
-| `--include-429` | off     | Report 429 rate limits                 |
-| `--poll`        | 30      | Poll interval (seconds)                |
-| `--session-id`  | auto    | Explicit session UUID                  |
-| `--team-name`   | —       | Team name for team monitoring          |
+| Flag            | Default | Purpose                                          |
+| --------------- | ------- | ------------------------------------------------ |
+| `--target`      | main    | main / subagent / team / all                     |
+| `--soft`        | 120     | Soft stall threshold (seconds) → WARN            |
+| `--hard`        | 300     | Hard stall threshold (seconds) → ERROR           |
+| `--verbosity`   | warn    | error / warn / info / debug                      |
+| `--check`       | all     | Check types: all / stall / error. DEAD always on |
+| `--include-429` | off     | Report 429 rate limits                           |
+| `--poll`        | 30      | Poll interval (seconds)                          |
+| `--session-id`  | auto    | Explicit session UUID                            |
+| `--team-name`   | —       | Team name for team monitoring                    |
 
 ## Response Protocol
 
 When a notification arrives, act based on severity:
 
-| Notification                      | Action                                         |
-| --------------------------------- | ---------------------------------------------- |
-| `[ERROR] API_ERROR ... retryable` | Re-spawn subagent per CLAUDE.md retry protocol |
-| `[ERROR] STALL ... hard`          | Alert user — session may be dead               |
-| `[ERROR] DEAD ...`                | Report to user, no auto-retry                  |
-| `[WARN] RATE_LIMIT 429`           | Wait 60s then retry                            |
-| `[WARN] STALL ... soft`           | Log, don't act — may be thinking               |
-| `[INFO] OK ...`                   | Ignore (heartbeat)                             |
+| Notification                      | Action                                                |
+| --------------------------------- | ----------------------------------------------------- |
+| `[ERROR] API_ERROR ... retryable` | Re-spawn subagent per CLAUDE.md retry protocol        |
+| `[ERROR] STALL ... hard`          | Alert user — session may be dead                      |
+| `[ERROR] DEAD ...`                | Report to user, no auto-retry                         |
+| `[WARN] RATE_LIMIT 429`           | Wait 60s then retry                                   |
+| `[WARN] STALL ... soft`           | Log, don't act — may be thinking                      |
+| `[INFO] WAITING ...`              | Ignore — LLM waiting for user input, hourly heartbeat |
+| `[INFO] OK ...`                   | Ignore (heartbeat)                                    |

@@ -50,6 +50,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--verbosity", choices=["error", "warn", "info", "debug"], default="warn")
     p.add_argument("--include-429", action="store_true", help="Report 429/rate limit as time-retryable")
     p.add_argument("--poll", type=int, default=30, help="Poll interval (seconds)")
+    p.add_argument("--check", choices=["all", "stall", "error"], default="all",
+                   help="Check types: all (default), stall-only, error-only. DEAD always on.")
     p.add_argument("--session-id", help="Explicit session UUID (auto-detect if omitted)")
     p.add_argument("--team-name", help="Team name for team monitoring")
     p.add_argument("--cwd", help="Override CWD for project slug resolution")
@@ -108,6 +110,7 @@ def main():
         verbosity=VERBOSITY_MAP[args.verbosity],
         poll_interval=args.poll,
         team_name=args.team_name or "",
+        checks=args.check,
     )
 
     sp = resolve_session_paths(session_id=args.session_id, cwd=args.cwd)

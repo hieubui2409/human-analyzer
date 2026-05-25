@@ -24,6 +24,7 @@ check_file_freshness = _core.check_file_freshness
 resolve_project_slug = _core.resolve_project_slug
 check_session_alive = _core.check_session_alive
 is_subagent_completed = _core.is_subagent_completed
+is_waiting_for_user = _core.is_waiting_for_user
 
 
 def resolve_session_paths(session_id: str | None = None, cwd: str | None = None) -> SessionPaths:
@@ -61,6 +62,27 @@ def resolve_session_paths(session_id: str | None = None, cwd: str | None = None)
                     continue
 
     return sp
+
+
+def _maybe_heartbeat(config: MonitorConfig, target_name: str) -> HealthEvent | None:
+    """Emit hourly INFO heartbeat while waiting for user input."""
+    now = time.time()
+    if config.wait_detected_ts == 0:
+        config.wait_detected_ts = now
+    elapsed = now - config.wait_detected_ts
+    if now - config.last_heartbeat_ts >= config.heartbeat_interval:
+        config.last_heartbeat_ts = now
+        mins = int(elapsed // 60)
+        h, m = divmod(mins, 60)
+        dur = f"{h}h {m}m" if h > 0 else f"{m}m"
+        return HealthEvent(Severity.INFO, "WAITING", target_name,
+                           f"waiting for user input ({dur})")
+    return None
+
+
+def _reset_waiting_state(config: MonitorConfig):
+    config.wait_detected_ts = 0.0
+    config.last_heartbeat_ts = 0.0
 
 
 def _check_content_errors(lines: list[dict], include_429: bool, target_name: str,
@@ -101,6 +123,7 @@ def check_main_agent(sp: SessionPaths, config: MonitorConfig) -> list[HealthEven
     """Full health check for main agent session."""
     events = []
 
+    # Process liveness — ALWAYS checked regardless of config.checks
     is_dead = False
     if sp.pid_file and sp.pid_file.exists():
         try:
@@ -113,13 +136,21 @@ def check_main_agent(sp: SessionPaths, config: MonitorConfig) -> list[HealthEven
         except (json.JSONDecodeError, OSError):
             pass
 
-    if not is_dead:
-        stall = check_file_freshness(sp.jsonl, config.soft_threshold, config.hard_threshold)
-        if stall:
-            stall.target = "main-agent"
-            events.append(stall)
+    # Stall check — skip if checks=="error" or process dead
+    if not is_dead and config.checks in ("all", "stall"):
+        if sp.jsonl and is_waiting_for_user(sp.jsonl):
+            hb = _maybe_heartbeat(config, "main-agent")
+            if hb:
+                events.append(hb)
+        else:
+            _reset_waiting_state(config)
+            stall = check_file_freshness(sp.jsonl, config.soft_threshold, config.hard_threshold)
+            if stall:
+                stall.target = "main-agent"
+                events.append(stall)
 
-    if sp.jsonl:
+    # Error check — skip if checks=="stall"
+    if sp.jsonl and config.checks in ("all", "error"):
         lines = read_tail_jsonl_lines(sp.jsonl)
         if lines:
             events.extend(_check_content_errors(lines, config.include_429, "main-agent",
@@ -154,6 +185,7 @@ def check_subagents(sp: SessionPaths, config: MonitorConfig) -> list[HealthEvent
 
     Layer 1: parent session dead (no session file or PID dead) → skip all.
     Layer 2: per-subagent — skip if clean exit (end_turn) or error exit (API error patterns).
+    Layer 3: skip stall if subagent is waiting for user input.
     """
     parent_alive = check_session_alive(sp.session_id)
     if parent_alive is False:
@@ -165,15 +197,22 @@ def check_subagents(sp: SessionPaths, config: MonitorConfig) -> list[HealthEvent
         if is_subagent_completed(f, config.hard_threshold):
             continue
 
-        stall = check_file_freshness(f, config.soft_threshold, config.hard_threshold)
-        if stall:
-            stall.target = agent_name
-            events.append(stall)
+        if config.checks in ("all", "stall"):
+            if is_waiting_for_user(f):
+                hb = _maybe_heartbeat(config, agent_name)
+                if hb:
+                    events.append(hb)
+            else:
+                stall = check_file_freshness(f, config.soft_threshold, config.hard_threshold)
+                if stall:
+                    stall.target = agent_name
+                    events.append(stall)
 
-        lines = read_tail_jsonl_lines(f)
-        if lines:
-            events.extend(_check_content_errors(lines, config.include_429, agent_name,
-                                                config.seen_errors))
+        if config.checks in ("all", "error"):
+            lines = read_tail_jsonl_lines(f)
+            if lines:
+                events.extend(_check_content_errors(lines, config.include_429, agent_name,
+                                                    config.seen_errors))
     return events
 
 
@@ -238,6 +277,7 @@ def check_team_agents(sp: SessionPaths, config: MonitorConfig) -> list[HealthEve
 
     for member in team_config.get("members", []):
         name = member.get("name", "unknown")
+        target = f"team:{name}"
         jsonl = resolve_team_member_jsonl(sp.project_slug, config.team_name, name)
 
         if not jsonl:
@@ -248,19 +288,26 @@ def check_team_agents(sp: SessionPaths, config: MonitorConfig) -> list[HealthEve
         if is_subagent_completed(jsonl, config.hard_threshold):
             continue
 
-        stall = check_file_freshness(jsonl, config.soft_threshold, config.hard_threshold)
-        if stall:
-            stall.target = f"team:{name}"
-            events.append(stall)
+        if config.checks in ("all", "stall"):
+            if is_waiting_for_user(jsonl):
+                hb = _maybe_heartbeat(config, target)
+                if hb:
+                    events.append(hb)
+            else:
+                stall = check_file_freshness(jsonl, config.soft_threshold, config.hard_threshold)
+                if stall:
+                    stall.target = target
+                    events.append(stall)
 
-        lines = read_tail_jsonl_lines(jsonl)
-        if lines:
-            events.extend(_check_content_errors(lines, config.include_429, f"team:{name}",
-                                                config.seen_errors))
+        if config.checks in ("all", "error"):
+            lines = read_tail_jsonl_lines(jsonl)
+            if lines:
+                events.extend(_check_content_errors(lines, config.include_429, target,
+                                                    config.seen_errors))
 
         pid = check_team_process(config.team_name, name)
         if pid is None and jsonl:
-            events.append(HealthEvent(Severity.WARN, "TEAM", f"team:{name}",
+            events.append(HealthEvent(Severity.WARN, "TEAM", target,
                                       "process not found via pgrep — may have exited"))
 
     return events
