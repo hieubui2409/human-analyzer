@@ -30,6 +30,7 @@ PLANS = ROOT / "plans"
 REPORTS = PLANS / "reports"
 SKILLS = ROOT / ".claude" / "skills"
 SESSION_STATE = ROOT / ".claude" / "session-state"
+DECISIONS = ROOT / ".claude" / "decisions"
 PROFILE_CACHE = ROOT / ".claude" / "profile-cache"
 
 CHARACTERS = {

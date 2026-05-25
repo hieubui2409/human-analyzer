@@ -189,6 +189,8 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `orc:domain-router` | Route domain events to downstream skills (diff or explicit)       |
 | `orc:cascade`       | Resolve multi-step event cascade chains across domains            |
 | `orc:audit`         | Cross-domain event consistency verification                       |
+| `orc:santa`         | Dual-reviewer quality gate — independent review, max 2 rounds     |
+| `orc:council`       | 4-voice decision framework — anti-anchoring, verdict storage      |
 
 ### COM — Common Skills
 
@@ -260,15 +262,15 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 
-| Module               | Purpose                                         |
-| -------------------- | ----------------------------------------------- |
-| `paths.py`           | Project root, character name resolution, paths  |
-| `clinical_terms.py`  | 80+ regex patterns, term scanning, ref indexing |
-| `markdown_parser.py` | Section extraction, frontmatter, dates, links   |
-| `profile_stats.py`   | File inventory, git hash cache validation       |
-| `formatters.py`      | Markdown tables, JSON output, severity badges   |
-| `env_utils.py`       | .env loading, API key resolution (standardized) |
-| `csv_search.py`      | BM25 text search over CSV data                  |
+| Module               | Purpose                                          |
+| -------------------- | ------------------------------------------------ |
+| `paths.py`           | Project root, character name resolution, paths   |
+| `clinical_terms.py`  | 80+ regex patterns, term scanning, ref indexing  |
+| `markdown_parser.py` | Section extraction, frontmatter, dates, links    |
+| `profile_stats.py`   | File inventory, git hash cache validation        |
+| `formatters.py`      | Markdown tables, JSON output, severity badges    |
+| `env_utils.py`       | .env loading, API key resolution (standardized)  |
+| `csv_search.py`      | BM25 text search over CSV data                   |
 | `instinct_store.py`  | Atomic learnings CRUD, confidence scoring, JSONL |
 
 ### Running Scripts

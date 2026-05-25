@@ -174,6 +174,7 @@ Final manual checks:
 - [ ] Platform constraints met (length, format)?
 - [ ] Sensitivity boundaries respected?
 - [ ] Image prompts don't produce recognizable real faces?
+- [ ] If high_risk content: consider `orc:santa --review <asset-dir> --framework cre` for dual-review
 
 ## Interactive Mode (no args)
 

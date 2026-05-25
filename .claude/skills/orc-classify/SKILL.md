@@ -147,6 +147,47 @@ After completing this task, check:
 | Writing voice match     | —        | Optional    | Required  | Compare `identity/writing-voice.md`   |
 | Multi-character review  | —        | —           | Required  | Check all affected profiles           |
 
+### File-Level Sensitivity (B6)
+
+In addition to task-level classification, individual files have sensitivity levels enforced by the `gateguard-profile-protect` hook (PreToolUse on Edit|Write):
+
+| Level    | Directories                                                                  | Hook Behavior                                        |
+| -------- | ---------------------------------------------------------------------------- | ---------------------------------------------------- |
+| CRITICAL | `darkness/`                                                                  | HARD block — must acknowledge checks + user approval |
+| HIGH     | `psychology/` (all 8 files)                                                  | HARD block — must acknowledge checks + user approval |
+| MEDIUM   | `relationships/`, `growth/`, `docs/rules/`, `docs/graph/`, `docs/materials/` | Warning only                                         |
+| LOW      | `identity/`, `timeline/`, `light/`, `evidence/`                              | No gate                                              |
+
+Task-level classification (tiny/normal/high_risk) determines ceremony; file-level sensitivity determines per-edit gates. Both systems are complementary.
+
+See: `.claude/scripts/platform_lib/file_sensitivity.py --all` for complete mapping.
+
+### Santa Method Gate (A1)
+
+When classification result is `high_risk`, recommend Santa dual-review:
+
+| Condition                        | Action                                                |
+| -------------------------------- | ----------------------------------------------------- |
+| high_risk + profile edit         | Suggest `orc:santa --review <target> --framework psy` |
+| high_risk + content creation     | Suggest `orc:santa --review <target> --framework cre` |
+| high_risk + growth edit          | Suggest `orc:santa --review <target> --framework gro` |
+| high_risk + material integration | Suggest `orc:santa --review <target> --framework mat` |
+
+Santa is RECOMMENDED for high_risk, not mandatory. User can skip with explicit acknowledgment.
+
+### Council Decision Gate (A4)
+
+When classification detects ambiguity (conflicting interpretations, unclear direction), suggest Council:
+
+| Trigger         | Condition                                                      |
+| --------------- | -------------------------------------------------------------- |
+| PSY conflict    | 2+ valid clinical interpretations for same behavior            |
+| CRE ambiguity   | Content direction unclear, multiple valid angles               |
+| GRO dispute     | Career trajectory has 2+ plausible paths                       |
+| Cross-character | Relationship dynamic interpretation differs between characters |
+
+Council is SUGGESTED, never auto-triggered. User invokes manually via `/orc:council`.
+
 ### Step 6: Write to Session State
 
 Read `.claude/session-state/state.json`, update atomically (read → modify → write-back):
