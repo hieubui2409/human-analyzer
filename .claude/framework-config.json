@@ -1,0 +1,11 @@
+{
+  "gateguard": {
+    "enabled": true,
+    "requireUserApproval": true,
+    "auditLog": ".claude/logs/gateguard-audit.jsonl"
+  },
+  "hooks": {
+    "privacyBlock": { "enabled": true },
+    "scoutBlock": { "enabled": true }
+  }
+}
