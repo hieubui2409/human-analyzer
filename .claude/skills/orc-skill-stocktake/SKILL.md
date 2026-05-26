@@ -1,7 +1,7 @@
 ---
 name: orc:skill-stocktake
 description: "Audit the project skill catalog — Quick Scan (counts per framework vs CLAUDE.md, frontmatter-metadata gaps, catalog drift) + Full Stocktake (pairwise description/trigger overlap candidates, usage signal, gap detection) in the proven 260523 KEEP/ENHANCE/CONSOLIDATE/RETIRE verdict format. Distinct from orc:audit (which audits events, not the skill catalog). READ-ONLY. Use when skills are added/renamed, periodically to catch catalog drift + bloat, or before a release. Triggers: 'skill stocktake', 'skill audit', 'catalog audit', 'skill overlap', 'are skills duplicated', 'skill necessity', 'count skills'."
-argument-hint: "[--quick | --full] [--framework orc|psy|cre|gro|mat|com] [--report] [--min-overlap N]"
+argument-hint: "[--quick | --full | --conformance | --ce02 | --eval] [--framework orc|psy|cre|gro|mat|com] [--report] [--min-overlap N]"
 metadata:
   author: hieubt
   version: "1.0.0"
@@ -48,6 +48,27 @@ $PY $SK/scan-skill-catalog-metadata.py --json
 # Full Stocktake — overlap candidates + usage signal (feed to LLM for verdicts)
 $PY $SK/analyze-skill-overlap-and-gaps.py --min-overlap 0.30 --json
 ```
+
+## Conformance Mode (`--conformance` / `--ce02` / `--eval`)
+
+The catalog audit above is *breadth* (counts, overlap, gaps). Conformance is *depth*: each
+project-owned skill scored against the CE-02 "200-line rule" + skill-creator structural rules.
+
+```bash
+# Tiers 0-2 (lines, references structure, description format) — deterministic
+$PY $SK/audit-skill-progressive-disclosure.py .claude/skills --scope project-owned --json
+
+# Full gate (T1-T2 + T4 cross-refs); --eval adds T5 trigger-accuracy (token cost, opt-in)
+.claude/scripts/run-skill-conformance-gate.sh           # CI entry, exits non-zero on any BLOCK
+.claude/scripts/run-skill-conformance-gate.sh --eval    # + skill-creator run_eval.py (READ-ONLY)
+```
+
+Per-skill verdict (additive to the 260523 set): **KEEP** (clean) · **ENHANCE-CE02** (WARNs:
+missing When-to-Use / nav / scope decl) · **REFACTOR-PD** (entry 201-300 → split body to
+`references/`) · **BLOCK** (any FAIL: entry >300, reference >300, nested refs, missing
+description). Tiered: 200 = WARN, 300 = FAIL. ck-origin skills are hard-excluded by the
+Tier-0 scope guard (prefix + `name:` not `ck:` + no ClaudeKit license). READ-ONLY — emits the
+report + suggested splits; never edits SKILL.md.
 
 ## Verdict Format (260523 report)
 
