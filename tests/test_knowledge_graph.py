@@ -223,3 +223,105 @@ def test_stats_reports_edges_by_source(kg):
     s = mod.graph_stats(G)
     assert s["edges_by_source"].get("body_text", 0) >= 1
     assert s["edges_by_source"].get("frontmatter", 0) >= 1  # belongs_to alpha
+
+
+# --- Phase 3a: graph_context API ---------------------------------------------
+
+def _seed_character(root, char="alpha"):
+    _w(root, f"docs/profiles/{char}/INDEX.md", f"---\ncharacter: {char}\n---\nidx")
+    _w(root, f"docs/profiles/{char}/CURRENT-STATE.md", f"---\ncharacter: {char}\n---\nnow")
+    _w(root, f"docs/profiles/{char}/psychology/formulation.md",
+       f"---\ncharacter: {char}\nreferences: [complex-ptsd]\n---\nbody")
+    _w(root, "docs/references/complex-ptsd.md", "# Complex PTSD")
+    _w(root, f"docs/materials/{char}/src.md",
+       f"---\ncharacter: {char}\nevidence_tier: T1\n---\nx")
+
+
+def test_graph_context_character_query(kg):
+    mod, root = kg
+    _seed_character(root)
+    mod.get_graph(force_rebuild=True)
+    r = mod.graph_context("alpha")
+    assert r["entity"] == "char:alpha"
+    assert "docs/profiles/alpha/INDEX.md" in r["files"]
+    assert "docs/profiles/alpha/psychology/formulation.md" in r["files"]
+    assert r["token_estimate"] > 0 and r["node_count"] > 0
+
+
+def test_graph_context_unknown_entity(kg):
+    mod, root = kg
+    _w(root, "docs/references/a.md", "# a")
+    mod.get_graph(force_rebuild=True)
+    r = mod.graph_context("nobody")
+    assert r["files"] == [] and r["token_estimate"] == 0
+    assert r["summary"] == "Entity not found"
+
+
+def test_graph_context_node_types_filter(kg):
+    mod, root = kg
+    _seed_character(root)
+    mod.get_graph(force_rebuild=True)
+    r = mod.graph_context("alpha", node_types=["reference"])
+    G = mod.get_graph()
+    assert r["files"] and all(G.nodes[f]["type"] == "reference" for f in r["files"])
+    assert "docs/references/complex-ptsd.md" in r["files"]
+
+
+def test_graph_context_hops_clamped_to_three(kg):
+    mod, root = kg
+    _seed_character(root)
+    mod.get_graph(force_rebuild=True)
+    assert set(mod.graph_context("alpha", hops=5)["files"]) == \
+           set(mod.graph_context("alpha", hops=3)["files"])
+
+
+def test_resolve_entity_forms(kg):
+    mod, root = kg
+    _seed_character(root)
+    G = mod.get_graph(force_rebuild=True)
+    assert mod._resolve_entity("alpha", G) == "char:alpha"
+    assert mod._resolve_entity("char:alpha", G) == "char:alpha"
+    assert mod._resolve_entity("complex-ptsd", G) == "docs/references/complex-ptsd.md"
+    assert mod._resolve_entity("docs/profiles/alpha/INDEX.md", G) == "docs/profiles/alpha/INDEX.md"
+    assert mod._resolve_entity("ghost", G) is None
+
+
+def test_graph_context_hub_files_first(kg):
+    mod, root = kg
+    _seed_character(root)
+    mod.get_graph(force_rebuild=True)
+    r = mod.graph_context("alpha", hops=1)
+    assert r["files"][0].rsplit("/", 1)[-1] in ("INDEX.md", "CURRENT-STATE.md")
+
+
+def test_graph_context_owning_character_ranked_first(kg):
+    mod, root = kg
+    _seed_character(root, "alpha")
+    _seed_character(root, "beta")
+    # link the two so beta files enter alpha's ego subgraph
+    _w(root, "docs/profiles/alpha/relationships/beta.md",
+       "---\ncharacter: alpha\ncross_characters: [beta]\n---\nx")
+    mod.get_graph(force_rebuild=True)
+    files = mod.graph_context("alpha")["files"]
+    beta = [i for i, f in enumerate(files) if f.startswith("docs/profiles/beta/")]
+    if beta:  # alpha's own INDEX must precede any beta profile
+        assert files.index("docs/profiles/alpha/INDEX.md") < min(beta)
+
+
+def test_graph_context_max_files_cap(kg):
+    mod, root = kg
+    for i in range(8):
+        _w(root, f"docs/profiles/alpha/psychology/f{i}.md", "---\ncharacter: alpha\n---\nx")
+    mod.get_graph(force_rebuild=True)
+    assert len(mod.graph_context("alpha", max_files=3)["files"]) == 3
+
+
+def test_undirected_projection_invalidated_on_rebuild(kg):
+    mod, root = kg
+    _w(root, "docs/references/a.md", "# a")
+    mod.get_graph(force_rebuild=True)
+    u1 = mod._undirected()
+    _w(root, "docs/references/b.md", "# b")
+    mod.get_graph(force_rebuild=True)
+    u2 = mod._undirected()
+    assert u1 is not u2 and "docs/references/b.md" in u2

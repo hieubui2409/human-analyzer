@@ -21,6 +21,7 @@ from __future__ import annotations
 import re
 import time
 import unicodedata
+from collections import Counter
 
 import networkx as nx
 import yaml
@@ -35,6 +36,7 @@ GRAPH = paths.GRAPH
 
 _FM_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
 _graph_cache: nx.DiGraph | None = None
+_undirected_cache: nx.Graph | None = None
 
 # Single-token reference slugs that are also generic English homographs: even with
 # repeated mentions their bare appearance is unreliable signal, so drop them entirely
@@ -279,10 +281,20 @@ def _build_graph() -> nx.DiGraph:
 
 def get_graph(force_rebuild: bool = False) -> nx.DiGraph:
     """Process-singleton DiGraph. Rebuild on demand (rebuild is sub-second)."""
-    global _graph_cache
+    global _graph_cache, _undirected_cache
     if _graph_cache is None or force_rebuild:
         _graph_cache = _build_graph()
+        _undirected_cache = None  # invalidate projection alongside the directed graph
     return _graph_cache
+
+
+def _undirected() -> nx.Graph:
+    """Cached undirected projection — edges are meaningful both ways for ego queries,
+    and to_undirected() is too costly to repeat per call."""
+    global _undirected_cache
+    if _undirected_cache is None:
+        _undirected_cache = get_graph().to_undirected(as_view=False)
+    return _undirected_cache
 
 
 def build_timed() -> tuple[nx.DiGraph, float]:
@@ -327,3 +339,84 @@ def validate_graph(G: nx.DiGraph | None = None) -> list[dict]:
         if d.get("type") in ("profile", "material") and G.degree(n) == 0:
             issues.append({"kind": "orphan", "node": n})
     return issues
+
+
+# --- graph_context: the consumer-facing "find related files" API -------------
+
+_TYPE_PRIORITY = {"profile": 0, "reference": 1, "material": 2, "graph_dyad": 3}
+_TIER_RANK = {"T1": 0, "T2": 1, "T3": 2, "T4": 3, "T5": 4}
+_HUB_FILES = ("INDEX.md", "CURRENT-STATE.md")
+
+
+def _resolve_entity(entity: str, G: nx.DiGraph) -> str | None:
+    """User input → graph node key. Accepts a node key, character slug, or file path."""
+    if entity in G:
+        return entity
+    hub = f"char:{entity}"
+    if hub in G:
+        return hub
+    for cand in (f"{entity}.md", f"docs/references/{entity}.md"):
+        if cand in G:
+            return cand
+    return None
+
+
+def _priority_key(node: str, attrs: dict, dist: int, center: str | None) -> tuple:
+    """Sort key. When querying a character, that character's own files + cited theory
+    references group ahead of other characters' files (dense cross_character edges
+    otherwise crowd them out under max_files). Then: 1-hop before far; type
+    (profile<ref<material<dyad); INDEX/CURRENT-STATE float up; materials by tier."""
+    t = attrs.get("type")
+    if center is None:
+        group = 0
+    elif t == "reference":
+        group = 0  # cited theories are character-agnostic — keep them prominent
+    else:
+        group = 0 if _owning_char(node) == center else 1
+    far = 1 if dist > 1 else 0
+    type_rank = _TYPE_PRIORITY.get(t, 5)
+    hub_boost = 0 if node.rsplit("/", 1)[-1] in _HUB_FILES else 1
+    tier = _TIER_RANK.get(attrs.get("evidence_tier", ""), 9)
+    return (group, far, type_rank, hub_boost, tier, node)
+
+
+def graph_context(entity: str, hops: int = 2, node_types=None,
+                  max_files: int = 50) -> dict:
+    """Primary cross-file discovery API for LLM skills — replaces glob/grep for
+    relationship queries. Returns priority-ordered markdown paths within `hops` of
+    `entity` plus a token-budget estimate. Unknown entity → empty result (no raise).
+    hops is clamped to [1, 3]; max_files caps the (post-sort) list."""
+    G = get_graph()
+    root = _resolve_entity(entity, G)
+    if root is None:
+        return {"entity": entity, "files": [], "summary": "Entity not found",
+                "token_estimate": 0, "node_count": 0, "edge_count": 0}
+    radius = min(max(hops, 1), 3)
+    center = root[len("char:"):] if root.startswith("char:") else None
+    ego = nx.ego_graph(_undirected(), root, radius=radius)
+    dist = nx.single_source_shortest_path_length(ego, root, cutoff=radius)
+    allowed = set(node_types) if node_types else None
+
+    candidates = []
+    for n, a in ego.nodes(data=True):
+        t = a.get("type")
+        if t is None or t == "character_hub":  # synthetic hubs are not files
+            continue
+        if allowed and t not in allowed:
+            continue
+        candidates.append((n, a, dist.get(n, radius)))
+    candidates.sort(key=lambda c: _priority_key(c[0], c[1], c[2], center))
+
+    files = [n for n, _, _ in candidates][:max_files]
+    token_estimate = sum(ego.nodes[n].get("token_count", 500) for n in files)
+    breakdown = Counter(ego.nodes[n].get("type") for n in files)
+    parts = ", ".join(f"{v} {k}{'s' if v != 1 else ''}" for k, v in breakdown.most_common())
+    return {
+        "entity": root,
+        "files": files,
+        "summary": f"{len(files)} files within {radius} hops ({parts})" if files
+                   else f"No files within {radius} hops",
+        "token_estimate": token_estimate,
+        "node_count": ego.number_of_nodes(),
+        "edge_count": ego.number_of_edges(),
+    }
