@@ -125,7 +125,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ## Skills Catalog (`.claude/skills/`)
 
-55 framework skills (ORC 15 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 3). Invoke as `{framework}:{skill}`.
+56 framework skills (ORC 16 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 3). Invoke as `{framework}:{skill}`.
 
 > Engineer-kit utility skills (`/ck:*`) installed alongside are **not** catalogued here — they are user-invoked dev tools, discoverable via the harness skill list.
 
@@ -142,6 +142,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 | `orc:decisions`       | Append-only decision records                                          |
 | `orc:agent-memory`    | Per-agent calibration memory                                          |
 | `orc:event-log`       | Persistent event audit logging (JSONL append + query)                 |
+| `orc:observe`         | Cross-framework observation signals (passive telemetry → instinct)    |
 | `orc:domain-router`   | Route domain events to downstream skills (diff or explicit)           |
 | `orc:cascade`         | Resolve multi-step event cascade chains across domains                |
 | `orc:audit`           | Cross-domain event consistency verification                           |

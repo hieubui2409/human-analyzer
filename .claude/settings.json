@@ -12,9 +12,26 @@
             "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/profile-edit-reminder.cjs",
             "timeout": 5,
             "type": "command"
+          },
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/observe-framework-signal.cjs",
+            "timeout": 5,
+            "type": "command"
           }
         ],
         "matcher": "Edit|Write"
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/write-framework-delta-compact-digest.cjs",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "manual|auto"
       }
     ],
     "PreToolUse": [

@@ -1,7 +1,7 @@
 ---
 name: orc:session-state
 description: "Track session state across conversations — what profiles were updated, content created, decisions made. View current state, archive history, recover on resume. Use when user says 'session state', 'what did we do', 'session recap', or automatically via hooks on SessionStart/Stop."
-argument-hint: "[--show|--archive|--reset]"
+argument-hint: "[--show|--archive|--reset|--compact-digest]"
 metadata:
   author: hieubt
   version: "1.0.0"
@@ -25,6 +25,22 @@ Track structured session state for ck-marketing project. Persists across Stop/Re
 | `--show`    | Print current state from state.json           |
 | `--archive` | Archive current state to timestamped markdown |
 | `--reset`   | Reset state to defaults (keep archive)        |
+| `--compact-digest` | Write a bounded per-framework delta digest before `/compact` (C5) |
+
+## Strategic Compact Digest (`--compact-digest`)
+
+Snapshots a bounded per-framework delta (top-N recent events per PSY/MAT/CRE/GRO/ORC/COM stream +
+B3 observations) to `.claude/session-state/compact-digest.json` so framework context survives a
+`/compact` boundary — `orc:bootstrap` re-injects it on resume. Runs **automatically** before every
+`/compact` via the project `write-framework-delta-compact-digest.cjs` PreCompact hook; this flag is
+the manual entry. Bounded (default top-5, ≤8 KB cap) so it never defeats compaction.
+
+```bash
+PY=$HOME/.claude/skills/.venv/bin/python3
+$PY .claude/skills/orc-session-state/scripts/write-framework-delta-compact-digest.py --top-n 5 --json
+```
+
+Project-owned (replaces ck PreCompact behavior); does not touch ck `write-compact-marker.cjs`.
 
 ## State File
 

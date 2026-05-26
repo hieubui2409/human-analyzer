@@ -8,7 +8,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = PROJECT_ROOT / ".claude" / "skills"
 PYTHON = Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3"
-DOMAINS = ["mat", "psy", "cre", "mpc", "com"]
+DOMAINS = ["mat", "psy", "cre", "gro", "orc", "com"]
 
 
 def get_framework_scripts():

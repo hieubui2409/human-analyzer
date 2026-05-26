@@ -206,6 +206,22 @@ Each event is one JSON line:
 - `orc-event-log/scripts/append-event-to-log.py` — append one event
 - `orc-event-log/scripts/query-event-log-with-filters.py` — filter and display
 
+## Automatic Project Hooks (project-owned, no ck dependency)
+
+Two project-authored hooks (git-tracked `settings.json` entries → project scripts) run
+automatically; neither `require`s ck-config-utils (CAP-1). Both fail-open — an error never
+blocks the tool/compaction.
+
+| Hook | Event | Does | Manual entry |
+| ---- | ----- | ---- | ------------ |
+| `observe-framework-signal.cjs` | PostToolUse (Edit\|Write) | Maps the edited path → framework, appends a deterministic `{fw}-touched` signal to `observations.jsonl` (B3). | `orc:observe` (semantic signals) |
+| `write-framework-delta-compact-digest.cjs` | PreCompact | Snapshots a bounded per-framework delta to `compact-digest.json`; `orc:bootstrap` re-injects on resume (C5). | `orc:session-state --compact-digest` |
+
+**Observation stream vs event bus:** observations (`observations.jsonl`) are passive telemetry —
+they never trip a cascade. Domain events (the framework streams) drive the cascade. `orc:observe`
+records LLM-judged signals; the hook guarantees a deterministic baseline trail. Enable flags live in
+`framework-config.json` (`hooks.observeFrameworkSignal`, `hooks.compactDigest`; default on).
+
 ## Failure Modes
 
 | Failure                               | Recovery                                             |
