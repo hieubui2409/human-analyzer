@@ -1,10 +1,10 @@
 ---
 name: com:skill-analytics
-description: "Observe and analyze the project's framework skills + scripts across six read-only lenses: infrastructure health, import dependency graph, skill cascade topology, usage analytics + per-skill token attribution, SKILL.md context-budget + trigger-overlap + coverage gaps, and content-pipeline health. Deterministic gather only — never edits skills; distinct from orc:audit (event consistency) and orc:skill-stocktake (catalog necessity). Use for pre-release skill/script health, finding broken scripts, mapping dependencies, spotting unused or token-costly skills, or surfacing content gaps. Triggers: 'skill health', 'skill analytics', 'dependency graph', 'platform_lib usage', 'cascade graph', 'skill usage', 'token usage per skill', 'context budget', 'content pipeline', 'posts per platform'."
-argument-hint: "[--health | --deps | --cascade | --usage | --coverage | --content | --all] [--json] [--format md|json] [--perf] [--tokens] [--days N] [--top N] [--framework mat|psy|cre|gro|orc|com] [--dot] [--orphans] [--critical] [--budget-only] [--gaps-only] [--decommission] [--platform NAME] [--since YYYY-MM-DD]"
+description: "Observe and analyze the project's framework skills + scripts across eight read-only lenses: infrastructure health, import dependency graph, skill cascade topology, usage analytics + per-skill token attribution, SKILL.md context-budget + trigger-overlap + coverage gaps, content-pipeline health, a unified traffic-light dashboard, and memory-system health. Deterministic gather only — never edits skills; distinct from orc:audit (event consistency) and orc:skill-stocktake (catalog necessity). Use for pre-release skill/script health, a one-glance project health snapshot, finding broken scripts, mapping dependencies, spotting unused or token-costly skills, surfacing content gaps, or catching memory index drift. Triggers: 'skill health', 'skill analytics', 'dependency graph', 'cascade graph', 'token usage per skill', 'context budget', 'content pipeline', 'health dashboard', 'memory health'."
+argument-hint: "[--health | --deps | --cascade | --usage | --coverage | --content | --dashboard | --memory | --all] [--json] [--format md|json|html] [--perf] [--tokens] [--days N] [--top N] [--framework mat|psy|cre|gro|orc|com] [--dot] [--budget-only] [--gaps-only] [--decommission] [--platform NAME] [--since YYYY-MM-DD] [--by-framework] [--skip keys] [--fix] [--apply]"
 metadata:
   author: hieubt
-  version: "1.1.0"
+  version: "1.2.0"
   category: "com-framework"
   position: "maintenance"
   dependencies: []
@@ -13,9 +13,9 @@ metadata:
 # com:skill-analytics — Skill & Script Observability
 
 Deterministic, read-only observability for the 6 framework domains' skills + scripts +
-`platform_lib`. Six lenses (infrastructure health, dependency graph, cascade topology,
-usage analytics, coverage/budget, content pipeline) over static structure + the
-consolidated telemetry sink. Scope = project framework skills only
+`platform_lib`. Eight lenses (infrastructure health, dependency graph, cascade topology,
+usage analytics, coverage/budget, content pipeline, unified dashboard, memory health) over
+static structure + the consolidated telemetry sink. Scope = project framework skills only
 (`mat-/psy-/cre-/gro-/orc-/com-`), never ck skills.
 
 ## When to Use
@@ -27,6 +27,8 @@ consolidated telemetry sink. Scope = project framework skills only
 - To see which skills are actually used and what they cost in tokens (`--usage --tokens`).
 - To find SKILL.md context-budget hogs, overlapping triggers, or decommission candidates (`--coverage`).
 - To check content cadence — posts per platform, inactive platforms (`--content`).
+- For a one-glance, traffic-light snapshot of the whole project (`--dashboard`).
+- To validate the persistent memory dir — orphans, dead index entries, broken `[[links]]` (`--memory`).
 - NOT for event-consistency auditing → that is `orc:audit`.
 - NOT for catalog overlap/necessity → that is `orc:skill-stocktake`.
 - NOT for CE-02 progressive-disclosure conformance → that is `orc:skill-stocktake --ce02`.
@@ -41,7 +43,9 @@ consolidated telemetry sink. Scope = project framework skills only
 | `--usage`    | S1     | Invocation counts (invocations.jsonl) + per-skill token attribution (session JSONL); never-used list |
 | `--coverage` | S4     | SKILL.md context budget (tokens), trigger-keyword overlap, routing/catalog gaps, decommission list |
 | `--content`  | M5     | Posts per platform from assets/; last-post date, cadence, inactive platforms   |
-| `--all`      | —      | Run all six sequentially                                                       |
+| `--dashboard`| M1     | Orchestrates all lenses + psy:health-check + mat:rescore → traffic-light table (md/json/html); `--by-framework`, `--skip`, `--verbose` |
+| `--memory`   | M6     | Memory dir health: frontmatter, MEMORY.md sync (orphans/dead), `[[links]]`, staleness; `--fix` dry-run, `--apply` to write |
+| `--all`      | —      | Run all lenses sequentially                                                    |
 
 ```bash
 PY=.claude/skills/.venv/bin/python3
@@ -52,6 +56,8 @@ $PY $S/build-cascade-graph.py [--orphans] [--dot] [--json]
 $PY $S/scan-skill-usage-and-tokens.py [--days 30] [--tokens] [--top 20] [--framework psy] [--json]
 $PY $S/analyze-skill-coverage-and-budget.py [--budget-only] [--gaps-only] [--decommission] [--json]
 $PY $S/scan-content-pipeline-health.py [--platform facebook] [--since 2026-01-01] [--json]
+$PY $S/build-unified-dashboard.py [--by-framework] [--skip profiles,memory] [--format md|json|html]
+$PY $S/check-memory-system-health.py [--fix [--apply]] [--json]
 ```
 
 ## Determinism Split (GOLDEN RULE #4)
