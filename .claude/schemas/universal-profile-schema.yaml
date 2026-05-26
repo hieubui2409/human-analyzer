@@ -1,6 +1,11 @@
 # Universal Profile Schema — PMC Framework
 # Same structure for ALL characters, no exceptions.
 # Empty skeleton = valid state.
+#
+# ⚠️ NON-AUTHORITATIVE / DERIVED (C7, 2026-05-26): human-readable reference only.
+# The machine-enforceable contract is profile-frontmatter.schema.json (+ growth-*/
+# psychology-* specializations), run by platform_lib/schema_validator.py +
+# validate-all-against-schemas.py. On drift, the .schema.json files win.
 
 version: "1.0"
 created: "2026-05-17"

@@ -61,7 +61,7 @@ EXACT_CATEGORY_MAP: dict[str, str] = {
     "shader": "frontend", "stitch": "frontend", "web-design-guidelines": "frontend",
     "tanstack": "frameworks",
     "deploy": "infrastructure",
-    "agent-browser": "multimedia", "web-testing": "multimedia",
+    "agent-browser": "multimedia", "chrome-profile": "dev-tools", "web-testing": "multimedia",
     "ck-security": "security", "cti-expert": "security", "security-scan": "security",
 }
 
