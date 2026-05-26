@@ -584,3 +584,59 @@ def test_s5_empty_graceful(tmp_path):
     data = mod.gather(days=30, top=10, min_sessions=5)
     assert data["sessions_analyzed"] == 0
     assert "No multi-skill chains" in mod.render_md(data)
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 — M4 profile drift detector (deterministic link + date gate).
+# Isolated via PROFILES repoint at a tmp fixture profile tree.
+# ---------------------------------------------------------------------------
+
+
+def _profile(root: Path, char: str, rel: str, body: str):
+    p = root / char / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(body, encoding="utf-8")
+    return p
+
+
+def test_m4_detects_broken_link(tmp_path):
+    mod = _load("detect-profile-drift")
+    mod.PROFILES = tmp_path
+    # core.md links to a sibling that exists and one that doesn't.
+    _profile(tmp_path, "alpha", "identity/core.md",
+             "See [ok](./writing-voice.md) and [bad](./missing.md) and [ext](https://x.com).")
+    _profile(tmp_path, "alpha", "identity/writing-voice.md", "# voice")
+    data = mod.gather(file=None, character="alpha")
+    urls = {b["url"] for b in data["broken_links"]}
+    assert "./missing.md" in urls
+    assert "./writing-voice.md" not in urls   # exists → not flagged
+    assert "https://x.com" not in urls         # external → ignored
+
+
+def test_m4_flags_implausible_future_date_in_timeline(tmp_path):
+    mod = _load("detect-profile-drift")
+    mod.PROFILES = tmp_path
+    _profile(tmp_path, "alpha", "timeline/overview.md",
+             "Event on 2099-01-01 is way off. Normal 2020-05-01 is fine.")
+    data = mod.gather(file=None, character="alpha")
+    dates = {d["date"] for d in data["implausible_dates"]}
+    assert "2099-01-01" in dates
+    assert "2020-05-01" not in dates
+
+
+def test_m4_single_file_mode(tmp_path):
+    mod = _load("detect-profile-drift")
+    mod.PROFILES = tmp_path
+    f = _profile(tmp_path, "alpha", "psychology/core-wounds.md", "[x](./nope.md)")
+    data = mod.gather(file=str(f), character=None)
+    assert data["files_checked"] == 1
+    assert len(data["broken_links"]) == 1
+
+
+def test_m4_clean_profile_green(tmp_path):
+    mod = _load("detect-profile-drift")
+    mod.PROFILES = tmp_path
+    _profile(tmp_path, "alpha", "INDEX.md", "All good, no links.")
+    data = mod.gather(file=None, character="alpha")
+    assert data["issue_count"] == 0
+    assert data["status"] == "GREEN"

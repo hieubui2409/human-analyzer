@@ -33,6 +33,9 @@ consolidated telemetry sink + Claude Code transcripts. Scope = project framework
 - To track subagent success/failure rates + top failure modes over time (`--reliability`).
 - To reconstruct a session post-hoc — tokens, tools, files, duration (`--forensics`).
 - To compare actual skill chains against the routing-doc recommendations (`--workflow`).
+- For a fast deterministic profile-content gate — broken links, implausible dates (`--drift`);
+  this is the manual counterpart of the PostToolUse:Edit hook, distinct from the skill/script
+  observability lenses and from `psy:crossref` (LLM semantic audit).
 - NOT for event-consistency auditing → that is `orc:audit`.
 - NOT for catalog overlap/necessity → that is `orc:skill-stocktake`.
 - NOT for CE-02 progressive-disclosure conformance → that is `orc:skill-stocktake --ce02`.
@@ -52,7 +55,8 @@ consolidated telemetry sink + Claude Code transcripts. Scope = project framework
 | `--reliability` | M3  | Subagent outcome rates (success/api_error/timeout) per agent type + top failure modes; reuses com:health-check error taxonomy |
 | `--forensics`| P1     | Post-hoc session reconstruction from transcript JSONL (streaming): skills, tools, tokens, files, subagents, duration; `--session`/`--all-sessions` |
 | `--workflow` | S5     | Actual per-session skill chains (from invocations.jsonl) vs routing-doc declared chains; deviation ranking |
-| `--all`      | —      | Run all lenses sequentially                                                    |
+| `--drift`    | M4     | Deterministic profile-content gate: broken internal `.md` links + implausible future dates; `--file`/`--all`; powers the PostToolUse:Edit hook |
+| `--all`      | —      | Run all observability lenses sequentially                                      |
 
 ```bash
 PY=.claude/skills/.venv/bin/python3
@@ -68,6 +72,7 @@ $PY $S/check-memory-system-health.py [--fix [--apply]] [--json]
 $PY $S/track-subagent-reliability.py [--days 30] [--agent-type researcher] [--json]
 $PY $S/parse-session-jsonl-forensics.py [--session ID | --all-sessions] [--tool-breakdown] [--json]
 $PY $S/analyze-workflow-chains.py [--days 30] [--top 10] [--min-sessions 5] [--json]
+$PY $S/detect-profile-drift.py [--file PATH | --all] [--character SLUG] [--json]
 ```
 
 ## Determinism Split (GOLDEN RULE #4)
