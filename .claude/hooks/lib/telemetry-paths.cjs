@@ -22,7 +22,8 @@ function projectDir() {
 }
 
 function telemetryDir() {
-  const dir = path.join(projectDir(), '.claude', 'telemetry');
+  // CK_TELEMETRY_DIR env overrides (tests point it at a tmp dir to isolate writes).
+  const dir = process.env.CK_TELEMETRY_DIR || path.join(projectDir(), '.claude', 'telemetry');
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }

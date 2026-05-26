@@ -2,7 +2,7 @@
   "gateguard": {
     "enabled": true,
     "requireUserApproval": true,
-    "auditLog": ".claude/logs/gateguard-audit.jsonl"
+    "auditLog": ".claude/telemetry/gateguard-audit.jsonl"
   },
   "hooks": {
     "privacyBlock": { "enabled": true },

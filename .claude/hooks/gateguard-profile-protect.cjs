@@ -4,7 +4,11 @@
  *
  * PreToolUse hook on Edit|Write. Classifies file sensitivity via
  * sensitivity-checker.cjs, blocks CRITICAL/HIGH until session-state
- * approval is written. Logs all actions to JSONL audit trail.
+ * approval is written. Logs all actions to the consolidated telemetry sink
+ * (telemetry-paths.cjs → .claude/telemetry/gateguard-audit.jsonl).
+ *
+ * Project-owned, ZERO ck dependency: enable/disable reads the project's
+ * .claude/framework-config.json via hook-config-utils.cjs (not ck .ck.json).
  *
  * Approval flow:
  * 1. LLM calls Edit on sensitive file → BLOCKED (exit 2)
@@ -18,7 +22,7 @@ const fs = require("fs");
 const path = require("path");
 
 const { classifyFile, LEVELS } = require("./lib/sensitivity-checker.cjs");
-const { isHookEnabled } = require("./lib/ck-config-utils.cjs");
+const { isHookEnabled } = require("./lib/hook-config-utils.cjs");
 const { sinkPath } = require("./lib/telemetry-paths.cjs");
 
 const PROJECT_DIR =

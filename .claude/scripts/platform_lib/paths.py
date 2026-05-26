@@ -30,7 +30,9 @@ PLANS = ROOT / "plans"
 REPORTS = PLANS / "reports"
 SKILLS = ROOT / ".claude" / "skills"
 SESSION_STATE = ROOT / ".claude" / "session-state"  # mutable session STATE (json), not event sinks
-TELEMETRY = ROOT / ".claude" / "telemetry"  # consolidated observability sink root (all JSONL streams)
+# Consolidated observability sink root (all JSONL streams). CK_TELEMETRY_DIR env
+# overrides it (tests point it at a tmp dir to isolate sink writes).
+TELEMETRY = Path(os.environ["CK_TELEMETRY_DIR"]) if os.environ.get("CK_TELEMETRY_DIR") else ROOT / ".claude" / "telemetry"
 DECISIONS = ROOT / ".claude" / "decisions"
 PROFILE_CACHE = ROOT / ".claude" / "profile-cache"
 

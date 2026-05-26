@@ -160,33 +160,23 @@ class TestMarkdownParser:
         except ImportError:
             pytest.skip("markdown_parser not available or incompatible")
 
-    def test_extract_section_on_sample_markdown(self):
-        """extract_section should work on sample markdown."""
-        try:
-            import platform_lib.markdown_parser as mp_mod
-            if not hasattr(mp_mod, "extract_section"):
-                pytest.skip("extract_section not available")
+    def test_extract_sections_on_sample_markdown(self, tmp_path):
+        """extract_sections(filepath, level) returns {heading: content} for level-2 headings."""
+        import platform_lib.markdown_parser as mp_mod
+        f = tmp_path / "sample.md"
+        f.write_text("# Header\n\n## Section\nContent here\n\n## Another\nMore content\n", encoding="utf-8")
+        result = mp_mod.extract_sections(f, level=2)
+        assert result["Section"] == "Content here"
+        assert result["Another"] == "More content"
 
-            sample = "# Header\n\n## Section\nContent here\n\n## Another\nMore content"
-            result = mp_mod.extract_section(sample, "Section")
-            # Should return something if the function exists and works
-            assert result is not None or result == ""
-        except Exception:
-            pytest.skip("extract_section implementation incompatible")
-
-    def test_parse_frontmatter_on_yaml(self):
-        """parse_frontmatter should handle YAML frontmatter."""
-        try:
-            import platform_lib.markdown_parser as mp_mod
-            if not hasattr(mp_mod, "parse_frontmatter"):
-                pytest.skip("parse_frontmatter not available")
-
-            sample = "---\nkey: value\n---\nContent"
-            result = mp_mod.parse_frontmatter(sample)
-            # Should return a dict or None
-            assert isinstance(result, dict) or result is None
-        except Exception:
-            pytest.skip("parse_frontmatter implementation incompatible")
+    def test_extract_frontmatter_on_yaml(self, tmp_path):
+        """extract_frontmatter(filepath) parses the YAML-like frontmatter block to a dict."""
+        import platform_lib.markdown_parser as mp_mod
+        f = tmp_path / "fm.md"
+        f.write_text('---\nname: "psy:test"\nkey: value\n---\nBody\n', encoding="utf-8")
+        result = mp_mod.extract_frontmatter(f)
+        assert result["name"] == "psy:test"
+        assert result["key"] == "value"
 
 
 class TestEnvUtils:
@@ -230,19 +220,16 @@ class TestCsvSearch:
         except ImportError:
             pytest.skip("csv_search not available")
 
-    def test_csv_search_handles_empty_input(self):
-        """csv_search functions should handle empty input."""
-        try:
-            import platform_lib.csv_search as cs_mod
-            if not hasattr(cs_mod, "search") and not hasattr(cs_mod, "bm25_search"):
-                pytest.skip("search functions not available")
-
-            # Call with empty data should not crash
-            if hasattr(cs_mod, "search"):
-                result = cs_mod.search([], "query")
-                assert isinstance(result, (list, dict)) or result is None
-        except Exception:
-            pytest.skip("csv_search implementation incompatible")
+    def test_csv_search_empty_and_basic(self):
+        """search(query, rows) returns [] on empty rows and ranks matching rows otherwise."""
+        import platform_lib.csv_search as cs_mod
+        assert cs_mod.search("query", []) == []
+        rows = [
+            {"name": "complex ptsd", "desc": "trauma and dissociation"},
+            {"name": "secure attachment", "desc": "stable bonding"},
+        ]
+        hits = cs_mod.search("trauma", rows, text_fields=["name", "desc"])
+        assert hits and hits[0][2]["name"] == "complex ptsd"
 
 
 class TestProfileValidator:

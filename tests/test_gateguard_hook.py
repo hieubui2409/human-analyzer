@@ -16,12 +16,18 @@ import pytest
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 HOOK_PATH = PROJECT_DIR / ".claude" / "hooks" / "gateguard-profile-protect.cjs"
-AUDIT_LOG_DIR = PROJECT_DIR / ".claude" / "telemetry"
+# Throwaway audit sink so blocking-test audit writes never touch the real tracked
+# .claude/telemetry/gateguard-audit.jsonl (CK_TELEMETRY_DIR honored by the hook).
+_ISO_TELEMETRY = tempfile.mkdtemp(prefix="ck-gateguard-telemetry-")
 
 
-def run_hook(tool_name: str, file_path: str, env_override: dict | None = None) -> subprocess.CompletedProcess:
+def run_hook(tool_name: str, file_path: str, env_override: dict | None = None,
+             project_dir: Path | None = None) -> subprocess.CompletedProcess:
+    """Run the gateguard hook. project_dir redirects CLAUDE_PROJECT_DIR (approval file);
+    audit writes are isolated to a throwaway sink unless env_override sets CK_TELEMETRY_DIR."""
     stdin_data = json.dumps({"tool_name": tool_name, "tool_input": {"file_path": file_path}})
-    env = {**os.environ, "CLAUDE_PROJECT_DIR": str(PROJECT_DIR)}
+    env = {**os.environ, "CLAUDE_PROJECT_DIR": str(project_dir or PROJECT_DIR),
+           "CK_TELEMETRY_DIR": _ISO_TELEMETRY}
     if env_override:
         env.update(env_override)
     return subprocess.run(
@@ -68,37 +74,34 @@ class TestHookBlocking:
 
 
 class TestApprovalFlow:
-    def test_approval_bypasses_block(self):
-        approval_path = PROJECT_DIR / ".claude" / "session-state" / "gateguard-approved.json"
+    def test_approval_bypasses_block(self, tmp_path):
+        # Isolated: approval file lives under the tmp project dir, not the real repo.
+        approval_path = tmp_path / ".claude" / "session-state" / "gateguard-approved.json"
         rel_path = "docs/profiles/character-a/darkness/traumas.md"
-        try:
-            approval_path.parent.mkdir(parents=True, exist_ok=True)
-            approval_path.write_text(json.dumps({rel_path: True}))
+        approval_path.parent.mkdir(parents=True, exist_ok=True)
+        approval_path.write_text(json.dumps({rel_path: True}))
 
-            r = run_hook("Edit", rel_path)
-            assert r.returncode == 0
-            assert "approved" in r.stderr.lower()
+        r = run_hook("Edit", rel_path, project_dir=tmp_path)
+        assert r.returncode == 0
+        assert "approved" in r.stderr.lower()
 
-            if approval_path.exists():
-                remaining = json.loads(approval_path.read_text())
-                assert rel_path not in remaining
-        finally:
-            if approval_path.exists():
-                approval_path.unlink()
+        # Approval is single-use: the consumed entry is removed; when it was the
+        # last entry the file itself is deleted.
+        if approval_path.exists():
+            assert rel_path not in json.loads(approval_path.read_text())
 
 
 class TestAuditLog:
-    def test_audit_log_written_on_block(self):
-        audit_path = AUDIT_LOG_DIR / "gateguard-audit.jsonl"
-        if audit_path.exists():
-            before_size = audit_path.stat().st_size
-        else:
-            before_size = 0
+    def test_audit_log_written_on_block(self, tmp_path):
+        # Isolated: CK_TELEMETRY_DIR redirects the audit sink to tmp, never the real
+        # tracked .claude/telemetry/gateguard-audit.jsonl.
+        sink = tmp_path / "telemetry"
+        audit_path = sink / "gateguard-audit.jsonl"
 
-        run_hook("Edit", "docs/profiles/character-a/darkness/traumas.md")
+        run_hook("Edit", "docs/profiles/character-a/darkness/traumas.md",
+                 env_override={"CK_TELEMETRY_DIR": str(sink)})
 
         assert audit_path.exists()
-        assert audit_path.stat().st_size > before_size
         last_line = audit_path.read_text().strip().split("\n")[-1]
         entry = json.loads(last_line)
         assert entry["action"] == "blocked"
@@ -106,27 +109,17 @@ class TestAuditLog:
 
 
 class TestHookDisabled:
-    def test_passes_when_disabled(self):
-        ck_config_path = PROJECT_DIR / ".claude" / ".ck.json"
-        backup = None
-        if ck_config_path.exists():
-            backup = ck_config_path.read_text()
-
-        try:
-            if ck_config_path.exists():
-                config = json.loads(ck_config_path.read_text())
-            else:
-                config = {}
-            config.setdefault("hooks", {})["gateguard-profile-protect"] = False
-            ck_config_path.write_text(json.dumps(config))
-
-            r = run_hook("Edit", "docs/profiles/character-a/darkness/traumas.md")
-            assert r.returncode == 0
-        finally:
-            if backup is not None:
-                ck_config_path.write_text(backup)
-            elif ck_config_path.exists():
-                ck_config_path.unlink()
+    def test_passes_when_disabled(self, tmp_path):
+        # CAP-1: gateguard now reads PROJECT framework-config.json (not ck .ck.json).
+        # Isolated tmp project dir with the hook toggled off → hook passes (exit 0).
+        cfg_dir = tmp_path / ".claude"
+        cfg_dir.mkdir(parents=True, exist_ok=True)
+        (cfg_dir / "framework-config.json").write_text(
+            json.dumps({"hooks": {"gateguard-profile-protect": False}})
+        )
+        r = run_hook("Edit", "docs/profiles/character-a/darkness/traumas.md",
+                     project_dir=tmp_path)
+        assert r.returncode == 0
 
 
 class TestNodeSensitivityChecker:

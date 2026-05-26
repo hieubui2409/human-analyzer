@@ -33,7 +33,10 @@ def _disabled() -> bool:
 
 
 def _find_telemetry_dir() -> Path:
-    """Walk up from this file to the project root and return its .claude/telemetry."""
+    """Resolve the consolidated sink root. CK_TELEMETRY_DIR env overrides (test isolation)."""
+    override = os.environ.get("CK_TELEMETRY_DIR")
+    if override:
+        return Path(override)
     p = Path(__file__).resolve()
     while p != p.parent:
         if (p / ".claude").is_dir():
