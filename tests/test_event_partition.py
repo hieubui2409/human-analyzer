@@ -87,6 +87,13 @@ class TestRouting:
         assert append_mod.resolve_stream("CRE.evidence-checked")[0] == streams["CRE"]
         assert append_mod.resolve_stream("PSY.relation-angle-discovered")[0] == streams["PSY"]
 
+    def test_batch7_event_types_registered(self, append_mod, streams):
+        # B7: cre:angle-discovery + cre:multiplatform event types route to CRE stream
+        assert "CRE.angle-discovered" in append_mod.VALID_EVENT_TYPES
+        assert "CRE.published" in append_mod.VALID_EVENT_TYPES
+        assert append_mod.resolve_stream("CRE.angle-discovered")[0] == streams["CRE"]
+        assert append_mod.resolve_stream("CRE.published")[0] == streams["CRE"]
+
 
 class TestQuery:
     def _seed(self, streams):

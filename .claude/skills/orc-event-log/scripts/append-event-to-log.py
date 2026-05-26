@@ -17,6 +17,8 @@ VALID_EVENT_TYPES = [
     "PSY.relation-angle-discovered",
     "CRE.recalibrate",
     "CRE.evidence-checked",
+    "CRE.angle-discovered",
+    "CRE.published",
     "GRO.assessed",
     "GRO.forecast",
     "GRO.mentored",

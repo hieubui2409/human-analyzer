@@ -18,7 +18,13 @@ metadata:
 
 # Content Repurpose
 
-Adapt existing content across platforms per `docs/rules/03-content-creation-pipeline.md` platform guidelines.
+Adapt **one existing published post → one other platform** (1→1, post-publish) per
+`docs/rules/03-content-creation-pipeline.md` platform guidelines.
+
+> **Scope vs `cre:multiplatform` (C1):** repurpose = adapt an *existing* post 1→1;
+> `cre:multiplatform` = generate *native* drafts 1→N from a source/angle. Both share the
+> single platform-rules module `.claude/scripts/platform_lib/platform_constraints.py`
+> (length, hook model, hashtags, aspect ratio, privacy threshold) — no duplicate table.
 
 ## Flags
 
@@ -44,7 +50,7 @@ Adapt existing content across platforms per `docs/rules/03-content-creation-pipe
 ## Workflow
 
 1. **Read source** content (post.md from specified path/platform)
-2. **Load platform constraints** from `docs/rules/03-content-creation-pipeline.md`
+2. **Load platform constraints** from `.claude/scripts/platform_lib/platform_constraints.py` (`get_constraints(platform)` — single source; mirrors `docs/rules/03-content-creation-pipeline.md`)
 3. **Identify core message** — what's the essential insight/story
 4. **Adapt**:
    - Adjust length to target constraints
@@ -85,4 +91,4 @@ When repurposing content:
 
 ## See Also
 
-cre:post-writer, cre:voice-audit, cre:privacy-guard
+cre:post-writer, cre:voice-audit, cre:privacy-guard, cre:multiplatform (1→N native generation)

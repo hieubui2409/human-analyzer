@@ -236,10 +236,12 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | Skill                  | Purpose                                                                    |
 | ---------------------- | -------------------------------------------------------------------------- |
 | `cre:exploring`        | 7-question exploration → CONTEXT.md                                        |
+| `cre:angle-discovery`  | Proactively mine 6 frameworks for ranked, evidence-backed content angles   |
+| `cre:multiplatform`    | 1→N platform-native variant generation (per-variant gated)                 |
 | `cre:post-writer`      | End-to-end content creation pipeline                                       |
 | `cre:prompt-leverage`  | 5-layer prompt strengthening                                               |
 | `cre:privacy-guard`    | Pre-publish privacy/confidentiality scan                                   |
-| `cre:repurpose`        | Adapt content across platforms                                             |
+| `cre:repurpose`        | Adapt content across platforms (1→1)                                       |
 | `cre:voice-audit`      | Audit content voice/tone consistency against WRITING-VOICE.md              |
 | `cre:evidence-scanner` | Per-claim evidence-tier gate (T1-T5) + Rule-09 leak; post-writer delegates |
 
@@ -260,7 +262,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ## Scripts Infrastructure
 
-53 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
+55 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 
