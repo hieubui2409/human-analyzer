@@ -50,6 +50,8 @@ assets/{platform}/          ← CRE output, per platform
 
 Asset package convention: `assets/{platform}/{YYMMDD}-{slug}/` → `post.txt`, `image-prompts.txt`, `images/`, `README.txt`.
 
+**Navigation docs:** `docs/knowledge-architecture.md` (6-layer knowledge map), `docs/MODULES.md` (55-skill grouping + cross-framework dependency edges), `docs/distilled-principles.md` (5 cross-domain invariants from rules 01–15).
+
 ---
 
 ## Profile Structure — Universal Nested Schema
