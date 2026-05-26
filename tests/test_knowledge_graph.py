@@ -110,3 +110,116 @@ def test_get_graph_singleton_and_rebuild(kg):
     _w(root, "docs/references/b.md", "# b")
     g3 = mod.get_graph(force_rebuild=True)
     assert "docs/references/b.md" in g3
+
+
+# --- Phase 2: Layer 2 body-text scanning -------------------------------------
+
+def test_fold_strips_vietnamese_diacritics():
+    from platform_lib import knowledge_graph as mod
+    assert mod._fold("Nhân vật A") == "bui trung hieu"
+    assert mod._fold("Đặng Hoà") == "dang hoa"
+
+
+def test_body_multitoken_slug_one_mention_065(kg):
+    mod, root = kg
+    _w(root, "docs/references/complex-ptsd.md", "# Complex PTSD")
+    _w(root, "docs/profiles/alpha/darkness/traumas.md",
+       "---\ncharacter: alpha\n---\nShe shows clear Complex PTSD patterns.")
+    G = mod.get_graph(force_rebuild=True)
+    e = G.get_edge_data("docs/profiles/alpha/darkness/traumas.md",
+                        "docs/references/complex-ptsd.md")
+    assert e["source"] == "body_text"
+    assert e["rel_type"] == "cites_theory"
+    assert e["confidence"] == 0.65  # multi-token, single mention
+    assert e["mention_count"] == 1
+
+
+def test_body_two_mentions_080(kg):
+    mod, root = kg
+    _w(root, "docs/references/complex-ptsd.md", "# x")
+    _w(root, "docs/profiles/alpha/darkness/t.md",
+       "---\ncharacter: alpha\n---\nComplex PTSD. Later: complex-ptsd again.")
+    G = mod.get_graph(force_rebuild=True)
+    e = G.get_edge_data("docs/profiles/alpha/darkness/t.md",
+                        "docs/references/complex-ptsd.md")
+    assert e["mention_count"] == 2 and e["confidence"] == 0.80
+
+
+def test_single_token_slug_needs_two_mentions(kg):
+    mod, root = kg
+    _w(root, "docs/references/transference.md", "# Transference")
+    p = "docs/profiles/alpha/psychology/x.md"
+    _w(root, p, "---\ncharacter: alpha\n---\nHe felt transference once.")
+    G = mod.get_graph(force_rebuild=True)
+    assert not G.has_edge(p, "docs/references/transference.md")  # 1 mention dropped
+    _w(root, p, "---\ncharacter: alpha\n---\nTransference, then more transference.")
+    G = mod.get_graph(force_rebuild=True)
+    e = G.get_edge_data(p, "docs/references/transference.md")
+    assert e["mention_count"] == 2 and e["confidence"] == 0.80
+
+
+def test_frontmatter_edge_not_downgraded_by_body(kg):
+    mod, root = kg
+    _w(root, "docs/references/complex-ptsd.md", "# x")
+    _w(root, "docs/profiles/alpha/psychology/f.md",
+       "---\ncharacter: alpha\nreferences: [complex-ptsd]\n---\nComplex PTSD complex ptsd")
+    G = mod.get_graph(force_rebuild=True)
+    e = G.get_edge_data("docs/profiles/alpha/psychology/f.md",
+                        "docs/references/complex-ptsd.md")
+    assert e["source"] == "frontmatter" and e["confidence"] == 0.95
+
+
+def test_blacklisted_slug_ignored_in_body(kg):
+    mod, root = kg
+    _w(root, "docs/references/displacement.md", "# Displacement")
+    p = "docs/profiles/alpha/psychology/d.md"
+    _w(root, p, "---\ncharacter: alpha\n---\nDisplacement displacement displacement.")
+    G = mod.get_graph(force_rebuild=True)
+    assert not G.has_edge(p, "docs/references/displacement.md")
+
+
+def test_reference_body_not_scanned_for_slugs(kg):
+    # Theory files must not cite each other from prose (only character-owned files scan).
+    mod, root = kg
+    _w(root, "docs/references/complex-ptsd.md", "# Complex PTSD\nrelated to Complex PTSD.")
+    _w(root, "docs/references/savior-complex.md", "# Savior\nSee Complex PTSD too.")
+    G = mod.get_graph(force_rebuild=True)
+    assert not G.has_edge("docs/references/savior-complex.md",
+                          "docs/references/complex-ptsd.md")
+
+
+def test_cross_character_body_edge(kg):
+    mod, root = kg
+    _w(root, "docs/profiles/alpha/identity/core.md", "---\ncharacter: alpha\n---\nx")
+    _w(root, "docs/profiles/beta/identity/core.md", "---\ncharacter: beta\n---\nx")
+    p = "docs/profiles/alpha/relationships/network.md"
+    _w(root, p, "---\ncharacter: alpha\n---\nAlpha works with beta, often beta.")
+    G = mod.get_graph(force_rebuild=True)
+    e = G.get_edge_data(p, "char:beta")
+    assert e["rel_type"] == "cross_character"
+    assert e["source"] == "body_text" and e["confidence"] == 0.70
+    # own character: only the frontmatter belongs_to edge, never a body self cross-link
+    assert G.get_edge_data(p, "char:alpha")["rel_type"] == "belongs_to"
+
+
+def test_short_name_diacritic_no_false_positive():
+    import re as _re
+    from platform_lib import knowledge_graph as mod
+    chars = {"character-b": {
+        "full_rx": _re.compile(r"\bhoang[\s\-]+cong[\s\-]+hoa\b"),
+        "display": "Nhân vật B", "multi": True}}
+    # 'hóa' (common VN word) folds to 'hoa' but must NOT match the proper-noun short name.
+    assert mod._scan_body_for_characters("văn hóa biến hóa hợp lý", "alpha", chars) == []
+    assert mod._scan_body_for_characters("anh Nhân vật B nói", "alpha", chars) == [("character-b", 1)]
+    assert mod._scan_body_for_characters("anh Nhân vật B nói", "character-b", chars) == []  # self skip
+
+
+def test_stats_reports_edges_by_source(kg):
+    mod, root = kg
+    _w(root, "docs/references/complex-ptsd.md", "# x")
+    _w(root, "docs/profiles/alpha/darkness/t.md",
+       "---\ncharacter: alpha\n---\nComplex PTSD here.")
+    G = mod.get_graph(force_rebuild=True)
+    s = mod.graph_stats(G)
+    assert s["edges_by_source"].get("body_text", 0) >= 1
+    assert s["edges_by_source"].get("frontmatter", 0) >= 1  # belongs_to alpha

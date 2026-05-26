@@ -5,9 +5,13 @@ profiles, materials, references, graph dyads → nodes; `character`, `cross_char
 `references`, `characters` fields → typed edges. In-memory, process-singleton, rebuilt
 on demand. Markdown is the source of truth; the graph is derived + disposable.
 
-Layer 1 only (frontmatter, confidence 0.95). Layer 2 (slug-regex body scan) and
-Layer 3 (embedding) extend `_build_graph` in later phases. No existing skill imports
-this yet — opt-in adoption.
+Layer 1: frontmatter (confidence 0.95). Layer 2: slug-first regex body scan —
+reference stems matched against body text (cites_theory) + character names matched
+cross-file (cross_character), confidence 0.65-0.80. Layer 3 (embedding) extends
+`_build_graph` in a later phase. No existing skill imports this yet — opt-in adoption.
+
+Characters are resolved dynamically from the profiles directory (never hardcoded);
+short-name matching uses paths.CHAR_DISPLAY for the diacritic proper-noun form.
 
 Frontmatter is parsed with `yaml.safe_load` (NOT markdown_parser.extract_frontmatter,
 which drops multi-line YAML lists — the field shape this graph depends on).
@@ -16,6 +20,7 @@ from __future__ import annotations
 
 import re
 import time
+import unicodedata
 
 import networkx as nx
 import yaml
@@ -30,6 +35,16 @@ GRAPH = paths.GRAPH
 
 _FM_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
 _graph_cache: nx.DiGraph | None = None
+
+# Single-token reference slugs that are also generic English homographs: even with
+# repeated mentions their bare appearance is unreliable signal, so drop them entirely
+# from body scanning. Multi-token and clinical-jargon single-token slugs are kept.
+_SLUG_FP_BLACKLIST = frozenset({"anchoring", "deflection", "displacement"})
+
+# Confidence tiers for Layer 2 body-text edges.
+_CONF_BODY_MULTI = 0.80   # slug seen 2+ times
+_CONF_BODY_SINGLE = 0.65  # slug seen once (multi-token slugs only)
+_CONF_BODY_CHAR = 0.70    # character name seen in another character's file
 
 
 def _parse_yaml_list(val) -> list[str]:
@@ -66,12 +81,147 @@ def _token_estimate(text: str) -> int:
     return int(len(text.split()) * 1.3)
 
 
+def _make_fold_table() -> dict[int, str]:
+    """Precomputed accented-codepoint -> ascii-base map covering Latin + Vietnamese,
+    so _fold can use C-speed str.translate instead of per-char NFD over the corpus."""
+    t: dict[int, str] = {}
+    for cp in range(0xC0, 0x1F00):
+        base = "".join(c for c in unicodedata.normalize("NFD", chr(cp))
+                        if unicodedata.category(c) != "Mn")
+        if base and base.isascii() and base != chr(cp):
+            t[cp] = base.lower()
+    t[ord("đ")] = t[ord("Đ")] = "d"
+    return t
+
+
+_FOLD_TABLE = _make_fold_table()
+
+
+def _fold(s: str) -> str:
+    """ASCII-fold + lowercase: 'Nhân vật A' -> 'bui trung hieu'. Folds Vietnamese
+    diacritics so a name's accented and unaccented spellings both match one pattern."""
+    return s.translate(_FOLD_TABLE).lower()
+
+
+def _strip_frontmatter(text: str) -> str:
+    """Body text only — drop a leading `---`…`---` frontmatter block if present."""
+    m = _FM_RE.match(text)
+    return text[m.end():] if m else text
+
+
+_WS_HYPHEN_RE = re.compile(r"[\s\-]+")
+
+
+def _build_slug_patterns() -> tuple[re.Pattern | None, dict[str, tuple[str, bool]]]:
+    """(combined_rx, {slug: (ref_node, is_single_token)}). One alternation regex over
+    all reference stems → a single findall per body instead of 71 separate scans. Built
+    per rebuild (not module-level) so refs added mid-session are picked up. Longest slugs
+    first so 'complex-ptsd' wins over a bare 'complex' prefix. Hyphens match flexible
+    whitespace/hyphen so the slug catches 'Complex PTSD'."""
+    meta: dict[str, tuple[str, bool]] = {}
+    if not REFERENCES.exists():
+        return None, meta
+    slugs = [f.stem for f in REFERENCES.glob("*.md")
+             if f.name != "INDEX.md" and f.stem not in _SLUG_FP_BLACKLIST]
+    alts = []
+    for slug in sorted(slugs, key=len, reverse=True):
+        meta[slug] = (f"docs/references/{slug}.md", "-" not in slug)
+        alts.append(re.escape(slug).replace(r"\-", r"[\s\-]"))
+    rx = re.compile(r"\b(" + "|".join(alts) + r")\b", re.IGNORECASE) if alts else None
+    return rx, meta
+
+
+def _scan_body_references(body: str, slug_index) -> list[tuple[str, float, int]]:
+    """(ref_node, confidence, mention_count) for each reference slug found in body.
+    Single-token slugs require 2+ mentions (FP guard); multi-token: 1 mention = 0.65."""
+    rx, meta = slug_index
+    if rx is None:
+        return []
+    counts: dict[str, int] = {}
+    for m in rx.findall(body):
+        key = _WS_HYPHEN_RE.sub("-", m.strip().lower())
+        counts[key] = counts.get(key, 0) + 1
+    hits = []
+    for slug, n in counts.items():
+        info = meta.get(slug)
+        if not info:
+            continue
+        ref_node, single = info
+        if single and n < 2:
+            continue
+        conf = _CONF_BODY_MULTI if n >= 2 else _CONF_BODY_SINGLE
+        hits.append((ref_node, conf, n))
+    return hits
+
+
+def _corpus_characters() -> dict[str, dict]:
+    """char_slug -> {folded_full_rx, display}. Derived from profile subdirectories
+    (dynamic — never a hardcoded character list). Diacritic short name from
+    paths.CHAR_DISPLAY, falling back to the capitalized last slug token."""
+    chars: dict[str, dict] = {}
+    if not PROFILES.exists():
+        return chars
+    for d in sorted(PROFILES.iterdir()):
+        if not d.is_dir():
+            continue
+        slug = d.name
+        tokens = slug.split("-")
+        full_rx = re.compile(r"\b" + r"[\s\-]+".join(map(re.escape, tokens)) + r"\b")
+        display = paths.CHAR_DISPLAY.get(slug) or tokens[-1].capitalize()
+        chars[slug] = {"full_rx": full_rx, "display": display, "multi": len(tokens) > 1}
+    return chars
+
+
+def _owning_char(rel: str) -> str:
+    """Character that owns a profile/material file, from its path. '' for refs/graph."""
+    for base in ("docs/profiles/", "docs/materials/"):
+        if rel.startswith(base):
+            return rel[len(base):].split("/", 1)[0]
+    return ""
+
+
+def _scan_body_for_characters(body: str, owning: str, chars: dict) -> list[tuple[str, int]]:
+    """(char_slug, mention_count) for OTHER characters named in this file's body.
+    Full name matched on ASCII-folded body (accent-insensitive); short name matched
+    as the diacritic proper noun (case-sensitive) to avoid folding 'hóa'→'Nhân vật B' FPs."""
+    folded = _fold(body)
+    hits = []
+    for slug, meta in chars.items():
+        if slug == owning:
+            continue
+        n = len(meta["full_rx"].findall(folded))
+        if meta["multi"]:
+            n += len(re.findall(rf"\b{re.escape(meta['display'])}\b", body))
+        if n:
+            hits.append((slug, n))
+    return hits
+
+
 def _add_char_hub(G: nx.DiGraph, char: str) -> None:
     G.add_node(f"char:{char}", type="character_hub", label=char)
 
 
+def _add_body_edges(G, rel, body, slug_patterns, chars, owning) -> None:
+    """Layer 2 edges for one file. Frontmatter edges (added first) win — an existing
+    (rel, dst) edge is never downgraded to a lower-confidence body edge."""
+    for ref_node, conf, n in _scan_body_references(body, slug_patterns):
+        if G.has_edge(rel, ref_node):
+            continue
+        G.add_edge(rel, ref_node, rel_type="cites_theory", confidence=conf,
+                   source="body_text", mention_count=n)
+    for slug, n in _scan_body_for_characters(body, owning, chars):
+        dst = f"char:{slug}"
+        if G.has_edge(rel, dst):
+            continue
+        _add_char_hub(G, slug)
+        G.add_edge(rel, dst, rel_type="cross_character", confidence=_CONF_BODY_CHAR,
+                   source="body_text", mention_count=n)
+
+
 def _build_graph() -> nx.DiGraph:
     G = nx.DiGraph()
+    slug_patterns = _build_slug_patterns()
+    chars = _corpus_characters()
     for base, node_type in ((PROFILES, "profile"), (MATERIALS, "material"),
                             (REFERENCES, "reference")):
         if not base.exists():
@@ -104,16 +254,23 @@ def _build_graph() -> nx.DiGraph:
                 G.add_edge(rel, f"docs/references/{ref}.md", rel_type="cites_theory",
                            confidence=0.95, source="frontmatter")
 
+            # Layer 2: scan body text of character-owned files (not theory references).
+            if node_type in ("profile", "material"):
+                _add_body_edges(G, rel, _strip_frontmatter(text), slug_patterns,
+                                chars, _owning_char(rel))
+
     if GRAPH.exists():
         for f in sorted(GRAPH.rglob("*.md")):
             rel = str(f.relative_to(paths.ROOT))
             fm, text = _frontmatter(f)
             G.add_node(rel, type="graph_dyad", file=rel, token_count=_token_estimate(text))
-            chars = _parse_yaml_list(fm.get("characters")) or _parse_yaml_list(fm.get("cross_characters"))
-            for c in chars:
+            dyad_chars = _parse_yaml_list(fm.get("characters")) or _parse_yaml_list(fm.get("cross_characters"))
+            for c in dyad_chars:
                 _add_char_hub(G, c)
                 G.add_edge(rel, f"char:{c}", rel_type="dyad_member",
                            confidence=0.95, source="frontmatter")
+            # Dyad files have no owning character — scan body for all characters.
+            _add_body_edges(G, rel, _strip_frontmatter(text), slug_patterns, chars, "")
             for ref in _parse_yaml_list(fm.get("references")):
                 G.add_edge(rel, f"docs/references/{ref}.md", rel_type="cites_theory",
                            confidence=0.95, source="frontmatter")
@@ -142,14 +299,18 @@ def graph_stats(G: nx.DiGraph | None = None) -> dict:
         t = d.get("type", "unknown")
         nodes_by_type[t] = nodes_by_type.get(t, 0) + 1
     edges_by_type: dict[str, int] = {}
+    edges_by_source: dict[str, int] = {}
     for _, _, d in G.edges(data=True):
         r = d.get("rel_type", "unknown")
         edges_by_type[r] = edges_by_type.get(r, 0) + 1
+        s = d.get("source", "unknown")
+        edges_by_source[s] = edges_by_source.get(s, 0) + 1
     return {
         "nodes": G.number_of_nodes(),
         "edges": G.number_of_edges(),
         "nodes_by_type": dict(sorted(nodes_by_type.items(), key=lambda kv: -kv[1])),
         "edges_by_type": dict(sorted(edges_by_type.items(), key=lambda kv: -kv[1])),
+        "edges_by_source": dict(sorted(edges_by_source.items(), key=lambda kv: -kv[1])),
     }
 
 
