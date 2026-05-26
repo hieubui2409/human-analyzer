@@ -13,6 +13,9 @@ __pycache__/
 # Hook crash/runtime logs (ck hook-logger output — churns every session)
 .claude/hooks/.logs/
 
+# Generated knowledge-graph visualizations (regenerable via visualize_focus())
+plans/visuals/knowledge-graph-*.html
+
 # Runtime artifacts (derived state, regenerated each session)
 .claude/session-state/compact-digest.json
 .claude/session-state/state.json

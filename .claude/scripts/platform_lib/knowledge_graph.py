@@ -457,3 +457,8 @@ def graph_context(entity: str, hops: int = 2, node_types=None,
         "node_count": ego.number_of_nodes(),
         "edge_count": ego.number_of_edges(),
     }
+
+
+# Layer-4 interactive visualization lives in its own module to keep this one retrieval-focused;
+# re-exported here for callers. viz imports back lazily (inside its function), so no import cycle.
+from .knowledge_graph_viz import visualize_focus  # noqa: E402,F401
