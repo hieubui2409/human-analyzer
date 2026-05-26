@@ -68,7 +68,7 @@ run_check "CRE" "psy-to-cre-translation" \
 ASSET_DIR=$(find assets/facebook -name "post.txt" -type f 2>/dev/null | head -1 | xargs dirname 2>/dev/null || echo "")
 if [ -n "$ASSET_DIR" ]; then
     run_check "CRE" "evidence-tier-check" \
-        "$PYTHON" "$SKILLS/cre-post-writer/scripts/check-evidence-tier-compliance-in-draft.py" "$ASSET_DIR" --json
+        "$PYTHON" "$SKILLS/cre-evidence-scanner/scripts/map-claims-to-evidence-tiers.py" "$ASSET_DIR" --json
     run_check "CRE" "voice-consistency" \
         "$PYTHON" "$SKILLS/cre-voice-audit/scripts/check-voice-consistency-against-defense-profile.py" \
         "$ASSET_DIR" --character character-a --json

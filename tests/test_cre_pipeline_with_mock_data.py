@@ -51,7 +51,8 @@ class TestPrivacyGuard:
 
 class TestPostWriter:
     def test_evidence_tier_compliance(self):
-        r = run_script("cre-post-writer", "check-evidence-tier-compliance-in-draft.py",
+        # relocated to cre:evidence-scanner (Batch 6 B8) — post-writer now delegates
+        r = run_script("cre-evidence-scanner", "map-claims-to-evidence-tiers.py",
                        [str(MOCK_DATA / "assets" / "test-post")])
         assert r.returncode == 0
 

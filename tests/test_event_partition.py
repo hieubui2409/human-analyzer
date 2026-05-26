@@ -80,6 +80,13 @@ class TestRouting:
         assert "COM.privacy" in append_mod.VALID_EVENT_TYPES
         assert "COM.governance" in append_mod.VALID_EVENT_TYPES
 
+    def test_batch6_event_types_registered(self, append_mod, streams):
+        # B6: cre:evidence-scanner + psy:relation-intelligence event types
+        assert "CRE.evidence-checked" in append_mod.VALID_EVENT_TYPES
+        assert "PSY.relation-angle-discovered" in append_mod.VALID_EVENT_TYPES
+        assert append_mod.resolve_stream("CRE.evidence-checked")[0] == streams["CRE"]
+        assert append_mod.resolve_stream("PSY.relation-angle-discovered")[0] == streams["PSY"]
+
 
 class TestQuery:
     def _seed(self, streams):

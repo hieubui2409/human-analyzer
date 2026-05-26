@@ -212,34 +212,36 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ### PSY — Psychology Framework Skills
 
-| Skill                 | Purpose                                                     |
-| --------------------- | ----------------------------------------------------------- |
-| `psy:crossref`        | Cross-character validation (10 dimensions: 4 core + 6 ext)  |
-| `psy:ref-audit`       | Profile → reference accuracy check + --discover blind spots |
-| `psy:ref-scan`        | Reference → profile coverage mapping                        |
-| `psy:ref-create`      | Create new reference files with mandatory schema            |
-| `psy:profile-lite`    | Compress profiles (~95% reduction)                          |
-| `psy:wave`            | 3-wave orchestration (Foundation→Deep Dive→Validation)      |
-| `psy:crisis-assess`   | DSM-5/ICD-11 crisis assessment + risk levels                |
-| `psy:narrative-twist` | Handle revealed falsehoods, strikethrough + cascade         |
-| `psy:hypothesis`      | Predict character behavior given hypothetical events        |
-| `psy:arc-tracker`     | Track character growth trajectories, hypothesis vs reality  |
-| `psy:propagate`       | Cross-character event cascade orchestration                 |
-| `psy:timeline-sync`   | Cross-character timeline date validation + fix suggestions  |
-| `psy:health-check`    | Profile completeness scoring (25 files × quality)           |
-| `psy:profile-compare` | Side-by-side dimension comparison across characters         |
-| `psy:ref-maintain`    | Reference library cleanup (orphans, outdated, duplicates)   |
+| Skill                       | Purpose                                                              |
+| --------------------------- | -------------------------------------------------------------------- |
+| `psy:crossref`              | Cross-character validation (10 dimensions: 4 core + 6 ext)           |
+| `psy:ref-audit`             | Profile → reference accuracy check + --discover blind spots          |
+| `psy:ref-scan`              | Reference → profile coverage mapping                                 |
+| `psy:ref-create`            | Create new reference files with mandatory schema                     |
+| `psy:profile-lite`          | Compress profiles (~95% reduction)                                   |
+| `psy:wave`                  | 3-wave orchestration (Foundation→Deep Dive→Validation)               |
+| `psy:crisis-assess`         | DSM-5/ICD-11 crisis assessment + risk levels                         |
+| `psy:narrative-twist`       | Handle revealed falsehoods, strikethrough + cascade                  |
+| `psy:hypothesis`            | Predict character behavior given hypothetical events                 |
+| `psy:arc-tracker`           | Track character growth trajectories, hypothesis vs reality           |
+| `psy:propagate`             | Cross-character event cascade orchestration                          |
+| `psy:timeline-sync`         | Cross-character timeline date validation + fix suggestions           |
+| `psy:health-check`          | Profile completeness scoring (25 files × quality)                    |
+| `psy:profile-compare`       | Side-by-side dimension comparison across characters                  |
+| `psy:ref-maintain`          | Reference library cleanup (orphans, outdated, duplicates)            |
+| `psy:relation-intelligence` | Proactively mine dyad graph for ranked, consent-gated content angles |
 
 ### CRE — Content Creation Skills
 
-| Skill                 | Purpose                                                       |
-| --------------------- | ------------------------------------------------------------- |
-| `cre:exploring`       | 7-question exploration → CONTEXT.md                           |
-| `cre:post-writer`     | End-to-end content creation pipeline                          |
-| `cre:prompt-leverage` | 5-layer prompt strengthening                                  |
-| `cre:privacy-guard`   | Pre-publish privacy/confidentiality scan                      |
-| `cre:repurpose`       | Adapt content across platforms                                |
-| `cre:voice-audit`     | Audit content voice/tone consistency against WRITING-VOICE.md |
+| Skill                  | Purpose                                                                    |
+| ---------------------- | -------------------------------------------------------------------------- |
+| `cre:exploring`        | 7-question exploration → CONTEXT.md                                        |
+| `cre:post-writer`      | End-to-end content creation pipeline                                       |
+| `cre:prompt-leverage`  | 5-layer prompt strengthening                                               |
+| `cre:privacy-guard`    | Pre-publish privacy/confidentiality scan                                   |
+| `cre:repurpose`        | Adapt content across platforms                                             |
+| `cre:voice-audit`      | Audit content voice/tone consistency against WRITING-VOICE.md              |
+| `cre:evidence-scanner` | Per-claim evidence-tier gate (T1-T5) + Rule-09 leak; post-writer delegates |
 
 ### GRO — Growth Framework Skills
 
@@ -258,7 +260,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 
 ## Scripts Infrastructure
 
-51 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
+53 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
 
 ### Shared Library (`.claude/scripts/platform_lib/`)
 

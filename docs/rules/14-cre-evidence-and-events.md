@@ -83,6 +83,32 @@ If content angle has no material backing (T5-only or gap):
 
 **Payload:** File path + scan timestamp. Consumed by post-writer Phase 5 gate.
 
+### CRE.evidence-checked
+
+**Trigger:** `cre:evidence-scanner` finishes a per-claim evidence-tier + Rule-09 scan of an asset (standalone, or via post-writer Phase 6).
+
+**Payload:**
+
+```json
+{
+  "event": "CRE.evidence-checked",
+  "character": "{slug}",
+  "asset_path": "assets/{platform}/{slug}/",
+  "overall_verdict": "PASS|WARN|FAIL",
+  "claim_count": 0,
+  "fail_reasons": ["rule09_leak", "tier_T5"],
+  "timestamp": "ISO-8601"
+}
+```
+
+**Routing:** prefix `CRE.*` → `content-events.jsonl`.
+
+**Downstream:**
+
+- A `FAIL` blocks `cre:post-writer` output until claims are fixed (no auto re-draft — logged only, pass@k is a WATCH pattern).
+- On a `FAIL` caused by a **Rule-09 leak**, the scanner ALSO emits `COM.governance` → `governance-audit.jsonl` (cross-framework governance trail).
+- `cre:evidence-scanner` is the single source of tier-permission logic (`platform_lib/evidence_tier_permissions.py`); post-writer delegates, holds no duplicate.
+
 ## PSY → CRE Translation Rules
 
 How psychological profile data translates into content creation:
