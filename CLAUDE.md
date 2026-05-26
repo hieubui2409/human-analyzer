@@ -125,7 +125,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ## Skills Catalog (`.claude/skills/`)
 
-57 framework skills (ORC 16 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 4). Invoke as `{framework}:{skill}`.
+58 framework skills (ORC 17 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 4). Invoke as `{framework}:{skill}`.
 
 > Engineer-kit utility skills (`/ck:*`) installed alongside are **not** catalogued here — they are user-invoked dev tools, discoverable via the harness skill list.
 
@@ -149,6 +149,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 | `orc:santa`           | Dual-reviewer quality gate — independent review, max 2 rounds         |
 | `orc:council`         | 4-voice decision framework — anti-anchoring, verdict storage          |
 | `orc:skill-stocktake` | Skill catalog audit — count/metadata/overlap + CE-02 conformance gate |
+| `orc:graph`           | Knowledge-graph query/visualize/validate — navigation + integrity layer |
 
 ### PSY — Psychology
 

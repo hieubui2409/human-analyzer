@@ -65,10 +65,11 @@ are dev tools used read-only, not part of the framework catalog.
 | `gro:milestone-tracker` | Career milestones actual vs planned | — |
 | `gro:validate` | Cross-check growth data consistency | — |
 
-## ORC — Orchestration (15)
+## ORC — Orchestration (16)
 
 | Skill | Purpose | Depends on |
 | ----- | ------- | ---------- |
+| `orc:graph` | Knowledge-graph query/visualize/validate (navigation + integrity) | `platform_lib.knowledge_graph` |
 | `orc:bootstrap` | Load project context | `orc:session-state` |
 | `orc:session-state` | Track session state + event queue | — |
 | `orc:classify` | Risk classification + MAT gates | — |
