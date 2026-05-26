@@ -436,3 +436,151 @@ def test_m6_missing_dir_graceful(tmp_path):
     data = mod.gather()
     assert data["count"] == 0
     assert data["status"] == "GREEN"
+
+
+# ---------------------------------------------------------------------------
+# Phase 5 — M3 reliability, P1 forensics, S5 workflow chains.
+# M3/P1 isolated via SESSIONS_DIR repoint; S5 via INVOCATIONS + ROUTING_DOCS.
+# M3 reuses the real (project-owned) com:health-check core deterministically.
+# ---------------------------------------------------------------------------
+
+
+def _write_lines(path: Path, records: list[dict]):
+    import json
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(json.dumps(r) for r in records) + "\n", encoding="utf-8")
+
+
+def _subagent(sessions: Path, session: str, agent_file: str, records: list[dict]):
+    _write_lines(sessions / session / "subagents" / agent_file, records)
+
+
+def test_m3_classifies_outcomes(tmp_path):
+    mod = _load("track-subagent-reliability")
+    mod.SESSIONS_DIR = tmp_path
+    # clean exit → success
+    _subagent(tmp_path, "s1", "agent-researcher-abc123.jsonl",
+              [{"message": {"stop_reason": "end_turn", "content": [{"type": "text", "text": "done"}]}}])
+    # retryable API error in last line → api_error
+    _subagent(tmp_path, "s1", "agent-tester-def456.jsonl",
+              [{"message": {"content": [{"type": "text", "text": "boom ECONNRESET happened"}]}}])
+    # pending tool_use, no clean stop, no error → timeout
+    _subagent(tmp_path, "s2", "agent-researcher-ghi789.jsonl",
+              [{"message": {"content": [{"type": "tool_use", "name": "Bash"}]}}])
+    data = mod.gather(days=3650, agent_type=None)
+    by = {r["agent_type"]: r for r in data["rows"]}
+    assert by["researcher"]["total"] == 2
+    assert by["researcher"]["success"] == 1
+    assert by["researcher"]["timeout"] == 1
+    assert by["tester"]["api_error"] == 1
+    assert data["total"] == 3
+    assert any("ECONNRESET" in m for m, _ in data["top_failure_modes"])
+
+
+def test_m3_empty_graceful(tmp_path):
+    mod = _load("track-subagent-reliability")
+    mod.SESSIONS_DIR = tmp_path / "none"
+    data = mod.gather(days=30, agent_type=None)
+    assert data["total"] == 0
+    assert "No subagent transcripts" in mod.render_md(data)
+
+
+def test_m3_agent_type_filter(tmp_path):
+    mod = _load("track-subagent-reliability")
+    mod.SESSIONS_DIR = tmp_path
+    _subagent(tmp_path, "s1", "agent-researcher-a1b2c3.jsonl",
+              [{"message": {"stop_reason": "end_turn", "content": []}}])
+    _subagent(tmp_path, "s1", "agent-tester-d4e5f6.jsonl",
+              [{"message": {"stop_reason": "end_turn", "content": []}}])
+    data = mod.gather(days=3650, agent_type="tester")
+    assert {r["agent_type"] for r in data["rows"]} == {"tester"}
+
+
+def test_p1_reconstructs_session(tmp_path):
+    mod = _load("parse-session-jsonl-forensics")
+    mod.SESSIONS_DIR = tmp_path
+    _write_lines(tmp_path / "sess1.jsonl", [
+        {"timestamp": "2026-05-26T10:00:00Z",
+         "message": {"content": [{"type": "tool_use", "name": "Skill", "input": {"skill": "com:git"}}]}},
+        {"message": {"usage": {"input_tokens": 100, "output_tokens": 50,
+                               "cache_read_input_tokens": 10}}},
+        {"message": {"content": [{"type": "tool_use", "name": "Edit",
+                                  "input": {"file_path": "/x/a.py"}}]}},
+        {"message": {"content": [{"type": "tool_use", "name": "Task", "input": {}}]}},
+        {"timestamp": "2026-05-26T10:05:00Z",
+         "message": {"usage": {"input_tokens": 200, "output_tokens": 100}}},
+    ])
+    data = mod.gather(session="sess1", all_sessions=False, since=None)
+    assert data["count"] == 1
+    s = data["sessions"][0]
+    assert s["skills"] == ["com:git"]
+    assert s["tool_counts"]["Edit"] == 1
+    assert s["files_modified"] == ["/x/a.py"]
+    assert s["subagents"] == 1
+    assert s["total_tokens"] == 450  # 100+50+200+100 (cache excluded from total)
+    assert s["tokens"]["cache_read_input_tokens"] == 10
+    assert s["duration_s"] == 300
+
+
+def test_p1_all_sessions_aggregate(tmp_path):
+    mod = _load("parse-session-jsonl-forensics")
+    mod.SESSIONS_DIR = tmp_path
+    _write_lines(tmp_path / "a.jsonl",
+                 [{"message": {"usage": {"input_tokens": 100, "output_tokens": 0}}}])
+    _write_lines(tmp_path / "b.jsonl",
+                 [{"message": {"usage": {"input_tokens": 200, "output_tokens": 0}}}])
+    data = mod.gather(session=None, all_sessions=True, since=None)
+    assert data["count"] == 2
+    assert data["agg_total_tokens"] == 300
+
+
+def test_p1_missing_dir_graceful(tmp_path):
+    mod = _load("parse-session-jsonl-forensics")
+    mod.SESSIONS_DIR = tmp_path / "none"
+    data = mod.gather(session=None, all_sessions=True, since=None)
+    assert data["count"] == 0
+    assert "No session transcripts" in mod.render_md(data, False)
+
+
+def test_s5_chains_and_deviation(tmp_path):
+    mod = _load("analyze-workflow-chains")
+    mod.INVOCATIONS = tmp_path / "invocations.jsonl"
+    routing = tmp_path / "routing.md"
+    routing.write_text("Flow: ck:plan → ck:cook → ck:test\n", encoding="utf-8")
+    mod.ROUTING_DOCS = [routing]
+    _write_lines(mod.INVOCATIONS, [
+        {"ts": "2026-05-26T10:00:00Z", "skill": "com-git", "session": "s1"},
+        {"ts": "2026-05-26T10:01:00Z", "skill": "psy-crossref", "session": "s1"},
+        {"ts": "2026-05-26T11:00:00Z", "skill": "ck-plan", "session": "s2"},
+        {"ts": "2026-05-26T11:01:00Z", "skill": "ck-cook", "session": "s2"},
+        {"ts": "2026-05-26T11:02:00Z", "skill": "ck-test", "session": "s2"},
+    ])
+    data = mod.gather(days=3650, top=10, min_sessions=1)
+    chains = {c["chain"] for c in data["common_chains"]}
+    assert "com:git → psy:crossref" in chains
+    assert "ck:plan → ck:cook → ck:test" in data["declared_chains"]
+    dev = {d["chain"] for d in data["deviations"]}
+    assert "com:git → psy:crossref" in dev          # not declared
+    assert "ck:plan → ck:cook → ck:test" not in dev  # matches declared
+
+
+def test_s5_thin_data_withholds_deviation(tmp_path):
+    mod = _load("analyze-workflow-chains")
+    mod.INVOCATIONS = tmp_path / "invocations.jsonl"
+    mod.ROUTING_DOCS = [tmp_path / "none.md"]
+    _write_lines(mod.INVOCATIONS, [
+        {"ts": "2026-05-26T10:00:00Z", "skill": "com-git", "session": "s1"},
+        {"ts": "2026-05-26T10:01:00Z", "skill": "psy-crossref", "session": "s1"},
+    ])
+    data = mod.gather(days=3650, top=10, min_sessions=5)
+    assert data["sufficient"] is False
+    assert "Thin data" in mod.render_md(data)
+
+
+def test_s5_empty_graceful(tmp_path):
+    mod = _load("analyze-workflow-chains")
+    mod.INVOCATIONS = tmp_path / "nope.jsonl"
+    mod.ROUTING_DOCS = [tmp_path / "none.md"]
+    data = mod.gather(days=30, top=10, min_sessions=5)
+    assert data["sessions_analyzed"] == 0
+    assert "No multi-skill chains" in mod.render_md(data)

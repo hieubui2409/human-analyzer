@@ -1,10 +1,10 @@
 ---
 name: com:skill-analytics
-description: "Observe and analyze the project's framework skills + scripts across eight read-only lenses: infrastructure health, import dependency graph, skill cascade topology, usage analytics + per-skill token attribution, SKILL.md context-budget + trigger-overlap + coverage gaps, content-pipeline health, a unified traffic-light dashboard, and memory-system health. Deterministic gather only — never edits skills; distinct from orc:audit (event consistency) and orc:skill-stocktake (catalog necessity). Use for pre-release skill/script health, a one-glance project health snapshot, finding broken scripts, mapping dependencies, spotting unused or token-costly skills, surfacing content gaps, or catching memory index drift. Triggers: 'skill health', 'skill analytics', 'dependency graph', 'cascade graph', 'token usage per skill', 'context budget', 'content pipeline', 'health dashboard', 'memory health'."
-argument-hint: "[--health | --deps | --cascade | --usage | --coverage | --content | --dashboard | --memory | --all] [--json] [--format md|json|html] [--perf] [--tokens] [--days N] [--top N] [--framework mat|psy|cre|gro|orc|com] [--dot] [--budget-only] [--gaps-only] [--decommission] [--platform NAME] [--since YYYY-MM-DD] [--by-framework] [--skip keys] [--fix] [--apply]"
+description: "Observe and analyze the project's framework skills + scripts across eleven read-only lenses: infrastructure health, dependency graph, cascade topology, usage analytics + per-skill token attribution, SKILL.md context-budget + trigger-overlap + coverage gaps, content-pipeline health, unified traffic-light dashboard, memory-system health, subagent reliability, session-JSONL forensics, and workflow-chain analysis. Deterministic gather only — never edits skills; distinct from orc:audit (event consistency) and orc:skill-stocktake (catalog necessity). Use for pre-release skill/script health, a one-glance project snapshot, finding broken scripts, mapping dependencies, spotting unused or token-costly skills, surfacing content gaps, catching memory drift, or tracking subagent reliability. Triggers: 'skill health', 'skill analytics', 'dependency graph', 'token usage per skill', 'content pipeline', 'health dashboard', 'memory health', 'subagent reliability', 'session forensics', 'workflow chains'."
+argument-hint: "[--health | --deps | --cascade | --usage | --coverage | --content | --dashboard | --memory | --reliability | --forensics | --workflow | --all] [--json] [--format md|json|html] [--perf] [--tokens] [--days N] [--top N] [--framework mat|psy|cre|gro|orc|com] [--dot] [--budget-only] [--gaps-only] [--decommission] [--platform NAME] [--since YYYY-MM-DD] [--by-framework] [--skip keys] [--fix] [--apply] [--agent-type TYPE] [--session ID] [--all-sessions] [--tool-breakdown] [--min-sessions N]"
 metadata:
   author: hieubt
-  version: "1.2.0"
+  version: "1.3.0"
   category: "com-framework"
   position: "maintenance"
   dependencies: []
@@ -13,9 +13,10 @@ metadata:
 # com:skill-analytics — Skill & Script Observability
 
 Deterministic, read-only observability for the 6 framework domains' skills + scripts +
-`platform_lib`. Eight lenses (infrastructure health, dependency graph, cascade topology,
-usage analytics, coverage/budget, content pipeline, unified dashboard, memory health) over
-static structure + the consolidated telemetry sink. Scope = project framework skills only
+`platform_lib`. Eleven lenses (infrastructure health, dependency graph, cascade topology,
+usage analytics, coverage/budget, content pipeline, unified dashboard, memory health,
+subagent reliability, session forensics, workflow chains) over static structure + the
+consolidated telemetry sink + Claude Code transcripts. Scope = project framework skills only
 (`mat-/psy-/cre-/gro-/orc-/com-`), never ck skills.
 
 ## When to Use
@@ -29,6 +30,9 @@ static structure + the consolidated telemetry sink. Scope = project framework sk
 - To check content cadence — posts per platform, inactive platforms (`--content`).
 - For a one-glance, traffic-light snapshot of the whole project (`--dashboard`).
 - To validate the persistent memory dir — orphans, dead index entries, broken `[[links]]` (`--memory`).
+- To track subagent success/failure rates + top failure modes over time (`--reliability`).
+- To reconstruct a session post-hoc — tokens, tools, files, duration (`--forensics`).
+- To compare actual skill chains against the routing-doc recommendations (`--workflow`).
 - NOT for event-consistency auditing → that is `orc:audit`.
 - NOT for catalog overlap/necessity → that is `orc:skill-stocktake`.
 - NOT for CE-02 progressive-disclosure conformance → that is `orc:skill-stocktake --ce02`.
@@ -45,6 +49,9 @@ static structure + the consolidated telemetry sink. Scope = project framework sk
 | `--content`  | M5     | Posts per platform from assets/; last-post date, cadence, inactive platforms   |
 | `--dashboard`| M1     | Orchestrates all lenses + psy:health-check + mat:rescore → traffic-light table (md/json/html); `--by-framework`, `--skip`, `--verbose` |
 | `--memory`   | M6     | Memory dir health: frontmatter, MEMORY.md sync (orphans/dead), `[[links]]`, staleness; `--fix` dry-run, `--apply` to write |
+| `--reliability` | M3  | Subagent outcome rates (success/api_error/timeout) per agent type + top failure modes; reuses com:health-check error taxonomy |
+| `--forensics`| P1     | Post-hoc session reconstruction from transcript JSONL (streaming): skills, tools, tokens, files, subagents, duration; `--session`/`--all-sessions` |
+| `--workflow` | S5     | Actual per-session skill chains (from invocations.jsonl) vs routing-doc declared chains; deviation ranking |
 | `--all`      | —      | Run all lenses sequentially                                                    |
 
 ```bash
@@ -58,6 +65,9 @@ $PY $S/analyze-skill-coverage-and-budget.py [--budget-only] [--gaps-only] [--dec
 $PY $S/scan-content-pipeline-health.py [--platform facebook] [--since 2026-01-01] [--json]
 $PY $S/build-unified-dashboard.py [--by-framework] [--skip profiles,memory] [--format md|json|html]
 $PY $S/check-memory-system-health.py [--fix [--apply]] [--json]
+$PY $S/track-subagent-reliability.py [--days 30] [--agent-type researcher] [--json]
+$PY $S/parse-session-jsonl-forensics.py [--session ID | --all-sessions] [--tool-breakdown] [--json]
+$PY $S/analyze-workflow-chains.py [--days 30] [--top 10] [--min-sessions 5] [--json]
 ```
 
 ## Determinism Split (GOLDEN RULE #4)
