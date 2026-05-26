@@ -29,6 +29,4 @@ __pycache__/
 .claude/telemetry/sessions.jsonl
 .claude/telemetry/observations.jsonl
 .claude/telemetry/cascade-events.jsonl
-.claude/telemetry/privacy-audit.jsonl
-.claude/telemetry/growth-signals.jsonl
 .claude/telemetry/*.jsonl.bak
