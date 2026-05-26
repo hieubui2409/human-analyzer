@@ -10,6 +10,9 @@ __pycache__/
 # Project-local skills venv (regenerable via .claude/scripts/requirements.txt + install.sh)
 .claude/skills/.venv/
 
+# Hook crash/runtime logs (ck hook-logger output — churns every session)
+.claude/hooks/.logs/
+
 # Runtime artifacts (derived state, regenerated each session)
 .claude/session-state/compact-digest.json
 
