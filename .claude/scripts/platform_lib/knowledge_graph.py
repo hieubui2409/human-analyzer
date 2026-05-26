@@ -284,12 +284,20 @@ def _build_graph() -> nx.DiGraph:
 def _add_embedding_edges(G: nx.DiGraph) -> None:
     """Layer 3: file↔file semantic-similarity edges from cached embeddings (cross-lingual,
     catches Vietnamese terms regex misses). No-op if no cache — graceful degradation, the
-    Layer 1+2 graph still builds. Frontmatter/regex edges (either direction) always win."""
+    Layer 1+2 graph still builds. Frontmatter/regex edges (either direction) always win.
+
+    Firm-only: edges flagged needs_review (similarity in the [reviewLow, simThreshold) band)
+    are NOT added to the graph — the corpus is one clinical domain so that band is mostly
+    cross-character noise that buries the relevant references (measured: review band dropped
+    cross-character noise ~38% and surfaced theory refs that the dense graph hid). The full
+    band stays available on demand via cached_embedding_edges(review_low=…) as a review lens."""
     try:
         from . import knowledge_graph_embeddings as kge
     except Exception:  # noqa: BLE001 — numpy/module missing → skip Layer 3
         return
     for src, dst, score, review in kge.cached_embedding_edges():
+        if review:  # firm-only into the graph (lens band excluded regardless of config)
+            continue
         if src not in G or dst not in G or G.has_edge(src, dst) or G.has_edge(dst, src):
             continue
         G.add_edge(src, dst, rel_type="semantic_similarity", source="embedding",
@@ -389,7 +397,12 @@ def _priority_key(node: str, attrs: dict, dist: int, center: str | None) -> tupl
     """Sort key. When querying a character, that character's own files + cited theory
     references group ahead of other characters' files (dense cross_character edges
     otherwise crowd them out under max_files). Then: 1-hop before far; type
-    (profile<ref<material<dyad); INDEX/CURRENT-STATE float up; materials by tier."""
+    (profile<ref<material<dyad); INDEX/CURRENT-STATE float up; materials by tier.
+
+    Known limitation: for a non-character query entity (a reference or material file),
+    `center` is None, so candidates are ordered by type/tier only — the embedding
+    similarity_score is NOT consulted, so semantically closest files are not pulled to the
+    top. Score-aware ordering for non-character entities is a separate, intended improvement."""
     t = attrs.get("type")
     if center is None:
         group = 0

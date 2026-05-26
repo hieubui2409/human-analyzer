@@ -13,7 +13,7 @@
       "maxLineChars": 5000,
       "maxChunksPerFile": 60,
       "simThreshold": 0.75,
-      "reviewLow": 0.65,
+      "reviewLow": 0.75,
       "chunkSize": 512,
       "chunkOverlap": 100,
       "embedThreshold": 800
