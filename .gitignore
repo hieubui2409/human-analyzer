@@ -7,6 +7,9 @@ release-manifest.json
 __pycache__/
 *.pyc
 
+# Project-local skills venv (regenerable via .claude/scripts/requirements.txt + install.sh)
+.claude/skills/.venv/
+
 # Runtime artifacts (derived state, regenerated each session)
 .claude/session-state/compact-digest.json
 
