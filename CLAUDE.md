@@ -125,7 +125,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ## Skills Catalog (`.claude/skills/`)
 
-56 framework skills (ORC 16 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 3). Invoke as `{framework}:{skill}`.
+57 framework skills (ORC 16 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 4). Invoke as `{framework}:{skill}`.
 
 > Engineer-kit utility skills (`/ck:*`) installed alongside are **not** catalogued here — they are user-invoked dev tools, discoverable via the harness skill list.
 
@@ -211,9 +211,10 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 | Skill              | Purpose                                                 |
 | ------------------ | ------------------------------------------------------- |
-| `com:git`          | Project-aware git operations                            |
-| `com:health-check` | Session health monitoring — stall/error/death detection |
-| `com:rules`        | Modular rules management                                |
+| `com:git`             | Project-aware git operations                               |
+| `com:health-check`    | Session health monitoring — stall/error/death detection    |
+| `com:rules`           | Modular rules management                                   |
+| `com:skill-analytics` | Skill/script observability — 11 read-only lenses + profile-drift gate |
 
 ---
 
@@ -231,6 +232,8 @@ Skills share a Python utility library + 60+ supportive scripts.
 | `env_utils.py`                           | .env loading, API key resolution               |
 | `csv_search.py`                          | BM25 text search over CSV data                 |
 | `instinct_store.py`                      | Atomic learnings CRUD, confidence scoring, JSONL |
+| `telemetry.py`                           | Consolidated sink root + auto script-metrics + crash excepthook |
+| `errors.py`                              | Structured error emission (errors.jsonl) over telemetry |
 
 Run scripts with the **project-local venv** (project is self-contained):
 
