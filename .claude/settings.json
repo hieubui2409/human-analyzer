@@ -54,6 +54,18 @@
         ],
         "matcher": "Edit|Write"
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/rebuild-knowledge-graph.cjs",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "startup|resume"
+      }
     ]
   },
   "includeCoAuthoredBy": false,

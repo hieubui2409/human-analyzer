@@ -220,63 +220,84 @@ def _add_body_edges(G, rel, body, slug_patterns, chars, owning) -> None:
                    source="body_text", mention_count=n)
 
 
+def _file_node_type(rel: str) -> str | None:
+    """Node type implied by a markdown file's location (None if outside the graph corpus)."""
+    if rel.startswith("docs/profiles/"):
+        return "profile"
+    if rel.startswith("docs/materials/"):
+        return "material"
+    if rel.startswith("docs/references/"):
+        return "reference"
+    if rel.startswith("docs/graph/"):
+        return "graph_dyad"
+    return None
+
+
+def _scan_one(G: nx.DiGraph, f, node_type: str, slug_patterns, chars) -> None:
+    """Add one markdown file's node + its Layer 1 (frontmatter) and Layer 2 (body) edges.
+    Every edge it creates has src == this file, so the file fully owns them — that ownership
+    is what lets the incremental rebuild surgically remove just this file's contribution."""
+    rel = str(f.relative_to(paths.ROOT))
+    fm, text = _frontmatter(f)
+    attrs = {"type": node_type, "file": rel, "token_count": _token_estimate(text)}
+    if node_type == "profile":
+        attrs.update(character=fm.get("character", ""), domain=fm.get("domain", ""))
+    elif node_type == "material":
+        attrs.update(character=fm.get("character", ""), evidence_tier=fm.get("evidence_tier", ""))
+    elif node_type == "reference":
+        attrs["slug"] = f.stem
+    G.add_node(rel, **attrs)
+
+    if node_type == "graph_dyad":
+        for c in (_parse_yaml_list(fm.get("characters"))
+                  or _parse_yaml_list(fm.get("cross_characters"))):
+            _add_char_hub(G, c)
+            G.add_edge(rel, f"char:{c}", rel_type="dyad_member", confidence=0.95,
+                       source="frontmatter")
+        _add_body_edges(G, rel, _strip_frontmatter(text), slug_patterns, chars, "")
+    else:
+        char = fm.get("character", "")
+        if char and node_type in ("profile", "material"):
+            _add_char_hub(G, char)
+            G.add_edge(rel, f"char:{char}", rel_type="belongs_to", confidence=0.95,
+                       source="frontmatter")
+        for cc in _parse_yaml_list(fm.get("cross_characters")):
+            _add_char_hub(G, cc)
+            G.add_edge(rel, f"char:{cc}", rel_type="cross_character", confidence=0.95,
+                       source="frontmatter")
+        if node_type in ("profile", "material"):  # Layer 2: scan character-owned bodies
+            _add_body_edges(G, rel, _strip_frontmatter(text), slug_patterns,
+                            chars, _owning_char(rel))
+    for ref in _parse_yaml_list(fm.get("references")):
+        G.add_edge(rel, f"docs/references/{ref}.md", rel_type="cites_theory",
+                   confidence=0.95, source="frontmatter")
+
+
+def _corpus_md_files() -> list:
+    """All markdown files that become graph nodes (profiles, materials, references, dyads),
+    excluding the references INDEX. Sorted for deterministic builds."""
+    # Read the location globals live (not a frozen tuple) so tests that monkeypatch
+    # PROFILES/MATERIALS/REFERENCES/GRAPH at a tmp corpus take effect.
+    out = []
+    for base, ntype in ((PROFILES, "profile"), (MATERIALS, "material"),
+                        (REFERENCES, "reference")):
+        if base.exists():
+            for f in sorted(base.rglob("*.md")):
+                if ntype == "reference" and f.name == "INDEX.md":
+                    continue
+                out.append(f)
+    if GRAPH.exists():
+        out.extend(sorted(GRAPH.rglob("*.md")))
+    return out
+
+
 def _build_graph() -> nx.DiGraph:
     G = nx.DiGraph()
     slug_patterns = _build_slug_patterns()
     chars = _corpus_characters()
-    for base, node_type in ((PROFILES, "profile"), (MATERIALS, "material"),
-                            (REFERENCES, "reference")):
-        if not base.exists():
-            continue
-        for f in sorted(base.rglob("*.md")):
-            if node_type == "reference" and f.name == "INDEX.md":
-                continue
-            rel = str(f.relative_to(paths.ROOT))
-            fm, text = _frontmatter(f)
-            attrs = {"type": node_type, "file": rel, "token_count": _token_estimate(text)}
-            if node_type == "profile":
-                attrs.update(character=fm.get("character", ""), domain=fm.get("domain", ""))
-            elif node_type == "material":
-                attrs.update(character=fm.get("character", ""),
-                             evidence_tier=fm.get("evidence_tier", ""))
-            elif node_type == "reference":
-                attrs["slug"] = f.stem
-            G.add_node(rel, **attrs)
-
-            char = fm.get("character", "")
-            if char and node_type in ("profile", "material"):
-                _add_char_hub(G, char)
-                G.add_edge(rel, f"char:{char}", rel_type="belongs_to",
-                           confidence=0.95, source="frontmatter")
-            for cc in _parse_yaml_list(fm.get("cross_characters")):
-                _add_char_hub(G, cc)
-                G.add_edge(rel, f"char:{cc}", rel_type="cross_character",
-                           confidence=0.95, source="frontmatter")
-            for ref in _parse_yaml_list(fm.get("references")):
-                G.add_edge(rel, f"docs/references/{ref}.md", rel_type="cites_theory",
-                           confidence=0.95, source="frontmatter")
-
-            # Layer 2: scan body text of character-owned files (not theory references).
-            if node_type in ("profile", "material"):
-                _add_body_edges(G, rel, _strip_frontmatter(text), slug_patterns,
-                                chars, _owning_char(rel))
-
-    if GRAPH.exists():
-        for f in sorted(GRAPH.rglob("*.md")):
-            rel = str(f.relative_to(paths.ROOT))
-            fm, text = _frontmatter(f)
-            G.add_node(rel, type="graph_dyad", file=rel, token_count=_token_estimate(text))
-            dyad_chars = _parse_yaml_list(fm.get("characters")) or _parse_yaml_list(fm.get("cross_characters"))
-            for c in dyad_chars:
-                _add_char_hub(G, c)
-                G.add_edge(rel, f"char:{c}", rel_type="dyad_member",
-                           confidence=0.95, source="frontmatter")
-            # Dyad files have no owning character — scan body for all characters.
-            _add_body_edges(G, rel, _strip_frontmatter(text), slug_patterns, chars, "")
-            for ref in _parse_yaml_list(fm.get("references")):
-                G.add_edge(rel, f"docs/references/{ref}.md", rel_type="cites_theory",
-                           confidence=0.95, source="frontmatter")
-
+    for f in _corpus_md_files():
+        rel = str(f.relative_to(paths.ROOT))
+        _scan_one(G, f, _file_node_type(rel), slug_patterns, chars)
     _add_embedding_edges(G)
     return G
 
@@ -304,12 +325,70 @@ def _add_embedding_edges(G: nx.DiGraph) -> None:
                    confidence=score, similarity_score=score, needs_review=review)
 
 
+def _strip_embedding_edges(G: nx.DiGraph) -> None:
+    """Drop all Layer 3 edges so they can be re-derived from the (possibly updated) embedding
+    cache — embedding edges are file↔file, not owned by any single file's rescan."""
+    G.remove_edges_from([(u, v) for u, v, d in G.edges(data=True)
+                         if d.get("source") == "embedding"])
+
+
+def _remove_file_contribution(G: nx.DiGraph, rel: str) -> None:
+    """Remove a file's own Layer 1/2 edges (out-edges it authored: frontmatter + body) so a
+    rescan re-adds the current set. The node attrs are overwritten by the rescan's add_node."""
+    if rel not in G:
+        return
+    stale = [(u, v) for u, v, d in G.out_edges(rel, data=True)
+             if d.get("source") in ("frontmatter", "body_text")]
+    G.remove_edges_from(stale)
+
+
+def _incremental_rebuild(G: nx.DiGraph, added: set, modified: set, removed: set) -> nx.DiGraph:
+    """Apply only the changed files to an already-loaded graph, then re-derive Layer 3.
+    Cheaper than a full rebuild: rescans the changed files instead of all ~200."""
+    slug_patterns = _build_slug_patterns()
+    chars = _corpus_characters()
+    for rel in removed:
+        if rel in G:
+            G.remove_node(rel)  # also drops every edge touching it
+    for rel in added | modified:
+        _remove_file_contribution(G, rel)
+        f = paths.ROOT / rel
+        ntype = _file_node_type(rel)
+        if f.exists() and ntype:
+            _scan_one(G, f, ntype, slug_patterns, chars)
+    _strip_embedding_edges(G)   # re-derive Layer 3 wholesale (fast; keeps it consistent
+    _add_embedding_edges(G)     # with the current Layer 1/2 edges + embedding cache)
+    return G
+
+
 def get_graph(force_rebuild: bool = False) -> nx.DiGraph:
-    """Process-singleton DiGraph. Rebuild on demand (rebuild is sub-second)."""
+    """Process-singleton DiGraph with a lazy, never-stale disk cache. Every call cheap-checks
+    per-file SHA256: unchanged → reuse cache; some files changed → incremental rescan of just
+    those; no/corrupt cache → full rebuild. force_rebuild bypasses all caches."""
     global _graph_cache, _undirected_cache
-    if _graph_cache is None or force_rebuild:
+    if _graph_cache is not None and not force_rebuild:
+        return _graph_cache
+    from . import knowledge_graph_cache as cache
+    if force_rebuild:
         _graph_cache = _build_graph()
-        _undirected_cache = None  # invalidate projection alongside the directed graph
+        cache.save(_graph_cache)
+        _undirected_cache = None
+        return _graph_cache
+
+    hashes = cache.current_hashes()
+    loaded = cache.load()
+    if loaded is None:                       # absent / corrupt / version drift → full build
+        _graph_cache = _build_graph()
+        cache.save(_graph_cache, hashes)
+    else:
+        G, meta = loaded
+        added, modified, removed = cache.diff(meta.get("file_hashes", {}), hashes)
+        if added or modified or removed:     # incremental: touch only changed files
+            _graph_cache = _incremental_rebuild(G, added, modified, removed)
+            cache.save(_graph_cache, hashes)
+        else:                                # cache fresh → reuse as-is
+            _graph_cache = G
+    _undirected_cache = None  # invalidate projection alongside the directed graph
     return _graph_cache
 
 
