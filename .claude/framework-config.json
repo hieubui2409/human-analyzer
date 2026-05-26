@@ -11,7 +11,7 @@
   "knowledgeGraph": {
     "embedding": {
       "maxLineChars": 5000,
-      "maxChunksPerFile": 40,
+      "maxChunksPerFile": 60,
       "simThreshold": 0.75,
       "reviewLow": 0.65,
       "chunkSize": 512,
