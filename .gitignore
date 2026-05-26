@@ -30,3 +30,7 @@ __pycache__/
 .claude/telemetry/observations.jsonl
 .claude/telemetry/cascade-events.jsonl
 .claude/telemetry/*.jsonl.bak
+
+# Knowledge graph embedding artifacts (derived, regenerable via embed_corpus)
+.models/
+.cache/

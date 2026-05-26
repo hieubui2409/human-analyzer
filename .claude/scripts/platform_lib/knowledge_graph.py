@@ -276,7 +276,24 @@ def _build_graph() -> nx.DiGraph:
             for ref in _parse_yaml_list(fm.get("references")):
                 G.add_edge(rel, f"docs/references/{ref}.md", rel_type="cites_theory",
                            confidence=0.95, source="frontmatter")
+
+    _add_embedding_edges(G)
     return G
+
+
+def _add_embedding_edges(G: nx.DiGraph) -> None:
+    """Layer 3: file↔file semantic-similarity edges from cached embeddings (cross-lingual,
+    catches Vietnamese terms regex misses). No-op if no cache — graceful degradation, the
+    Layer 1+2 graph still builds. Frontmatter/regex edges (either direction) always win."""
+    try:
+        from . import knowledge_graph_embeddings as kge
+    except Exception:  # noqa: BLE001 — numpy/module missing → skip Layer 3
+        return
+    for src, dst, score, review in kge.cached_embedding_edges():
+        if src not in G or dst not in G or G.has_edge(src, dst) or G.has_edge(dst, src):
+            continue
+        G.add_edge(src, dst, rel_type="semantic_similarity", source="embedding",
+                   confidence=score, similarity_score=score, needs_review=review)
 
 
 def get_graph(force_rebuild: bool = False) -> nx.DiGraph:
@@ -317,12 +334,19 @@ def graph_stats(G: nx.DiGraph | None = None) -> dict:
         edges_by_type[r] = edges_by_type.get(r, 0) + 1
         s = d.get("source", "unknown")
         edges_by_source[s] = edges_by_source.get(s, 0) + 1
+    emb_layer = "disabled"
+    try:
+        from . import knowledge_graph_embeddings as kge
+        emb_layer = "enabled" if kge.cache_exists() else "disabled"
+    except Exception:  # noqa: BLE001
+        pass
     return {
         "nodes": G.number_of_nodes(),
         "edges": G.number_of_edges(),
         "nodes_by_type": dict(sorted(nodes_by_type.items(), key=lambda kv: -kv[1])),
         "edges_by_type": dict(sorted(edges_by_type.items(), key=lambda kv: -kv[1])),
         "edges_by_source": dict(sorted(edges_by_source.items(), key=lambda kv: -kv[1])),
+        "embedding_layer": emb_layer,
     }
 
 
