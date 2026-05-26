@@ -122,13 +122,54 @@ def test_m4_hook_early_returns_non_profile(tmp_path):
 
 
 def test_m4_hook_reports_drift_on_profile(tmp_path):
-    # Real profile file with known pre-existing broken reference links.
-    target = "docs/profiles/character-a/identity/core.md"
-    if not (ROOT / target).exists():
-        pytest.skip("sample profile not present")
+    # Self-contained: a file whose path contains docs/profiles/ (so the hook's
+    # path guard matches) with a deliberately broken internal link. Uses the real
+    # script via CLAUDE_PROJECT_DIR=ROOT but an external target file.
+    target = tmp_path / "docs" / "profiles" / "tchar" / "identity" / "core.md"
+    target.parent.mkdir(parents=True)
+    target.write_text("Has a [bad](./does-not-exist.md) link.", encoding="utf-8")
     out = _run_hook("detect-profile-drift-hook.cjs",
-                    {"tool_input": {"file_path": target}},
+                    {"tool_input": {"file_path": str(target)}},
                     {"CLAUDE_PROJECT_DIR": str(ROOT)})
     result = json.loads(out.stdout)
     assert result["continue"] is True
     assert "Profile Drift" in result.get("additionalContext", "")
+
+
+# --- context-budget-gauge (UserPromptSubmit, 70/85 tiers) ----------------------
+
+def _gauge(tmp_path, input_tokens, **env):
+    transcript = tmp_path / "t.jsonl"
+    transcript.write_text(
+        json.dumps({"message": {"usage": {"input_tokens": input_tokens}}}) + "\n",
+        encoding="utf-8")
+    return _run_hook("context-budget-gauge.cjs",
+                     {"transcript_path": str(transcript)},
+                     {"CK_TELEMETRY_DIR": str(tmp_path / "tel"),
+                      "CK_CONTEXT_WINDOW": "200000", "CK_CONTEXT_NEXT_EST": "25000",
+                      **env})
+
+
+def test_gauge_force_tier(tmp_path):
+    out = _gauge(tmp_path, 180000)
+    r = json.loads(out.stdout)
+    assert "85%" in r["additionalContext"]
+    rec = json.loads((tmp_path / "tel" / "context-gauge.jsonl").read_text().strip())
+    assert rec["pct"] == 0.9
+
+
+def test_gauge_warn_tier(tmp_path):
+    out = _gauge(tmp_path, 130000)
+    r = json.loads(out.stdout)
+    assert "70%" in r["additionalContext"] and "85%" not in r["additionalContext"]
+
+
+def test_gauge_quiet_when_low(tmp_path):
+    out = _gauge(tmp_path, 50000)
+    r = json.loads(out.stdout)
+    assert "additionalContext" not in r
+
+
+def test_gauge_noop_when_disabled(tmp_path):
+    _gauge(tmp_path, 180000, CK_TELEMETRY_DISABLED="1")
+    assert not (tmp_path / "tel" / "context-gauge.jsonl").exists()
