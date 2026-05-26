@@ -1,4 +1,17 @@
 {
-  "hooks": {},
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/profile-edit-reminder.cjs",
+            "timeout": 5,
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write"
+      }
+    ]
+  },
   "includeCoAuthoredBy": false
 }

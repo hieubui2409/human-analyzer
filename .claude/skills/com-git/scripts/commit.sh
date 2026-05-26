@@ -56,6 +56,19 @@ if git diff --cached --quiet; then
   exit 0
 fi
 
+# Format staged files with prettier (commit-time, replaces the per-edit PostToolUse
+# hook so working edits don't trigger constant reflow). Non-fatal: skip if prettier
+# is unavailable. --ignore-unknown skips file types prettier can't format.
+if [ "$LUCAS_SKIP_FORMAT" != "true" ]; then
+  STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+  if [ -n "$STAGED" ]; then
+    echo "$STAGED" | xargs npx prettier --write --ignore-unknown >/dev/null 2>&1 || true
+    # Re-stage whatever prettier rewrote (only files still present)
+    echo "$STAGED" | while read -r f; do [ -f "$f" ] && git add -- "$f" || true; done
+    echo "Formatted staged files with prettier."
+  fi
+fi
+
 # Use pre-built message or fallback
 if [ -z "$LUCAS_COMMIT_MSG" ]; then
   LUCAS_COMMIT_MSG="chore: update"
