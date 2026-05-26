@@ -11,6 +11,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 from platform_lib.paths import DECISIONS
 from platform_lib.formatters import print_json
+from platform_lib.errors import emit_error
 
 CATEGORIES = ("psy", "cre", "gro", "cross")
 VOICES = ("advocate", "skeptic", "pragmatist", "wildcard")
@@ -116,6 +117,7 @@ def tally(input_path: str) -> str:
     try:
         data = json.loads(ip.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as e:
+        emit_error("parse", str(e), {"input": str(ip)})
         print(json.dumps({"error": f"Failed to read input JSON: {e}"}), file=sys.stderr)
         sys.exit(1)
 

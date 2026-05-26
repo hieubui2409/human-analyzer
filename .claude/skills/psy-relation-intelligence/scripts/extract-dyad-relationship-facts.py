@@ -36,6 +36,7 @@ from platform_lib.materials_classifier import extract_frontmatter, SOURCE_TO_TIE
 from platform_lib.markdown_parser import (
     extract_sections, extract_tags, extract_timeline_events, extract_milestones,
 )
+from platform_lib.errors import emit_error
 
 # Graph sections worth mining for publishable facts (exclude clinical-only sections).
 PUBLISHABLE_SECTIONS = {
@@ -234,6 +235,7 @@ def main():
     try:
         a, b = resolve_character(args.char_a), resolve_character(args.char_b)
     except ValueError as e:
+        emit_error("validation", str(e), {"char_a": args.char_a, "char_b": args.char_b})
         print(json.dumps({"error": str(e)}, ensure_ascii=False))
         sys.exit(1)
     print(json.dumps(build(a, b), indent=2, ensure_ascii=False))

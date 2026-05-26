@@ -10,6 +10,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 from platform_lib.paths import SESSION_STATE
 from platform_lib.formatters import print_json, summary_block
+from platform_lib.errors import emit_error
 
 STATE_FILE = SESSION_STATE / "state.json"
 
@@ -46,6 +47,7 @@ def main():
     try:
         state = json.loads(STATE_FILE.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
+        emit_error("parse", str(e), {"file": str(STATE_FILE)})
         print(f"Error: state.json is malformed — {e}", file=sys.stderr)
         sys.exit(1)
 

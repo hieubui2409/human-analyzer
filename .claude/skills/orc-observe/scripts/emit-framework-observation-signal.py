@@ -29,6 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths  # noqa: E402
+from platform_lib.errors import emit_error  # noqa: E402
 
 OBSERVATIONS = paths.OBSERVATIONS
 
@@ -80,6 +81,7 @@ def main() -> None:
             raise ValueError("--payload must be a JSON object")
         rec = emit(args.framework, args.signal, payload, args.source)
     except (ValueError, json.JSONDecodeError) as e:
+        emit_error("validation", str(e))
         print(f"ERROR: {e}", file=sys.stderr)
         raise SystemExit(2)
 

@@ -22,6 +22,7 @@ import json
 import os
 import sys
 import time
+import traceback
 from pathlib import Path
 
 # Rotate a sink once it crosses this size; keeps one .bak generation.
@@ -95,6 +96,19 @@ _orig_excepthook = sys.excepthook
 def _excepthook(exc_type, exc_value, exc_tb):
     global _failed
     _failed = True
+    # Auto-capture the crash as a structured error (I6) — covers every script
+    # that imports platform_lib, no per-script boilerplate. Never let error
+    # logging mask the original traceback.
+    try:
+        append_event("errors.jsonl", {
+            "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "script": sys.argv[0] if sys.argv else "unknown",
+            "category": "unhandled",
+            "message": f"{exc_type.__name__}: {exc_value}"[:200],
+            "context": {"frame": traceback.format_tb(exc_tb)[-1][:200] if exc_tb else ""},
+        })
+    except Exception:  # pragma: no cover - defensive
+        pass
     _orig_excepthook(exc_type, exc_value, exc_tb)
 
 
