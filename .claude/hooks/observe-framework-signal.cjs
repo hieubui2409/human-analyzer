@@ -5,7 +5,7 @@
  * Fires after Edit/Write. Maps the edited path to its framework (docs/profiles → psy,
  * docs/materials → mat, assets → cre, docs/profiles/.../growth → gro, .claude → orc) and
  * appends a deterministic `{fw}-touched` signal to the project observation stream
- * (.claude/session-state/observations.jsonl). This is the AUTOMATIC baseline trail; the
+ * (.claude/telemetry/observations.jsonl). This is the AUTOMATIC baseline trail; the
  * orc:observe skill records the LLM-judged semantic signals on top.
  *
  * Standalone: reads hook data from stdin, NO require of ck-config-utils (CAP-1). Reads its
@@ -15,10 +15,11 @@
 
 const fs = require("fs");
 const path = require("path");
+const { sinkPath } = require("./lib/telemetry-paths.cjs");
 
 const PROJECT_DIR =
   process.env.CLAUDE_PROJECT_DIR || process.env.PMC_PROJECT_ROOT || process.cwd();
-const OBSERVATIONS = path.join(PROJECT_DIR, ".claude", "session-state", "observations.jsonl");
+const OBSERVATIONS = sinkPath("observations.jsonl");
 const CONFIG = path.join(PROJECT_DIR, ".claude", "framework-config.json");
 
 // Ordered: first match wins (growth is more specific than the profile root).

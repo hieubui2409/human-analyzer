@@ -13,7 +13,7 @@ metadata:
 # orc:observe — Cross-Framework Observation Signals
 
 Project-owned observation layer (ECC § B3). Two writers, one stream
-(`.claude/session-state/observations.jsonl`):
+(`.claude/telemetry/observations.jsonl`):
 
 1. **Automatic** — the `observe-framework-signal.cjs` PostToolUse hook emits a *deterministic*
    `*-touched` signal whenever a framework's data is edited (path → framework). Fast, fail-open.

@@ -16,7 +16,7 @@ import pytest
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 HOOK_PATH = PROJECT_DIR / ".claude" / "hooks" / "gateguard-profile-protect.cjs"
-AUDIT_LOG_DIR = PROJECT_DIR / ".claude" / "logs"
+AUDIT_LOG_DIR = PROJECT_DIR / ".claude" / "telemetry"
 
 
 def run_hook(tool_name: str, file_path: str, env_override: dict | None = None) -> subprocess.CompletedProcess:

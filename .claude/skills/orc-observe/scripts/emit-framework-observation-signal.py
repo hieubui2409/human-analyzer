@@ -4,7 +4,7 @@ GOLDEN RULE #4: deterministic append only. This validates + records a signal; it
 NOT decide what to observe — the calling skill (LLM) makes that judgment, this script just
 persists it. Distinct from orc:event-log domain events (the cascade bus): observation
 signals are passive telemetry (defense-pattern noticed, voice drift, low-CRAAP source),
-written to a separate `.claude/session-state/observations.jsonl` so they never trip cascades.
+written to a separate `.claude/telemetry/observations.jsonl` so they never trip cascades.
 
 Per-framework signal vocabulary (ECC § B3) — extend deliberately, not ad-hoc:
   psy: core-wound | defense-pattern | attachment-shift | profile-touched
@@ -30,7 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths  # noqa: E402
 
-OBSERVATIONS = paths.ROOT / ".claude" / "session-state" / "observations.jsonl"
+OBSERVATIONS = paths.OBSERVATIONS
 
 SIGNALS = {
     "psy": {"core-wound", "defense-pattern", "attachment-shift", "profile-touched"},

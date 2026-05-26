@@ -19,6 +19,7 @@ const path = require("path");
 
 const { classifyFile, LEVELS } = require("./lib/sensitivity-checker.cjs");
 const { isHookEnabled } = require("./lib/ck-config-utils.cjs");
+const { sinkPath } = require("./lib/telemetry-paths.cjs");
 
 const PROJECT_DIR =
   process.env.CLAUDE_PROJECT_DIR ||
@@ -30,12 +31,8 @@ const APPROVAL_PATH = path.join(
   "session-state",
   "gateguard-approved.json",
 );
-const AUDIT_LOG_PATH = path.join(
-  PROJECT_DIR,
-  ".claude",
-  "logs",
-  "gateguard-audit.jsonl",
-);
+// Consolidated observability sink: .claude/telemetry/gateguard-audit.jsonl
+const AUDIT_LOG_PATH = sinkPath("gateguard-audit.jsonl");
 const FRAMEWORK_CONFIG_PATH = path.join(
   PROJECT_DIR,
   ".claude",

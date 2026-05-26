@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 
 from platform_lib.clinical_terms import COMPILED_PATTERNS
-from platform_lib.paths import ASSETS, ROOT
+from platform_lib.paths import ASSETS, ROOT, PRIVACY_AUDIT
 from platform_lib.formatters import print_table, severity_badge, eprint
 
 PRIVACY_TAG_PATTERNS = [
@@ -47,7 +47,7 @@ CROSS_FRAMEWORK_DIRS = [
     str(ROOT / "docs" / "graph"),
 ]
 
-AUDIT_LOG = ROOT / ".claude" / "logs" / "privacy-audit.jsonl"
+AUDIT_LOG = PRIVACY_AUDIT  # consolidated telemetry sink
 
 SCAN_EXTENSIONS = {".md", ".txt", ".text"}
 

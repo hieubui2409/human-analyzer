@@ -10,3 +10,7 @@ __pycache__/
 # Runtime artifacts (derived state, regenerated each session)
 .claude/session-state/compact-digest.json
 .claude/session-state/observations.jsonl
+
+# Consolidated telemetry sink (runtime JSONL — never committed; keep .gitkeep)
+.claude/telemetry/*.jsonl
+.claude/telemetry/*.jsonl.bak

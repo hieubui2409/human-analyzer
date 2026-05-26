@@ -29,17 +29,26 @@ ASSETS = ROOT / "assets"
 PLANS = ROOT / "plans"
 REPORTS = PLANS / "reports"
 SKILLS = ROOT / ".claude" / "skills"
-SESSION_STATE = ROOT / ".claude" / "session-state"
+SESSION_STATE = ROOT / ".claude" / "session-state"  # mutable session STATE (json), not event sinks
+TELEMETRY = ROOT / ".claude" / "telemetry"  # consolidated observability sink root (all JSONL streams)
 DECISIONS = ROOT / ".claude" / "decisions"
 PROFILE_CACHE = ROOT / ".claude" / "profile-cache"
 
-# Framework-partitioned event streams (B2 memory persistence lifecycle)
-CHARACTER_EVENTS = SESSION_STATE / "character-events.jsonl"  # PSY
-MATERIAL_EVENTS = SESSION_STATE / "material-events.jsonl"  # MAT
-CONTENT_EVENTS = SESSION_STATE / "content-events.jsonl"  # CRE
-GROWTH_SIGNALS = SESSION_STATE / "growth-signals.jsonl"  # GRO
-CASCADE_EVENTS = SESSION_STATE / "cascade-events.jsonl"  # ORC
-GOVERNANCE_AUDIT = SESSION_STATE / "governance-audit.jsonl"  # COM
+# Framework-partitioned event streams (B2 memory persistence lifecycle).
+# Files stay SEPARATE (partition preserved); the directory is consolidated under
+# TELEMETRY so the dashboard + forensics parser read one root.
+CHARACTER_EVENTS = TELEMETRY / "character-events.jsonl"  # PSY
+MATERIAL_EVENTS = TELEMETRY / "material-events.jsonl"  # MAT
+CONTENT_EVENTS = TELEMETRY / "content-events.jsonl"  # CRE
+GROWTH_SIGNALS = TELEMETRY / "growth-signals.jsonl"  # GRO
+CASCADE_EVENTS = TELEMETRY / "cascade-events.jsonl"  # ORC
+GOVERNANCE_AUDIT = TELEMETRY / "governance-audit.jsonl"  # COM
+
+# Other consolidated JSONL sinks (signals + audits), same root.
+INSTINCTS = TELEMETRY / "instincts.jsonl"  # continuous-learning store (B3)
+OBSERVATIONS = TELEMETRY / "observations.jsonl"  # passive cross-framework signals (B3)
+GATEGUARD_AUDIT = TELEMETRY / "gateguard-audit.jsonl"  # profile-protection audit trail
+PRIVACY_AUDIT = TELEMETRY / "privacy-audit.jsonl"  # cre:privacy-guard audit trail
 
 # Route an event to a stream by its event-type prefix (e.g. "PSY.refresh" → PSY).
 # Unknown prefixes fall back to CASCADE_EVENTS.

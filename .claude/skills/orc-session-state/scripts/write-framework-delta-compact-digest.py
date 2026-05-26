@@ -23,8 +23,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths  # noqa: E402
 
-DIGEST = paths.SESSION_STATE / "compact-digest.json"
-OBSERVATIONS = paths.SESSION_STATE / "observations.jsonl"
+DIGEST = paths.SESSION_STATE / "compact-digest.json"  # session STATE, stays
+OBSERVATIONS = paths.OBSERVATIONS  # consolidated telemetry sink
 
 # Per-framework "keep" stream + the delta categories each contributes (ECC § C5).
 FRAMEWORK_STREAMS = {

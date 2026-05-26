@@ -139,7 +139,7 @@ Full audit with report:
 3. Also scan plans/reports/ for accidental `[PRIVATE]` content
 4. Cross-reference with `docs/rules/09-confidentiality-protocol.md`
 5. Generate report: `plans/reports/privacy-audit-{date}.md`
-6. Append audit summary to `.claude/logs/privacy-audit.jsonl`:
+6. Append audit summary to `.claude/telemetry/privacy-audit.jsonl`:
    ```json
    {"timestamp": "ISO", "scan_scope": ["..."], "files_scanned": N, "findings_count": N, "critical": N, "high": N, "medium": N, "low": N, "operator": "cre:privacy-guard"}
    ```
@@ -169,7 +169,7 @@ When scanning content that references materials:
 - Called by `cre:prompt-leverage` in sensitivity scan layer
 - Can be wired as PostToolUse hook for assets/ writes
 - Emits `CRE.privacy_cleared` when scan passes (consumed by ORC orchestration)
-- Audit JSONL at `.claude/logs/privacy-audit.jsonl` queryable via `jq` for governance reporting
+- Audit JSONL at `.claude/telemetry/privacy-audit.jsonl` queryable via `jq` for governance reporting
 
 ## Safety
 

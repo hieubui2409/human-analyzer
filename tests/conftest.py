@@ -9,6 +9,10 @@ from pathlib import Path
 
 import pytest
 
+# Disable telemetry side-effects (atexit script metrics + sink writes) for the
+# whole session BEFORE any platform_lib import triggers the auto-import.
+os.environ["CK_TELEMETRY_DISABLED"] = "1"
+
 # Ensure platform_lib is importable
 SCRIPTS_DIR = Path(__file__).resolve().parents[1] / ".claude" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))

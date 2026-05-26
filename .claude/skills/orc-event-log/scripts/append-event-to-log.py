@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import SESSION_STATE, EVENT_STREAMS, CASCADE_EVENTS
+from platform_lib.paths import TELEMETRY, EVENT_STREAMS, CASCADE_EVENTS
 
 VALID_EVENT_TYPES = [
     "MAT.integrated",
@@ -65,7 +65,7 @@ def main():
               file=sys.stderr)
 
     # Ensure directory exists
-    SESSION_STATE.mkdir(parents=True, exist_ok=True)
+    TELEMETRY.mkdir(parents=True, exist_ok=True)
 
     event = {
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

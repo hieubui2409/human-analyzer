@@ -15,10 +15,10 @@ from pathlib import Path
 from secrets import token_hex
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from platform_lib.paths import ROOT, SESSION_STATE
+from platform_lib.paths import ROOT, INSTINCTS
 from platform_lib.formatters import json_output
 
-INSTINCT_FILE = SESSION_STATE / "instincts.jsonl"
+INSTINCT_FILE = INSTINCTS
 
 AGENT_CATEGORY_MAP = {
     "psychologist": ["psychology", "clinical"],

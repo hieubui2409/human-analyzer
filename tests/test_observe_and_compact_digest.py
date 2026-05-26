@@ -104,7 +104,7 @@ def test_observe_hook_routes_profile_edit(tmp_path):
     r = subprocess.run([NODE, str(OBSERVE_HOOK)], input=payload, capture_output=True,
                        text=True, env={"CLAUDE_PROJECT_DIR": str(tmp_path), "PATH": "/usr/bin:/bin"})
     assert json.loads(r.stdout)["continue"] is True
-    obs = tmp_path / ".claude" / "session-state" / "observations.jsonl"
+    obs = tmp_path / ".claude" / "telemetry" / "observations.jsonl"
     rec = json.loads(obs.read_text().strip())
     assert rec["framework"] == "psy" and rec["signal"] == "profile-touched"
 
@@ -115,7 +115,7 @@ def test_observe_hook_skips_non_framework_path(tmp_path):
     r = subprocess.run([NODE, str(OBSERVE_HOOK)], input=payload, capture_output=True,
                        text=True, env={"CLAUDE_PROJECT_DIR": str(tmp_path), "PATH": "/usr/bin:/bin"})
     assert json.loads(r.stdout)["continue"] is True
-    assert not (tmp_path / ".claude" / "session-state" / "observations.jsonl").exists()
+    assert not (tmp_path / ".claude" / "telemetry" / "observations.jsonl").exists()
 
 
 @pytest.mark.skipif(NODE is None, reason="node not available")
