@@ -6,3 +6,7 @@ release-manifest.json
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Runtime artifacts (derived state, regenerated each session)
+.claude/session-state/compact-digest.json
+.claude/session-state/observations.jsonl
