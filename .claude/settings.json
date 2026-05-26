@@ -1,4 +1,9 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "hooks": {
     "PostToolUse": [
       {
@@ -11,7 +16,21 @@
         ],
         "matcher": "Edit|Write"
       }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/gateguard-profile-protect.cjs",
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write"
+      }
     ]
   },
-  "includeCoAuthoredBy": false
+  "includeCoAuthoredBy": false,
+  "language": "vietnamese",
+  "skillListingBudgetFraction": 0.04,
+  "skillListingMaxDescChars": 512
 }

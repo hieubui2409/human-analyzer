@@ -1,9 +1,10 @@
-"""Integration tests for gateguard sensitivity gating (Batch 2 A3) via the
-consolidated hook-dispatcher (Batch 5 B1).
+"""Integration tests for gateguard sensitivity gating (Batch 2 A3).
 
-The sub-hooks no longer have standalone CLI entries — they are composed by
-hook-dispatcher.cjs. These tests pipe Edit/Write/Read JSON to the dispatcher and
-assert the gateguard behavior (block/warn/pass) plus privacy/scout regression.
+gateguard-profile-protect.cjs is registered natively as a PreToolUse(Edit|Write)
+hook and exposes a standalone CLI entry (stdin → run() → exit 2 block / exit 0).
+These tests pipe Edit/Write/Read JSON to it and assert block/warn/pass behavior.
+privacy-block and scout-block are ck-owned hooks with their own native entries —
+out of scope here.
 """
 import json
 import os
@@ -14,7 +15,7 @@ from pathlib import Path
 import pytest
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
-HOOK_PATH = PROJECT_DIR / ".claude" / "hooks" / "hook-dispatcher.cjs"
+HOOK_PATH = PROJECT_DIR / ".claude" / "hooks" / "gateguard-profile-protect.cjs"
 AUDIT_LOG_DIR = PROJECT_DIR / ".claude" / "logs"
 
 
@@ -142,16 +143,3 @@ console.log(JSON.stringify(r));
         data = json.loads(result.stdout)
         assert data["level"] == "CRITICAL"
         assert data["zone"] == "PSY-darkness"
-
-
-class TestRegressionExistingHooks:
-    """privacy + scout still block through the consolidated dispatcher."""
-
-    def test_privacy_block_still_works(self):
-        r = run_hook("Edit", ".env")
-        assert r.returncode == 2
-        assert "PRIVACY BLOCK" in r.stderr
-
-    def test_scout_block_still_works(self):
-        r = run_hook("Read", "node_modules/package/index.js")
-        assert r.returncode == 2

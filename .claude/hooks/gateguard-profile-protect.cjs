@@ -123,7 +123,8 @@ function formatWarning(rel, classification) {
 /**
  * Decide gateguard outcome for a parsed PreToolUse payload.
  * Pure of stdin/process.exit (but keeps audit-log + approval-state side effects,
- * which are the hook's single source of truth) so hook-dispatcher.cjs can compose it.
+ * which are the hook's single source of truth); the CLI shim below maps its
+ * verdict to exit codes, and unit tests call it directly.
  * @param {Object} hookData - { tool_name, tool_input }
  * @returns {{block?: boolean, stderr?: string}}
  */
@@ -188,5 +189,41 @@ function run(hookData) {
   };
 }
 
-// Composed exclusively by hook-dispatcher.cjs — no standalone CLI entry.
+/**
+ * Standalone PreToolUse CLI entry (native settings.json registration).
+ * Reads the hook payload from stdin once, delegates to run(), then maps the
+ * verdict to Claude Code's hook protocol: block → exit 2 (+stderr), non-blocking
+ * stderr → print + exit 0. Fail-open everywhere — a parse/runtime error must
+ * never block the tool.
+ */
+function main() {
+  let input = "";
+  try {
+    input = fs.readFileSync(0, "utf-8");
+  } catch {
+    process.exit(0);
+  }
+
+  let data;
+  try {
+    data = JSON.parse(input);
+  } catch {
+    process.exit(0); // fail-open on unparseable input
+  }
+
+  let out;
+  try {
+    out = run(data) || {};
+  } catch {
+    process.exit(0); // fail-open: a runtime error never blocks the tool
+  }
+
+  if (out.stderr) console.error(out.stderr);
+  process.exit(out.block ? 2 : 0);
+}
+
+if (require.main === module) {
+  main();
+}
+
 module.exports = { run, normalizePath, formatBlockMessage, formatWarning };
