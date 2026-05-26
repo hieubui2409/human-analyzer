@@ -15,6 +15,7 @@ __pycache__/
 
 # Runtime artifacts (derived state, regenerated each session)
 .claude/session-state/compact-digest.json
+.claude/session-state/state.json
 
 # Telemetry sink (.claude/telemetry/) — SELECTIVE: ephemeral observability is
 # ignored; persistent streams (instincts, *-events, growth-signals, audits) are
@@ -25,4 +26,5 @@ __pycache__/
 .claude/telemetry/errors.jsonl
 .claude/telemetry/sessions.jsonl
 .claude/telemetry/observations.jsonl
+.claude/telemetry/cascade-events.jsonl
 .claude/telemetry/*.jsonl.bak
