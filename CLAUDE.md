@@ -1,36 +1,37 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working in this repository.
+Guidance for Claude Code in this repository. Loaded every session — kept lean: **architecture, rules, workflow only**. No examples, no character specifics (those live in `docs/profiles/`).
 
 ---
 
 ## Project Purpose
 
-Character profile documentation for storytelling and content creation.
+A clinical-grade **character profile intelligence system** for storytelling and content creation. Each character is documented as a deep, evidence-backed psychological profile; profiles feed platform-native content.
+
+Built to **scale to many characters** (currently 3). Never hardcode character specifics into shared logic — resolve characters dynamically via `paths.py`.
 
 ---
 
-## Framework Architecture
+## Architecture
 
-Five integrated frameworks with event-driven orchestration:
+Four domain frameworks + one orchestrator + one common toolkit, wired by an event bus:
 
 ```
 MAT (Input) → PSY (Analysis) → CRE (Output)
-                    ↑ ORC (Orchestration) ↑
-              GRO (Growth) ↗ PSY + CRE
+                  ↑ ORC (Orchestration) ↑
+            GRO (Growth) ↗ PSY + CRE
 ```
 
-| Framework | Domain           | Directory                                             | Purpose                            |
-| --------- | ---------------- | ----------------------------------------------------- | ---------------------------------- |
-| **MAT**   | Materials        | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
-| **PSY**   | Psychology       | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
-| **CRE**   | Content          | `assets/`                                             | Platform content creation          |
-| **GRO**   | Growth           | `docs/profiles/*/growth/`                             | Career + intelligence growth       |
-| **ORC**   | Orchestration    | `.claude/`                                            | Event routing, domain coordination |
-| **COM**   | Common utilities | `.claude/`                                            | Git, health-check, rules           |
+| Framework | Type         | Domain       | Data location                                         | Purpose                            |
+| --------- | ------------ | ------------ | ----------------------------------------------------- | ---------------------------------- |
+| **MAT**   | Domain       | Materials    | `docs/materials/`                                     | Evidence ingestion, tiers, CRAAP   |
+| **PSY**   | Domain       | Psychology   | `docs/profiles/` + `docs/references/` + `docs/graph/` | Clinical profiling, 5P formulation |
+| **CRE**   | Domain       | Content      | `assets/`                                             | Platform content creation          |
+| **GRO**   | Domain       | Growth       | `docs/profiles/*/growth/`                             | Career + competency intelligence   |
+| **ORC**   | Orchestrator | Coordination | `.claude/`                                            | Event routing, domain boundaries   |
+| **COM**   | Common       | Utilities    | `.claude/`                                            | Git, health-check, rules           |
 
-Event flow: `MAT.integrated` → `PSY.refresh` → `CRE.recalibrate`
-GRO events: `GRO.assessed` / `GRO.mentored` → `PSY.refresh` → `CRE.recalibrate`
+Domain boundaries are enforced: each framework owns its data location and communicates through events, not direct cross-domain writes (Rule 12).
 
 ---
 
@@ -38,118 +39,67 @@ GRO events: `GRO.assessed` / `GRO.mentored` → `PSY.refresh` → `CRE.recalibra
 
 ```
 docs/
-├── profiles/           ← Character profiles (universal nested structure)
-│   ├── character-a/
-│   ├── character-b/
-│   └── character-c/
-├── materials/          ← MAT framework: source materials with evidence tiers
-│   ├── character-a/
-│   ├── character-b/
-│   └── character-c/
-├── references/         ← Clinical Psychology Theory Library (62 theories)
-├── graph/              ← Cross-character relational dynamics
-└── rules/              ← Modular rules (14 files)
-plans/
-├── reports/            ← Validation reports
-└── templates/          ← Plan templates
-assets/
-├── facebook/           ← Facebook posts & media
-├── instagram/          ← Instagram posts & stories
-├── tiktok/             ← TikTok content
-├── youtube/            ← YouTube thumbnails, scripts
-├── twitter/            ← Twitter/X posts
-└── linkedin/           ← LinkedIn articles
+├── profiles/{character}/   ← 25-file universal nested profile (schema below)
+├── materials/{character}/  ← MAT source materials w/ evidence tiers T1–T5 + CRAAP scores
+├── references/             ← Clinical theory library (60+ theories), show-don't-tell
+├── graph/                  ← Cross-character relational dynamics
+└── rules/                  ← 15 modular rule files
+plans/{reports,templates}/  ← Validation reports + plan templates
+assets/{platform}/          ← CRE output, per platform
 ```
 
-### Assets Naming Convention
-
-```
-assets/{platform}/{YYMMDD}-{slug}/
-├── post.txt            ← Main content
-├── image-prompts.txt   ← AI image generation prompts
-├── images/             ← Generated/final images
-└── README.txt          ← Package summary
-```
+Asset package convention: `assets/{platform}/{YYMMDD}-{slug}/` → `post.txt`, `image-prompts.txt`, `images/`, `README.txt`.
 
 ---
 
-## Character Profiles — Universal Nested Structure
+## Profile Structure — Universal Nested Schema
 
-Each character has **25 universal files** in a standardized nested structure, plus **optional per-character cross-relationship files** discovered dynamically via `list_relationship_files()` in `paths.py`:
+Every character has the **same 25 universal files** so tooling stays character-agnostic:
 
 ```
 docs/profiles/{character}/
-├── INDEX.md                          ← Quick reference
-├── CURRENT-STATE.md                  ← Current psychological state snapshot
-├── milestones.md                     ← Key life milestones
-├── identity/
-│   ├── core.md                       ← Basic info, education, career, family
-│   ├── writing-voice.md              ← Tone, themes (Nhân vật A has richest)
-│   ├── achievements.md               ← Academic, scholarships, awards
-│   └── media-coverage.md             ← Press timeline
-├── psychology/
-│   ├── formulation.md                ← 5 Ps case formulation (clinical core)
-│   ├── defense-mechanisms.md         ← Defense hierarchy: Mature→Neurotic→Immature
-│   ├── attachment-style.md           ← Attachment patterns + relationship dynamics
-│   ├── growth-edges.md               ← Active growth areas + therapeutic windows
-│   ├── core-wounds.md                ← Core wound patterns
-│   ├── diagnostics.md                ← Big Five + ICD-11 dimensional scores
-│   ├── cultural-formulation.md       ← Cultural context factors
-│   └── archetype.md                  ← Jungian + Pia Melody mapping
-├── relationships/
-│   ├── family.md                     ← Family tree, key relationships
-│   ├── {other-character}.md          ← Cross-relationship file (optional, per character)
-│   └── network.md                    ← Extended network (Nhân vật A only)
-├── timeline/
-│   ├── overview.md                   ← Timeline summary
-│   └── state-timeline.md            ← Longitudinal ICD-11 phases with severity
-├── darkness/
-│   └── traumas.md                    ← Trauma documentation
-├── light/
-│   └── strengths-hope.md            ← Sources of hope, resilience
-├── evidence/
-│   └── conversations.md             ← Key conversation evidence
-└── growth/
-    ├── career-path.md               ← Career history, trajectory (Super's model)
-    ├── competencies.md              ← Skill inventory (Dreyfus 7-level)
-    ├── learning-profile.md          ← Cognitive style (Kolb's model)
-    └── mentoring-map.md             ← Mentor/mentee relationships (Kram's model)
+├── INDEX.md                  ← Quick reference
+├── CURRENT-STATE.md          ← Current psychological state snapshot
+├── milestones.md             ← Key life milestones
+├── identity/                 ← core, writing-voice, achievements, media-coverage
+├── psychology/               ← formulation (5P), defense-mechanisms, attachment-style,
+│                                growth-edges, core-wounds, diagnostics (Big Five + ICD-11),
+│                                cultural-formulation, archetype (Jungian + Pia Melody)
+├── relationships/            ← family, network, + cross-relationship files
+├── timeline/                 ← overview, state-timeline (longitudinal ICD-11 phases)
+├── darkness/traumas.md       ← Trauma documentation
+├── light/strengths-hope.md   ← Resilience, sources of hope
+├── evidence/conversations.md ← Key conversation evidence
+└── growth/                   ← career-path (Super), competencies (Dreyfus),
+                                 learning-profile (Kolb), mentoring-map (Kram)
 ```
 
-Cross-relationship files per character: Nhân vật A (3: character-b.md, character-c.md, network.md), Nhân vật B (2: character-a.md, character-c.md), Nhân vật C (2: character-a.md, character-b.md). Mirror pairs are bidirectional.
-
-**Characters:** Nhân vật A (`character-a`), Nhân vật B (`character-b`), Nhân vật C (`character-c`)
-
-### Research Materials — MAT Framework (`docs/materials/`)
-
-Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, processing status).
-
-- `character-a/` — Transcripts, clinical notes, personal logs
-- `character-b/` — Conversation logs, family context
-- `character-c/` — Interview transcripts, letters, news articles
-
-### Clinical Reference Library (`docs/references/`)
-
-- `INDEX.md` — Master index of 62 clinical psychological theories
-- Focus: Clinical-grade character analysis without exposing raw psychiatric terms in content
-
-### Cross-Character Graph (`docs/graph/`)
-
-- `relational-dynamics.md` — Cross-character relationship dynamics, attachment interactions
+Cross-relationship files (`relationships/{other-character}.md`) are **optional and per-character**, discovered dynamically via `list_relationship_files()` in `paths.py`. Mirror pairs are bidirectional. Never enumerate them statically in code.
 
 ---
 
-## Key Facts
+## Workflow
 
-**Nhân vật A**: Born 24/09/1997, Senior AI Engineer at VinSmart Future (06/2026~), prev. One Mount Group (08/2020-05/2026)
-**Nhân vật B**: Born 18/02/2008, Grade 12 student, Tỉnh X
-**Nhân vật C**: Born 14/05/2007, IT-E6 student at ĐHBK Hà Nội, Scholarship X F15 scholar
-**Relationship (Nhân vật A - Nhân vật B)**: Sworn brothers (kết nghĩa) since 09/2025, 11-year age gap
-**Relationship (Nhân vật A - Nhân vật C)**: Mentor - Mentee (Scholarship X interviewer)
+**Primary pipeline (event-driven):**
+
+```
+MAT.integrated → PSY.refresh → CRE.recalibrate
+GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
+```
+
+- **MAT** ingests + classifies sources (5-stage pipeline, evidence tiers T1–T5, CRAAP). Material must be *integrated* before PSY consumes it — MAT gates block premature analysis.
+- **PSY** builds/refreshes the clinical formulation from integrated material + references.
+- **GRO** feeds career/competency intelligence into PSY and CRE.
+- **CRE** translates the refreshed profile into platform content, gated by evidence tier + confidentiality (Rules 09, 14).
+- **ORC** routes events across domains, resolves cascades, audits consistency.
+
+**Profile build protocol:** 3-wave — Foundation → Deep Dive → Validation (Rule 05).
+
+**Design principle:** Scripts do **deterministic gathering** (may over-flag — false positives expected); the LLM does **heuristic judgment**. Never delegate reasoning to scripts.
 
 ---
 
-## Rules (`docs/rules/`)
+## Rules (`docs/rules/` — 15 files)
 
 | #   | File                       | Scope                                                         |
 | --- | -------------------------- | ------------------------------------------------------------- |
@@ -164,53 +114,40 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | 09  | confidentiality-protocol   | Privacy tags, content boundaries                              |
 | 10  | reference-library-standard | Reference schema, scientific rigor                            |
 | 11  | mat-pipeline               | MAT 5-stage pipeline, evidence tiers, CRAAP test              |
-| 12  | orc-orchestration          | Event system, domain boundaries, trigger routing (5 domains)  |
-| 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)       |
+| 12  | orc-orchestration          | Event system, domain boundaries, trigger routing              |
+| 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)        |
 | 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
 | 15  | gro-framework              | GRO domain boundaries, profile files, GRO↔PSY boundary        |
 
 ---
 
-## Skills (`.claude/skills/`)
+## Skills Catalog (`.claude/skills/`)
 
-### ORC — Orchestration Skills
+55 framework skills (ORC 15 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 3). Invoke as `{framework}:{skill}`.
 
-| Skill               | Purpose                                                           |
-| ------------------- | ----------------------------------------------------------------- |
-| `orc:bootstrap`     | Load project context (--quick/--full/--character/--lite/--intent) |
-| `orc:session-state` | Track session state, framework domains, event queue               |
-| `orc:classify`      | Risk classification (tiny/normal/high_risk) + MAT gates           |
-| `orc:intake`        | Route work type → skill chain (MAT/PSY/CRE/GRO routing)           |
-| `orc:compounding`   | Extract session learnings → memory                                |
-| `orc:dream`         | Periodic memory consolidation                                     |
-| `orc:decisions`     | Append-only decision records                                      |
-| `orc:agent-memory`  | Per-agent calibration memory                                      |
-| `orc:event-log`     | Persistent event audit logging (JSONL append + query)             |
-| `orc:domain-router` | Route domain events to downstream skills (diff or explicit)       |
-| `orc:cascade`       | Resolve multi-step event cascade chains across domains            |
-| `orc:audit`         | Cross-domain event consistency verification                       |
-| `orc:santa`         | Dual-reviewer quality gate — independent review, max 2 rounds     |
-| `orc:council`       | 4-voice decision framework — anti-anchoring, verdict storage      |
+> Engineer-kit utility skills (`/ck:*`) installed alongside are **not** catalogued here — they are user-invoked dev tools, discoverable via the harness skill list.
 
-### COM — Common Skills
+### ORC — Orchestration
 
-| Skill              | Purpose                                                 |
-| ------------------ | ------------------------------------------------------- |
-| `com:git`          | Project-aware git operations                            |
-| `com:health-check` | Session health monitoring — stall/error/death detection |
-| `com:kit-cleanup`  | Project cleanup utilities                               |
-| `com:rules`        | Modular rules management                                |
+| Skill                 | Purpose                                                               |
+| --------------------- | --------------------------------------------------------------------- |
+| `orc:bootstrap`       | Load project context (--quick/--full/--character/--lite/--intent)     |
+| `orc:session-state`   | Track session state, framework domains, event queue                   |
+| `orc:classify`        | Risk classification (tiny/normal/high_risk) + MAT gates               |
+| `orc:intake`          | Route work type → skill chain (MAT/PSY/CRE/GRO routing)               |
+| `orc:compounding`     | Extract session learnings → memory                                    |
+| `orc:dream`           | Periodic memory consolidation                                         |
+| `orc:decisions`       | Append-only decision records                                          |
+| `orc:agent-memory`    | Per-agent calibration memory                                          |
+| `orc:event-log`       | Persistent event audit logging (JSONL append + query)                 |
+| `orc:domain-router`   | Route domain events to downstream skills (diff or explicit)           |
+| `orc:cascade`         | Resolve multi-step event cascade chains across domains                |
+| `orc:audit`           | Cross-domain event consistency verification                           |
+| `orc:santa`           | Dual-reviewer quality gate — independent review, max 2 rounds         |
+| `orc:council`         | 4-voice decision framework — anti-anchoring, verdict storage          |
+| `orc:skill-stocktake` | Skill catalog audit — count/metadata/overlap + CE-02 conformance gate |
 
-### MAT — Material Framework Skills
-
-| Skill         | Purpose                                                             |
-| ------------- | ------------------------------------------------------------------- |
-| `mat:loader`  | Stage 1-2: ingest, classify, CRAAP score, frontmatter injection     |
-| `mat:indexer` | Stage 3-4: contradiction detection, coverage gaps, integration gate |
-| `mat:archive` | Material soft-delete/archival with audit trail (dry-run default)    |
-| `mat:rescore` | Identify materials needing CRAAP re-evaluation                      |
-
-### PSY — Psychology Framework Skills
+### PSY — Psychology
 
 | Skill                       | Purpose                                                              |
 | --------------------------- | -------------------------------------------------------------------- |
@@ -231,7 +168,7 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `psy:ref-maintain`          | Reference library cleanup (orphans, outdated, duplicates)            |
 | `psy:relation-intelligence` | Proactively mine dyad graph for ranked, consent-gated content angles |
 
-### CRE — Content Creation Skills
+### CRE — Content Creation
 
 | Skill                  | Purpose                                                                    |
 | ---------------------- | -------------------------------------------------------------------------- |
@@ -242,10 +179,10 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `cre:prompt-leverage`  | 5-layer prompt strengthening                                               |
 | `cre:privacy-guard`    | Pre-publish privacy/confidentiality scan                                   |
 | `cre:repurpose`        | Adapt content across platforms (1→1)                                       |
-| `cre:voice-audit`      | Audit content voice/tone consistency against WRITING-VOICE.md              |
+| `cre:voice-audit`      | Audit content voice/tone consistency against writing-voice                 |
 | `cre:evidence-scanner` | Per-claim evidence-tier gate (T1-T5) + Rule-09 leak; post-writer delegates |
 
-### GRO — Growth Framework Skills
+### GRO — Growth
 
 | Skill                   | Purpose                                                   |
 | ----------------------- | --------------------------------------------------------- |
@@ -258,86 +195,59 @@ Materials with MAT-compliant frontmatter (evidence tiers T1-T5, CRAAP scores, pr
 | `gro:compare`           | Side-by-side career comparison across characters          |
 | `gro:milestone-tracker` | Track career milestones actual vs planned                 |
 
+### MAT — Materials
+
+| Skill         | Purpose                                                             |
+| ------------- | ------------------------------------------------------------------- |
+| `mat:loader`  | Stage 1-2: ingest, classify, CRAAP score, frontmatter injection     |
+| `mat:indexer` | Stage 3-4: contradiction detection, coverage gaps, integration gate |
+| `mat:archive` | Material soft-delete/archival with audit trail (dry-run default)    |
+| `mat:rescore` | Identify materials needing CRAAP re-evaluation                      |
+
+### COM — Common
+
+| Skill              | Purpose                                                 |
+| ------------------ | ------------------------------------------------------- |
+| `com:git`          | Project-aware git operations                            |
+| `com:health-check` | Session health monitoring — stall/error/death detection |
+| `com:rules`        | Modular rules management                                |
+
 ---
 
 ## Scripts Infrastructure
 
-55 skills (orc/mat/psy/cre/gro/com) share a Python utility library and 60+ supportive scripts.
+Skills share a Python utility library + 60+ supportive scripts.
 
-### Shared Library (`.claude/scripts/platform_lib/`)
+| Module (`.claude/scripts/platform_lib/`) | Purpose                                        |
+| ---------------------------------------- | ---------------------------------------------- |
+| `paths.py`                               | Project root, character resolution, paths      |
+| `clinical_terms.py`                      | 80+ regex patterns, term scanning, ref indexing |
+| `markdown_parser.py`                     | Section extraction, frontmatter, dates, links  |
+| `profile_stats.py`                       | File inventory, git hash cache validation      |
+| `formatters.py`                          | Markdown tables, JSON output, severity badges  |
+| `env_utils.py`                           | .env loading, API key resolution               |
+| `csv_search.py`                          | BM25 text search over CSV data                 |
+| `instinct_store.py`                      | Atomic learnings CRUD, confidence scoring, JSONL |
 
-| Module               | Purpose                                          |
-| -------------------- | ------------------------------------------------ |
-| `paths.py`           | Project root, character name resolution, paths   |
-| `clinical_terms.py`  | 80+ regex patterns, term scanning, ref indexing  |
-| `markdown_parser.py` | Section extraction, frontmatter, dates, links    |
-| `profile_stats.py`   | File inventory, git hash cache validation        |
-| `formatters.py`      | Markdown tables, JSON output, severity badges    |
-| `env_utils.py`       | .env loading, API key resolution (standardized)  |
-| `csv_search.py`      | BM25 text search over CSV data                   |
-| `instinct_store.py`  | Atomic learnings CRUD, confidence scoring, JSONL |
-
-### Running Scripts
+Run scripts with the **project-local venv** (project is self-contained):
 
 ```bash
-# Python scripts (use project venv)
-$HOME/.claude/skills/.venv/bin/python3 .claude/skills/{framework}-{skill}/scripts/{script}.py [args]
-
-# Shell scripts
+.claude/skills/.venv/bin/python3 .claude/skills/{framework}-{skill}/scripts/{script}.py [args]
 bash .claude/skills/{framework}-{skill}/scripts/{script}.sh [args]
 ```
 
-### Design Principle
+---
 
-Scripts do **DETERMINISTIC GATHERING**; LLM does **HEURISTIC JUDGMENT**. Scripts may over-flag (false positives expected) — better to over-gather than miss genuine findings.
+## Operational Notices
+
+**Subagent API retry** — If an Agent-tool result contains a transient API error (`API Error`, `JSON Parse error`, `Unexpected EOF`, `Internal Server Error`, `Service Unavailable`, `ECONNRESET`, `socket hang up`), auto-retry **once** with the identical prompt. Never retry on: `rate_limit`/`429`, `credit`/`billing`, `context_length_exceeded`, `invalid_api_key`.
+
+**Auto-monitoring** — Auto-invoke `com:health-check` for subagents only when the user confirms monitoring OR a health Monitor already runs for the main agent. Never auto-spawn a monitor silently.
+
+**RTK** — Token-optimized CLI proxy (60-90% savings). Hook-based: `git status` → `rtk git status` via PreToolUse. Meta commands: `rtk gain [--history]`, `rtk discover`, `rtk proxy <cmd>`.
+
+**Self-contained** — All skills, agents, hooks, rules, scripts are local under `.claude/`. Global `~/.claude/` is runtime-only (config, cache, sessions).
 
 ---
 
-## Subagent API Error Retry
-
-When a subagent (Agent tool) returns output containing API error patterns, **auto-retry once** with the same prompt.
-
-**Retry patterns** (case-insensitive match on tool result):
-
-- `API Error`, `JSON Parse error`, `Unexpected EOF`
-- `Internal Server Error`, `Service Unavailable`, `ECONNRESET`, `socket hang up`
-
-**Never retry** if result contains: `rate_limit`, `Rate limit`, `429`, `credit`, `billing`, `context_length_exceeded`, `invalid_api_key`
-
-**Protocol:**
-
-1. Detect error pattern in Agent tool result
-2. Log: `"⚠️ Subagent API error — retrying (attempt 2/2)..."`
-3. Re-spawn Agent with identical prompt
-4. If retry also fails → report error to user, stop
-
----
-
-## Auto-Monitoring Policy
-
-LLM should auto-invoke `com:health-check` for subagents/team agents ONLY when:
-
-1. User explicitly confirms monitoring, OR
-2. A health-check Monitor is already running for the main agent
-
-Never auto-spawn health monitor without user awareness.
-
----
-
-## RTK (Token Optimization)
-
-Token-optimized CLI proxy (60-90% savings on dev operations). Hook-based — `git status` automatically becomes `rtk git status` via PreToolUse hook.
-
-Meta commands (use directly): `rtk gain`, `rtk gain --history`, `rtk discover`, `rtk proxy <cmd>`
-
----
-
-## Infrastructure Note
-
-This project is fully self-contained. All skills, agents, hooks, rules, and scripts are local under `.claude/`.
-Global `~/.claude/` has been stripped to runtime-only (config, cache, sessions only).
-Backup: `~/.claude-backup-260522.tar.gz`
-
----
-
-_Updated: 2026-05-23_
+_Updated: 2026-05-26_

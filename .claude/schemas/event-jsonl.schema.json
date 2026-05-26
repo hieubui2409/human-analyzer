@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "event-jsonl.schema.json",
+  "title": "ORC Event Record (one JSONL line)",
+  "description": "Authoritative Draft-7 contract for each line in .claude/session-state/*.jsonl (B5 6-stream event log). Reverse-derived from append-event-to-log.py + lifecycle-emitter records. additionalProperties:true tolerates per-event payload extras.",
+  "type": "object",
+  "required": ["timestamp", "event"],
+  "properties": {
+    "timestamp": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$" },
+    "event": { "type": "string", "pattern": "^[A-Z]+\\.[A-Za-z0-9_.-]+$" },
+    "source": { "type": ["string", "null"] },
+    "character": { "type": ["string", "null"] },
+    "reason": { "type": ["string", "null"] }
+  },
+  "additionalProperties": true
+}
