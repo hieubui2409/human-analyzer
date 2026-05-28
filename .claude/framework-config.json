@@ -1,0 +1,22 @@
+{
+  "gateguard": {
+    "enabled": true,
+    "requireUserApproval": true,
+    "auditLog": ".claude/telemetry/gateguard-audit.jsonl"
+  },
+  "hooks": {
+    "privacyBlock": { "enabled": true },
+    "scoutBlock": { "enabled": true }
+  },
+  "knowledgeGraph": {
+    "embedding": {
+      "maxLineChars": 5000,
+      "maxChunksPerFile": 60,
+      "simThreshold": 0.75,
+      "reviewLow": 0.75,
+      "chunkSize": 512,
+      "chunkOverlap": 100,
+      "embedThreshold": 800
+    }
+  }
+}

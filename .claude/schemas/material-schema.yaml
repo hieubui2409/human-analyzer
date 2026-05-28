@@ -1,6 +1,11 @@
 # Material Schema — MAT Framework
 # Standardized YAML frontmatter for ALL material files in docs/materials/
 # Same fields for ALL characters, no exceptions.
+#
+# ⚠️ NON-AUTHORITATIVE / DERIVED (C7, 2026-05-26): human-readable reference only.
+# The machine-enforceable contract is material-frontmatter.schema.json, run by
+# platform_lib/schema_validator.py + validate-all-against-schemas.py. INDEX.md
+# catalog files are excluded (not CRAAP-scored materials). On drift, .schema.json wins.
 
 version: "1.0"
 created: "2026-05-17"

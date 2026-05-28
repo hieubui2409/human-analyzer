@@ -1,7 +1,40 @@
 # env files (can opt-in for committing if needed)
 .env*
-!.env.examplerelease-manifest.json
+!.env.example
+release-manifest.json
 
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Project-local skills venv (regenerable via .claude/scripts/requirements.txt + install.sh)
+.claude/skills/.venv/
+
+# Hook crash/runtime logs (ck hook-logger output — churns every session)
+.claude/hooks/.logs/
+
+# Generated knowledge-graph visualizations (regenerable via visualize_focus())
+plans/visuals/knowledge-graph-*.html
+
+# Runtime artifacts (derived state, regenerated each session)
+.claude/session-state/compact-digest.json
+.claude/session-state/state.json
+.claude/session-state/latest.md
+.claude/session-state/event-log.jsonl.migrated
+
+# Telemetry sink (.claude/telemetry/) — SELECTIVE: ephemeral observability is
+# ignored; persistent streams (instincts, *-events, growth-signals, audits) are
+# COMMITTED so they survive across sessions/machines (cross-machine memory + audit).
+.claude/telemetry/invocations.jsonl
+.claude/telemetry/script-telemetry.jsonl
+.claude/telemetry/hook-telemetry.jsonl
+.claude/telemetry/errors.jsonl
+.claude/telemetry/sessions.jsonl
+.claude/telemetry/observations.jsonl
+.claude/telemetry/cascade-events.jsonl
+.claude/telemetry/context-gauge.jsonl
+.claude/telemetry/*.jsonl.bak
+
+# Knowledge graph embedding artifacts (derived, regenerable via embed_corpus)
+.models/
+.cache/

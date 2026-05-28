@@ -29,8 +29,39 @@ ASSETS = ROOT / "assets"
 PLANS = ROOT / "plans"
 REPORTS = PLANS / "reports"
 SKILLS = ROOT / ".claude" / "skills"
-SESSION_STATE = ROOT / ".claude" / "session-state"
+SESSION_STATE = ROOT / ".claude" / "session-state"  # mutable session STATE (json), not event sinks
+# Consolidated observability sink root (all JSONL streams). CK_TELEMETRY_DIR env
+# overrides it (tests point it at a tmp dir to isolate sink writes).
+TELEMETRY = Path(os.environ["CK_TELEMETRY_DIR"]) if os.environ.get("CK_TELEMETRY_DIR") else ROOT / ".claude" / "telemetry"
+DECISIONS = ROOT / ".claude" / "decisions"
 PROFILE_CACHE = ROOT / ".claude" / "profile-cache"
+
+# Framework-partitioned event streams (B2 memory persistence lifecycle).
+# Files stay SEPARATE (partition preserved); the directory is consolidated under
+# TELEMETRY so the dashboard + forensics parser read one root.
+CHARACTER_EVENTS = TELEMETRY / "character-events.jsonl"  # PSY
+MATERIAL_EVENTS = TELEMETRY / "material-events.jsonl"  # MAT
+CONTENT_EVENTS = TELEMETRY / "content-events.jsonl"  # CRE
+GROWTH_SIGNALS = TELEMETRY / "growth-signals.jsonl"  # GRO
+CASCADE_EVENTS = TELEMETRY / "cascade-events.jsonl"  # ORC
+GOVERNANCE_AUDIT = TELEMETRY / "governance-audit.jsonl"  # COM
+
+# Other consolidated JSONL sinks (signals + audits), same root.
+INSTINCTS = TELEMETRY / "instincts.jsonl"  # continuous-learning store (B3)
+OBSERVATIONS = TELEMETRY / "observations.jsonl"  # passive cross-framework signals (B3)
+GATEGUARD_AUDIT = TELEMETRY / "gateguard-audit.jsonl"  # profile-protection audit trail
+PRIVACY_AUDIT = TELEMETRY / "privacy-audit.jsonl"  # cre:privacy-guard audit trail
+
+# Route an event to a stream by its event-type prefix (e.g. "PSY.refresh" → PSY).
+# Unknown prefixes fall back to CASCADE_EVENTS.
+EVENT_STREAMS = {
+    "PSY": CHARACTER_EVENTS,
+    "MAT": MATERIAL_EVENTS,
+    "CRE": CONTENT_EVENTS,
+    "GRO": GROWTH_SIGNALS,
+    "ORC": CASCADE_EVENTS,
+    "COM": GOVERNANCE_AUDIT,
+}
 
 CHARACTERS = {
     "hieu": "character-a",

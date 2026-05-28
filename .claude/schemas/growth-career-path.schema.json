@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "growth-career-path.schema.json",
+  "title": "Growth Career-Path Frontmatter",
+  "description": "growth/career-path.md — base profile frontmatter constrained to domain=growth. Super career-stage validation is heuristic (gro:career-path), not frontmatter-enforceable.",
+  "allOf": [
+    { "$ref": "profile-frontmatter.schema.json" },
+    { "properties": { "domain": { "const": "growth" } } }
+  ]
+}

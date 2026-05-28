@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Scan plans/decisions/ to build a searchable index of decision records with frontmatter metadata."""
+"""Scan .claude/decisions/ to build a searchable index of decision records with frontmatter metadata."""
 import os
 import sys
 import argparse
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import PLANS, resolve_character
+from platform_lib.paths import DECISIONS, resolve_character
 from platform_lib.markdown_parser import extract_frontmatter, extract_sections, count_lines
 from platform_lib.formatters import print_table, print_json
 
-DECISIONS_DIR = PLANS / "decisions"
+DECISIONS_DIR = DECISIONS
 
 
 def load_decisions(decisions_dir: Path) -> list[dict]:
@@ -57,7 +57,7 @@ def filter_decisions(decisions: list[dict], search: str = "", character: str = "
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Index and search decision records from plans/decisions/")
+    parser = argparse.ArgumentParser(description="Index and search decision records from .claude/decisions/")
     parser.add_argument("--search", help="Search query (matches title, summary, category, character)")
     parser.add_argument("--character", help="Filter by character name or slug")
     parser.add_argument("--list", action="store_true", help="List all decisions")
@@ -69,7 +69,7 @@ def main():
 
     if not decisions:
         print(f"No decision records found in {DECISIONS_DIR}")
-        print("Create records in plans/decisions/*.md with YAML frontmatter (date, character, category, status, title)")
+        print("Create records in .claude/decisions/*.md with YAML frontmatter (date, character, category, status, title)")
         sys.exit(0)
 
     if args.status:

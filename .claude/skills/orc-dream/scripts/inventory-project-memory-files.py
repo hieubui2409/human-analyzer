@@ -7,6 +7,11 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 from platform_lib.formatters import print_table, print_json
+try:
+    from platform_lib.instinct_store import load_instincts, get_promotion_candidates, INSTINCT_FILE
+    _HAS_INSTINCTS = True
+except ImportError:
+    _HAS_INSTINCTS = False
 
 MEMORY_DIR = Path.home() / ".claude" / "projects" / "-home-hieubt-Documents-ck-marketing" / "memory"
 
@@ -82,6 +87,25 @@ def main():
         print_table(["File", "Broken Link"], [[b["file"], b["broken_link"]] for b in all_broken])
     else:
         print("\n_No broken [[links]] found._")
+
+    if _HAS_INSTINCTS and INSTINCT_FILE.exists():
+        from collections import Counter
+        try:
+            active = load_instincts(status="active")
+            archived = load_instincts(status="archived")
+            cats = Counter(i["category"] for i in active)
+            avg_conf = sum(i["confidence"] for i in active) / len(active) if active else 0
+            promo = get_promotion_candidates()
+            stale = sum(1 for i in active if i["confidence"] < 0.4)
+            print("\n### Instinct Inventory")
+            print(f"- Total active: {len(active)}")
+            print(f"- Total archived: {len(archived)}")
+            print(f"- By category: {dict(cats)}")
+            print(f"- Avg confidence: {avg_conf:.2f}")
+            print(f"- Promotion-ready: {len(promo)}")
+            print(f"- Stale candidates: {stale}")
+        except Exception as e:
+            print(f"\n_Instinct inventory skipped: {e}_", file=sys.stderr)
 
 
 if __name__ == "__main__":

@@ -7,7 +7,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, resolve_character
-from platform_lib.markdown_parser import extract_frontmatter
+# Use the YAML-based parser: craap_score is a nested mapping (currency/relevance/
+# authority/accuracy/purpose/total), which the line-based markdown parser cannot read.
+from platform_lib.materials_classifier import extract_frontmatter
 
 CRAAP_FIELDS = ["currency", "relevance", "authority", "accuracy", "purpose", "total"]
 

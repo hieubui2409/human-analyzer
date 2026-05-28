@@ -8,6 +8,11 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 from platform_lib.paths import ROOT
 from platform_lib.formatters import print_table, print_json
+try:
+    from platform_lib.instinct_store import load_instincts, AGENT_CATEGORY_MAP
+    _HAS_INSTINCTS = True
+except ImportError:
+    _HAS_INSTINCTS = False
 
 AGENT_MEMORY_DIR = ROOT / ".claude" / "agent-memory"
 
@@ -24,13 +29,9 @@ def main():
     agent_stats: dict[str, dict] = {}
 
     for f in AGENT_MEMORY_DIR.rglob("*.md"):
-        # Agent name from parent dir or filename prefix
-        if f.parent != AGENT_MEMORY_DIR:
-            agent_name = f.parent.name
-        else:
-            # Try to infer agent name from filename (agent-name-memory.md)
-            parts = f.stem.split("-")
-            agent_name = "-".join(parts[:-1]) if len(parts) > 1 else f.stem
+        if f.name.startswith(".") or f.name.startswith("_"):
+            continue
+        agent_name = f.stem
 
         if agent_name not in agent_stats:
             agent_stats[agent_name] = {"files": [], "total_lines": 0, "last_updated": 0.0}
@@ -47,19 +48,34 @@ def main():
         print(f"No agent memory files found in {AGENT_MEMORY_DIR}")
         return
 
+    instincts_by_cat = {}
+    if _HAS_INSTINCTS:
+        try:
+            active = load_instincts(status="active")
+            for inst in active:
+                cat = inst.get("category", "")
+                instincts_by_cat.setdefault(cat, []).append(inst)
+        except Exception:
+            pass
+
     rows = []
     for agent, stats in sorted(agent_stats.items()):
         last_dt = datetime.datetime.fromtimestamp(stats["last_updated"]).strftime("%Y-%m-%d %H:%M")
+        relevant = 0
+        if _HAS_INSTINCTS:
+            categories = AGENT_CATEGORY_MAP.get(agent, [])
+            for cat in categories:
+                relevant += len(instincts_by_cat.get(cat, []))
         rows.append([
             agent,
             str(len(stats["files"])),
             str(stats["total_lines"]),
+            str(relevant),
             last_dt,
-            ", ".join(stats["files"])[:60],
         ])
 
     print(f"## Agent Memory Stats — {AGENT_MEMORY_DIR}\n")
-    print_table(["Agent", "Files", "Lines", "Last Updated", "File(s)"], rows)
+    print_table(["Agent", "Files", "Lines", "Instincts", "Last Updated"], rows)
 
 
 if __name__ == "__main__":

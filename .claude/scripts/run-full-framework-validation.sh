@@ -68,7 +68,7 @@ run_check "CRE" "psy-to-cre-translation" \
 ASSET_DIR=$(find assets/facebook -name "post.txt" -type f 2>/dev/null | head -1 | xargs dirname 2>/dev/null || echo "")
 if [ -n "$ASSET_DIR" ]; then
     run_check "CRE" "evidence-tier-check" \
-        "$PYTHON" "$SKILLS/cre-post-writer/scripts/check-evidence-tier-compliance-in-draft.py" "$ASSET_DIR" --json
+        "$PYTHON" "$SKILLS/cre-evidence-scanner/scripts/map-claims-to-evidence-tiers.py" "$ASSET_DIR" --json
     run_check "CRE" "voice-consistency" \
         "$PYTHON" "$SKILLS/cre-voice-audit/scripts/check-voice-consistency-against-defense-profile.py" \
         "$ASSET_DIR" --character character-a --json
@@ -79,13 +79,13 @@ fi
 # MPC — Orchestration
 echo "  [MPC] Running event routing..."
 run_check "MPC" "detect-state-changes" \
-    "$PYTHON" "$SKILLS/mpc-session-state/scripts/detect-domain-state-changes-from-git-diff.py" --ref HEAD~1 --json
+    "$PYTHON" "$SKILLS/orc-session-state/scripts/detect-domain-state-changes-from-git-diff.py" --ref HEAD~1 --json
 run_check "MPC" "task-routing-mat" \
-    "$PYTHON" "$SKILLS/mpc-intake/scripts/route-task-to-framework-domain.py" "load new chat log" --json
+    "$PYTHON" "$SKILLS/orc-intake/scripts/route-task-to-framework-domain.py" "load new chat log" --json
 run_check "MPC" "task-routing-psy" \
-    "$PYTHON" "$SKILLS/mpc-intake/scripts/route-task-to-framework-domain.py" "update profile" --json
+    "$PYTHON" "$SKILLS/orc-intake/scripts/route-task-to-framework-domain.py" "update profile" --json
 run_check "MPC" "task-routing-cre" \
-    "$PYTHON" "$SKILLS/mpc-intake/scripts/route-task-to-framework-domain.py" "write post" --json
+    "$PYTHON" "$SKILLS/orc-intake/scripts/route-task-to-framework-domain.py" "write post" --json
 
 # Summary
 echo ""

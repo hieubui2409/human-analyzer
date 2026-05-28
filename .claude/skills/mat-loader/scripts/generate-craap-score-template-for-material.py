@@ -67,8 +67,8 @@ def main():
                 "notes": f"Material type: {material_type}. Intent: clinical/personal/media?",
             },
         },
-        "overall_quality_score": None,
-        "llm_notes": "Fill in scores (1-10) and notes. Overall = average of 5 dimensions.",
+        "total": None,
+        "llm_notes": "Fill in each dimension 1-5. total = sum of 5 dimensions (max 25). Store under nested craap_score in frontmatter.",
     }
 
     if args.json:
@@ -82,10 +82,10 @@ def main():
     print()
     for dim, data in template["craap_scores"].items():
         print(f"## {dim.upper()}")
-        print(f"  Score: ___/10")
+        print(f"  Score: ___/5")
         print(f"  Notes: {data['notes']}")
         print()
-    print("## OVERALL QUALITY SCORE: ___/10")
+    print("## TOTAL (sum of 5 dimensions): ___/25")
 
 
 if __name__ == "__main__":

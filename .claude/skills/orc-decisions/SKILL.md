@@ -29,7 +29,7 @@ Record WHY choices were made for character arcs, profile interpretations, and co
 
 ## Decision Record Format
 
-Each decision stored as markdown in `plans/decisions/`:
+Each decision stored as markdown in `.claude/decisions/`:
 
 ```markdown
 # {YYYY-MM-DD} — {Short title}
@@ -77,19 +77,19 @@ Each decision stored as markdown in `plans/decisions/`:
    - Q4: What alternatives were considered? (free text)
    - Q5: Why this choice? (free text)
 2. Auto-populate evidence by reading relevant profile files
-3. Write to `plans/decisions/{YYYYMMDD}-{slug}.md`
+3. Write to `.claude/decisions/{YYYYMMDD}-{slug}.md`
 4. Update session state: append to `decisions` array
 5. Print confirmation with file path
 
 ### --search `<query>`
 
-1. `grep -ril "{query}" plans/decisions/` — find matching files
+1. `grep -ril "{query}" .claude/decisions/` — find matching files
 2. For each match, read and extract title + decision + status
 3. Print results sorted by date (newest first)
 
 ### --list
 
-1. `ls -t plans/decisions/*.md | head -20`
+1. `ls -t .claude/decisions/*.md | head -20`
 2. For each file, extract title + character + category + status
 3. Print as table:
    ```
@@ -129,9 +129,9 @@ Each decision stored as markdown in `plans/decisions/`:
 
 ## Scripts
 
-| Script                                   | Purpose                                                            |
-| ---------------------------------------- | ------------------------------------------------------------------ |
-| `scripts/index-decisions-with-search.py` | Build searchable index of all decision records in plans/decisions/ |
+| Script                                   | Purpose                                                              |
+| ---------------------------------------- | -------------------------------------------------------------------- |
+| `scripts/index-decisions-with-search.py` | Build searchable index of all decision records in .claude/decisions/ |
 
 ## Safety
 

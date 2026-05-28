@@ -59,6 +59,23 @@ GRADE_MAP = [(95, "A+"), (90, "A"), (85, "A-"), (80, "B+"), (75, "B"),
              (70, "B-"), (65, "C+"), (60, "C"), (50, "D"), (0, "F")]
 
 
+def validate_file_counts() -> dict:
+    """Assert all 75 profile files (25×3) exist."""
+    expected_per_char = len(PROFILE_FILES)
+    expected_total = expected_per_char * len(ALL_CHARS)
+    missing = []
+    for slug in ALL_CHARS:
+        for rel in PROFILE_FILES:
+            if not (PROFILES / slug / rel).exists():
+                missing.append(f"{slug}/{rel}")
+    return {
+        "expected": expected_total,
+        "actual": expected_total - len(missing),
+        "missing": missing,
+        "pass": len(missing) == 0,
+    }
+
+
 def grade(score: float) -> str:
     for threshold, letter in GRADE_MAP:
         if score >= threshold:
@@ -141,11 +158,23 @@ def main():
     args = parser.parse_args()
 
     chars = [resolve_character(args.character)] if args.character else ALL_CHARS
+    file_count = validate_file_counts()
     assessments = [assess_character(slug) for slug in chars]
+    has_fail = not file_count["pass"]
 
     if args.json_out:
-        print(json.dumps(assessments, indent=2, ensure_ascii=False))
+        output = {"file_count_assertion": file_count, "assessments": assessments}
+        print(json.dumps(output, indent=2, ensure_ascii=False))
+        if has_fail:
+            sys.exit(1)
         return
+
+    if file_count["pass"]:
+        print(f"\n  ✓ File count assertion PASS: {file_count['actual']}/{file_count['expected']} files present")
+    else:
+        print(f"\n  ✗ File count assertion FAIL: {file_count['actual']}/{file_count['expected']} files present")
+        for m in file_count["missing"]:
+            print(f"    Missing: {m}")
 
     print(f"\n{'='*70}")
     print("  Profile Health Report")
@@ -199,6 +228,9 @@ def main():
         print(f"\n  Next step: use `psy:wave` to fill gaps systematically")
     else:
         print(f"\n  All profile files score 80+. Profiles are well-developed.")
+
+    if has_fail:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,1 @@
+{"type":"assistant","uuid":"a1","timestamp":"2026-05-24T09:00:00.000Z","message":{"role":"assistant","stop_reason":"tool_use","content":[{"type":"tool_use","id":"toolu_test1","name":"AskUserQuestion","input":{"questions":[{"question":"Pick one?","header":"Choice","options":[{"label":"A","description":"Option A"},{"label":"B","description":"Option B"}],"multiSelect":false}]}}]}}

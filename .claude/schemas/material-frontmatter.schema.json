@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "material-frontmatter.schema.json",
+  "title": "MAT Material Frontmatter",
+  "description": "Authoritative Draft-7 contract for docs/materials/**/*.md frontmatter. Reverse-derived from the live corpus (40 files) + material-schema.yaml (now non-authoritative). additionalProperties:true tolerates optional MAT fields.",
+  "type": "object",
+  "required": [
+    "material_id", "character", "material_type", "title", "source_category",
+    "source_reliability", "source_creator", "captured_date", "processing_status",
+    "confidentiality", "last_updated", "updated_by"
+  ],
+  "properties": {
+    "material_id": { "type": "string", "pattern": "^[A-Z0-9_]+_MAT_[0-9]+$" },
+    "character": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "material_type": {
+      "type": "string",
+      "enum": ["conversation_log", "letter", "interview", "news_article",
+               "screenshot", "clinical_note", "observation", "document"]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "source_category": {
+      "type": "string",
+      "enum": ["primary", "secondary", "tertiary", "contextual", "auxiliary"]
+    },
+    "source_reliability": { "type": "string", "enum": ["high", "medium", "low"] },
+    "source_creator": { "type": "string", "minLength": 1 },
+    "captured_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "processing_status": {
+      "type": "string",
+      "enum": ["raw", "extracted", "analyzed", "validated", "integrated", "archived"]
+    },
+    "confidentiality": {
+      "type": "string",
+      "enum": ["public", "shared", "private", "restricted"]
+    },
+    "last_updated": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "updated_by": { "type": "string", "minLength": 1 },
+    "evidence_tier": { "type": "string", "pattern": "^T[1-5]$" },
+    "craap_score": {
+      "type": "object",
+      "properties": {
+        "currency": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "relevance": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "authority": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "accuracy": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "purpose": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "total": { "type": "integer", "minimum": 0, "maximum": 25 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

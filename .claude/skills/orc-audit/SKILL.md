@@ -62,6 +62,20 @@ Scans all event declaration sources (SKILL.md tables, rules files, Python script
 
 MAT, PSY, CRE, GRO, COM, ORC
 
+## Schema Validation (C7)
+
+Event-consistency auditing pairs with the **Draft-7 event contract**
+(`event-jsonl.schema.json`) for machine-enforceable per-record structure on the 6 B5
+streams. Run the shared validator (additive — keeps existing consistency checks):
+
+```bash
+PY=$HOME/.claude/skills/.venv/bin/python3
+$PY .claude/scripts/validate-all-against-schemas.py   # validates *.jsonl lines too
+```
+
+`platform_lib/schema_validator.py` is the single Draft-7 engine (shared with `psy:health-check`,
+`gro:validate`, KG-06). Validates each event line's timestamp/event prefix/fields.
+
 ## Safety
 
 - Read-only: scans files, never modifies

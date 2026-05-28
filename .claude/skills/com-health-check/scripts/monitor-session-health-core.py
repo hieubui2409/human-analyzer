@@ -5,7 +5,7 @@ Layers: process liveness, file freshness, content inspection, error classificati
 import json
 import os
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field, field
 from enum import Enum
 from pathlib import Path
 
@@ -38,6 +38,8 @@ NON_RETRYABLE_PATTERNS = [
 
 VERBOSITY_MAP = {"error": Severity.ERROR, "warn": Severity.WARN, "info": Severity.INFO, "debug": Severity.DEBUG}
 
+INTERACTIVE_TOOLS = {"AskUserQuestion"}
+
 
 @dataclass
 class SessionPaths:
@@ -63,6 +65,11 @@ class MonitorConfig:
     verbosity: Severity = Severity.WARN
     poll_interval: int = 30
     team_name: str = ""
+    checks: str = "all"
+    seen_errors: set = field(default_factory=set)
+    wait_detected_ts: float = 0.0
+    last_heartbeat_ts: float = 0.0
+    heartbeat_interval: int = 3600
 
 
 def resolve_project_slug(cwd: str | None = None) -> str:
@@ -70,31 +77,62 @@ def resolve_project_slug(cwd: str | None = None) -> str:
     return (cwd or os.getcwd()).replace("/", "-")
 
 
-def read_last_jsonl_line(path: Path, tail_bytes: int = 8192) -> dict | None:
-    """Read last complete JSON line from a JSONL file (only reads tail)."""
-    if not path or not path.exists():
-        return None
-    size = path.stat().st_size
-    if size == 0:
-        return None
-
+def _read_tail_chunk(path: Path, tail_bytes: int) -> str | None:
+    """Read tail_bytes from end of file, return decoded string or None."""
     try:
+        size = path.stat().st_size
+        if size == 0:
+            return None
         with open(path, "rb") as f:
             read_size = min(tail_bytes, size)
             f.seek(max(0, size - read_size))
-            chunk = f.read().decode("utf-8", errors="replace")
+            return f.read().decode("utf-8", errors="replace")
     except OSError:
         return None
 
-    for line in reversed(chunk.strip().split("\n")):
-        line = line.strip()
-        if not line:
-            continue
-        try:
-            return json.loads(line)
-        except json.JSONDecodeError:
-            continue
+
+_TAIL_SIZES = [8192, 32768, 131072]
+
+
+def read_last_jsonl_line(path: Path) -> dict | None:
+    """Read last complete JSON line. Progressively reads more if lines are large."""
+    if not path or not path.exists():
+        return None
+    for sz in _TAIL_SIZES:
+        chunk = _read_tail_chunk(path, sz)
+        if chunk is None:
+            return None
+        for line in reversed(chunk.strip().split("\n")):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                return json.loads(line)
+            except json.JSONDecodeError:
+                continue
     return None
+
+
+def read_tail_jsonl_lines(path: Path) -> list[dict]:
+    """Read all complete JSON lines from file tail. Progressively reads more if needed."""
+    if not path or not path.exists():
+        return []
+    for sz in _TAIL_SIZES:
+        chunk = _read_tail_chunk(path, sz)
+        if chunk is None:
+            return []
+        results = []
+        for line in chunk.strip().split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                results.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+        if results:
+            return results
+    return []
 
 
 def extract_error_text(jsonl_line: dict) -> list[str]:
@@ -165,6 +203,97 @@ def check_file_freshness(path: Path, soft: int, hard: int) -> HealthEvent | None
         return HealthEvent(Severity.WARN, "STALL", target,
                            f"no activity for {int(delta)}s (soft: {soft}s) — may be thinking")
     return None
+
+
+def is_waiting_for_user(path: Path) -> bool:
+    """Detect if LLM finished work and is waiting for user input.
+
+    True when last JSONL entry shows AskUserQuestion pending or clean end_turn.
+    """
+    last = read_last_jsonl_line(path)
+    if not last:
+        return False
+    msg = last.get("message", {})
+    if not isinstance(msg, dict):
+        return False
+    sr = msg.get("stop_reason", "")
+    content = msg.get("content", [])
+
+    if sr == "tool_use":
+        for c in content:
+            if (isinstance(c, dict) and c.get("type") == "tool_use"
+                    and c.get("name") in INTERACTIVE_TOOLS):
+                return True
+
+    if sr == "end_turn":
+        has_tool = any(
+            isinstance(c, dict) and c.get("type") == "tool_use"
+            for c in content
+        )
+        if not has_tool:
+            return True
+
+    return False
+
+
+def check_session_alive(session_id: str) -> bool | None:
+    """Check if a session's parent process is alive via ~/.claude/sessions/*.json.
+
+    Returns True if alive, False if dead, None if no session file found.
+    """
+    sessions_dir = Path.home() / ".claude" / "sessions"
+    if not sessions_dir.exists():
+        return None
+    for pf in sessions_dir.glob("*.json"):
+        try:
+            data = json.loads(pf.read_text())
+            if data.get("sessionId") == session_id:
+                pid = data.get("pid")
+                return check_process_liveness(pid) if pid else None
+        except (json.JSONDecodeError, OSError):
+            continue
+    return None
+
+
+def is_subagent_completed(path: Path, hard_threshold: int) -> bool:
+    """Detect completed/abandoned subagent via 2 signals. Requires stale > hard_threshold first.
+
+    Signal 1 (clean exit): last message has stop_reason in (end_turn, stop_sequence) with no pending tool_use.
+    Signal 2 (error exit): last JSONL entries contain API error patterns — subagent crashed.
+    """
+    if not path or not path.exists():
+        return False
+    try:
+        delta = time.time() - path.stat().st_mtime
+    except OSError:
+        return False
+    if delta <= hard_threshold:
+        return False
+
+    lines = read_tail_jsonl_lines(path)
+    if not lines:
+        return False
+
+    # Signal 1: clean completion — last assistant message ended cleanly
+    last = lines[-1]
+    msg = last.get("message", {})
+    if isinstance(msg, dict) and msg.get("stop_reason") in ("end_turn", "stop_sequence"):
+        content = msg.get("content", [])
+        has_pending_tool = any(
+            isinstance(c, dict) and c.get("type") == "tool_use"
+            for c in content
+        )
+        if not has_pending_tool:
+            return True
+
+    # Signal 2: error exit — LAST line contains API error (not any line in tail,
+    # because earlier errors may have been retried successfully)
+    texts = extract_error_text(last)
+    err_class = classify_error(texts)
+    if err_class in (ErrorClass.RETRYABLE, ErrorClass.NON_RETRYABLE):
+        return True
+
+    return False
 
 
 def format_event(event: HealthEvent) -> str:

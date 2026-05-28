@@ -127,8 +127,23 @@ Priority gaps to fill:
 /psy:health-check --json                       # machine-readable
 ```
 
+## Schema Validation (C7)
+
+Completeness scoring is complementary to the **Draft-7 frontmatter contract**. Run the
+shared validator for machine-enforceable field/enum/range checks (additive — does not
+change completeness scoring):
+
+```bash
+PY=$HOME/.claude/skills/.venv/bin/python3
+$PY .claude/scripts/validate-all-against-schemas.py   # whole corpus, CI exit code
+```
+
+`platform_lib/schema_validator.py` is the single Draft-7 engine (shared with `gro:validate`,
+`orc:audit`, KG-06). 5P sections + Big-Five/ICD-11 ranges remain content-level (this skill).
+
 ## See Also
 
 - `psy:wave` — 3-wave profiling to fill completeness gaps
 - `orc:bootstrap --full` — load full context (uses health to prioritize)
 - `psy:crossref` — consistency validation (run after gaps are filled)
+- `validate-all-against-schemas.py` — C7 Draft-7 corpus gate (shared engine)

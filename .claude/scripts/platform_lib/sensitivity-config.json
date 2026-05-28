@@ -1,0 +1,111 @@
+{
+  "zones": [
+    {
+      "pattern": "darkness/",
+      "level": "CRITICAL",
+      "zone": "PSY-darkness",
+      "checks": [
+        "Confirm user authorization for trauma data",
+        "Check privacy tags",
+        "Audit log mandatory"
+      ]
+    },
+    {
+      "pattern": "psychology/formulation.md",
+      "level": "HIGH",
+      "zone": "PSY-clinical",
+      "checks": [
+        "List all files referencing this formulation",
+        "Confirm no cross-character contradiction",
+        "Show 5P schema"
+      ]
+    },
+    {
+      "pattern": "psychology/diagnostics.md",
+      "level": "HIGH",
+      "zone": "PSY-clinical",
+      "checks": [
+        "Verify DSM-5/ICD-11 codes have evidence",
+        "Confirm clinical accuracy"
+      ]
+    },
+    {
+      "pattern": "psychology/defense-mechanisms.md",
+      "level": "HIGH",
+      "zone": "PSY-clinical",
+      "checks": [
+        "Verify defense hierarchy consistency",
+        "Check cross-character alignment"
+      ]
+    },
+    {
+      "pattern": "psychology/core-wounds.md",
+      "level": "HIGH",
+      "zone": "PSY-clinical",
+      "checks": [
+        "List all files referencing core wounds",
+        "Cross-character consistency check"
+      ]
+    },
+    {
+      "pattern": "psychology/attachment-style.md",
+      "level": "HIGH",
+      "zone": "PSY-clinical",
+      "checks": [
+        "List all files referencing attachment style",
+        "Cross-character consistency check"
+      ]
+    },
+    {
+      "pattern": "psychology/",
+      "level": "HIGH",
+      "zone": "PSY-clinical",
+      "checks": ["List referencing files", "Cross-character consistency check"]
+    },
+    {
+      "pattern": "docs/materials/",
+      "level": "MEDIUM",
+      "zone": "MAT-materials",
+      "checks": [
+        "Show CRAAP frontmatter",
+        "Confirm evidence tier",
+        "Check no duplicate material"
+      ]
+    },
+    {
+      "pattern": "relationships/",
+      "level": "MEDIUM",
+      "zone": "PSY-relationship",
+      "checks": [
+        "List mirror file paths (bidirectional)",
+        "Confirm alignment with counterpart"
+      ]
+    },
+    {
+      "pattern": "growth/",
+      "level": "MEDIUM",
+      "zone": "GRO-growth",
+      "checks": [
+        "Verify Dreyfus level valid",
+        "Timeline alignment with identity/core.md"
+      ]
+    },
+    {
+      "pattern": "docs/rules/",
+      "level": "MEDIUM",
+      "zone": "ORC-rules",
+      "checks": ["List affected skills", "Confirm no cascade chain break"]
+    },
+    {
+      "pattern": "docs/graph/",
+      "level": "MEDIUM",
+      "zone": "PSY-graph",
+      "checks": ["Verify cross-character consistency"]
+    }
+  ],
+  "defaults": {
+    "docs/profiles/": "LOW",
+    "docs/references/": "LOW",
+    "fallback": "NONE"
+  }
+}

@@ -504,3 +504,579 @@ class TestEdgeCases:
         assert len(targets.discover_subagent_files(sp)) == 0
         (subdir / "agent-new.jsonl").write_text('{"type":"assistant"}\n')
         assert len(targets.discover_subagent_files(sp)) == 1
+
+
+# ---------------------------------------------------------------------------
+# Unit Tests: read_tail_jsonl_lines
+# ---------------------------------------------------------------------------
+class TestReadTailJsonlLines:
+    def test_returns_all_lines(self):
+        result = core.read_tail_jsonl_lines(FIXTURES_DIR / "session-normal.jsonl")
+        assert len(result) == 3
+        assert result[0]["type"] == "attachment"
+        assert result[-1]["type"] == "assistant"
+
+    def test_empty_file(self):
+        result = core.read_tail_jsonl_lines(FIXTURES_DIR / "session-empty.jsonl")
+        assert result == []
+
+    def test_missing_file(self):
+        result = core.read_tail_jsonl_lines(Path("/nonexistent/file.jsonl"))
+        assert result == []
+
+    def test_none_path(self):
+        result = core.read_tail_jsonl_lines(None)
+        assert result == []
+
+    def test_skips_corrupt_lines(self):
+        result = core.read_tail_jsonl_lines(FIXTURES_DIR / "session-truncated.jsonl")
+        assert all(isinstance(r, dict) for r in result)
+
+
+# ---------------------------------------------------------------------------
+# Integration Tests: buried error detection (the key fix)
+# ---------------------------------------------------------------------------
+class TestBuriedErrorDetection:
+    def test_error_buried_under_normal_lines(self, tmp_path):
+        """Error followed by ai-title/queue-operation/attachment must still be detected."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig()
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "API_ERROR" and "retryable" in e.message for e in events)
+
+    def test_uuid_dedup_across_polls(self, tmp_path):
+        """Same error UUID should not be reported twice across poll cycles."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig()
+        events1 = targets.check_main_agent(sp, config)
+        assert any(e.category == "API_ERROR" for e in events1)
+        events2 = targets.check_main_agent(sp, config)
+        assert not any(e.category == "API_ERROR" for e in events2)
+
+    def test_new_error_after_dedup(self, tmp_path):
+        """A new error with different UUID should be reported even after dedup."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig()
+        targets.check_main_agent(sp, config)
+        with open(jsonl, "a") as f:
+            f.write('{"type":"assistant","uuid":"r2","timestamp":"2026-05-19T03:01:00.000Z",'
+                    '"toolUseResult":{"content":[{"type":"text","text":"API Error: ECONNRESET"}]}}\n')
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "API_ERROR" for e in events)
+
+    def test_separate_configs_no_cross_contamination(self, tmp_path):
+        """Different MonitorConfig instances have independent seen_errors sets."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config1 = MonitorConfig()
+        config2 = MonitorConfig()
+        targets.check_main_agent(sp, config1)
+        events = targets.check_main_agent(sp, config2)
+        assert any(e.category == "API_ERROR" for e in events)
+
+    def test_subagent_buried_error(self, tmp_path):
+        """Subagent error buried under normal lines should also be detected."""
+        subdir = tmp_path / "test-uuid" / "subagents"
+        subdir.mkdir(parents=True)
+        shutil.copy(FIXTURES_DIR / "session-error-then-normal.jsonl",
+                    subdir / "agent-broken.jsonl")
+        sp = SessionPaths(jsonl=tmp_path / "test-uuid.jsonl", session_id="test-uuid")
+        (tmp_path / "test-uuid.jsonl").write_text("{}\n")
+        config = MonitorConfig()
+        events = targets.check_subagents(sp, config)
+        assert any(e.category == "API_ERROR" for e in events)
+
+
+# ---------------------------------------------------------------------------
+# Unit Tests: check_session_alive
+# ---------------------------------------------------------------------------
+class TestCheckSessionAlive:
+    def test_no_session_file_returns_none(self, tmp_path):
+        with patch.object(Path, "home", return_value=tmp_path):
+            result = core.check_session_alive("nonexistent-session-id")
+        assert result is None
+
+    def test_no_sessions_dir_returns_none(self, tmp_path):
+        with patch.object(Path, "home", return_value=tmp_path):
+            result = core.check_session_alive("any-id")
+        assert result is None
+
+    def test_alive_session(self, tmp_path):
+        sessions = tmp_path / ".claude" / "sessions"
+        sessions.mkdir(parents=True)
+        (sessions / "1234.json").write_text(json.dumps({
+            "pid": os.getpid(), "sessionId": "alive-session"
+        }))
+        with patch.object(Path, "home", return_value=tmp_path):
+            result = core.check_session_alive("alive-session")
+        assert result is True
+
+    def test_dead_session(self, tmp_path):
+        sessions = tmp_path / ".claude" / "sessions"
+        sessions.mkdir(parents=True)
+        (sessions / "1234.json").write_text(json.dumps({
+            "pid": 999999, "sessionId": "dead-session"
+        }))
+        with patch.object(Path, "home", return_value=tmp_path):
+            result = core.check_session_alive("dead-session")
+        assert result is False
+
+    def test_no_pid_returns_none(self, tmp_path):
+        sessions = tmp_path / ".claude" / "sessions"
+        sessions.mkdir(parents=True)
+        (sessions / "1234.json").write_text(json.dumps({
+            "sessionId": "no-pid-session"
+        }))
+        with patch.object(Path, "home", return_value=tmp_path):
+            result = core.check_session_alive("no-pid-session")
+        assert result is None
+
+
+# ---------------------------------------------------------------------------
+# Unit Tests: is_subagent_completed
+# ---------------------------------------------------------------------------
+class TestIsSubagentCompleted:
+    def _write_jsonl(self, path, lines):
+        with open(path, "w") as f:
+            for l in lines:
+                f.write(json.dumps(l) + "\n")
+
+    def test_fresh_file_not_completed(self, tmp_path):
+        f = tmp_path / "agent.jsonl"
+        self._write_jsonl(f, [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "done"}], "stop_reason": "end_turn"}}
+        ])
+        assert core.is_subagent_completed(f, 300) is False
+
+    def test_stale_clean_exit_end_turn(self, tmp_path):
+        f = tmp_path / "agent.jsonl"
+        self._write_jsonl(f, [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "done"}], "stop_reason": "end_turn"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        assert core.is_subagent_completed(f, 300) is True
+
+    def test_stale_clean_exit_stop_sequence(self, tmp_path):
+        f = tmp_path / "agent.jsonl"
+        self._write_jsonl(f, [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "result"}], "stop_reason": "stop_sequence"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        assert core.is_subagent_completed(f, 300) is True
+
+    def test_stale_pending_tool_use_not_completed(self, tmp_path):
+        f = tmp_path / "agent.jsonl"
+        self._write_jsonl(f, [
+            {"type": "assistant", "message": {"content": [
+                {"type": "text", "text": "let me check"},
+                {"type": "tool_use", "id": "t1", "name": "Read", "input": {}}
+            ], "stop_reason": "tool_use"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        assert core.is_subagent_completed(f, 300) is False
+
+    def test_stale_error_last_line_completed(self, tmp_path):
+        """Signal 2: API error as last line + stale → completed (crashed)."""
+        f = tmp_path / "agent.jsonl"
+        self._write_jsonl(f, [
+            {"type": "user", "message": {"content": [{"type": "text", "text": "do task"}]}},
+            {"uuid": "e1", "type": "assistant", "message": {"content": [{"type": "text", "text": "API Error: JSON Parse error: Unexpected EOF"}], "stop_reason": "end_turn"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        assert core.is_subagent_completed(f, 300) is True
+
+    def test_error_in_middle_clean_end_completed(self, tmp_path):
+        """Error in middle but clean end_turn at end → completed via Signal 1."""
+        f = tmp_path / "agent.jsonl"
+        self._write_jsonl(f, [
+            {"uuid": "e1", "type": "assistant", "message": {"content": [{"type": "text", "text": "API Error: Unexpected EOF"}], "stop_reason": "end_turn"}},
+            {"type": "user", "message": {"content": [{"type": "text", "text": "retry"}]}},
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "OK done"}], "stop_reason": "end_turn"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        assert core.is_subagent_completed(f, 300) is True
+
+    def test_error_in_middle_pending_tool_not_completed(self, tmp_path):
+        """Error recovered but agent still working (pending tool_use) → NOT completed."""
+        f = tmp_path / "agent.jsonl"
+        self._write_jsonl(f, [
+            {"uuid": "e1", "type": "assistant", "message": {"content": [{"type": "text", "text": "API Error: Unexpected EOF"}], "stop_reason": "end_turn"}},
+            {"type": "user", "message": {"content": [{"type": "text", "text": "retry"}]}},
+            {"type": "assistant", "message": {"content": [
+                {"type": "text", "text": "retrying..."},
+                {"type": "tool_use", "id": "t1", "name": "Bash", "input": {}}
+            ], "stop_reason": "tool_use"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        assert core.is_subagent_completed(f, 300) is False
+
+    def test_nonexistent_file(self):
+        assert core.is_subagent_completed(Path("/nonexistent.jsonl"), 300) is False
+
+    def test_none_path(self):
+        assert core.is_subagent_completed(None, 300) is False
+
+    def test_empty_file(self, tmp_path):
+        f = tmp_path / "empty.jsonl"
+        f.write_text("")
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        assert core.is_subagent_completed(f, 300) is False
+
+
+# ---------------------------------------------------------------------------
+# Integration: check_subagents with parent session liveness
+# ---------------------------------------------------------------------------
+class TestSubagentParentLiveness:
+    def _write_jsonl(self, path, lines):
+        with open(path, "w") as f:
+            for l in lines:
+                f.write(json.dumps(l) + "\n")
+
+    def test_dead_parent_skips_all_subagents(self, tmp_path):
+        """Layer 1: parent dead → skip all subagents, no events."""
+        subdir = tmp_path / "dead-session" / "subagents"
+        subdir.mkdir(parents=True)
+        f = subdir / "agent-abc.jsonl"
+        f.write_text('{"type":"assistant"}\n')
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=tmp_path / "dead-session.jsonl", session_id="dead-session")
+        (tmp_path / "dead-session.jsonl").write_text("{}\n")
+
+        sessions_dir = tmp_path / ".claude" / "sessions"
+        sessions_dir.mkdir(parents=True)
+        (sessions_dir / "999.json").write_text(json.dumps({
+            "pid": 999999, "sessionId": "dead-session"
+        }))
+        config = MonitorConfig()
+        with patch.object(Path, "home", return_value=tmp_path):
+            events = targets.check_subagents(sp, config)
+        assert len(events) == 0
+
+    def test_alive_parent_completed_subagent_skipped(self, tmp_path):
+        """Layer 2: parent alive, subagent completed (end_turn) → skip."""
+        subdir = tmp_path / "live-session" / "subagents"
+        subdir.mkdir(parents=True)
+        f = subdir / "agent-done.jsonl"
+        self._write_jsonl(f, [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "done"}], "stop_reason": "end_turn"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=tmp_path / "live-session.jsonl", session_id="live-session")
+        (tmp_path / "live-session.jsonl").write_text("{}\n")
+
+        sessions_dir = tmp_path / ".claude" / "sessions"
+        sessions_dir.mkdir(parents=True)
+        (sessions_dir / "pid.json").write_text(json.dumps({
+            "pid": os.getpid(), "sessionId": "live-session"
+        }))
+        config = MonitorConfig()
+        with patch.object(Path, "home", return_value=tmp_path):
+            events = targets.check_subagents(sp, config)
+        assert len(events) == 0
+
+    def test_alive_parent_active_subagent_monitored(self, tmp_path):
+        """Layer 2: parent alive, subagent stalled (pending tool_use) → still monitored."""
+        subdir = tmp_path / "live-session" / "subagents"
+        subdir.mkdir(parents=True)
+        f = subdir / "agent-stuck.jsonl"
+        self._write_jsonl(f, [
+            {"type": "assistant", "message": {"content": [
+                {"type": "text", "text": "working..."},
+                {"type": "tool_use", "id": "t1", "name": "Read", "input": {}}
+            ], "stop_reason": "tool_use"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=tmp_path / "live-session.jsonl", session_id="live-session")
+        (tmp_path / "live-session.jsonl").write_text("{}\n")
+
+        sessions_dir = tmp_path / ".claude" / "sessions"
+        sessions_dir.mkdir(parents=True)
+        (sessions_dir / "pid.json").write_text(json.dumps({
+            "pid": os.getpid(), "sessionId": "live-session"
+        }))
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300)
+        with patch.object(Path, "home", return_value=tmp_path):
+            events = targets.check_subagents(sp, config)
+        assert any(e.category == "STALL" for e in events)
+
+    def test_no_session_file_falls_through(self, tmp_path):
+        """Layer 1: no session file (None) → falls through to Layer 2 per-agent check."""
+        subdir = tmp_path / "orphan-session" / "subagents"
+        subdir.mkdir(parents=True)
+        f = subdir / "agent-old.jsonl"
+        self._write_jsonl(f, [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "done"}], "stop_reason": "end_turn"}}
+        ])
+        os.utime(f, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=tmp_path / "orphan-session.jsonl", session_id="orphan-session")
+        (tmp_path / "orphan-session.jsonl").write_text("{}\n")
+        config = MonitorConfig()
+        with patch.object(Path, "home", return_value=tmp_path):
+            events = targets.check_subagents(sp, config)
+        assert len(events) == 0
+
+
+# ---------------------------------------------------------------------------
+# Integration: DEAD main agent still reports API errors
+# ---------------------------------------------------------------------------
+class TestDeadMainAgentErrors:
+    def test_dead_plus_api_error_both_reported(self, tmp_path):
+        """DEAD + API errors in tail → both events emitted."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-api-error.jsonl", jsonl)
+        pid_file = tmp_path / "pid.json"
+        pid_file.write_text(json.dumps({"pid": 999999, "sessionId": "test"}))
+        sp = SessionPaths(jsonl=jsonl, pid_file=pid_file, session_id="test")
+        config = MonitorConfig()
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "DEAD" for e in events)
+        assert any(e.category == "API_ERROR" for e in events)
+
+    def test_dead_no_stall(self, tmp_path):
+        """DEAD process → no STALL event (redundant)."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-stale.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        pid_file = tmp_path / "pid.json"
+        pid_file.write_text(json.dumps({"pid": 999999, "sessionId": "test"}))
+        sp = SessionPaths(jsonl=jsonl, pid_file=pid_file, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300)
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "DEAD" for e in events)
+        assert not any(e.category == "STALL" for e in events)
+
+    def test_alive_process_still_shows_stall(self, tmp_path):
+        """Alive process + stale JSONL → STALL event (not suppressed)."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-stale.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        pid_file = tmp_path / "pid.json"
+        pid_file.write_text(json.dumps({"pid": os.getpid(), "sessionId": "test"}))
+        sp = SessionPaths(jsonl=jsonl, pid_file=pid_file, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300)
+        events = targets.check_main_agent(sp, config)
+        assert not any(e.category == "DEAD" for e in events)
+        assert any(e.category == "STALL" for e in events)
+
+
+# ---------------------------------------------------------------------------
+# Progressive tail reader
+# ---------------------------------------------------------------------------
+class TestProgressiveTailReader:
+    def test_large_last_line(self, tmp_path):
+        """Lines > 8KB should still be read via progressive sizing."""
+        f = tmp_path / "large.jsonl"
+        large_text = "x" * 20000
+        lines = [
+            json.dumps({"type": "user", "uuid": "u1", "message": {"content": [{"type": "text", "text": "hi"}]}}),
+            json.dumps({"type": "assistant", "uuid": "a1", "message": {"content": [{"type": "text", "text": large_text}], "stop_reason": "end_turn"}}),
+        ]
+        f.write_text("\n".join(lines) + "\n")
+        result = core.read_last_jsonl_line(f)
+        assert result is not None
+        assert result["uuid"] == "a1"
+
+    def test_progressive_tail_lines(self, tmp_path):
+        """read_tail_jsonl_lines should also handle large lines."""
+        f = tmp_path / "large.jsonl"
+        large_text = "y" * 15000
+        lines = [
+            json.dumps({"type": "assistant", "uuid": "a1", "message": {"content": [{"type": "text", "text": large_text}], "stop_reason": "end_turn"}}),
+        ]
+        f.write_text("\n".join(lines) + "\n")
+        result = core.read_tail_jsonl_lines(f)
+        assert len(result) == 1
+        assert result[0]["uuid"] == "a1"
+
+
+# ---------------------------------------------------------------------------
+# Unit Tests: is_waiting_for_user
+# ---------------------------------------------------------------------------
+class TestIsWaitingForUser:
+    def test_askuser_pending(self):
+        """AskUserQuestion tool_use pending → True."""
+        result = core.is_waiting_for_user(FIXTURES_DIR / "session-waiting-askuser.jsonl")
+        assert result is True
+
+    def test_endturn_clean(self):
+        """end_turn without tool_use → True."""
+        result = core.is_waiting_for_user(FIXTURES_DIR / "session-waiting-endturn.jsonl")
+        assert result is True
+
+    def test_bash_tooluse_not_waiting(self):
+        """Non-interactive tool_use (Bash) → False."""
+        result = core.is_waiting_for_user(FIXTURES_DIR / "session-waiting-bash-tooluse.jsonl")
+        assert result is False
+
+    def test_empty_file(self):
+        result = core.is_waiting_for_user(FIXTURES_DIR / "session-empty.jsonl")
+        assert result is False
+
+    def test_missing_file(self):
+        result = core.is_waiting_for_user(Path("/nonexistent.jsonl"))
+        assert result is False
+
+    def test_none_path(self):
+        result = core.is_waiting_for_user(None)
+        assert result is False
+
+    def test_normal_session_not_waiting(self):
+        """Normal assistant message without stop_reason field → False."""
+        result = core.is_waiting_for_user(FIXTURES_DIR / "session-normal.jsonl")
+        assert result is False
+
+
+# ---------------------------------------------------------------------------
+# Integration Tests: stall suppression when waiting for user
+# ---------------------------------------------------------------------------
+class TestStallSuppression:
+    def test_stall_suppressed_when_askuser(self, tmp_path):
+        """Stale file with AskUserQuestion pending → no STALL, emit WAITING heartbeat."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-waiting-askuser.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300, verbosity=Severity.INFO)
+        events = targets.check_main_agent(sp, config)
+        assert not any(e.category == "STALL" for e in events)
+        assert any(e.category == "WAITING" for e in events)
+
+    def test_stall_suppressed_when_endturn(self, tmp_path):
+        """Stale file with clean end_turn → no STALL, emit WAITING heartbeat."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-waiting-endturn.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300, verbosity=Severity.INFO)
+        events = targets.check_main_agent(sp, config)
+        assert not any(e.category == "STALL" for e in events)
+        assert any(e.category == "WAITING" for e in events)
+
+    def test_stall_fires_for_bash_tooluse(self, tmp_path):
+        """Stale file with non-interactive tool_use → STALL fires normally."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-waiting-bash-tooluse.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300)
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "STALL" for e in events)
+        assert not any(e.category == "WAITING" for e in events)
+
+    def test_heartbeat_respects_interval(self, tmp_path):
+        """Second poll within heartbeat_interval → no WAITING event."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-waiting-endturn.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300,
+                               verbosity=Severity.INFO, heartbeat_interval=3600)
+        # First poll → heartbeat emitted
+        events1 = targets.check_main_agent(sp, config)
+        assert any(e.category == "WAITING" for e in events1)
+        # Second poll immediately → no heartbeat (within interval)
+        events2 = targets.check_main_agent(sp, config)
+        assert not any(e.category == "WAITING" for e in events2)
+
+    def test_waiting_state_resets(self, tmp_path):
+        """After user responds (not waiting), wait_detected_ts resets."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-waiting-endturn.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300, verbosity=Severity.INFO)
+        targets.check_main_agent(sp, config)
+        assert config.wait_detected_ts > 0
+        # Now replace with non-waiting content
+        shutil.copy(FIXTURES_DIR / "session-stale.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        targets.check_main_agent(sp, config)
+        assert config.wait_detected_ts == 0
+
+    def test_dead_still_detected_when_waiting(self, tmp_path):
+        """DEAD detection works even if JSONL shows waiting state."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-waiting-endturn.jsonl", jsonl)
+        pid_file = tmp_path / "pid.json"
+        pid_file.write_text(json.dumps({"pid": 999999, "sessionId": "test"}))
+        sp = SessionPaths(jsonl=jsonl, pid_file=pid_file, session_id="test")
+        config = MonitorConfig()
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "DEAD" for e in events)
+
+
+# ---------------------------------------------------------------------------
+# Integration Tests: --check filter
+# ---------------------------------------------------------------------------
+class TestCheckFilter:
+    def test_check_error_skips_stall(self, tmp_path):
+        """--check error → no STALL events even when file is stale."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-stale.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300, checks="error")
+        events = targets.check_main_agent(sp, config)
+        assert not any(e.category == "STALL" for e in events)
+
+    def test_check_stall_skips_error(self, tmp_path):
+        """--check stall → no API_ERROR events."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-api-error.jsonl", jsonl)
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig(checks="stall")
+        events = targets.check_main_agent(sp, config)
+        assert not any(e.category == "API_ERROR" for e in events)
+
+    def test_check_error_still_detects_dead(self, tmp_path):
+        """--check error → DEAD detection still works."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-normal.jsonl", jsonl)
+        pid_file = tmp_path / "pid.json"
+        pid_file.write_text(json.dumps({"pid": 999999, "sessionId": "test"}))
+        sp = SessionPaths(jsonl=jsonl, pid_file=pid_file, session_id="test")
+        config = MonitorConfig(checks="error")
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "DEAD" for e in events)
+
+    def test_check_stall_still_detects_dead(self, tmp_path):
+        """--check stall → DEAD detection still works."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-normal.jsonl", jsonl)
+        pid_file = tmp_path / "pid.json"
+        pid_file.write_text(json.dumps({"pid": 999999, "sessionId": "test"}))
+        sp = SessionPaths(jsonl=jsonl, pid_file=pid_file, session_id="test")
+        config = MonitorConfig(checks="stall")
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "DEAD" for e in events)
+
+    def test_check_all_default(self, tmp_path):
+        """--check all (default) → both stall and error detected."""
+        jsonl = tmp_path / "session.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-stale.jsonl", jsonl)
+        os.utime(jsonl, (time.time() - 600, time.time() - 600))
+        sp = SessionPaths(jsonl=jsonl, session_id="test")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300)
+        assert config.checks == "all"
+        events = targets.check_main_agent(sp, config)
+        assert any(e.category == "STALL" for e in events)
+
+    def test_subagent_check_filter(self, tmp_path):
+        """--check error on subagents → no STALL for stale subagent."""
+        subdir = tmp_path / "test-uuid" / "subagents"
+        subdir.mkdir(parents=True)
+        f = subdir / "agent-slow.jsonl"
+        shutil.copy(FIXTURES_DIR / "session-stale.jsonl", f)
+        os.utime(f, (time.time() - 150, time.time() - 150))
+        sp = SessionPaths(jsonl=tmp_path / "test-uuid.jsonl", session_id="test-uuid")
+        (tmp_path / "test-uuid.jsonl").write_text("{}\n")
+        config = MonitorConfig(soft_threshold=120, hard_threshold=300, checks="error")
+        events = targets.check_subagents(sp, config)
+        assert not any(e.category == "STALL" for e in events)

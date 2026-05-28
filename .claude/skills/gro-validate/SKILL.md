@@ -120,9 +120,25 @@ LLM reviews findings and suggests specific corrections for failures.
 /gro:validate --fix                        # include fix suggestions
 ```
 
+## Schema Validation (C7)
+
+Growth-data consistency checks are complementary to the **Draft-7 frontmatter contract**
+for `growth/competencies.md` + `growth/career-path.md` (domain=growth). Run the shared
+validator for machine-enforceable frontmatter checks (additive — keeps existing consistency
+scoring); Dreyfus 1-7 / Super-stage judgment stays heuristic in this skill:
+
+```bash
+PY=$HOME/.claude/skills/.venv/bin/python3
+$PY .claude/scripts/validate-all-against-schemas.py   # whole corpus, CI exit code
+```
+
+`platform_lib/schema_validator.py` is the single Draft-7 engine (shared with `psy:health-check`,
+`orc:audit`, KG-06; growth-competency.schema.json + growth-career-path.schema.json).
+
 ## See Also
 
 - `psy:crossref` — cross-character PSY validation
 - `psy:health-check` — profile completeness scoring
 - `mat:indexer` — material coverage validation
 - `docs/rules/15-gro-framework.md` — GRO domain rules
+- `validate-all-against-schemas.py` — C7 Draft-7 corpus gate (shared engine)

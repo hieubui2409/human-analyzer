@@ -147,6 +147,8 @@ export LUCAS_COMMIT_MSG="<generated message>"
 bash scripts/commit.sh
 ```
 
+`commit.sh` runs `prettier --write --ignore-unknown` on staged files just before committing (replaces the old per-edit PostToolUse prettier hook, so working edits no longer trigger constant table/markdown reflow). Non-fatal — skips if prettier is unavailable. Set `LUCAS_SKIP_FORMAT=true` to bypass.
+
 ### Step 4: Push with auto-fix
 
 ```bash

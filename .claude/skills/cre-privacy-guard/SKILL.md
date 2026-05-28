@@ -1,7 +1,7 @@
 ---
 name: cre:privacy-guard
-description: "Scan assets/ and content drafts for leaked [PRIVATE], [CONFIDENTIAL], or restricted information before publishing. Use before publishing any social media content, after cre:post-writer completes, or as periodic audit. Triggers: 'privacy check', 'privacy scan', 'leak check', 'content safety', 'before publish', 'confidentiality audit'."
-argument-hint: "[--scan|--file <path>|--audit|--strict]"
+description: "Scan assets/ and cross-framework dirs for leaked PII, privacy tags, clinical terms, DSM/ICD codes. Use before publishing, after cre:post-writer, or as periodic governance audit. Triggers: 'privacy check', 'privacy scan', 'leak check', 'content safety', 'before publish', 'confidentiality audit', 'governance audit'."
+argument-hint: "[--scan|--file <path>|--audit|--strict|--cross-framework]"
 metadata:
   author: hieubt
   version: "1.0.0"
@@ -16,12 +16,13 @@ Enforce `docs/rules/09-confidentiality-protocol.md` — prevent private/confiden
 
 ## Flags
 
-| Flag            | Purpose                                           |
-| --------------- | ------------------------------------------------- |
-| `--scan`        | Scan all assets/ for privacy violations (default) |
-| `--file <path>` | Check specific file or directory                  |
-| `--audit`       | Full audit with report generation                 |
-| `--strict`      | Fail on ANY privacy tag found (zero tolerance)    |
+| Flag                | Purpose                                                       |
+| ------------------- | ------------------------------------------------------------- |
+| `--scan`            | Scan all assets/ for privacy violations (default)             |
+| `--file <path>`     | Check specific file or directory                              |
+| `--audit`           | Full audit with report generation + JSONL logging             |
+| `--strict`          | Fail on ANY privacy tag found (zero tolerance)                |
+| `--cross-framework` | Scan assets/ + docs/profiles/ + docs/materials/ + docs/graph/ |
 
 ## Scan Targets
 
@@ -63,6 +64,13 @@ Check for raw clinical terms in assets/ (two layers):
 3. Examples: "cơ chế phòng vệ tâm lý" (defense mechanism phrasing), "mô hình gắn kết lo âu" (anxious attachment model)
 4. Flag as MEDIUM severity — suggest more natural phrasing
 
+**Layer 3 — DSM-5/ICD-11 code leak detection:**
+
+1. Grep ALL framework dirs for diagnostic codes (F##.#, 6A##, etc.)
+2. If found OUTSIDE `docs/profiles/*/psychology/` or `docs/references/`:
+   - Flag as HIGH severity — diagnostic codes should not appear in content, materials descriptions, or relationship files
+   - Exception: `docs/profiles/*/psychology/diagnostics.md` — codes expected there
+
 ### Location Detection
 
 Check for protected location references:
@@ -70,6 +78,31 @@ Check for protected location references:
 - Specific addresses, school names, hospital names
 - Exact GPS/map references
 - Small town names that could identify characters
+
+### Cross-Framework PII Detection (--audit or --cross-framework mode)
+
+When running `--audit` or `--cross-framework`, extend scan beyond `assets/` to framework directories:
+
+| Directory                        | What to Check                                    | Severity |
+| -------------------------------- | ------------------------------------------------ | -------- |
+| `docs/profiles/*/identity/`      | Un-tagged real names, phone, email, addresses    | CRITICAL |
+| `docs/profiles/*/relationships/` | Third-party names without [CONFIDENTIAL] wrapper | CRITICAL |
+| `docs/profiles/*/darkness/`      | Raw trauma details without privacy tags          | HIGH     |
+| `docs/materials/`                | Source materials with un-redacted PII            | HIGH     |
+| `docs/graph/`                    | Cross-character PII leaks                        | MEDIUM   |
+
+**Exclusions (clinical terms expected):**
+
+- `docs/profiles/*/psychology/` — clinical terms are legitimate here
+- `docs/references/` — clinical reference library
+
+### PII Regex Patterns
+
+| Pattern          | Regex                     | Example        |
+| ---------------- | ------------------------- | -------------- |
+| Vietnamese phone | `0[35789]\d{8}`           | 0912345678     |
+| Email            | `[\w.+-]+@[\w-]+\.[\w.]+` | name@email.com |
+| Vietnamese CCCD  | `0\d{11}`                 | 012345678901   |
 
 ## Workflow
 
@@ -102,9 +135,15 @@ Same as --scan but limited to specific file/directory.
 Full audit with report:
 
 1. Run --scan across all assets/
-2. Also scan plans/reports/ for accidental `[PRIVATE]` content
-3. Cross-reference with `docs/rules/09-confidentiality-protocol.md`
-4. Generate report: `plans/reports/privacy-audit-{date}.md`
+2. Run --cross-framework scan across `docs/profiles/`, `docs/materials/`, `docs/graph/`
+3. Also scan plans/reports/ for accidental `[PRIVATE]` content
+4. Cross-reference with `docs/rules/09-confidentiality-protocol.md`
+5. Generate report: `plans/reports/privacy-audit-{date}.md`
+6. Append audit summary to `.claude/telemetry/privacy-audit.jsonl`:
+   ```json
+   {"timestamp": "ISO", "scan_scope": ["..."], "files_scanned": N, "findings_count": N, "critical": N, "high": N, "medium": N, "low": N, "operator": "cre:privacy-guard"}
+   ```
+7. JSONL log is append-only. Each `--audit` run adds one line. Use `jq` to query history.
 
 ### --strict
 
@@ -130,6 +169,7 @@ When scanning content that references materials:
 - Called by `cre:prompt-leverage` in sensitivity scan layer
 - Can be wired as PostToolUse hook for assets/ writes
 - Emits `CRE.privacy_cleared` when scan passes (consumed by ORC orchestration)
+- Audit JSONL at `.claude/telemetry/privacy-audit.jsonl` queryable via `jq` for governance reporting
 
 ## Safety
 

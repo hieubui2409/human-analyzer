@@ -21,7 +21,7 @@ PYTHON = str(Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3")
 MOCK_DATA = PROJECT_ROOT / "tests" / "mock-data"
 SCENARIOS_FILE = PROJECT_ROOT / "tests" / "scenarios" / "llm-reasoning-scenarios.yaml"
 ROUTE_SCRIPT = (
-    PROJECT_ROOT / ".claude" / "skills" / "mpc-intake" / "scripts"
+    PROJECT_ROOT / ".claude" / "skills" / "orc-intake" / "scripts"
     / "route-task-to-framework-domain.py"
 )
 REPORTS_DIR = PROJECT_ROOT / "plans" / "reports"

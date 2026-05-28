@@ -1,31 +1,32 @@
 ---
 name: orc:agent-memory
-description: "Persistent memory for content-creator and copywriter agents. Stores writing style learnings, successful patterns, platform-specific insights, and character voice calibration. Agents read before writing, write after completing work. Use to view, manage, or seed agent memory. Triggers: 'agent memory', 'what has the agent learned', 'agent learnings', 'reset agent memory'."
-argument-hint: "[--show|--seed|--reset|--agent <name>]"
+description: "Persistent memory for CK-domain agents (psychologist, content-strategist, growth-analyst). Stores domain-specific insights, character calibration, patterns learned, and instinct-promoted knowledge. Agents read before work, write after. Use to view, seed, or manage agent memory. Triggers: 'agent memory', 'what has the agent learned', 'agent learnings', 'reset agent memory'."
+argument-hint: "[--show|--seed|--reset|--agent <name>|--instinct-feed <name>]"
 metadata:
   author: hieubt
-  version: "1.0.0"
+  version: "2.0.0"
   category: "workflow"
   position: "utility"
   dependencies: ["orc:compounding"]
 ---
 
-# Agent Memory — Persistent Learning for Content Agents
+# Agent Memory — Persistent Learning for CK-Domain Agents
 
-Store and retrieve learnings specific to content-producing agents. Each agent builds a memory of what works.
+Store and retrieve learnings specific to 3 CK-domain custom agents. Each agent builds domain-specific memory from sessions and instinct promotions.
 
 ## Default (No Arguments)
 
-`--show` — display all agent memories.
+`--show` — display all agent memories with instinct stats.
 
 ## Flags
 
-| Flag             | Purpose                                  |
-| ---------------- | ---------------------------------------- |
-| `--show`         | Display current agent memories (default) |
-| `--seed`         | Initialize agent memory from profiles    |
-| `--reset`        | Clear agent memory (with confirmation)   |
-| `--agent <name>` | Filter to specific agent                 |
+| Flag                     | Purpose                                           |
+| ------------------------ | ------------------------------------------------- |
+| `--show`                 | Display current agent memories (default)          |
+| `--seed`                 | Initialize agent memory from profiles + instincts |
+| `--reset`                | Clear agent memory (with confirmation)            |
+| `--agent <name>`         | Filter to specific agent                          |
+| `--instinct-feed <name>` | Show only instinct-relevant data for an agent     |
 
 ## Agent Memory Directory
 
@@ -33,11 +34,21 @@ Location: `.claude/agent-memory/`
 
 ```
 .claude/agent-memory/
-├── content-creator.md    — content-creator agent learnings
-├── copywriter.md         — copywriter agent learnings
-├── social-media.md       — social-media-manager agent learnings
-└── _shared.md            — cross-agent learnings
+├── psychologist.md       ← PSY: clinical insights, formulation patterns
+├── content-strategist.md ← CRE: voice calibration, platform patterns
+└── growth-analyst.md     ← GRO: career observations, competency evolution
 ```
+
+## Agent-to-Category Mapping
+
+Instincts are filtered to agents by category (imported from `instinct_store.AGENT_CATEGORY_MAP`):
+
+| Agent              | Instinct Categories          |
+| ------------------ | ---------------------------- |
+| psychologist       | psychology, clinical         |
+| content-strategist | writing, audience            |
+| growth-analyst     | growth                       |
+| _(unmapped)_       | process → instinct pool only |
 
 ## Memory Schema
 
@@ -48,85 +59,72 @@ Each agent memory file:
 
 Last updated: {ISO date}
 
-## Character Voice Calibration
+## Character Insights
 
 ### Nhân vật A
 
-- Tone: {calibrated description}
-- Vocabulary: {patterns}
-- Effective hooks: {list}
-- Anti-patterns: {what to avoid}
+- {domain-specific calibration}
 
 ### Nhân vật B
 
-- Tone: {calibrated description}
-- ...
+- {domain-specific calibration}
 
 ### Nhân vật C
 
-- Tone: {calibrated description}
-- ...
+- {domain-specific calibration}
 
-## Platform Patterns
+## Patterns Learned
 
-### LinkedIn
+- {accumulated patterns from sessions}
 
-- Optimal length: {range}
-- Hook style: {what works}
-- Structure: {pattern}
+## Anti-patterns
 
-### Facebook
+- {what didn't work}
 
-- ...
+## Instinct-Promoted Patterns
 
-## Successful Templates
-
-1. {Template name}: {structure description}
-   - Used for: {context}
-   - Example: {reference to asset}
-
-## Failures / Anti-patterns
-
-1. {What didn't work}: {why}
-
-## Career & Growth Framing Notes
-
-- Career analysis vocabulary: {preferred terms for competency/growth discussions}
-- Forecast presentation style: {data-first vs narrative-first, confidence language preferences}
-
-## Clinical Framing Notes
-
-- {Theory}: {how to reference accessibly}
+- {populated by orc:dream promotion pipeline}
 ```
+
+**psychologist.md**: Character Insights = clinical observations per character. Patterns = formulation patterns, defense mechanism triggers, attachment dynamics.
+
+**content-strategist.md**: Character Insights = voice calibration per character. Patterns = platform patterns, hook styles, content structures.
+
+**growth-analyst.md**: Character Insights = career trajectory observations. Patterns = competency evolution, mentoring effectiveness.
 
 ## Workflow
 
 ### --show
 
 1. Read all files in `.claude/agent-memory/`
-2. Print summary per agent:
+2. Load instincts via `instinct_store.load_instincts(status="active")`
+3. For each agent, filter instincts by `AGENT_CATEGORY_MAP`
+4. Print summary per agent:
 
    ```
    ## Agent Memory Status
 
-   content-creator: {N} voice entries, {M} templates, {P} anti-patterns
-   copywriter: {N} voice entries, {M} templates, {P} anti-patterns
-   social-media: {N} voice entries, {M} templates, {P} anti-patterns
-   _shared: {N} cross-agent learnings
+   psychologist: {N} character insights, {M} patterns, {P} anti-patterns
+     Relevant instincts: 5 (3 psychology, 2 clinical)
+     Top: [0.85] "Nhân vật B avoidance intensifies under academic pressure"
+   content-strategist: {N} character insights, {M} patterns
+     Relevant instincts: 3 (2 writing, 1 audience)
+   growth-analyst: {N} character insights, {M} patterns
+     Relevant instincts: 2 (2 growth)
 
-   Last updated: {date}
+   Promotion-ready: 2 instincts eligible for agent memory integration
    ```
 
 ### --seed
 
-Initialize agent memory from current profile state:
+Initialize agent memory from current profile state + instincts:
 
-1. Read `WRITING-VOICE.md` (Nhân vật A) → seed voice calibration
-2. Read `CHARACTERISTIC.md` for all 3 characters → seed voice patterns
-3. Read `docs/rules/03-content-creation-pipeline.md` + `docs/rules/09-confidentiality-protocol.md` → seed platform constraints
-4. Scan `assets/` for recent content → extract templates
-5. Write initial memory files
-6. Print: "Seeded {N} voice entries, {M} platform rules, {P} templates"
+1. **psychologist.md**: Read `psychology/formulation.md`, `psychology/defense-mechanisms.md`, `psychology/attachment-style.md` for each character → seed Character Insights
+2. **content-strategist.md**: Read `identity/writing-voice.md` (Nhân vật A) + `docs/rules/03-content-creation-pipeline.md` → seed voice calibration and platform patterns
+3. **growth-analyst.md**: Read `growth/career-path.md`, `growth/competencies.md` for each character → seed career observations
+4. Query instincts by agent category mapping via `instinct_store.get_agent_categories()`
+5. Append promoted instincts (conf ≥ 0.80) to "## Instinct-Promoted Patterns"
+6. Print: "Seeded {N} character insights, {M} patterns, {P} promoted instincts"
 
 ### --reset
 
@@ -137,39 +135,48 @@ Initialize agent memory from current profile state:
 
 ### --agent `<name>`
 
-Filter all operations to one agent. Valid names: `content-creator`, `copywriter`, `social-media`.
+Filter all operations to one agent. Valid names: `psychologist`, `content-strategist`, `growth-analyst`.
+
+### --instinct-feed `<name>`
+
+Show only instinct-relevant data for a specific agent:
+
+1. Load instincts filtered by agent's categories
+2. Show instinct list sorted by confidence
+3. Show promotion candidates for this agent's domain
+4. Skip memory file content (instincts only)
 
 ## How Agents Use Memory
 
-### Before Writing (Agent reads)
+### Before Work (Agent reads)
 
-Content-producing agents should read their memory file at start:
+Domain agents should read their memory file at start:
 
 ```
 Read .claude/agent-memory/{agent-name}.md
-Apply voice calibration for {character}
-Apply platform patterns for {platform}
-Reference successful templates
+Apply character insights for {character being analyzed}
+Reference patterns learned
 Avoid documented anti-patterns
+Check instinct-promoted patterns for recent calibration
 ```
 
-### After Writing (Agent appends)
+### After Work (Agent appends)
 
-After completing content work, append learnings:
+After completing domain work, append learnings:
 
 ```
-If new voice insight discovered → update Character Voice Calibration
-If new template pattern worked → add to Successful Templates
-If something failed → add to Failures / Anti-patterns
+If new character insight discovered → update Character Insights
+If new pattern validated → add to Patterns Learned
+If something failed → add to Anti-patterns
 Update "Last updated" timestamp
 ```
 
-## Integration with orc:compounding
+## Integration with orc:compounding + orc:dream
 
-`orc:compounding` extracts session-level learnings.
-`orc:agent-memory` stores agent-specific operational patterns.
-
-Flow: Work completes → `orc:compounding` extracts insights → relevant insights pushed to agent memory files.
+- `orc:compounding` extracts session learnings → atomic instincts with confidence scores
+- `orc:dream --full` Phase 5 evaluates instincts for promotion
+- Promoted instincts (conf ≥ 0.80, evidence ≥ 3) are written to agent memory under "## Instinct-Promoted Patterns"
+- Agent memory is the persistent, curated layer; instincts are the evolving, scored layer
 
 ## Scripts
 
@@ -181,21 +188,22 @@ Flow: Work completes → `orc:compounding` extracts insights → relevant insigh
 
 - Agent memory is additive — never auto-deletes entries
 - Reset requires explicit confirmation + archives first
-- Memory files are .claude/-scoped, not in git by default
+- Memory files are `.claude/`-scoped
 - Scope: agent memory management for ck-marketing. Does NOT handle content creation or profile editing.
 
 ## Examples
 
 ```bash
-/orc:agent-memory                           # show all
-/orc:agent-memory --show                    # same
-/orc:agent-memory --seed                    # initialize from profiles
-/orc:agent-memory --agent copywriter        # show copywriter only
-/orc:agent-memory --reset                   # clear with backup
+/orc:agent-memory                                 # show all
+/orc:agent-memory --show                          # same
+/orc:agent-memory --seed                          # initialize from profiles + instincts
+/orc:agent-memory --agent psychologist            # show psychologist only
+/orc:agent-memory --instinct-feed growth-analyst  # instinct data for GRO agent
+/orc:agent-memory --reset                         # clear with backup
 ```
 
 ## See Also
 
-- `/orc:compounding` — feeds learnings into agent memory
-- `/orc:dream` — consolidates agent memory during maintenance
+- `/orc:compounding` — feeds learnings into instinct store → agent memory
+- `/orc:dream` — promotes high-confidence instincts to agent memory
 - `/cre:prompt-leverage` — agent memory informs prompt strengthening

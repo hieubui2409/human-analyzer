@@ -1,0 +1,5 @@
+{"type":"user","uuid":"u1","timestamp":"2026-05-19T03:00:00.000Z","message":{"role":"user","content":[{"type":"text","text":"run tests"}]}}
+{"type":"assistant","uuid":"r1","timestamp":"2026-05-19T03:00:05.000Z","toolUseResult":{"content":[{"type":"text","text":"API Error: JSON Parse error: Unexpected EOF"}]}}
+{"type":"ai-title","uuid":"t1","timestamp":"2026-05-19T03:00:10.000Z","message":{"role":"system","content":[]}}
+{"type":"queue-operation","uuid":"q1","timestamp":"2026-05-19T03:00:15.000Z","message":{"role":"system","content":[]}}
+{"type":"attachment","uuid":"a1","timestamp":"2026-05-19T03:00:20.000Z","message":{"role":"system","content":[]}}

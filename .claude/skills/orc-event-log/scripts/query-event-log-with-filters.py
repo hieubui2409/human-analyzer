@@ -7,9 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import SESSION_STATE
-
-LOG_FILE = SESSION_STATE / "event-log.jsonl"
+from platform_lib.paths import EVENT_STREAMS
 
 
 def parse_date(date_str: str) -> datetime:
@@ -17,19 +15,35 @@ def parse_date(date_str: str) -> datetime:
     return datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
 
 
-def load_events() -> list[dict]:
-    if not LOG_FILE.exists():
+def _read_stream(path) -> list[dict]:
+    if not path.exists():
         return []
     events = []
-    with LOG_FILE.open(encoding="utf-8") as f:
+    with path.open(encoding="utf-8") as f:
         for i, line in enumerate(f, 1):
             line = line.strip()
             if not line:
                 continue
             try:
-                events.append(json.loads(line))
+                ev = json.loads(line)
+                ev["_stream"] = path.name
+                events.append(ev)
             except json.JSONDecodeError as e:
-                print(f"WARNING: skipping malformed line {i}: {e}", file=sys.stderr)
+                print(f"WARNING: skipping malformed line {i} in {path.name}: {e}", file=sys.stderr)
+    return events
+
+
+def load_events(framework: str = "all") -> list[dict]:
+    """Read one framework stream, or merge all 6 sorted by timestamp."""
+    if framework == "all":
+        paths = list(EVENT_STREAMS.values())
+    else:
+        path = EVENT_STREAMS.get(framework.upper())
+        paths = [path] if path else []
+    events = []
+    for p in paths:
+        events.extend(_read_stream(p))
+    events.sort(key=lambda e: e.get("timestamp", ""))
     return events
 
 
@@ -80,6 +94,9 @@ def main():
     parser.add_argument("--source", help="Filter by source skill")
     parser.add_argument("--since", help="Events on or after YYYY-MM-DD")
     parser.add_argument("--until", help="Events on or before YYYY-MM-DD")
+    parser.add_argument("--framework", default="all",
+                        choices=["all", "psy", "mat", "cre", "gro", "orc", "com"],
+                        help="Framework stream to query (default: all, merged sorted)")
     parser.add_argument("--limit", type=int, default=20,
                         help="Max results to show (default: 20)")
     parser.add_argument("--json", dest="json_out", action="store_true", help="Raw JSON output")
@@ -88,10 +105,10 @@ def main():
     since = parse_date(args.since) if args.since else None
     until = parse_date(args.until) if args.until else None
 
-    all_events = load_events()
+    all_events = load_events(args.framework)
 
     if not all_events:
-        print(f"No events found. Log file: {LOG_FILE}")
+        print(f"No events found for framework='{args.framework}'.")
         print("Use `orc:event-log --append` to log events.")
         return
 

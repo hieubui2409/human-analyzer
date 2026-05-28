@@ -1,4 +1,75 @@
 {
-  "hooks": {},
-  "includeCoAuthoredBy": false
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/profile-edit-reminder.cjs",
+            "timeout": 5,
+            "type": "command"
+          },
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/observe-framework-signal.cjs",
+            "timeout": 5,
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write"
+      },
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/detect-profile-drift-hook.cjs",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write|MultiEdit"
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/write-framework-delta-compact-digest.cjs",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "manual|auto"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/gateguard-profile-protect.cjs",
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write"
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/rebuild-knowledge-graph.cjs",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "startup|resume"
+      }
+    ]
+  },
+  "includeCoAuthoredBy": false,
+  "language": "vietnamese",
+  "skillListingBudgetFraction": 0.04,
+  "skillListingMaxDescChars": 512
 }

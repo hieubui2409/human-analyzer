@@ -7,16 +7,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import SESSION_STATE
-
-LOG_FILE = SESSION_STATE / "event-log.jsonl"
+from platform_lib.paths import TELEMETRY, EVENT_STREAMS, CASCADE_EVENTS
 
 VALID_EVENT_TYPES = [
     "MAT.integrated",
     "MAT.archived",
     "PSY.refresh",
     "PSY.crisis",
+    "PSY.relation-angle-discovered",
     "CRE.recalibrate",
+    "CRE.evidence-checked",
+    "CRE.angle-discovered",
+    "CRE.published",
     "GRO.assessed",
     "GRO.forecast",
     "GRO.mentored",
@@ -25,7 +27,16 @@ VALID_EVENT_TYPES = [
     "ORC.decision",
     "ORC.classify",
     "ORC.intake",
+    "COM.privacy",
+    "COM.governance",
+    "COM.commit",
 ]
+
+
+def resolve_stream(event_type: str):
+    """Route an event to its framework stream by prefix; unknown → cascade-events."""
+    framework = event_type.split(".", 1)[0].upper()
+    return EVENT_STREAMS.get(framework, CASCADE_EVENTS), framework
 
 
 def main():
@@ -47,8 +58,14 @@ def main():
         print(f"WARNING: '{args.event_type}' is not a known event type. Appending anyway.",
               file=sys.stderr)
 
+    # Route to the framework stream by event-type prefix
+    log_file, framework = resolve_stream(args.event_type)
+    if framework not in EVENT_STREAMS:
+        print(f"WARNING: unknown framework prefix '{framework}' — routing to cascade-events.jsonl.",
+              file=sys.stderr)
+
     # Ensure directory exists
-    SESSION_STATE.mkdir(parents=True, exist_ok=True)
+    TELEMETRY.mkdir(parents=True, exist_ok=True)
 
     event = {
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -60,13 +77,13 @@ def main():
     # Remove None values for compact log
     event = {k: v for k, v in event.items() if v is not None}
 
-    with LOG_FILE.open("a", encoding="utf-8") as f:
+    with log_file.open("a", encoding="utf-8") as f:
         f.write(json.dumps(event, ensure_ascii=False) + "\n")
 
     print(f"Event logged: {event['event']} from {event['source']}"
           + (f" [{event['character']}]" if "character" in event else "")
           + f" at {event['timestamp']}")
-    print(f"Log file: {LOG_FILE}")
+    print(f"Stream: {log_file.name}")
 
 
 if __name__ == "__main__":

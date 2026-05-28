@@ -1,0 +1,1 @@
+{"type":"assistant","uuid":"a3","timestamp":"2026-05-24T09:00:00.000Z","message":{"role":"assistant","stop_reason":"tool_use","content":[{"type":"tool_use","id":"toolu_test2","name":"Bash","input":{"command":"ls -la"}}]}}

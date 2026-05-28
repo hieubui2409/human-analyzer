@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, resolve_character
 from platform_lib.markdown_parser import extract_frontmatter
+from platform_lib.errors import emit_error
 
 
 def parse_frontmatter_date(val) -> date | None:
@@ -96,6 +97,7 @@ def main():
         try:
             before_date = datetime.strptime(args.before_date, "%Y-%m-%d").date()
         except ValueError:
+            emit_error("validation", f"invalid --before-date: {args.before_date!r}")
             print(f"ERROR: invalid --before-date format: {args.before_date!r} (expected YYYY-MM-DD)")
             sys.exit(1)
 

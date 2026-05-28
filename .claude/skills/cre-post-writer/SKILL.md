@@ -14,6 +14,7 @@ metadata:
       "orc:bootstrap",
       "cre:privacy-guard",
       "cre:voice-audit",
+      "cre:evidence-scanner",
     ]
 ---
 
@@ -63,7 +64,7 @@ Before any content generation, check freshness:
 
 1. Load character lite profile (`psy:profile-lite --character <name>`)
    - If --quick: skip, use whatever context is already loaded
-2. If character is Nhân vật A + platform needs voice: read `identity/writing-voice.md`
+2. Read `identity/writing-voice.md` for target character. Extract `## Voice Profile (Structured)` section — inject as VOICE PROFILE context block into prompt.
 3. Read `psychology/formulation.md` for 5P context (informs content angle)
 4. Read `psychology/defense-mechanisms.md` for voice authenticity
 5. Load session state for current arc context + active domain
@@ -164,7 +165,7 @@ After automated gates pass, verify content doesn't contradict profiles:
 1. **Factual alignment** — cross-check claims against `timeline/state-timeline.md`, `identity/core.md` (dates, events, relationships)
 2. **Psychological alignment** — verify emotional framing matches `psychology/formulation.md`, `psychology/defense-mechanisms.md` (no contradictory coping portrayals)
 3. **Relationship alignment** — if post mentions cross-character dynamics, verify against `relationships/family.md`, cross-character files (e.g. `relationships/character-b.md`, discovered via `list_relationship_files()`), and `docs/graph/{dyad}.md`
-4. **Evidence alignment** — verify claims are backed by T1-T3 evidence (MAT framework). T4-T5 claims must be explicitly qualified
+4. **Evidence alignment** — delegate to `cre:evidence-scanner --asset {asset_dir}` (no duplicate tier logic here). Per-claim PASS/WARN/FAIL by MAT tier + Rule-09 leak; any FAIL → fix before output. T4-T5 claims must be explicitly qualified or removed
 5. If ANY contradiction found → fix before output, don't just flag
 
 ### Phase 7: Quality Checklist
@@ -174,6 +175,7 @@ Final manual checks:
 - [ ] Platform constraints met (length, format)?
 - [ ] Sensitivity boundaries respected?
 - [ ] Image prompts don't produce recognizable real faces?
+- [ ] If high_risk content: consider `orc:santa --review <asset-dir> --framework cre` for dual-review
 
 ## Interactive Mode (no args)
 
