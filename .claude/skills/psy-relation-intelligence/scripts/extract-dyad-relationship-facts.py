@@ -203,7 +203,30 @@ def primary_character_hint(facts: list[dict], slugs: list[str]) -> str:
     return max(counts, key=counts.get) if any(counts.values()) else slugs[0]
 
 
-def build(slug_a: str, slug_b: str) -> dict:
+def extract_graph_dyad_facts(slug_a: str, slug_b: str, top_n: int = 10) -> list[dict]:
+    """Optional embedding-graph signal — surfaces cross-character semantically similar
+    file pairs as additional dyad facts. Default-off; opted in via --graph-signal.
+    Tags `consent_status=REVIEW` because semantic similarity is content-blind to consent;
+    the downstream LLM + cre:privacy-guard remain authoritative gates."""
+    try:
+        from platform_lib import knowledge_graph_discovery as kgd
+    except Exception:                                       # noqa: BLE001 — missing module/dep → skip
+        return []
+    facts = []
+    for pair in kgd.dyad_angle_signals(slug_a, slug_b, top_n=top_n):
+        facts.append({
+            "kind": "graph_dyad_signal", "section": "embedding_similarity",
+            "date": None,
+            "text": (f"semantic dyad: {pair['file_a']} ↔ {pair['file_b']} "
+                     f"(score={pair['score']}, band={pair['confidence_band']})"),
+            "consent_status": "REVIEW",                     # content-blind; downstream gate decides
+            "source": "knowledge_graph_discovery.dyad_angle_signals",
+            "confidence_band": pair["confidence_band"],
+        })
+    return facts
+
+
+def build(slug_a: str, slug_b: str, graph_signal: bool = False) -> dict:
     graph = find_dyad_graph(slug_a, slug_b)
     facts = []
     if graph:
@@ -212,6 +235,8 @@ def build(slug_a: str, slug_b: str) -> dict:
     facts += extract_relationship_facts(slug_b, slug_a)
     facts += extract_mentoring_facts(slug_a, slug_b)
     facts += extract_mentoring_facts(slug_b, slug_a)
+    if graph_signal:                                        # opt-in additive embedding signal
+        facts += extract_graph_dyad_facts(slug_a, slug_b)
 
     gather_backing_materials(facts, [slug_a, slug_b])
     for i, fact in enumerate(facts):
@@ -230,6 +255,9 @@ def main():
     ap = argparse.ArgumentParser(description="Extract dyad relationship facts (deterministic gather).")
     ap.add_argument("char_a", help="First character (alias or slug)")
     ap.add_argument("char_b", help="Second character (alias or slug)")
+    ap.add_argument("--graph-signal", action="store_true",
+                    help="Append KG dyad_angle_signal facts (default off; "
+                         "output identical for same inputs when omitted)")
     ap.add_argument("--json", action="store_true", help="JSON output (default)")
     args = ap.parse_args()
     try:
@@ -238,7 +266,7 @@ def main():
         emit_error("validation", str(e), {"char_a": args.char_a, "char_b": args.char_b})
         print(json.dumps({"error": str(e)}, ensure_ascii=False))
         sys.exit(1)
-    print(json.dumps(build(a, b), indent=2, ensure_ascii=False))
+    print(json.dumps(build(a, b, graph_signal=args.graph_signal), indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":

@@ -26,6 +26,8 @@ Extract and cross-compare dates from character timeline files. Detect shared-eve
 | `--all`              | Cross-check all characters (default) |
 | `--json`             | Output as JSON                       |
 
+**Optional advisory input** (default-off): `from platform_lib import knowledge_graph_advisory as kgad; kgad.timeline_crosscheck_candidates(char_a, char_b)` returns cross-character timeline file pairs with high embedding similarity — candidates for date-validation. Every row tagged `authoritative:false`, `owning_skill: "psy:timeline-sync"`; the date logic below stays source-of-truth (graph only flags candidate dyads to inspect).
+
 ## Timeline Files Checked
 
 For each character:

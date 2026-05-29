@@ -17,6 +17,48 @@
       "chunkSize": 512,
       "chunkOverlap": 100,
       "embedThreshold": 800
+    },
+    "analytics": {
+      "minNodesForHeavyMetrics": 500,
+      "topN": 10,
+      "overHubStdevK": 2.0,
+      "centrality": {
+        "degree": true,
+        "betweenness": true,
+        "eigenvector": true,
+        "pagerank": true
+      },
+      "community": {
+        "enabled": true,
+        "algorithm": "greedy"
+      },
+      "paths": {
+        "maxAlternatives": 5,
+        "maxHops": 6
+      }
+    },
+    "discovery": {
+      "topN": 10,
+      "includeReviewBand": false,
+      "discoveryReviewBandFloor": 0.65,
+      "filters": {
+        "sameBasename": true,
+        "analysisPrefix": true,
+        "metaFiles": true
+      }
+    },
+    "advisory": {
+      "coverageGap": {
+        "enabled": true,
+        "minBackingEdges": 2
+      },
+      "timeline": {
+        "enabled": true
+      },
+      "propagation": {
+        "enabled": true,
+        "maxSuggestions": 10
+      }
     }
   }
 }

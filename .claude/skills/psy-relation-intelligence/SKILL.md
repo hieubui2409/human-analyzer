@@ -1,7 +1,7 @@
 ---
 name: psy:relation-intelligence
 description: "Proactively mine the cross-character relationship graph for publishable content angles. Reads dyad graph + relationship files + GRO mentoring + backing materials, scores angles by evidence tier × coherence × consent, tags each with primary_character + consent_status, and hands ranked angles to cre:post-writer. READ-ONLY. Complements (not replaces) psy:crossref (validation) and psy:propagate (cascade). Triggers: 'relation intelligence', 'content angles', 'mine relationships', 'dyad angles', 'what to write about X and Y', 'relationship content ideas'."
-argument-hint: "--dyad <c1> <c2> [--all] [--character <main>] [--json] [--report]"
+argument-hint: "--dyad <c1> <c2> [--all] [--character <main>] [--graph-signal] [--json] [--report]"
 metadata:
   author: hieubt
   version: "1.0.0"
@@ -20,11 +20,11 @@ to surface what must stay private.
 
 ## Determinism Split (GOLDEN RULE #4)
 
-| Layer      | Owner                                | Does                                                                                                                                                                                                                                        |
-| ---------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Gather     | `extract-dyad-relationship-facts.py` | Parse dyad graph (matched by frontmatter `characters`) + relationship files + GRO mentoring milestones; attach backing-material evidence tier; scan Rule-09 tags + crisis/self-harm markers; compute primary_character hint. Deterministic. |
-| Synthesize | **LLM**                              | Read facts → compose candidate angles (title, hook, which fact_ids back it, coherence + publishability judgments). Heuristic.                                                                                                               |
-| Rank       | `rank-content-angles-by-evidence.py` | Combine LLM judgments with tier strength + consent propagation → final score + ranking. Deterministic arithmetic.                                                                                                                           |
+| Layer      | Owner                                | Does                                                                                                                                                                                                                                                                                                                                                                          |
+| ---------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gather     | `extract-dyad-relationship-facts.py` | Parse dyad graph + relationship files + GRO mentoring milestones; attach backing-material evidence tier; scan Rule-09 + crisis markers; compute primary_character hint. Optional **`--graph-signal`** (default OFF) appends KG `dyad_angle_signals` as `kind=graph_dyad_signal` facts tagged `consent_status=REVIEW` (content-blind; downstream gate decides). Deterministic. |
+| Synthesize | **LLM**                              | Read facts → compose candidate angles (title, hook, which fact_ids back it, coherence + publishability judgments). Heuristic.                                                                                                                                                                                                                                                 |
+| Rank       | `rank-content-angles-by-evidence.py` | Combine LLM judgments with tier strength + consent propagation → final score + ranking. Deterministic arithmetic.                                                                                                                                                                                                                                                             |
 
 ## Usage
 
