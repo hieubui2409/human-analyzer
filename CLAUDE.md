@@ -89,7 +89,7 @@ MAT.integrated → PSY.refresh → CRE.recalibrate
 GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 ```
 
-- **MAT** ingests + classifies sources (5-stage pipeline, evidence tiers T1–T5, CRAAP). Material must be *integrated* before PSY consumes it — MAT gates block premature analysis.
+- **MAT** ingests + classifies sources (5-stage pipeline, evidence tiers T1–T5, CRAAP). Material must be _integrated_ before PSY consumes it — MAT gates block premature analysis.
 - **PSY** builds/refreshes the clinical formulation from integrated material + references.
 - **GRO** feeds career/competency intelligence into PSY and CRE.
 - **CRE** translates the refreshed profile into platform content, gated by evidence tier + confidentiality (Rules 09, 14).
@@ -117,7 +117,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 | 10  | reference-library-standard | Reference schema, scientific rigor                            |
 | 11  | mat-pipeline               | MAT 5-stage pipeline, evidence tiers, CRAAP test              |
 | 12  | orc-orchestration          | Event system, domain boundaries, trigger routing              |
-| 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)        |
+| 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)       |
 | 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
 | 15  | gro-framework              | GRO domain boundaries, profile files, GRO↔PSY boundary        |
 
@@ -131,25 +131,25 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ### ORC — Orchestration
 
-| Skill                 | Purpose                                                               |
-| --------------------- | --------------------------------------------------------------------- |
-| `orc:bootstrap`       | Load project context (--quick/--full/--character/--lite/--intent)     |
-| `orc:session-state`   | Track session state, framework domains, event queue                   |
-| `orc:classify`        | Risk classification (tiny/normal/high_risk) + MAT gates               |
-| `orc:intake`          | Route work type → skill chain (MAT/PSY/CRE/GRO routing)               |
-| `orc:compounding`     | Extract session learnings → memory                                    |
-| `orc:dream`           | Periodic memory consolidation                                         |
-| `orc:decisions`       | Append-only decision records                                          |
-| `orc:agent-memory`    | Per-agent calibration memory                                          |
-| `orc:event-log`       | Persistent event audit logging (JSONL append + query)                 |
-| `orc:observe`         | Cross-framework observation signals (passive telemetry → instinct)    |
-| `orc:domain-router`   | Route domain events to downstream skills (diff or explicit)           |
-| `orc:cascade`         | Resolve multi-step event cascade chains across domains                |
-| `orc:audit`           | Cross-domain event consistency verification                           |
-| `orc:santa`           | Dual-reviewer quality gate — independent review, max 2 rounds         |
-| `orc:council`         | 4-voice decision framework — anti-anchoring, verdict storage          |
-| `orc:skill-stocktake` | Skill catalog audit — count/metadata/overlap + CE-02 conformance gate |
-| `orc:graph`           | Knowledge-graph query/visualize/validate — navigation + integrity layer |
+| Skill                 | Purpose                                                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `orc:bootstrap`       | Load project context (--quick/--full/--character/--lite/--intent)                                                                    |
+| `orc:session-state`   | Track session state, framework domains, event queue                                                                                  |
+| `orc:classify`        | Risk classification (tiny/normal/high_risk) + MAT gates                                                                              |
+| `orc:intake`          | Route work type → skill chain (MAT/PSY/CRE/GRO routing)                                                                              |
+| `orc:compounding`     | Extract session learnings → memory                                                                                                   |
+| `orc:dream`           | Periodic memory consolidation                                                                                                        |
+| `orc:decisions`       | Append-only decision records                                                                                                         |
+| `orc:agent-memory`    | Per-agent calibration memory                                                                                                         |
+| `orc:event-log`       | Persistent event audit logging (JSONL append + query)                                                                                |
+| `orc:observe`         | Cross-framework observation signals (passive telemetry → instinct)                                                                   |
+| `orc:domain-router`   | Route domain events to downstream skills (diff or explicit)                                                                          |
+| `orc:cascade`         | Resolve multi-step event cascade chains across domains                                                                               |
+| `orc:audit`           | Cross-domain event consistency verification                                                                                          |
+| `orc:santa`           | Dual-reviewer quality gate — independent review, max 2 rounds                                                                        |
+| `orc:council`         | 4-voice decision framework — anti-anchoring, verdict storage                                                                         |
+| `orc:skill-stocktake` | Skill catalog audit — count/metadata/overlap + CE-02 conformance gate                                                                |
+| `orc:graph`           | Knowledge-graph query/visualize/validate · analytics/centrality/community/path subcommands (heavy metrics size-gated, advisory only) |
 
 ### PSY — Psychology
 
@@ -210,11 +210,11 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ### COM — Common
 
-| Skill              | Purpose                                                 |
-| ------------------ | ------------------------------------------------------- |
-| `com:git`             | Project-aware git operations                               |
-| `com:health-check`    | Session health monitoring — stall/error/death detection    |
-| `com:rules`           | Modular rules management                                   |
+| Skill                 | Purpose                                                               |
+| --------------------- | --------------------------------------------------------------------- |
+| `com:git`             | Project-aware git operations                                          |
+| `com:health-check`    | Session health monitoring — stall/error/death detection               |
+| `com:rules`           | Modular rules management                                              |
 | `com:skill-analytics` | Skill/script observability — 11 read-only lenses + profile-drift gate |
 
 ---
@@ -223,18 +223,18 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 Skills share a Python utility library + 60+ supportive scripts.
 
-| Module (`.claude/scripts/platform_lib/`) | Purpose                                        |
-| ---------------------------------------- | ---------------------------------------------- |
-| `paths.py`                               | Project root, character resolution, paths      |
-| `clinical_terms.py`                      | 80+ regex patterns, term scanning, ref indexing |
-| `markdown_parser.py`                     | Section extraction, frontmatter, dates, links  |
-| `profile_stats.py`                       | File inventory, git hash cache validation      |
-| `formatters.py`                          | Markdown tables, JSON output, severity badges  |
-| `env_utils.py`                           | .env loading, API key resolution               |
-| `csv_search.py`                          | BM25 text search over CSV data                 |
-| `instinct_store.py`                      | Atomic learnings CRUD, confidence scoring, JSONL |
+| Module (`.claude/scripts/platform_lib/`) | Purpose                                                         |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| `paths.py`                               | Project root, character resolution, paths                       |
+| `clinical_terms.py`                      | 80+ regex patterns, term scanning, ref indexing                 |
+| `markdown_parser.py`                     | Section extraction, frontmatter, dates, links                   |
+| `profile_stats.py`                       | File inventory, git hash cache validation                       |
+| `formatters.py`                          | Markdown tables, JSON output, severity badges                   |
+| `env_utils.py`                           | .env loading, API key resolution                                |
+| `csv_search.py`                          | BM25 text search over CSV data                                  |
+| `instinct_store.py`                      | Atomic learnings CRUD, confidence scoring, JSONL                |
 | `telemetry.py`                           | Consolidated sink root + auto script-metrics + crash excepthook |
-| `errors.py`                              | Structured error emission (errors.jsonl) over telemetry |
+| `errors.py`                              | Structured error emission (errors.jsonl) over telemetry         |
 
 Run scripts with the **project-local venv** (project is self-contained):
 
