@@ -6,13 +6,13 @@ GOLDEN RULE #4 split:
     tagged {source_framework, signal_type, character, summary, timestamp, freshness}.
     Pure reads + arithmetic. No angle quality judgment.
   - LLM (downstream): SYNTHESIZES candidate angles from these signals (title, hook,
-    framing) — then rank-angles-by-freshness-and-evidence.py scores them.
+    framing) -- then rank-angles-by-freshness-and-evidence.py scores them.
 
-Freshness = recency decay over a window: 1.0 today → 0.0 at/after --since-days.
-Older-than-window signals are dropped (stale → no stale angles, plan risk row).
+Freshness = recency decay over a window: 1.0 today -> 0.0 at/after --since-days.
+Older-than-window signals are dropped (stale -> no stale angles, plan risk row).
 
-Framework → angle TYPE (the lens the signal feeds):
-  PSY→emotional  MAT→story  GRO→professional  CRE→distribution  ORC→timing
+Framework -> angle TYPE (the lens the signal feeds):
+  PSY->emotional  MAT->story  GRO->professional  CRE->distribution  ORC->timing
 
 Usage:
   aggregate-angle-signals-across-frameworks.py --character <c>
@@ -32,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths
 from platform_lib.markdown_parser import extract_sections, extract_milestones
 
-# framework → the angle lens its signals feed
+# framework -> the angle lens its signals feed
 FRAMEWORK_ANGLE = {
     "PSY": "emotional",
     "MAT": "story",
@@ -48,7 +48,7 @@ def _now() -> datetime:
 
 
 def freshness(ts: datetime, since_days: int, now: datetime | None = None) -> float:
-    """Linear recency decay: 1.0 at now → 0.0 at since_days old. Clamped [0,1]."""
+    """Linear recency decay: 1.0 at now -> 0.0 at since_days old. Clamped [0,1]."""
     now = now or _now()
     age_days = (now - ts).total_seconds() / 86400.0
     if age_days <= 0:
@@ -122,7 +122,7 @@ def _file_freshness(fp: Path, since_days: int, now: datetime | None = None) -> f
 
 
 def psy_state_signals(character: str, since_days: int, now=None) -> list[dict]:
-    """PSY growth-edges section headers → emotional angle candidates."""
+    """PSY growth-edges section headers -> emotional angle candidates."""
     fp = paths.character_dir(character) / "psychology" / "growth-edges.md"
     fr = _file_freshness(fp, since_days, now)
     if fr <= 0:
@@ -135,7 +135,7 @@ def psy_state_signals(character: str, since_days: int, now=None) -> list[dict]:
 
 
 def gro_milestone_signals(character: str, since_days: int, now=None) -> list[dict]:
-    """GRO milestones (ACHIEVED / IN_PROGRESS) → professional angle candidates."""
+    """GRO milestones (ACHIEVED / IN_PROGRESS) -> professional angle candidates."""
     fp = paths.character_dir(character) / "milestones.md"
     fr = _file_freshness(fp, since_days, now)
     if fr <= 0:
@@ -153,7 +153,7 @@ def gro_milestone_signals(character: str, since_days: int, now=None) -> list[dic
 
 
 def mat_story_signals(character: str, since_days: int, now=None) -> list[dict]:
-    """Recently-touched MAT materials → story angle candidates."""
+    """Recently-touched MAT materials -> story angle candidates."""
     mdir = paths.materials_dir(character)
     if not mdir.exists():
         return []
@@ -170,40 +170,8 @@ def mat_story_signals(character: str, since_days: int, now=None) -> list[dict]:
     return out
 
 
-def graph_signals(character: str, since_days: int, top_n: int = 10) -> list[dict]:
-    """Optional embedding-graph signal — surfaces `latent_links` (firm embedding pairs
-    NOT covered by L1/L2 graph edges) and `similar_files` for the character's hub as
-    additional angle candidates. Default-off; opted in via the --graph-signal CLI flag.
-    Empty if no embedding cache (graceful degradation).
-
-    Tags follow the existing gather schema: `source_framework='graph'`,
-    `signal_type='semantic_similarity'`, freshness=1.0 (signal is not date-bound)."""
-    try:
-        from platform_lib import knowledge_graph_discovery as kgd
-    except Exception:                                       # noqa: BLE001 — module/dep missing → skip
-        return []
-    out: list[dict] = []
-    for cand in kgd.latent_links(top_n=top_n):
-        out.append({
-            "source_framework": "graph", "signal_type": "semantic_similarity",
-            "character": character,
-            "summary": f"latent: {cand['file_a']} ↔ {cand['file_b']} (score={cand['score']})",
-            "origin": "latent_link", "timestamp": "", "freshness": 1.0,
-            "confidence_band": cand["confidence_band"],
-        })
-    for cand in kgd.similar_files(character, top_n=top_n):
-        out.append({
-            "source_framework": "graph", "signal_type": "semantic_similarity",
-            "character": character,
-            "summary": f"similar: {cand['file']} (score={cand['score']})",
-            "origin": "similar_file", "timestamp": "", "freshness": 1.0,
-            "confidence_band": cand["confidence_band"],
-        })
-    return out
-
-
 def aggregate(character: str, frameworks: list[str], since_days: int,
-              now: datetime | None = None, graph_signal: bool = False) -> list[dict]:
+              now: datetime | None = None) -> list[dict]:
     char = paths.resolve_character(character)
     signals = event_signals(frameworks, char, since_days, now)
     if "PSY" in frameworks:
@@ -212,8 +180,6 @@ def aggregate(character: str, frameworks: list[str], since_days: int,
         signals += gro_milestone_signals(char, since_days, now)
     if "MAT" in frameworks:
         signals += mat_story_signals(char, since_days, now)
-    if graph_signal:                                        # opt-in additive embedding signal
-        signals += graph_signals(char, since_days)
     signals.sort(key=lambda s: -s["freshness"])
     return signals
 
@@ -230,14 +196,10 @@ def main():
     ap.add_argument("--framework", default="all",
                     choices=["psy", "mat", "gro", "cre", "orc", "all"])
     ap.add_argument("--since-days", type=int, default=30, help="Freshness window (default 30)")
-    ap.add_argument("--graph-signal", action="store_true",
-                    help="Append KG semantic_similarity signals (default off; "
-                         "output identical for same inputs when omitted)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
-    signals = aggregate(args.character, _frameworks(args.framework), args.since_days,
-                        graph_signal=args.graph_signal)
+    signals = aggregate(args.character, _frameworks(args.framework), args.since_days)
     out = {"character": paths.resolve_character(args.character),
            "framework": args.framework, "since_days": args.since_days,
            "signal_count": len(signals), "signals": signals}

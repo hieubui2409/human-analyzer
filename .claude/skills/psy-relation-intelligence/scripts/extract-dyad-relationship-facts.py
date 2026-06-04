@@ -3,7 +3,7 @@
 GOLDEN RULE #4: this script ONLY gathers deterministic facts from the dyad
 graph + relationship files + GRO mentoring milestones, scans Rule-09 consent
 tags, and attaches backing-material evidence tiers. It does NOT decide which
-facts make a compelling angle — that is the LLM synthesis layer (see SKILL.md).
+facts make a compelling angle -- that is the LLM synthesis layer (see SKILL.md).
 
 Read sources (READ-ONLY):
   - docs/graph/{dyad}.md            (matched by frontmatter `characters`, robust)
@@ -12,7 +12,7 @@ Read sources (READ-ONLY):
   - materials/{char}/*.md           (backing evidence tiers, over-gather)
 
 EXCLUSION (red-team R2): darkness/traumas.md content is NEVER read into a fact
-payload — only its existence is noted as metadata. Trauma detail must not leak
+payload -- only its existence is noted as metadata. Trauma detail must not leak
 into a content angle.
 
 Consent (red-team R2 / OQ#6 A): a fact whose source line carries a Rule-09 tag
@@ -43,14 +43,14 @@ PUBLISHABLE_SECTIONS = {
     "Relationship Timeline", "Growth Interface", "Communication Patterns",
     "Power Dynamics", "Prognosis",
 }
-_STOP = {"này", "đó", "của", "với", "cho", "các", "một", "những", "được", "là", "và"}
+_STOP = {"nay", "do", "cua", "voi", "cho", "cac", "mot", "nhung", "duoc", "la", "va"}
 
 # Deterministic crisis/self-harm markers (VN + EN). A graph dyad legitimately
 # records crisis episodes; surfacing them in a content angle without explicit
 # consent is a Rule-09 / Rule-06 violation. Gathering matches is deterministic;
 # the BLOCKED verdict forces an LLM/human look (fail-closed, never silent OK).
 _CRISIS_RE = re.compile(
-    r"tự\s*tử|tự\s*sát|tự\s*hại|chết|cắt\s*tay|kết\s*liễu|trầm\s*cảm|"
+    r"tu\s*tu|tu\s*sat|tu\s*hai|chet|cat\s*tay|ket\s*lieu|tram\s*cam|"
     r"suicid|self[- ]?harm|kill\s*(my|him|her)self|overdose|crisis",
     re.IGNORECASE,
 )
@@ -101,7 +101,7 @@ def extract_graph_facts(graph_path: Path) -> list[dict]:
            not any(p in graph_path.read_text(encoding="utf-8") for p in []):
             pass
         for line in content.splitlines():
-            s = line.strip(" -•*|")
+            s = line.strip(" -*|")
             if len(s) > 25 and not s.startswith("#") and "|" not in line:
                 facts.append({
                     "kind": "dynamic", "section": name, "date": None, "text": s[:200],
@@ -121,7 +121,7 @@ def extract_relationship_facts(slug: str, other_slug: str) -> list[dict]:
             continue
         for name, content in extract_sections(relf, level=2).items():
             for line in content.splitlines():
-                s = line.strip(" -•*")
+                s = line.strip(" -*")
                 if len(s) > 25 and not s.startswith("#"):
                     facts.append({
                         "kind": "relationship", "section": name, "date": None,
@@ -188,7 +188,7 @@ def gather_backing_materials(facts: list[dict], slugs: list[str]) -> None:
 
 
 def traumas_present(slugs: list[str]) -> dict:
-    """Note ONLY existence of darkness/traumas.md (never read content) — R2."""
+    """Note ONLY existence of darkness/traumas.md (never read content) -- R2."""
     return {slug: (character_dir(slug) / "darkness" / "traumas.md").exists() for slug in slugs}
 
 
@@ -203,30 +203,7 @@ def primary_character_hint(facts: list[dict], slugs: list[str]) -> str:
     return max(counts, key=counts.get) if any(counts.values()) else slugs[0]
 
 
-def extract_graph_dyad_facts(slug_a: str, slug_b: str, top_n: int = 10) -> list[dict]:
-    """Optional embedding-graph signal — surfaces cross-character semantically similar
-    file pairs as additional dyad facts. Default-off; opted in via --graph-signal.
-    Tags `consent_status=REVIEW` because semantic similarity is content-blind to consent;
-    the downstream LLM + cre:privacy-guard remain authoritative gates."""
-    try:
-        from platform_lib import knowledge_graph_discovery as kgd
-    except Exception:                                       # noqa: BLE001 — missing module/dep → skip
-        return []
-    facts = []
-    for pair in kgd.dyad_angle_signals(slug_a, slug_b, top_n=top_n):
-        facts.append({
-            "kind": "graph_dyad_signal", "section": "embedding_similarity",
-            "date": None,
-            "text": (f"semantic dyad: {pair['file_a']} ↔ {pair['file_b']} "
-                     f"(score={pair['score']}, band={pair['confidence_band']})"),
-            "consent_status": "REVIEW",                     # content-blind; downstream gate decides
-            "source": "knowledge_graph_discovery.dyad_angle_signals",
-            "confidence_band": pair["confidence_band"],
-        })
-    return facts
-
-
-def build(slug_a: str, slug_b: str, graph_signal: bool = False) -> dict:
+def build(slug_a: str, slug_b: str) -> dict:
     graph = find_dyad_graph(slug_a, slug_b)
     facts = []
     if graph:
@@ -235,8 +212,6 @@ def build(slug_a: str, slug_b: str, graph_signal: bool = False) -> dict:
     facts += extract_relationship_facts(slug_b, slug_a)
     facts += extract_mentoring_facts(slug_a, slug_b)
     facts += extract_mentoring_facts(slug_b, slug_a)
-    if graph_signal:                                        # opt-in additive embedding signal
-        facts += extract_graph_dyad_facts(slug_a, slug_b)
 
     gather_backing_materials(facts, [slug_a, slug_b])
     for i, fact in enumerate(facts):
@@ -255,9 +230,6 @@ def main():
     ap = argparse.ArgumentParser(description="Extract dyad relationship facts (deterministic gather).")
     ap.add_argument("char_a", help="First character (alias or slug)")
     ap.add_argument("char_b", help="Second character (alias or slug)")
-    ap.add_argument("--graph-signal", action="store_true",
-                    help="Append KG dyad_angle_signal facts (default off; "
-                         "output identical for same inputs when omitted)")
     ap.add_argument("--json", action="store_true", help="JSON output (default)")
     args = ap.parse_args()
     try:
@@ -266,7 +238,7 @@ def main():
         emit_error("validation", str(e), {"char_a": args.char_a, "char_b": args.char_b})
         print(json.dumps({"error": str(e)}, ensure_ascii=False))
         sys.exit(1)
-    print(json.dumps(build(a, b, graph_signal=args.graph_signal), indent=2, ensure_ascii=False))
+    print(json.dumps(build(a, b), indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
