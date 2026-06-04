@@ -1,17 +1,27 @@
-"""Evidence-tier publish permissions — single source of truth.
+"""Evidence-tier publish permissions — single source of truth for gate verdicts.
 
 Maps a MAT evidence tier (T1-T5) to a publish permission + a draft-gate verdict.
 Imported by cre:evidence-scanner (standalone gate) and cre:post-writer (Phase 6).
 
-Tier semantics (from materials_classifier.EVIDENCE_TIERS):
-  T1 Primary / T2 Secondary  → publishable
-  T3 Tertiary                → publishable WITH qualification
-  T4 Contextual / T5 Auxiliary → not publishable (hearsay / inference)
+Tier identity (names/descriptions) is owned by materials_classifier.EVIDENCE_TIERS.
+This module only owns the permission/gate mapping for those tiers.
 
-Gate policy is FAIL-CLOSED: only T1/T2 PASS outright; T3 warns; T4/T5 fail
-(red-team R3: "only T4/T5 hard-fail"). A Rule-09 privacy leak in the claim text
-overrides tier and always FAILs, regardless of backing evidence.
+Tier → gate policy:
+  T1 Primary / T2 Secondary  → yes      → PASS  (publishable)
+  T3 Tertiary                → qualified → WARN  (publishable WITH qualification)
+  T4 Contextual              → restricted → FAIL  (restricted: not publishable without
+                                                   explicit editorial approval; distinct
+                                                   from T5 in that restricted use is a
+                                                   documented editorial decision, not a
+                                                   blanket prohibition)
+  T5 Auxiliary               → no        → FAIL  (not publishable — inference/metadata only)
+
+Gate policy is FAIL-CLOSED: only T1/T2 PASS outright; T3 warns; T4/T5 fail.
+A Rule-09 privacy leak in the claim text overrides tier and always FAILs.
 """
+# LIB-07: Tier IDENTITY (T1-T5 names) lives in materials_classifier.EVIDENCE_TIERS.
+# This module owns only the permission/verdict mapping for those tiers.
+from platform_lib.materials_classifier import EVIDENCE_TIERS as _EVIDENCE_TIERS  # noqa: F401 (re-exported for callers)
 
 # tier -> {permission, label}
 TIER_PERMISSIONS = {
@@ -34,7 +44,7 @@ PERMISSION_TO_VERDICT = {
 STRICT_OVERRIDES = {"qualified": "FAIL"}
 
 # Verdict when a claim has NO candidate evidence at all.
-# Never silent PASS (red-team R1 / FAIL-CLOSED) — force a human/LLM look.
+# Never silent PASS (FAIL-CLOSED) — force a human/LLM look.
 NO_EVIDENCE_VERDICT = "WARN"
 
 VERDICT_ICON = {"PASS": "✓", "WARN": "~", "FAIL": "✗"}

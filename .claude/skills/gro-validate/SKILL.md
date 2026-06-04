@@ -20,46 +20,45 @@ Cross-check growth data consistency across all 4 GRO profile files + identity/co
 
 ## Flags
 
-| Flag                 | Purpose                                |
-| -------------------- | -------------------------------------- |
-| `--character <name>` | Validate one character only            |
-| `--all`              | Validate all characters (default)      |
-| `--json`             | Output as JSON                         |
-| `--fix`              | LLM suggests fixes for detected issues |
+| Flag                 | Purpose                                          |
+| -------------------- | ------------------------------------------------ |
+| `--character <name>` | Validate one character only                      |
+| `--all`              | Validate all characters (default)                |
+| `--json`             | Output as JSON                                   |
+| `--fix`              | LLM suggests fixes for detected issues           |
+| `--stale-days N`     | Days threshold for staleness warning (default 90)|
 
 ## Validation Dimensions
 
+The script (`validate-growth-data-consistency.py`) implements these deterministic checks:
+
 ### 1. Frontmatter Consistency
 
-- All 4 growth files have required frontmatter fields
+- All 4 growth files exist and have required frontmatter fields
 - `domain: growth`, `type: data`, correct `character:` slug
 - `updated_by: gro:{skill}` format
-- `last_updated` not stale (>90 days warning)
+- `last_updated` not stale (configurable via `--stale-days`, default 90 days)
 
-### 2. Cross-File Consistency
+### 2. Cross-File Consistency (heuristic)
 
-- Career stage in career-path.md matches competency context in competencies.md
-- Mentoring relationships in mentoring-map.md align with relationships/ files
-- Learning style in learning-profile.md consistent with competency acquisition evidence
-- Skills mentioned in career-path.md exist in competencies.md
+- Career-path.md and competencies.md cross-reference each other (keyword presence check)
+- Mentoring-map.md references known relationship files
+- Note: fine-grained skill-existence checks (e.g., each career-path skill in competencies)
+  are **not implemented** — those require LLM judgment
 
 ### 3. GRO ↔ PSY Boundary
 
-- Growth files contain factual data only (no psychological interpretations)
+- Growth files contain no PSY-domain terms (defense mechanisms, attachment, trauma, etc.)
 - Cross-references to PSY files are read-only citations, not duplicated content
-- No `defense mechanism`, `attachment`, `trauma` claims in GRO files
 
 ### 4. Evidence Grounding
 
-- Claims marked with evidence tier or [UNVERIFIED]
-- [LIMITED DATA] markers present where data is thin
-- Material references point to existing files
+- Presence of evidence markers: [Source:], [UNVERIFIED], [LIMITED DATA], [PRIVATE]
+- Note: material reference link validation is **not implemented** — script checks markers only
 
 ### 5. Life Stage Adaptation
 
-- Career-path.md content appropriate for character's career stage
-- Student characters don't have professional skill matrices
-- Professional characters have full career trajectories
+- Not implemented in the script — LLM judgment required for career-stage appropriateness
 
 ## Workflow
 
@@ -118,6 +117,7 @@ LLM reviews findings and suggests specific corrections for failures.
 /gro:validate --character hieu             # Nhân vật A only
 /gro:validate --all --json                 # machine-readable
 /gro:validate --fix                        # include fix suggestions
+/gro:validate --stale-days 180             # warn on files >180 days old
 ```
 
 ## Schema Validation (C7)

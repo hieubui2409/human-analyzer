@@ -51,19 +51,27 @@ docs/materials/
 
 ## MAT-Compliant Frontmatter Schema
 
-Every material file MUST have this frontmatter (per `.claude/schemas/material-schema.yaml`):
+Every material file MUST have this frontmatter (authoritative contract: `.claude/schemas/material-frontmatter.schema.json`):
 
 ```yaml
 ---
-material_type: transcript|letter|conversation|clinical|news|interview|document|media
-source_category: P1-primary|P2-documentary|P3-conversational|P4-analytical|P5-auxiliary
-evidence_tier: T1|T2|T3|T4|T5
-processing_status: raw|extracted|analyzed|validated|integrated|archived
-character: character-a|character-b|character-c
-date_created: YYYY-MM-DD
-date_range: "YYYY-MM to YYYY-MM"
-confidentiality: public|internal|private|confidential
-privacy_flags: []
+# --- Required fields ---
+material_id: CHAR_SLUG_MAT_NNN         # unique ID pattern: [A-Z0-9_]+_MAT_[0-9]+
+character: character-a              # kebab-case character slug
+material_type: conversation_log        # conversation_log|letter|interview|news_article|
+                                       # screenshot|clinical_note|observation|document
+title: "Human-readable title"
+source_category: primary               # primary|secondary|tertiary|contextual|auxiliary
+source_reliability: high               # high|medium|low
+source_creator: unknown                # who created the source
+captured_date: YYYY-MM-DD             # ISO date when material was captured
+processing_status: raw                 # raw|extracted|analyzed|validated|integrated|archived
+confidentiality: private               # public|shared|private|restricted
+last_updated: YYYY-MM-DD
+updated_by: mat:loader
+
+# --- Optional fields (common) ---
+evidence_tier: T1                      # T1-T5 — derived from source_category; set by LLM
 craap_score:
   currency: 1-5
   relevance: 1-5
@@ -71,11 +79,19 @@ craap_score:
   accuracy: 1-5
   purpose: 1-5
   total: 5-25
-tags: []
-cross_characters: []
-last_updated: YYYY-MM-DD
+content_tags: []                       # kebab-case topic tags
+psychology_constructs: []              # construct slugs from docs/references/
+references: []                         # reference slugs
+cross_characters: []                   # other character slugs mentioned
 ---
 ```
+
+**Key distinctions from older docs:**
+- Date key is `captured_date` (not `date_created` or `date_range`)
+- Confidentiality values are `public|shared|private|restricted` (not `internal|confidential`)
+- No `privacy_flags` or `tags` top-level keys — use `content_tags` for tags
+- `source_category` values are plain words (`primary`…`auxiliary`), not `P1-primary` codes
+- Evidence tier is **derived from source_category** by the LLM/code; CRAAP is a quality gate, not tier source
 
 ## Workflow: --ingest `<path>` (MAT Stage 1-2)
 
@@ -155,7 +171,7 @@ last_updated: YYYY-MM-DD
 
 ## Workflow: --list (Default)
 
-1. Run `scripts/inventory-materials-with-mat-frontmatter.py`
+1. Run `scripts/inventory-materials-with-frontmatter-status.py`
 2. For each file: name, type, tier, status, lines, modified date
 3. Group by character, color-code by processing_status
 
@@ -180,9 +196,13 @@ Bottleneck: 5 files stuck at 'raw' — run mat:loader --ingest to process
 
 ## Scripts
 
-| Script                                                | Purpose                                |
-| ----------------------------------------------------- | -------------------------------------- |
-| `scripts/inventory-materials-with-mat-frontmatter.py` | Inventory with MAT frontmatter parsing |
+| Script                                                            | Purpose                                         |
+| ----------------------------------------------------------------- | ----------------------------------------------- |
+| `scripts/inventory-materials-with-frontmatter-status.py`         | Inventory with MAT frontmatter + status parsing |
+| `scripts/inventory-materials-with-type-detection.py`             | Inventory with file type detection              |
+| `scripts/validate-material-frontmatter-against-schema.py`        | Validate frontmatter against schema             |
+| `scripts/generate-craap-score-template-for-material.py`          | Generate CRAAP scoring template for a file      |
+| `scripts/detect-duplicate-materials-by-size-and-content-hash.py` | Detect duplicate files by hash                  |
 
 ## Safety
 

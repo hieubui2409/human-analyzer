@@ -7,10 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS
-from platform_lib.materials_classifier import (
-    extract_frontmatter,
-    validate_material_frontmatter,
-)
+from platform_lib.materials_classifier import validate_material_frontmatter
 
 
 def main():

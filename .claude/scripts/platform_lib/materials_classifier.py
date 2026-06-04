@@ -37,7 +37,8 @@ EVIDENCE_TIERS = {
     5: {"label": "Auxiliary", "patterns": ["metadata", "timestamp", "log", "inference"]},
 }
 
-PROCESSING_STATES = ["raw", "preprocessed", "extracted", "analyzed", "integrated"]
+# Canonical pipeline states ordered from ingestion to retirement.
+PROCESSING_STATES = ["raw", "extracted", "analyzed", "validated", "integrated", "archived"]
 
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
 
@@ -123,7 +124,7 @@ def validate_material_frontmatter(filepath: Path) -> list[str]:
         errors.append(f"invalid source_reliability: {fm['source_reliability']}")
     if "confidentiality" in fm and fm["confidentiality"] not in VALID_CONFIDENTIALITIES:
         errors.append(f"invalid confidentiality: {fm['confidentiality']}")
-    if "processing_status" in fm and fm["processing_status"] not in PROCESSING_STATES + ["validated", "archived"]:
+    if "processing_status" in fm and fm["processing_status"] not in PROCESSING_STATES:
         errors.append(f"invalid processing_status: {fm['processing_status']}")
     if "captured_date" in fm:
         val = str(fm["captured_date"])

@@ -26,7 +26,6 @@ def scan_materials(slug: str) -> list[dict]:
         return []
     results = []
     for f in sorted(mat_dir.rglob("*.md")):
-        text = f.read_text(encoding="utf-8")
         fm = extract_frontmatter(f) or {}
         results.append({
             "path": f,
@@ -37,7 +36,7 @@ def scan_materials(slug: str) -> list[dict]:
             "captured_date": fm.get("captured_date", ""),
             "has_frontmatter": bool(fm),
             "frontmatter": fm,
-            "raw_text": text,
+            # raw_text is read on-demand in apply mode only (avoid wasted I/O in dry-run)
         })
     return results
 
@@ -142,7 +141,7 @@ def main():
     archived_count = 0
     if not dry_run:
         for item in matched:
-            text = item["raw_text"]
+            text = item["path"].read_text(encoding="utf-8")
             text = update_frontmatter_field(text, "processing_status", "archived")
             text = update_frontmatter_field(text, "last_updated", today)
             item["path"].write_text(text, encoding="utf-8")

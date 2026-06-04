@@ -46,12 +46,30 @@ def _cell(cells: list[str], idx, default: str = "") -> str:
     return cells[idx].strip().strip("*").strip()
 
 
-def _detect_status(cells: list[str]) -> str:
+def _gather_status_signals(cells: list[str]) -> list[str]:
+    """Return ALL matched status keywords found across the row cells.
+    Leaves final achieved/planned/missed adjudication to the LLM — do not pick one winner
+    when multiple patterns match (e.g. a milestone can be 'planned' AND marked 'in_progress').
+    Empty list means no status signal detected.
+    """
     full_text = " ".join(cells)
-    for status_name, pattern in STATUS_PATTERNS.items():
-        if pattern.search(full_text):
-            return status_name
-    return "unknown"
+    matched = [name for name, pattern in STATUS_PATTERNS.items() if pattern.search(full_text)]
+    return matched
+
+
+def _detect_status(cells: list[str]) -> str:
+    """Legacy single-winner status for backward-compat summary counts.
+    Prefers more specific signals: achieved > missed > in_progress > planned.
+    Use status_signals (all signals) for LLM adjudication.
+    """
+    signals = _gather_status_signals(cells)
+    if not signals:
+        return "unknown"
+    # Precedence: achieved > missed > in_progress > planned
+    for preferred in ("achieved", "missed", "in_progress", "planned"):
+        if preferred in signals:
+            return preferred
+    return signals[0]
 
 
 def parse_milestone_table(text: str) -> list[dict]:
@@ -90,6 +108,8 @@ def parse_milestone_table(text: str) -> list[dict]:
             "date_or_period": date[:30],
             "detail": detail[:80],
             "status": status,
+            # All raw status signals found in this row; LLM uses this for adjudication
+            "status_signals": _gather_status_signals(cells),
         })
 
     return milestones
@@ -195,6 +215,8 @@ def gather_character(slug: str) -> dict:
 def main():
     parser = argparse.ArgumentParser(description="Gather career milestone tracking data")
     parser.add_argument("--character", "-c", help="Character slug or alias")
+    parser.add_argument("--all", dest="all_chars", action="store_true",
+                        help="Track all characters (default when no --character given)")
     parser.add_argument("--json", dest="json_out", action="store_true", help="JSON output")
     parser.add_argument("--pending-only", action="store_true", help="Show only planned/unachieved")
     args = parser.parse_args()

@@ -192,14 +192,14 @@ def validate_cross_file_consistency(slug: str) -> list[Finding]:
     return findings
 
 
-def validate_staleness(slug: str) -> list[Finding]:
-    """Check for stale growth files (>90 days since last_updated)."""
+def validate_staleness(slug: str, stale_days: int = 90) -> list[Finding]:
+    """Check for stale growth files (>stale_days since last_updated)."""
     findings = []
     char_dir = PROFILES / slug
 
     from datetime import datetime, timedelta
     now = datetime.now()
-    stale_threshold = now - timedelta(days=90)
+    stale_threshold = now - timedelta(days=stale_days)
 
     for rel_path in GRO_PROFILE_FILES:
         fpath = char_dir / rel_path
@@ -222,7 +222,7 @@ def validate_staleness(slug: str) -> list[Finding]:
                                     f"Cannot parse last_updated: {last_updated!r}", rel_path))
 
     if not findings:
-        findings.append(Finding("Staleness", "PASS", "All growth files are current (<90 days)"))
+        findings.append(Finding("Staleness", "PASS", f"All growth files are current (<{stale_days} days)"))
 
     return findings
 
@@ -245,14 +245,14 @@ def validate_growth_file_counts() -> list:
     return findings
 
 
-def validate_character(slug: str) -> dict:
+def validate_character(slug: str, stale_days: int = 90) -> dict:
     """Run all validation checks for one character."""
     all_findings = []
     all_findings.extend(validate_frontmatter(slug))
     all_findings.extend(validate_psy_boundary(slug))
     all_findings.extend(validate_evidence_markers(slug))
     all_findings.extend(validate_cross_file_consistency(slug))
-    all_findings.extend(validate_staleness(slug))
+    all_findings.extend(validate_staleness(slug, stale_days=stale_days))
 
     pass_count = sum(1 for f in all_findings if f.status == "PASS")
     warn_count = sum(1 for f in all_findings if f.status == "WARN")
@@ -274,13 +274,17 @@ def validate_character(slug: str) -> dict:
 def main():
     parser = argparse.ArgumentParser(description="Validate GRO growth data consistency")
     parser.add_argument("--character", "-c", help="Character slug or alias")
+    parser.add_argument("--all", dest="all_chars", action="store_true",
+                        help="Validate all characters (default when no --character given)")
     parser.add_argument("--json", dest="json_out", action="store_true", help="JSON output")
     parser.add_argument("--fix", action="store_true", help="Include fix suggestions (LLM-only)")
+    parser.add_argument("--stale-days", type=int, default=90, dest="stale_days",
+                        help="Days threshold for staleness warning (default: 90)")
     args = parser.parse_args()
 
     chars = [resolve_character(args.character)] if args.character else ALL_CHARS
     file_count_findings = validate_growth_file_counts()
-    results = {slug: validate_character(slug) for slug in chars}
+    results = {slug: validate_character(slug, stale_days=args.stale_days) for slug in chars}
     has_fail = any(f.status == "FAIL" for f in file_count_findings)
 
     if args.json_out:
