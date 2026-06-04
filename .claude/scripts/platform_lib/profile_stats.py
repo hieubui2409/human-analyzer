@@ -25,21 +25,6 @@ def profile_file_inventory(char_slug: str) -> list[dict]:
     return inventory
 
 
-def all_profiles_summary() -> list[dict]:
-    """Summary of all characters' profiles: file count, total lines."""
-    summary = []
-    for slug in ALL_CHARS:
-        files = profile_file_inventory(slug)
-        summary.append({
-            "character": CHAR_DISPLAY.get(slug, slug),
-            "slug": slug,
-            "file_count": len(files),
-            "total_lines": sum(f["lines"] for f in files),
-            "files": files,
-        })
-    return summary
-
-
 def git_hash_for_dir(directory: Path) -> Optional[str]:
     """Get latest git commit hash touching a directory."""
     try:

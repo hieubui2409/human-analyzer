@@ -89,22 +89,6 @@ def extract_frontmatter(filepath: Path) -> dict | None:
         return None
 
 
-def get_processing_status(filepath: Path) -> str:
-    """Get processing_status from frontmatter, or 'unknown' if missing."""
-    fm = extract_frontmatter(filepath)
-    if fm and "processing_status" in fm:
-        return fm["processing_status"]
-    return "unknown"
-
-
-def parse_evidence_tier(filepath: Path) -> int:
-    """Get evidence tier from frontmatter source_category, fallback to filename heuristic."""
-    fm = extract_frontmatter(filepath)
-    if fm and "source_category" in fm:
-        return SOURCE_TO_TIER.get(fm["source_category"], 5)
-    return estimate_evidence_tier(filepath)
-
-
 def validate_material_frontmatter(filepath: Path) -> list[str]:
     """Validate material frontmatter against schema. Returns list of errors."""
     fm = extract_frontmatter(filepath)

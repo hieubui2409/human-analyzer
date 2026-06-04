@@ -158,14 +158,3 @@ def extract_key_terms_from_name(theory_name: str) -> list[str]:
             terms.extend(expansions)
     return list(set(terms))
 
-
-def match_term_to_reference(term: str, ref_index: dict) -> Optional[str]:
-    """Find best matching reference for a clinical term."""
-    term_lower = term.lower()
-    for name, info in ref_index.items():
-        if term_lower in name.lower():
-            return name
-        for kt in info["key_terms"]:
-            if term_lower in kt or kt in term_lower:
-                return name
-    return None

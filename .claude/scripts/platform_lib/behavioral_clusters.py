@@ -196,16 +196,6 @@ def scan_file_for_behavioral_clusters(
     return results
 
 
-def get_clusters_for_theory(slug: str) -> list[str]:
-    """Return raw pattern strings for a given theory slug."""
-    return BEHAVIORAL_CLUSTERS.get(slug, [])
-
-
-def get_all_slugs() -> list[str]:
-    """Return all theory slugs with behavioral clusters defined."""
-    return list(BEHAVIORAL_CLUSTERS.keys())
-
-
 # ============================================================
 # Phase 2: LLM Behavioral Description Catalog
 # Plain-text descriptions for LLM semantic matching.

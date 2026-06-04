@@ -211,28 +211,6 @@ def get_promotion_candidates(conf_min=0.80, evidence_min=3):
     ]
 
 
-_IMMUTABLE_FIELDS = frozenset(["id", "created_at"])
-
-
-def update_instinct(instinct_id, **fields):
-    """Update instinct fields by ID. Raises KeyError if not found, ValueError for immutable fields."""
-    blocked = _IMMUTABLE_FIELDS & fields.keys()
-    if blocked:
-        raise ValueError(f"Cannot update immutable fields: {blocked}")
-    all_instincts = load_instincts()
-    found = None
-    for inst in all_instincts:
-        if inst["id"] == instinct_id:
-            found = inst
-            break
-    if found is None:
-        raise KeyError(f"Instinct not found: {instinct_id}")
-    for k, v in fields.items():
-        found[k] = v
-    _atomic_rewrite(all_instincts)
-    return found
-
-
 def get_agent_categories(agent_name):
     """Lookup categories for an agent from AGENT_CATEGORY_MAP."""
     return AGENT_CATEGORY_MAP.get(agent_name, [])
