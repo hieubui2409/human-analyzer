@@ -38,3 +38,5 @@ plans/visuals/knowledge-graph-*.html
 # Knowledge graph embedding artifacts (derived, regenerable via embed_corpus)
 .models/
 .cache/
+# Gemini CLI settings (contains user-specific config)
+.gemini/
