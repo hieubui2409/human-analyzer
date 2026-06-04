@@ -8,21 +8,16 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import TELEMETRY, EVENT_STREAMS, CASCADE_EVENTS
+from platform_lib.event_routing import routable_events
 
-VALID_EVENT_TYPES = [
-    "MAT.integrated",
+# Audit-only events not in the routing table (internal lifecycle / CRE / COM signals).
+_AUDIT_EVENT_TYPES = [
     "MAT.archived",
-    "PSY.refresh",
     "PSY.crisis",
     "PSY.relation-angle-discovered",
-    "CRE.recalibrate",
     "CRE.evidence-checked",
     "CRE.angle-discovered",
     "CRE.published",
-    "GRO.assessed",
-    "GRO.forecast",
-    "GRO.mentored",
-    "GRO.profiled",
     "ORC.bootstrap",
     "ORC.decision",
     "ORC.classify",
@@ -31,6 +26,9 @@ VALID_EVENT_TYPES = [
     "COM.governance",
     "COM.commit",
 ]
+
+# Union of routable events (from canonical table) and audit-only events above.
+VALID_EVENT_TYPES = sorted(set(_AUDIT_EVENT_TYPES) | set(routable_events()))
 
 
 def resolve_stream(event_type: str):
