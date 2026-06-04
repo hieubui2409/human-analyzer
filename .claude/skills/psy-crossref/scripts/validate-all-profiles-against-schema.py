@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILES, PROFILE_FILES
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILES, PROFILE_FILES, resolve_character
 from platform_lib import schema_validator as sv
 
 # status icons preserved from the previous validator for stable CLI output
@@ -77,7 +77,7 @@ def main():
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
 
-    slugs = [args.character] if args.character else ALL_CHARS
+    slugs = [resolve_character(args.character)] if args.character else ALL_CHARS
     report = {slug: validate_character(slug) for slug in slugs}
 
     if args.json:
