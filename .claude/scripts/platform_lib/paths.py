@@ -1,4 +1,5 @@
 """Project path constants and discovery utilities for PMC framework."""
+import itertools
 import os
 from pathlib import Path
 
@@ -77,6 +78,18 @@ CHARACTERS = {
 
 ALL_CHARS = ["character-a", "character-b", "character-c"]
 CHAR_DISPLAY = {"character-a": "Nhân vật A", "character-b": "Nhân vật B", "character-c": "Nhân vật C"}
+
+# Free-text search aliases per character (display, ASCII-folded, full name) — used to find
+# cross-character mentions in profile/timeline prose. Single source so the crossref scripts
+# stop re-declaring divergent copies.
+CHAR_SEARCH_ALIASES = {
+    "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật A"],
+    "character-b": ["Nhân vật B", "Nhân vật ẩn danh", "Nhân vật B"],
+    "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật C"],
+}
+
+# All unordered dyad pairs, derived (never hand-listed — hand-lists drifted to 2/3 pairs).
+CHARACTER_PAIRS = list(itertools.combinations(ALL_CHARS, 2))
 
 # Universal profile schema — nested structure (25 base files, same for all characters).
 # Per-character relationship files (e.g. relationships/character-a.md) are NOT listed

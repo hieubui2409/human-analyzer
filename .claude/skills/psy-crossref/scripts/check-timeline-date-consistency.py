@@ -13,7 +13,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, character_dir
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, character_dir, CHARACTER_PAIRS, CHAR_SEARCH_ALIASES
 from platform_lib.markdown_parser import extract_timeline_events
 from platform_lib.formatters import print_json, print_table
 
@@ -125,22 +125,14 @@ def check_cross_character_date_alignment() -> list[dict]:
     """Find events in one char's timeline that reference another char, compare dates."""
     issues = []
     char_events: dict[str, list] = {}
-    char_aliases = {
-        "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật A"],
-        "character-b": ["Nhân vật B", "Nhân vật ẩn danh", "Nhân vật B"],
-        "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật C"],
-    }
+    char_aliases = CHAR_SEARCH_ALIASES
 
     for slug in ALL_CHARS:
         tf = character_dir(slug) / "timeline/overview.md"
         char_events[slug] = extract_timeline_events(tf) if tf.exists() else []
 
-    pairs = [
-        ("character-a", "character-b"),
-        ("character-a", "character-c"),
-    ]
-
-    for c1, c2 in pairs:
+    # All dyad pairs (was hand-listed with only 2 of 3 → missed hoa↔chiến date conflicts).
+    for c1, c2 in CHARACTER_PAIRS:
         aliases2 = char_aliases[c2]
         for ev in char_events[c1]:
             for alias in aliases2:
