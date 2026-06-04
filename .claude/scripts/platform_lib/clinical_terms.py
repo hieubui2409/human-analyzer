@@ -3,6 +3,12 @@ import re
 from pathlib import Path
 from typing import Optional
 
+# Canonical reference-file H2 sections per docs/rules/10-reference-library-standard.md
+# (matched as case-insensitive substrings, since headings carry a numeric prefix like
+# "## 1. Định nghĩa (Definition)"). Single source so ref-create and ref-maintain validate
+# against the same schema instead of two divergent (and both wrong) section lists.
+REFERENCE_REQUIRED_SECTIONS = ["Định nghĩa", "Nguồn gốc", "Cơ chế", "Case Study"]
+
 CLINICAL_PATTERNS = [
     r"\battachment\s+(style|theory|pattern|anxious|avoidant|disorganized|secure)\b",
     r"\b(anxious|avoidant|disorganized|secure)\s+attachment\b",

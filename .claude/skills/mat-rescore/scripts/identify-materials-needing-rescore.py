@@ -44,7 +44,7 @@ def scan_character(slug: str, missing_only: bool, raw_only: bool) -> list[dict]:
     if not mat_dir.exists():
         return []
     results = []
-    for f in sorted(mat_dir.glob("*.md")):
+    for f in sorted(mat_dir.rglob("*.md")):
         text = f.read_text(encoding="utf-8")
         fm = extract_frontmatter(f) or {}
         status = fm.get("processing_status", "unknown")
@@ -112,7 +112,7 @@ def main():
     total_flagged = 0
     for slug, items in all_results.items():
         display = CHAR_DISPLAY.get(slug, slug)
-        total = sum(1 for f in (MATERIALS / slug).glob("*.md")) if (MATERIALS / slug).exists() else 0
+        total = sum(1 for f in (MATERIALS / slug).rglob("*.md")) if (MATERIALS / slug).exists() else 0
         print(f"\n  {display} ({slug}) — {len(items)}/{total} need rescore")
         if not items:
             print("    All materials have complete CRAAP scores.")

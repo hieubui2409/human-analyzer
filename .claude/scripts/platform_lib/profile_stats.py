@@ -8,15 +8,20 @@ from .paths import PROFILES, PROFILE_CACHE, PROFILE_FILES, ALL_CHARS, CHAR_DISPL
 
 
 def profile_file_inventory(char_slug: str) -> list[dict]:
-    """List all profile files for a character with line counts."""
+    """List all profile files for a character with line counts.
+
+    Walks the nested profile tree (``rglob``) so the 22 files under identity/, psychology/,
+    growth/, etc. are counted — not just the 3 root-level files. The ``file`` key is the
+    path relative to the character dir (e.g. ``psychology/formulation.md``) so nested files
+    with the same basename stay distinct.
+    """
     char_dir = PROFILES / char_slug
     if not char_dir.exists():
         return []
     inventory = []
-    for f in sorted(char_dir.iterdir()):
-        if f.suffix == ".md":
-            lines = len(f.read_text(encoding="utf-8").splitlines())
-            inventory.append({"file": f.name, "lines": lines, "path": str(f)})
+    for f in sorted(char_dir.rglob("*.md")):
+        lines = len(f.read_text(encoding="utf-8").splitlines())
+        inventory.append({"file": f.relative_to(char_dir).as_posix(), "lines": lines, "path": str(f)})
     return inventory
 
 
@@ -47,8 +52,25 @@ def git_hash_for_dir(directory: Path) -> Optional[str]:
         return None
 
 
+def has_uncommitted_changes(directory: Path) -> bool:
+    """True if the directory has staged/unstaged/untracked changes in git."""
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain", "--", str(directory)],
+            capture_output=True, text=True, timeout=10,
+        )
+        return bool(result.stdout.strip())
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False
+
+
 def cache_is_valid(char_slug: str) -> bool:
-    """Check if profile-lite cache is still valid against git state."""
+    """Check if profile-lite cache is still valid against git state.
+
+    Invalidates on both committed changes (commit-hash mismatch) AND uncommitted
+    working-tree edits — a commit-hash check alone would report a stale cache as valid
+    while source files were edited but not yet committed.
+    """
     meta_file = PROFILE_CACHE / f"{char_slug}-meta.json"
     if not meta_file.exists():
         return False
@@ -59,8 +81,10 @@ def cache_is_valid(char_slug: str) -> bool:
     stored_hash = meta.get("git_hash")
     if not stored_hash:
         return False
-    current_hash = git_hash_for_dir(PROFILES / char_slug)
-    return stored_hash == current_hash
+    char_dir = PROFILES / char_slug
+    if has_uncommitted_changes(char_dir):
+        return False
+    return stored_hash == git_hash_for_dir(char_dir)
 
 
 def cache_status_table() -> list[dict]:

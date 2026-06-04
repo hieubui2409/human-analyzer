@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, character_dir, REFERENCES
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, character_dir, REFERENCES, resolve_character
 from platform_lib.clinical_terms import build_reference_index, scan_file_for_clinical_terms
 from platform_lib.formatters import print_table, print_json, eprint
 
@@ -19,11 +19,13 @@ LINK_PATTERN = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
 
 
 def scan_profile_for_unlinked_terms(char: str, ref_index: dict) -> list[dict]:
-    cdir = character_dir(char)
+    slug = resolve_character(char)
+    display = CHAR_DISPLAY[slug]
+    cdir = character_dir(slug)
     if not cdir.exists():
         return []
     results = []
-    for f in sorted(cdir.glob("*.md")):
+    for f in sorted(cdir.rglob("*.md")):
         content = f.read_text(encoding="utf-8", errors="replace")
         lines = content.split("\n")
         linked_refs = set()
@@ -43,8 +45,8 @@ def scan_profile_for_unlinked_terms(char: str, ref_index: dict) -> list[dict]:
                             line, re.IGNORECASE
                         ))
                         results.append({
-                            "character": CHAR_DISPLAY[char],
-                            "file": f.name,
+                            "character": display,
+                            "file": f.relative_to(cdir).as_posix(),
                             "line": i + 1,
                             "term": term,
                             "theory": theory_name[:50],

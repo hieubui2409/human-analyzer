@@ -1,7 +1,27 @@
 """Markdown section parser and metadata extractor."""
+import datetime as _dt
 import re
 from pathlib import Path
 from typing import Optional
+
+import yaml
+
+_FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
+
+
+def _stringify_dates(obj):
+    """YAML turns unquoted ISO dates into date objects; coerce back to ISO strings so
+    downstream string comparisons (last_updated, captured_date) stay stable. Recurses
+    into nested dicts/lists so craap_score / tags / references keep their structure."""
+    if isinstance(obj, _dt.datetime):
+        return obj.isoformat()
+    if isinstance(obj, _dt.date):
+        return obj.isoformat()
+    if isinstance(obj, dict):
+        return {k: _stringify_dates(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_stringify_dates(v) for v in obj]
+    return obj
 
 
 def extract_sections(filepath: Path, level: int = 2) -> dict[str, str]:
@@ -20,20 +40,24 @@ def extract_sections(filepath: Path, level: int = 2) -> dict[str, str]:
     return sections
 
 
-def extract_frontmatter(filepath: Path) -> dict[str, str]:
-    """Extract YAML-like frontmatter from markdown file."""
+def extract_frontmatter(filepath: Path) -> dict:
+    """Extract YAML frontmatter from a markdown file as a (possibly nested) dict.
+
+    Uses ``yaml.safe_load`` so nested mappings (e.g. ``craap_score:``) and block/flow
+    list values (``tags: [a, b]``, multi-line ``references:``) are preserved instead of
+    being flattened to empty strings. Date scalars are coerced to ISO strings for stable
+    comparisons. Returns ``{}`` when the file is missing or has no frontmatter block.
+    """
     if not filepath.exists():
         return {}
     text = filepath.read_text(encoding="utf-8")
-    fm_match = re.match(r"^---\s*\n(.*?)\n---", text, re.DOTALL)
+    fm_match = _FRONTMATTER_RE.match(text)
     if not fm_match:
         return {}
-    result = {}
-    for line in fm_match.group(1).splitlines():
-        kv = line.split(":", 1)
-        if len(kv) == 2:
-            result[kv[0].strip()] = kv[1].strip().strip('"').strip("'")
-    return result
+    data = yaml.safe_load(fm_match.group(1)) or {}
+    if not isinstance(data, dict):
+        return {}
+    return _stringify_dates(data)
 
 
 def count_lines(filepath: Path) -> int:
@@ -101,6 +125,56 @@ def extract_timeline_events(filepath: Path) -> list[dict]:
                     "section": section_name,
                 })
     return events
+
+
+def parse_table_rows(text: str) -> list[list[str]]:
+    """Split markdown table rows into trimmed cell lists (deterministic gather).
+
+    One row per line containing at least two ``|`` delimiters. The outer leading/trailing
+    pipe is stripped, each cell is trimmed, and separator rows (``| --- | --- |``) are
+    dropped. Cells are returned verbatim with NO column-count assumption — callers map
+    columns themselves (tables in this corpus range from 3 to 5 columns). This replaces
+    the divergent fixed-3-group ``re.search`` parsers that silently truncated wide tables.
+    """
+    rows: list[list[str]] = []
+    for line in text.splitlines():
+        s = line.strip()
+        if s.count("|") < 2:
+            continue
+        if s.startswith("|"):
+            s = s[1:]
+        if s.endswith("|"):
+            s = s[:-1]
+        cells = [c.strip() for c in s.split("|")]
+        # separator row: every (non-empty) cell is only dashes/colons/spaces
+        if cells and all(c and set(c) <= set("-: ") for c in cells):
+            continue
+        rows.append(cells)
+    return rows
+
+
+def parse_dreyfus_skills(text: str) -> list[dict]:
+    """Extract Dreyfus competency rows from a markdown table → ``[{name, level}]``.
+
+    A skill row has a name cell (col 1) plus a Dreyfus level cell (col 2) whose leading
+    token is a 1-7 digit (e.g. ``5 — Expert``). Only the 2nd column is inspected for the
+    level so that textual-level tables (``Basic``) and evidence cells that merely *start*
+    with a number (``1 năm tại …``) are NOT mis-read as Dreyfus scores. Header/separator
+    rows are skipped. Single canonical parser shared by gro:competency-map / gro:compare /
+    gro:career-forecast so they can no longer disagree on skill count / average level.
+    """
+    skills: list[dict] = []
+    for cells in parse_table_rows(text):
+        if len(cells) < 2:
+            continue
+        name = cells[0].strip().strip("*").strip()
+        m = re.match(r"\*{0,2}\s*([1-7])\b", cells[1])
+        if not m or len(name) <= 1:
+            continue
+        if name.lower() in {"kỹ năng", "skill", "competency", "name", "field"}:
+            continue
+        skills.append({"name": name, "level": int(m.group(1))})
+    return skills
 
 
 def extract_milestones(filepath: Path) -> list[dict]:

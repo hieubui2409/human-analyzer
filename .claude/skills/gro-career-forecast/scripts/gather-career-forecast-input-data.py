@@ -8,7 +8,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILES, resolve_character
-from platform_lib.markdown_parser import extract_sections, extract_frontmatter
+from platform_lib.markdown_parser import extract_sections, parse_dreyfus_skills
+from platform_lib.growth_taxonomy import SUPER_STAGES, earliest_term, mentioned_terms
 
 
 def extract_career_state(slug: str) -> dict:
@@ -24,11 +25,8 @@ def extract_career_state(slug: str) -> dict:
     result["lines"] = len(text.splitlines())
     result["sections"] = extract_sections(cp_file)
 
-    text_lower = text.lower()
-    for stage in ["establishment", "exploration", "growth", "maintenance", "disengagement"]:
-        if stage in text_lower:
-            result["stage"] = stage
-            break
+    result["stage"] = earliest_term(text, SUPER_STAGES, default="")
+    result["stages_mentioned"] = mentioned_terms(text, SUPER_STAGES)
 
     return result
 
@@ -44,14 +42,7 @@ def extract_skill_summary(slug: str) -> dict:
     text = comp_file.read_text(encoding="utf-8")
     result["exists"] = True
 
-    dreyfus_pattern = re.compile(r'^\|\s*\*{0,2}([^|*]+?)\*{0,2}\s*\|\s*(\d)[^|]*\|', re.MULTILINE)
-    skills = []
-    for match in dreyfus_pattern.finditer(text):
-        name = match.group(1).strip().strip("*")
-        level = int(match.group(2))
-        if 1 <= level <= 7 and len(name) > 1:
-            skills.append({"name": name, "level": level})
-
+    skills = parse_dreyfus_skills(text)
     result["skill_count"] = len(skills)
     result["top_skills"] = sorted(skills, key=lambda s: s["level"], reverse=True)[:5]
     return result

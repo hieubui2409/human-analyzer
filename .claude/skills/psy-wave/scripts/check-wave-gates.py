@@ -6,11 +6,14 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 from platform_lib.paths import resolve_character, character_dir, CHAR_DISPLAY, list_relationship_files
-from platform_lib.markdown_parser import extract_sections, extract_tags
+from platform_lib.markdown_parser import extract_sections, extract_tags, extract_frontmatter
 from platform_lib.formatters import print_json
 
+# Section headings in this corpus are English. "Career" is intentionally NOT required —
+# student characters (e.g. Nhân vật C) have no career section yet, so requiring it would falsely
+# block their Wave 1 gate.
 WAVE1_REQUIRED_SECTIONS = {
-    "identity/core.md": ["Thông tin cơ bản", "Học vấn", "Nghề nghiệp"],
+    "identity/core.md": ["Basic Information", "Education"],
     "timeline/overview.md": [],  # just needs to be non-empty
 }
 WAVE1_CONFIDENTIAL_FILES = ["identity/core.md", "relationships/family.md"]
@@ -66,15 +69,20 @@ def check_wave2(char_dir_path):
         if len(text) < 200:
             issues.append(f"TOO_SPARSE: {fname} (<200 chars)")
 
-    # Check clinical refs linked (look for [[ref]] or (ref) links)
+    # Clinical references may be cited two ways in this corpus: inline markdown/wiki links
+    # to references/ (relative paths, e.g. ../../../references/foo.md — used by some
+    # characters) OR a non-empty frontmatter `references:` list (used by others). Accept
+    # either; only flag when BOTH are absent.
     import re
-    ref_pattern = re.compile(r"\[\[.+?\]\]|\[.+?\]\(docs/references/")
+    ref_link_pattern = re.compile(r"\[\[.+?\]\]|\]\([^)]*references/[^)]+\.md")
     for fname in WAVE2_CLINICAL_REFS_FILES:
         fpath = char_dir_path / fname
         if not fpath.exists():
             continue
         text = fpath.read_text(encoding="utf-8")
-        if not ref_pattern.search(text):
+        fm_refs = extract_frontmatter(fpath).get("references") or []
+        has_fm_refs = isinstance(fm_refs, list) and len(fm_refs) > 0
+        if not ref_link_pattern.search(text) and not has_fm_refs:
             issues.append(f"NO_CLINICAL_REF_LINKS: {fname}")
 
     return issues
