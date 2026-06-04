@@ -31,15 +31,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib import paths  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
+from platform_lib.skill_ids import framework_of as _framework_of, to_dir_id  # noqa: E402
 
 FRAMEWORKS = ["mat", "psy", "cre", "gro", "orc", "com"]
 # Module-level, monkeypatchable in tests (point at a tmp fixture tree).
 INVOCATIONS = paths.TELEMETRY / "invocations.jsonl"
 SKILLS_DIR = paths.SKILLS
-
-
-def _framework_of(skill: str) -> str:
-    return skill.split("-", 1)[0].split(":", 1)[0]
 
 
 def all_framework_skills() -> set[str]:
@@ -69,7 +66,7 @@ def gather_invocations(days: int, framework: str | None) -> dict:
                 rec = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            skill = rec.get("skill", "").replace(":", "-")
+            skill = to_dir_id(rec.get("skill", ""))
             if not skill:
                 continue
             ts = _parse_ts(rec)
@@ -92,12 +89,28 @@ def _sessions_dir() -> Path:
     return Path.home() / ".claude" / "projects" / enc
 
 
-def gather_tokens() -> dict[str, int]:
-    """Per-skill token attribution across all session transcripts (best-effort)."""
+def _rec_ts(rec: dict) -> datetime | None:
+    """Session-JSONL turn timestamp (top-level 'timestamp', ISO-8601)."""
+    raw = rec.get("timestamp", "")
+    try:
+        return datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except (ValueError, AttributeError):
+        return None
+
+
+def gather_tokens(days: int, framework: str | None) -> dict[str, int]:
+    """Per-skill token attribution across session transcripts within the same window.
+
+    Honors --days (skip turns older than the cutoff) and --framework (skip spans for
+    other frameworks) so the token column matches the day/framework-filtered count column.
+    Best-effort: a span that opens before the cutoff is simply not credited for its
+    pre-cutoff turns — directional, not billing-exact.
+    """
     sdir = _sessions_dir()
     tokens: dict[str, int] = defaultdict(int)
     if not sdir.exists():
         return {}
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
     for sf in sorted(sdir.glob("*.jsonl")):
         current: str | None = None
         try:
@@ -110,6 +123,9 @@ def gather_tokens() -> dict[str, int]:
                     rec = json.loads(line)
                 except json.JSONDecodeError:
                     continue
+                ts = _rec_ts(rec)
+                if ts and ts < cutoff:
+                    continue  # outside the window — keep token sum aligned with counts
                 msg = rec.get("message")
                 if not isinstance(msg, dict):
                     continue
@@ -119,7 +135,9 @@ def gather_tokens() -> dict[str, int]:
                         if isinstance(b, dict) and b.get("type") == "tool_use" and b.get("name") == "Skill":
                             sk = (b.get("input") or {}).get("skill", "")
                             if sk:
-                                current = sk.replace(":", "-")
+                                sk = to_dir_id(sk)
+                                # Drop spans outside the requested framework.
+                                current = sk if not framework or _framework_of(sk) == framework else None
                 usage = msg.get("usage")
                 if current and isinstance(usage, dict):
                     tokens[current] += int(usage.get("input_tokens", 0)) + int(usage.get("output_tokens", 0))
@@ -140,7 +158,7 @@ def gather(days: int, framework: str | None, with_tokens: bool) -> dict:
     catalog = all_framework_skills()
     if framework:
         catalog = {s for s in catalog if _framework_of(s) == framework}
-    tokens = gather_tokens() if with_tokens else {}
+    tokens = gather_tokens(days, framework) if with_tokens else {}
     never_used = sorted(s for s in catalog if s not in counts)
     rows = []
     for skill in catalog | set(counts):

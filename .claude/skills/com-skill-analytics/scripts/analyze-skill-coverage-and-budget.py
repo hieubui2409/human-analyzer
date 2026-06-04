@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths  # noqa: E402
 from platform_lib.markdown_parser import extract_frontmatter  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
+from platform_lib.skill_ids import to_dir_id  # noqa: E402
 
 FRAMEWORKS = ["mat", "psy", "cre", "gro", "orc", "com"]
 # Where framework skills are actually cataloged. The two skill-*-routing.md rule
@@ -114,7 +115,7 @@ def never_used(skills: list[dict]) -> list[str]:
     if INVOCATIONS.exists():
         for line in INVOCATIONS.read_text(encoding="utf-8").splitlines():
             try:
-                used.add(json.loads(line).get("skill", "").replace(":", "-"))
+                used.add(to_dir_id(json.loads(line).get("skill", "")))
             except json.JSONDecodeError:
                 continue
     return sorted(s["skill"] for s in skills if s["skill"] not in used)

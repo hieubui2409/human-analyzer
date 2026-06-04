@@ -53,9 +53,22 @@ if [ ${#FLAGS[@]} -eq 0 ]; then
   FLAGS=("--commit" "--push")
 fi
 
+# commit.sh needs either --all or an explicit LUCAS_FILES list (env, set by Claude after
+# smart file selection). If --commit is requested with neither, fail fast with guidance
+# instead of letting commit.sh emit a cryptic "No files specified" exit 1.
+for flag in "${FLAGS[@]}"; do
+  if [ "$flag" = "--commit" ] && [ "$STAGE_ALL" != "true" ] && [ -z "$LUCAS_FILES" ]; then
+    echo "ERROR: --commit needs files. Pass --all to stage everything, or set LUCAS_FILES" >&2
+    echo "       (space-separated paths) before calling. Claude normally selects files and" >&2
+    echo "       calls commit.sh directly; the dispatcher is mainly for --push/--sync/--all." >&2
+    exit 1
+  fi
+done
+
 export LUCAS_COMMIT_MSG="$COMMIT_MSG"
 export LUCAS_STAGE_ALL="$STAGE_ALL"
 export LUCAS_DRY_RUN="$DRY_RUN"
+export LUCAS_FILES="${LUCAS_FILES:-}"
 
 # Execute flags sequentially, stop on failure
 EXIT_CODE=0

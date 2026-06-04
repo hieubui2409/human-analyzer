@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths  # noqa: E402
 from platform_lib.markdown_parser import extract_links, extract_dates  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
+from platform_lib.paths import resolve_character  # noqa: E402
 
 # Module-level, monkeypatchable in tests.
 PROFILES = paths.PROFILES
@@ -88,7 +89,9 @@ def _profile_md_files(character: str | None):
     root = PROFILES
     if not root.exists():
         return []
-    chars = [root / character] if character else [d for d in root.iterdir() if d.is_dir()]
+    # Resolve aliases (e.g. "hieu" → "character-a") so --character doesn't silently
+    # point at a non-existent dir and scan nothing.
+    chars = [root / resolve_character(character)] if character else [d for d in root.iterdir() if d.is_dir()]
     files = []
     for c in chars:
         if c.is_dir():

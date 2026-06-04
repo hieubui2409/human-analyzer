@@ -101,7 +101,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ---
 
-## Rules (`docs/rules/` — 15 files)
+## Rules (`docs/rules/` — 16 files)
 
 | #   | File                       | Scope                                                         |
 | --- | -------------------------- | ------------------------------------------------------------- |
@@ -120,6 +120,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 | 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)       |
 | 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
 | 15  | gro-framework              | GRO domain boundaries, profile files, GRO↔PSY boundary        |
+| 16  | knowledge-graph            | KG tier schema, graph integrity, `orc:graph` validation       |
 
 ---
 
