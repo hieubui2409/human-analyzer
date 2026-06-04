@@ -20,7 +20,6 @@ def kg(monkeypatch, tmp_path):
     monkeypatch.setattr(mod, "MATERIALS", tmp_path / "docs" / "materials")
     monkeypatch.setattr(mod, "REFERENCES", tmp_path / "docs" / "references")
     monkeypatch.setattr(mod, "GRAPH", tmp_path / "docs" / "graph")
-    mod._graph_cache = None
     return mod, tmp_path
 
 

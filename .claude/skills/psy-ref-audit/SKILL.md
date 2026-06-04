@@ -23,6 +23,8 @@ Audit clinical references in ALL directions. Scripts do deterministic gathering;
 | Profile → Ref (implicit) | Psychology-related PHRASES in profiles not using formal terms but describing clinical concepts | PURE HEURISTIC — LLM reads context |
 | Ref → Profile            | Theories in ref library that SHOULD appear in profiles but don't                               | Script maps + LLM assesses fit     |
 
+**Optional advisory input** (default-off): `from platform_lib import knowledge_graph_advisory as kgad; kgad.coverage_gap_candidates(character, min_backing=2)` surfaces profile files whose count of material-edges falls below a threshold — candidate under-evidenced sections. Every row carries `authoritative:false` and `owning_skill: "psy:ref-audit"`; the text-scan workflow below remains source-of-truth (graph `cites_theory` is English-slug-literal and undercounts Vietnamese-only citations).
+
 ## Flags
 
 | Flag                 | Purpose                                                          |

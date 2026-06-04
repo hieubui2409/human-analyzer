@@ -1,7 +1,7 @@
 ---
 name: cre:angle-discovery
 description: "Discover publishable content angles by proactively mining all 6 frameworks — PSY growth-edges (emotional), MAT new materials (story), GRO milestones (professional), CRE/ORC event history (distribution/timing), plus psy:relation-intelligence (relationship). Aggregates raw signals, ranks by freshness × evidence × platform-fit, tags each {source_framework, evidence_tier, primary_character, freshness, consent_status}, and emits a CONTEXT.md block for cre:post-writer. READ-ONLY, autonomous (cron/event-runnable). Use when deciding what to post next or seeding cre:exploring/post-writer. Triggers: 'angle discovery', 'find content angles', 'what should we post', 'mine angles', 'proactive ideation', 'content opportunities'."
-argument-hint: "--character <slug> [--framework psy|mat|gro|cre|orc|all] [--since-days N] [--top N] [--to-context] [--json]"
+argument-hint: "--character <slug> [--framework psy|mat|gro|cre|orc|all] [--since-days N] [--top N] [--graph-signal] [--to-context] [--json]"
 metadata:
   author: hieubt
   version: "1.0.0"
@@ -21,11 +21,11 @@ angle straight into `cre:exploring` (to refine) or `cre:post-writer --from-conte
 
 ## Determinism Split (GOLDEN RULE #4)
 
-| Layer     | Owner                                            | Does                                                                                                                                          |
-| --------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Gather    | `aggregate-angle-signals-across-frameworks.py`   | OVER-GATHER raw signals: B5 streams (date-filtered) + PSY growth-edges + GRO milestones + MAT recent materials; tag framework/type/freshness. Deterministic. |
-| Synthesize| **LLM**                                          | Read raw signals + (optionally) B9 relationship facts → write candidate angles (title, hook, framing), assign evidence_tier + platform_fit. Heuristic. |
-| Rank      | `rank-angles-by-freshness-and-evidence.py`       | Score = freshness × evidence × platform-fit × consent_factor; sort; flag speculative (T4/T5) + sink BLOCKED. Deterministic.                  |
+| Layer      | Owner                                          | Does                                                                                                                                                                                                                        |
+| ---------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gather     | `aggregate-angle-signals-across-frameworks.py` | OVER-GATHER raw signals: B5 streams + PSY growth-edges + GRO milestones + MAT recent materials. Optional **`--graph-signal`** (default OFF) appends KG `latent_links` + `similar_files` semantic candidates. Deterministic. |
+| Synthesize | **LLM**                                        | Read raw signals + (optionally) B9 relationship facts → write candidate angles (title, hook, framing), assign evidence_tier + platform_fit. Heuristic.                                                                      |
+| Rank       | `rank-angles-by-freshness-and-evidence.py`     | Score = freshness × evidence × platform-fit × consent_factor; sort; flag speculative (T4/T5) + sink BLOCKED. Deterministic.                                                                                                 |
 
 Scripts may over-gather (e.g. ORC session-lifecycle events) — false positives expected;
 the LLM synthesis layer discards noise and keeps only signals that make a real angle.
@@ -53,13 +53,13 @@ $PY $SK/rank-angles-by-freshness-and-evidence.py --angles angles.json --top 5 --
 
 ## Signal → Angle Lens
 
-| Framework | Signal source (gathered)                              | Angle lens   |
-| --------- | ----------------------------------------------------- | ------------ |
-| PSY       | growth-edges sections, CURRENT-STATE deltas, events   | emotional    |
-| MAT       | newly-touched materials, coverage gaps                | story        |
-| GRO       | milestones (ACHIEVED/IN_PROGRESS), competency deltas  | professional |
-| CRE       | content-events history (engagement, prior posts)      | distribution |
-| ORC       | cascade/timing events                                 | timing       |
+| Framework | Signal source (gathered)                             | Angle lens   |
+| --------- | ---------------------------------------------------- | ------------ |
+| PSY       | growth-edges sections, CURRENT-STATE deltas, events  | emotional    |
+| MAT       | newly-touched materials, coverage gaps               | story        |
+| GRO       | milestones (ACHIEVED/IN_PROGRESS), competency deltas | professional |
+| CRE       | content-events history (engagement, prior posts)     | distribution |
+| ORC       | cascade/timing events                                | timing       |
 
 ## Ranking & Scoring
 
@@ -100,8 +100,8 @@ $PY .claude/skills/orc-event-log/scripts/append-event-to-log.py \
 
 - **vs `cre:exploring`** — exploring = interactive user Q&A (synchronous, user-driven);
   this = autonomous signal-mining (proactive, no user input). They compose: discovery → exploring.
-- **vs `psy:relation-intelligence` (B9)** — B9 is a *specialized* angle source (cross-character
-  relationship only). This skill *aggregates* B9 + 4 other framework sources and ranks globally.
+- **vs `psy:relation-intelligence` (B9)** — B9 is a _specialized_ angle source (cross-character
+  relationship only). This skill _aggregates_ B9 + 4 other framework sources and ranks globally.
   This skill calls B9 for the relationship slice; no duplication.
 
 ## See Also

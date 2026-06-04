@@ -26,6 +26,30 @@ def mock_data_dir() -> Path:
     return MOCK_DATA_DIR
 
 
+@pytest.fixture(autouse=True)
+def _reset_kg_singletons():
+    """Reset knowledge-graph process-singleton caches before and after every test.
+
+    A graph (and its undirected projection / embedding adjacency) is memoized at module
+    scope and survives across tests in one pytest process; without a reset a graph built
+    under one test's monkeypatched paths leaks into the next. Centralized here so each KG
+    test file no longer repeats the reset (and no longer forgets `_undirected_cache`).
+    Only touches modules already imported, so non-KG tests pay no import cost.
+    """
+    def _clear():
+        kg = sys.modules.get("platform_lib.knowledge_graph")
+        if kg is not None:
+            kg._graph_cache = None
+            kg._undirected_cache = None
+        kgd = sys.modules.get("platform_lib.knowledge_graph_discovery")
+        if kgd is not None and hasattr(kgd, "_reset_adjacency_cache"):
+            kgd._reset_adjacency_cache()
+
+    _clear()
+    yield
+    _clear()
+
+
 @pytest.fixture(autouse=False)
 def patch_platform_paths(monkeypatch):
     """Redirect platform_lib.paths globals to mock-data for the duration of a test."""

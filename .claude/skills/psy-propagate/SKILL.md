@@ -26,6 +26,8 @@ Prompt for character selection, then scan all connections.
 | `--section <section>` | Specific profile section that changed (optional) |
 | `--json`              | Output as JSON                                   |
 
+**Optional advisory input** (default-off): `from platform_lib import knowledge_graph_advisory as kgad; kgad.propagation_suggestions(seed_entity, hops=1)` returns ranked SUGGEST-ONLY neighbours (graph + semantic) of the changed entity to widen the consideration set. Every row tagged `authoritative:false`, `suggest_only:true`, `owning_skill: "psy:propagate"`; the PROPAGATION_MAP causal logic below stays source-of-truth (semantic similarity ≠ causal dependency).
+
 ## Relationship Graph
 
 The propagation map is derived from `docs/graph/relational-dynamics.md`:
