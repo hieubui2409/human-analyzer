@@ -23,27 +23,56 @@ SHARED_EVENTS = [
      [r"mentor", r"cố\s*vấn"]),
 ]
 
+# Ordered most-precise → least-precise. The original second tuple element (format
+# templates) was dead code — extraction appended the raw match, so "2026-03" and
+# "03/2026" (same month) compared unequal → false MISMATCH. Dates are now normalized
+# to a single canonical key (YYYY-MM, YYYY-Tq, or YYYY) for comparison.
+_MONTH_ABBR = {m: i for i, m in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
+
 DATE_PATTERNS = [
-    (r"\b(\d{4})-(\d{2})-(\d{2})\b", "{year}-{month:02d}"),  # YYYY-MM-DD
-    (r"\b(\d{2})/(\d{4})\b", "{month:02d}/{year}"),           # MM/YYYY
-    (r"\b(0[1-9]|1[0-2])/(\d{4})\b", "{month:02d}/{year}"),
-    (r"\b(T\d{1,2})/(\d{4})\b", "T{month}/{year}"),           # Vietnamese quarter
-    (r"(?:tháng\s*|month\s*)(\d{1,2}).*?(\d{4})", "{month:02d}/{year}"),
-    (r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{4})", "{year}"),
-    (r"\b(\d{4})\b", "{year}"),  # Year only — lowest precision
+    r"\b\d{4}-\d{2}-\d{2}\b",                              # YYYY-MM-DD
+    r"\bT\d{1,2}/\d{4}\b",                                 # Vietnamese quarter Tq/YYYY
+    r"\b\d{1,2}/\d{4}\b",                                  # MM/YYYY
+    r"(?:tháng\s*|month\s*)\d{1,2}.*?\d{4}",               # tháng N ... YYYY
+    r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{4}",  # Mon YYYY
+    r"\b\d{4}\b",                                          # year only — lowest precision
 ]
 
 
+def normalize_date(raw: str) -> str:
+    """Collapse a matched date string to a canonical comparable key.
+
+    YYYY-MM-DD / MM/YYYY / 'tháng N ... YYYY' / 'Mon YYYY' → YYYY-MM;
+    Tq/YYYY → YYYY-Tq; bare year → YYYY. Unparseable → stripped raw.
+    """
+    s = raw.strip()
+    if m := re.match(r"(\d{4})-(\d{2})-\d{2}$", s):
+        return f"{m.group(1)}-{m.group(2)}"
+    if m := re.match(r"T(\d{1,2})/(\d{4})$", s):
+        return f"{m.group(2)}-T{int(m.group(1))}"
+    if m := re.match(r"(\d{1,2})/(\d{4})$", s):
+        return f"{m.group(2)}-{int(m.group(1)):02d}"
+    if m := re.search(r"(?:tháng\s*|month\s*)(\d{1,2}).*?(\d{4})", s, re.IGNORECASE):
+        return f"{m.group(2)}-{int(m.group(1)):02d}"
+    if m := re.match(r"([A-Za-z]{3})[a-z]*\.?\s+(\d{4})$", s):
+        mon = _MONTH_ABBR.get(m.group(1).lower())
+        return f"{m.group(2)}-{mon:02d}" if mon else m.group(2)
+    if m := re.match(r"(\d{4})$", s):
+        return m.group(1)
+    return s
+
+
 def extract_dates_near_pattern(text: str, patterns: list[str]) -> list[str]:
-    """Find dates within 100 chars of a matching keyword."""
+    """Find dates within ~80 chars of a matching keyword, normalized + deduplicated."""
     found_dates = []
     for kw in patterns:
         for m in re.finditer(kw, text, re.IGNORECASE | re.UNICODE):
             context = text[max(0, m.start() - 80): m.end() + 80]
-            for dpat, _ in DATE_PATTERNS:
+            for dpat in DATE_PATTERNS:
                 dm = re.search(dpat, context)
                 if dm:
-                    found_dates.append(dm.group(0))
+                    found_dates.append(normalize_date(dm.group(0)))
                     break
     return list(dict.fromkeys(found_dates))  # preserve order, deduplicate
 

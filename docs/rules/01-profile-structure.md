@@ -38,9 +38,17 @@ docs/profiles/{character}/
 │   └── traumas.md                  ← Trauma documentation [MANDATORY]
 ├── light/
 │   └── strengths-hope.md           ← Sources of hope, growth signs [MANDATORY]
-└── evidence/
-    └── conversations.md            ← Messenger/chat transcripts [Optional]
+├── evidence/
+│   └── conversations.md            ← Messenger/chat transcripts [Optional]
+└── growth/                         ← GRO domain (see rule 15-gro-framework)
+    ├── career-path.md              ← Career trajectory (Super stages) [MANDATORY]
+    ├── competencies.md             ← Skills inventory (Dreyfus) [MANDATORY]
+    ├── learning-profile.md         ← Learning style (Kolb) [Optional]
+    └── mentoring-map.md            ← Mentoring relationships (Kram) [Optional]
 ```
+
+> The `growth/` subtree is owned by the GRO framework (rule 15) but is part of the
+> universal profile schema (`paths.PROFILE_FILES`), so it is listed here for completeness.
 
 ## Path Migration Map
 

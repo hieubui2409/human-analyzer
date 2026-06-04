@@ -43,8 +43,8 @@ Run `scripts/build-reference-index.py` → JSON map of `{theory → file, catego
 
 ### Step 2: Scan Profiles (script + heuristic)
 
-1. Run `scripts/scan-clinical-terms.py --character <name>` → candidate term list with line + context
-2. With `--deep`: also run `scripts/scan-clinical-terms.py --character <name> --deep` → adds behavioral cluster hits (theories described as behavior without formal terms). Behavioral hits tagged `source: behavioral` vs clinical hits `source: clinical`.
+1. Run `scripts/scan-profile-files-for-clinical-terms.py --character <name>` → candidate term list with line + context
+2. With `--deep`: also run `scripts/scan-profile-files-for-clinical-terms.py --character <name> --deep` → adds behavioral cluster hits (theories described as behavior without formal terms). Behavioral hits tagged `source: behavioral` vs clinical hits `source: clinical`.
 3. **HEURISTIC PHASE:** LLM reviews each candidate:
    - Is this term used in CLINICAL context or everyday language?
    - Example: "attachment to his hometown" = casual. "anxious attachment pattern" = clinical
@@ -95,12 +95,12 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 
 ### Direction 1: Materials → Ref gaps
 
-1. Run `scripts/scan-clinical-terms-in-materials.py` → candidates
+1. Run `scripts/scan-materials-and-assets-for-clinical-terms.py` → candidates
 2. LLM judges: clinical or casual? New theory or variant of existing?
 
 ### Direction 2: Ref → Ref gaps (NEW)
 
-1. Run `scripts/scan-reference-cross-links.py` → find theories mentioned INSIDE ref files that don't have own ref file
+1. Run `scripts/scan-reference-cross-links-between-theories.py` → find theories mentioned INSIDE ref files that don't have own ref file
 2. Example: `savior-complex.md` discusses "co-dependency patterns" → check if `co-dependency.md` exists
 3. Example: `parentification.md` mentions "role reversal" → check if `role-reversal.md` exists
 4. LLM judges: does the mentioned concept warrant its own ref file, or is it adequately covered as subsection?
@@ -138,7 +138,7 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 
 ## Workflow: --cross-ref (Inter-Reference Audit)
 
-1. Run `scripts/scan-reference-cross-links.py` → linkage inventory
+1. Run `scripts/scan-reference-cross-links-between-theories.py` → linkage inventory
 2. For each ref file, check:
    - Which OTHER theories it mentions (by name or concept)
    - Are mentions markdown links or plain text?
@@ -151,9 +151,10 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 | Script                                        | Phase     | Purpose                                                   |
 | --------------------------------------------- | --------- | --------------------------------------------------------- |
 | `scripts/build-reference-index.py`            | Gathering | Parse INDEX.md → JSON theory map                          |
-| `scripts/scan-clinical-terms.py`              | Gathering | Grep profiles for clinical terms (+ behavioral w/ --deep) |
-| `scripts/scan-clinical-terms-in-materials.py` | Gathering | Grep materials/assets for terms                           |
-| `scripts/scan-reference-cross-links.py`       | Gathering | Check ref↔ref linkage                                     |
+| `scripts/scan-profile-files-for-clinical-terms.py`              | Gathering | Grep profiles for clinical terms (+ behavioral w/ --deep) |
+| `scripts/scan-materials-and-assets-for-clinical-terms.py` | Gathering | Grep materials/assets for terms                           |
+| `scripts/scan-reference-cross-links-between-theories.py`       | Gathering | Check ref↔ref linkage                                     |
+| `scripts/detect-profile-keywords-without-ref-links.py`        | Gathering | Profile theory-terms that lack a ref link (coverage gaps) |
 
 **Scripts do GATHERING only. LLM does all JUDGMENT.** Scripts may over-flag (false positives expected) — that's by design. Better to over-gather than miss genuine clinical concepts.
 

@@ -43,6 +43,7 @@ Implement `docs/rules/06-crisis-protocol.md` — structured clinical crisis docu
 ### Step 2: Crisis Keyword + Behavioral Cluster Scan (default deep mode)
 
 1. Run `scripts/scan-crisis-keywords-in-profile.py --character <name>` → keyword hits + behavioral cluster hits
+   - **Scope (deterministic):** the script scans ONLY `darkness/traumas.md` + `psychology/core-wounds.md`. It does NOT scan `timeline/overview.md`, evidence, or relationships — the LLM must read those itself (step 1 of the workflow above) for crisis signals outside the two scanned files.
 2. Default **deep mode**: scans both explicit crisis keywords (24 patterns) AND behavioral clusters for crisis-adjacent theories (suicidal-ideation, existential-void, complex-ptsd, somatization, flight-response)
 3. With `--quick`: keyword scan only (skips behavioral clusters — faster but may miss metaphorical/implicit crisis indicators)
 4. If 0 total hits from both passes: **LLM MUST independently re-read `darkness/traumas.md` + `psychology/core-wounds.md`** for implicit crisis indicators not caught by regex

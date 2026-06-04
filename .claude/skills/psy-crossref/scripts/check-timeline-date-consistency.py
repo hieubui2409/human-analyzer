@@ -48,7 +48,13 @@ def parse_dob_from_identity(char_dir: Path) -> date | None:
 
 
 def parse_event_date(date_str: str) -> date | None:
-    """Convert event date string to date object. Returns None if unparseable."""
+    """Convert event date string to date object. Returns None if unparseable.
+
+    NOTE: mixed-precision dates are coerced to a full date (MM/YYYY → day 1, YYYY → Jan 1),
+    so an OUT_OF_ORDER flag between e.g. "2026" and "03/2026" is a deterministic OVER-FLAG,
+    not a confirmed error. This is acceptable per the gather-not-judge principle: the script
+    surfaces the candidate, the LLM adjudicates whether the ordering is actually wrong.
+    """
     date_str = date_str.strip()
     formats = ["%d/%m/%Y", "%Y-%m-%d", "%m/%Y", "%Y"]
     for fmt in formats:
