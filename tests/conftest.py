@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from venv_python import VENV_PYTHON
 
 # Disable telemetry side-effects (atexit script metrics + sink writes) for the
 # whole session BEFORE any platform_lib import triggers the auto-import.
@@ -102,7 +103,7 @@ def patch_platform_paths(monkeypatch):
 @pytest.fixture(scope="session")
 def python_bin() -> Path:
     """Path to the project venv Python interpreter."""
-    return Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3"
+    return VENV_PYTHON
 
 
 @pytest.fixture(scope="session")

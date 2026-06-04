@@ -35,6 +35,11 @@ plans/visuals/knowledge-graph-*.html
 .claude/telemetry/context-gauge.jsonl
 .claude/telemetry/*.jsonl.bak
 
+# Consolidated cache root (.claude/cache/): committed/ is TRACKED (reproducible content-addressed
+# verdict caches — verdict labels/scores only, no PII); runtime/ is IGNORED (cheap-rebuild,
+# machine-local: profile-lite compression cache, etc.)
+.claude/cache/runtime/
+
 # Knowledge graph embedding artifacts (derived, regenerable via embed_corpus)
 .models/
 .cache/

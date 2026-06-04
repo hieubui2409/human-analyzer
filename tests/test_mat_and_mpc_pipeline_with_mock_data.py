@@ -5,9 +5,10 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from venv_python import VENV_PYTHON
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-PYTHON = str(Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3")
+PYTHON = str(VENV_PYTHON)
 MOCK_DATA = PROJECT_ROOT / "tests" / "mock-data"
 # Isolate event-log subprocess writes (append-event-to-log) to a throwaway sink,
 # never the real tracked .claude/telemetry/ (CK_TELEMETRY_DIR honored by paths.py).

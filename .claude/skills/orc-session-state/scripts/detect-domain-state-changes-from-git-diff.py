@@ -21,7 +21,7 @@ def _refine_psy_vs_gro(filepath: str, info: dict) -> dict:
     return info
 
 IGNORE_PATTERNS = [
-    "plans/", ".claude/session-state/", ".claude/profile-cache/",
+    "plans/", ".claude/session-state/", ".claude/cache/",
     ".claude/teams/", ".claude/tasks/", "node_modules/",
 ]
 

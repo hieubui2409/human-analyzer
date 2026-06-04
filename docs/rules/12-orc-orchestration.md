@@ -12,15 +12,18 @@ ORC (Orchestrator) is the meta-framework that routes events between MAT, PSY, CR
 
 ## Domain Boundaries
 
-| Domain | Writes to                                        | Reads from                                      |
-| ------ | ------------------------------------------------ | ----------------------------------------------- |
-| MAT    | `docs/materials/{character}/`                    | Raw source files only                           |
-| PSY    | `docs/profiles/{character}/`, `docs/references/` | `docs/materials/` (read-only after MAT)         |
-| CRE    | `assets/`                                        | `docs/profiles/` (read-only), `docs/materials/` |
-| GRO    | `docs/profiles/{character}/growth/`              | `docs/profiles/`, `docs/materials/` (read-only) |
-| ORC    | `.claude/` (skills, session-state, config)       | All domains (orchestration only, no edits)      |
+| Domain | Writes to                                                          | Reads from                                      |
+| ------ | ------------------------------------------------------------------ | ----------------------------------------------- |
+| MAT    | `docs/materials/{character}/`                                      | Raw source files only                           |
+| PSY    | `docs/profiles/{character}/`, `docs/references/`, `docs/graph/`    | `docs/materials/` (read-only after MAT)         |
+| CRE    | `assets/`                                                          | `docs/profiles/` (read-only), `docs/materials/` |
+| GRO    | `docs/profiles/{character}/growth/`                                | `docs/profiles/`, `docs/materials/` (read-only) |
+| ORC    | `.claude/` (skills, session-state, config, cache)                  | All domains (orchestration only, no edits)      |
+| COM    | `.claude/` (common toolkit: git, health-check, rules)             | All domains (utility, no domain-content edits)  |
 
-**Hard rule**: No domain writes outside its boundary. Cross-boundary changes are bugs.
+**Hard rule**: No domain writes outside its boundary. Cross-boundary changes are bugs. This table is the single
+source of truth for the per-domain write roots — the `platform_lib/fs_guard` write-jail derives its allowed
+roots from exactly these rows (PSY owns `docs/graph/` per the knowledge-graph tier; ORC/COM share `.claude/`).
 
 ## Event System
 

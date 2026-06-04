@@ -15,9 +15,10 @@ from pathlib import Path
 
 import pytest
 import yaml
+from venv_python import VENV_PYTHON
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-PYTHON = str(Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3")
+PYTHON = str(VENV_PYTHON)
 SCENARIOS_FILE = PROJECT_ROOT / "tests" / "scenarios" / "llm-reasoning-scenarios.yaml"
 ROUTE_SCRIPT = (
     PROJECT_ROOT / ".claude" / "skills" / "orc-intake" / "scripts"

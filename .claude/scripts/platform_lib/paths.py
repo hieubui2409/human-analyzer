@@ -36,7 +36,41 @@ SESSION_STATE = ROOT / ".claude" / "session-state"  # mutable session STATE (jso
 # overrides it (tests point it at a tmp dir to isolate sink writes).
 TELEMETRY = Path(os.environ["CK_TELEMETRY_DIR"]) if os.environ.get("CK_TELEMETRY_DIR") else ROOT / ".claude" / "telemetry"
 DECISIONS = ROOT / ".claude" / "decisions"
-PROFILE_CACHE = ROOT / ".claude" / "profile-cache"
+
+# --- Consolidated cache root (one home for cache LOCATION; split by durability) ---
+# Debated decision (user-confirmed): a single cache root, two subtrees by durability class:
+#   committed/ — reproducible, content-addressed verdict/judgment caches. TRACKED + committed
+#                (key = content hash → stable for identical content; reuse + audit trail). Stores
+#                verdict labels/scores/refs ONLY — never raw profile text (confidentiality).
+#   runtime/   — telemetry-adjacent + cheap-to-rebuild caches (profile-lite). GITIGNORED
+#                (machine-local, high-churn; never committed).
+# CK_CACHE_DIR overrides the root (tests point it at a tmp dir to isolate cache writes).
+CACHE_ROOT = Path(os.environ["CK_CACHE_DIR"]) if os.environ.get("CK_CACHE_DIR") else ROOT / ".claude" / "cache"
+
+
+def cache_root() -> Path:
+    """The single cache root. Callers prefer committed_cache_dir / runtime_cache_dir."""
+    return CACHE_ROOT
+
+
+def committed_cache_dir(name: str) -> Path:
+    """A tracked, committed cache subtree (reproducible content-addressed caches, no PII).
+
+    Created on demand. Commit policy lives in .gitignore (committed/ is tracked)."""
+    d = CACHE_ROOT / "committed" / name
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def runtime_cache_dir(name: str) -> Path:
+    """A gitignored runtime cache subtree (cheap-rebuild / machine-local caches)."""
+    d = CACHE_ROOT / "runtime" / name
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+# profile-lite is a cheap-to-rebuild compression cache → runtime subtree.
+PROFILE_CACHE = CACHE_ROOT / "runtime" / "profile-lite"
 
 # Framework-partitioned event streams (B2 memory persistence lifecycle).
 # Files stay SEPARATE (partition preserved); the directory is consolidated under
