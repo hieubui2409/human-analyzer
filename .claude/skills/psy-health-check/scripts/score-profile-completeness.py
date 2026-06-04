@@ -92,7 +92,9 @@ def score_file(char_dir: Path, rel_path: str) -> tuple[int, int, str]:
     lines = [l for l in text.splitlines() if l.strip()]
     n = len(lines)
     if n == 0:
-        return 10, 0, "EMPTY"
+        # Empty file contributes nothing to completeness — score 0 so present/missing
+        # tallies (score > 0) don't count it as a developed file (status still flags EMPTY).
+        return 0, 0, "EMPTY"
 
     base = 40 if n < 50 else (70 if n < 100 else 90)
 

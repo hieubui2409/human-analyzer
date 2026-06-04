@@ -11,7 +11,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import ast
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -20,35 +19,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib import paths  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
+from platform_lib.skill_imports import (  # noqa: E402
+    platform_lib_imports_of as _imports, framework_scripts as _framework_scripts,
+)
 
-SKILLS_DIR = paths.ROOT / ".claude" / "skills"
-PLATFORM_LIB = paths.ROOT / ".claude" / "scripts" / "platform_lib"
-FRAMEWORKS = ["mat", "psy", "cre", "gro", "orc", "com"]
+PLATFORM_LIB = paths.PLATFORM_LIB
 CRITICAL_FANIN = 20
-
-
-def _imports(path: Path) -> set[str]:
-    try:
-        tree = ast.parse(path.read_text(encoding="utf-8"))
-    except (SyntaxError, OSError, UnicodeDecodeError):
-        return set()
-    mods: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.ImportFrom) and node.module and node.module.startswith("platform_lib"):
-            parts = node.module.split(".")
-            if len(parts) > 1:
-                mods.add(parts[1])
-        elif isinstance(node, ast.Import):
-            for n in node.names:
-                if n.name.startswith("platform_lib."):
-                    mods.add(n.name.split(".")[1])
-    return mods
-
-
-def _framework_scripts():
-    for d in sorted(SKILLS_DIR.iterdir()):
-        if d.is_dir() and d.name.split("-", 1)[0] in FRAMEWORKS:
-            yield from sorted(d.glob("scripts/*.py"))
 
 
 def _lib_internal_edges() -> dict[str, set[str]]:

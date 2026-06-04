@@ -30,6 +30,7 @@ ASSETS = ROOT / "assets"
 PLANS = ROOT / "plans"
 REPORTS = PLANS / "reports"
 SKILLS = ROOT / ".claude" / "skills"
+PLATFORM_LIB = ROOT / ".claude" / "scripts" / "platform_lib"  # shared utility package dir
 SESSION_STATE = ROOT / ".claude" / "session-state"  # mutable session STATE (json), not event sinks
 # Consolidated observability sink root (all JSONL streams). CK_TELEMETRY_DIR env
 # overrides it (tests point it at a tmp dir to isolate sink writes).
