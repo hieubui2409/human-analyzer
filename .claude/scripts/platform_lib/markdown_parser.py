@@ -68,17 +68,32 @@ def count_lines(filepath: Path) -> int:
 
 
 def extract_dates(text: str) -> list[str]:
-    """Extract date patterns from text (DD/MM/YYYY, YYYY-MM-DD, MM/YYYY)."""
+    """Extract date patterns from text.
+
+    Slash dates in this corpus use the **DD/MM/YYYY** convention (Vietnamese locale),
+    NOT US MM/DD — callers comparing/parsing these must assume day-first. The two-field
+    `NN/YYYY` form is month/year. Returned as raw strings (no validation); use
+    `parse_iso_date` for a validated date object from an ISO `YYYY-MM-DD` arg.
+    """
     patterns = [
-        r"\b\d{2}/\d{2}/\d{4}\b",
-        r"\b\d{4}-\d{2}-\d{2}\b",
-        r"\b\d{2}/\d{4}\b",
-        r"\b\d{2}-\d{4}\b",
+        r"\b\d{2}/\d{2}/\d{4}\b",   # DD/MM/YYYY (day-first)
+        r"\b\d{4}-\d{2}-\d{2}\b",   # YYYY-MM-DD (ISO)
+        r"\b\d{2}/\d{4}\b",         # MM/YYYY
+        r"\b\d{2}-\d{4}\b",         # MM-YYYY
     ]
     dates = []
     for pat in patterns:
         dates.extend(re.findall(pat, text))
     return sorted(set(dates))
+
+
+def parse_iso_date(raw: str) -> _dt.date:
+    """Parse a CLI `--since`-style ISO date (YYYY-MM-DD) to a date. Raises ValueError if bad.
+
+    Single source so CLI scripts stop diverging between `date.fromisoformat` and
+    `datetime.strptime(...,'%Y-%m-%d')` (both accept the same input, but sharing one
+    parser keeps error handling and the accepted format identical everywhere)."""
+    return _dt.date.fromisoformat(raw.strip())
 
 
 def extract_links(text: str) -> list[dict]:

@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sc
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY
 from platform_lib.formatters import print_json
 from platform_lib.skill_ids import SKILL_MENTION_RE
+from platform_lib.platform_constraints import ALL_PLATFORMS as PLATFORMS
 
 ACTION_KEYWORDS = {
     "write": ["write", "draft", "create post", "compose", "viết", "tạo bài", "soạn"],
@@ -49,7 +50,7 @@ OBJECT_KEYWORDS = {
                "nghề nghiệp", "năng lực", "hướng nghiệp", "sự nghiệp"],
 }
 
-PLATFORMS = ["facebook", "linkedin", "instagram", "tiktok", "youtube", "twitter", "blog"]
+# PLATFORMS imported from platform_constraints.ALL_PLATFORMS (single source of truth).
 
 URGENCY_MARKERS = ["urgent", "asap", "now", "immediately", "gấp", "ngay", "khẩn",
                     "deadline", "today", "tonight", "hôm nay", "tối nay"]

@@ -30,13 +30,21 @@ VALID_CATEGORIES = ["psychology", "writing", "audience", "clinical", "growth", "
 VALID_STATUSES = ["active", "archived"]
 
 
+def _disp(text, width=140):
+    """Truncate stored full text for one-line display (storage stays full — LIB-14)."""
+    text = str(text)
+    return text if len(text) <= width else text[:width - 1].rstrip() + "…"
+
+
 def create_instinct(text, category, confidence=0.5, source_session="", tags=None):
     """Create instinct dict with unique ID and defaults."""
     now = datetime.now(timezone.utc)
     pinned = category == "process"
     return {
         "id": f"instinct-{now.strftime('%Y%m%d')}-{now.strftime('%H%M')}-{token_hex(3)}",
-        "text": text[:140],
+        # Store the FULL text — truncating here made two learnings that share the first
+        # 140 chars dedup as identical in find_similar(). Truncation is a display concern.
+        "text": text.strip(),
         "category": category,
         "confidence": round(min(max(confidence, 0.0), 1.0), 4),
         "evidence_count": 1,
@@ -263,19 +271,19 @@ def main():
         active = load_instincts(status="active")
         for inst in sorted(active, key=lambda x: x["confidence"], reverse=True):
             pin = " [PINNED]" if inst.get("pinned") else ""
-            print(f"[{inst['confidence']:.2f}] {inst['category']:12s} {inst['text']}{pin}")
+            print(f"[{inst['confidence']:.2f}] {inst['category']:12s} {_disp(inst['text'])}{pin}")
     elif args.promote_candidates:
         candidates = get_promotion_candidates()
         if not candidates:
             print("No promotion candidates (need conf >= 0.80 + evidence >= 3)")
         else:
             for c in candidates:
-                print(f"[{c['confidence']:.2f} {c['evidence_count']}x] {c['category']}: {c['text']}")
+                print(f"[{c['confidence']:.2f} {c['evidence_count']}x] {c['category']}: {_disp(c['text'])}")
     elif args.decay:
         decayed = apply_decay()
         print(f"Decay applied: {len(decayed)} instincts updated")
         for d in decayed:
-            print(f"  [{d['confidence']:.2f}] {d['text']}")
+            print(f"  [{d['confidence']:.2f}] {_disp(d['text'])}")
     else:
         parser.print_help()
 

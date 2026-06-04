@@ -28,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
 from platform_lib.errors import emit_error  # noqa: E402
+from platform_lib.markdown_parser import parse_iso_date  # noqa: E402
 
 
 def _sessions_dir() -> Path:
@@ -172,7 +173,7 @@ def main() -> int:
     since = None
     if args.since:
         try:
-            since = date.fromisoformat(args.since)
+            since = parse_iso_date(args.since)
         except ValueError:
             emit_error("validation", f"bad --since: {args.since!r}")
             print(f"error: --since must be YYYY-MM-DD, got {args.since!r}", file=sys.stderr)

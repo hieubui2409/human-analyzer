@@ -13,6 +13,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 CONFIDENCE_THRESHOLD = 0.5
 
+# ADVISORY routing only — keyword sets score which DOMAIN a task belongs to; the per-domain
+# `skills` lists are ILLUSTRATIVE entry points, NOT an exhaustive catalog (the LLM picks the
+# final skill from the live catalog after this gathers a domain suggestion). Deliberately not
+# generated from the skill dirs: this is a heuristic router, not a source of truth for which
+# skills exist (see com:skill-stocktake / orc:skill-stocktake for the authoritative catalog).
 DOMAIN_KEYWORDS = {
     "MAT": {
         "keywords": [
