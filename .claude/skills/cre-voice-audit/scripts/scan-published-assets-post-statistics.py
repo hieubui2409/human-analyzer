@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Scan assets/*/post.md files and compute per-post writing statistics."""
+"""Scan asset packages (post.md source-of-truth, else post.txt) for per-post writing stats."""
 import argparse
 import os
 import re
@@ -9,6 +9,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 from platform_lib.paths import ASSETS
 from platform_lib.formatters import print_table
+from platform_lib.asset_packages import POST_FORMS
 
 
 def compute_stats(text: str) -> dict:
@@ -34,7 +35,7 @@ def scan_platform(platform_dir: Path) -> list[dict]:
     for slug_dir in sorted(platform_dir.iterdir()):
         if not slug_dir.is_dir():
             continue
-        for fname in ["post.md", "post.txt"]:
+        for fname in POST_FORMS:
             post_file = slug_dir / fname
             if post_file.exists():
                 text = post_file.read_text(encoding="utf-8")

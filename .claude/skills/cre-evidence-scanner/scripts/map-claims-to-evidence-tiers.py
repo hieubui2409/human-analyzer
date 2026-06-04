@@ -22,6 +22,7 @@ READ-ONLY on materials. Exit 1 on any FAIL.
 import argparse
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -72,10 +73,15 @@ def load_character_materials(slug: str) -> list[dict]:
     return out
 
 
+def _name_present(needle: str, haystack: str) -> bool:
+    """Word-boundary match so short names ('hòa') don't fire inside 'hòa bình'."""
+    return re.search(rf'(?<!\w){re.escape(needle.lower())}(?!\w)', haystack) is not None
+
+
 def detect_characters(text: str) -> dict:
     low = text.lower()
     matches = {s: CHAR_DISPLAY.get(s, s) for s in ALL_CHARS
-               if CHAR_DISPLAY.get(s, s).lower() in low or s.replace("-", " ") in low}
+               if _name_present(CHAR_DISPLAY.get(s, s), low) or _name_present(s.replace("-", " "), low)}
     return matches or {ALL_CHARS[0]: CHAR_DISPLAY.get(ALL_CHARS[0], ALL_CHARS[0])}
 
 
