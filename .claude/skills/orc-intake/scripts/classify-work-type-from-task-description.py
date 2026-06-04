@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY
 from platform_lib.formatters import print_json
+from platform_lib.skill_ids import SKILL_MENTION_RE
 
 ACTION_KEYWORDS = {
     "write": ["write", "draft", "create post", "compose", "viết", "tạo bài", "soạn"],
@@ -98,7 +99,7 @@ def extract_file_references(text: str) -> list[str]:
 
 
 def extract_skill_mentions(text: str) -> list[str]:
-    return re.findall(r'lucas:\w[\w-]*', text)
+    return SKILL_MENTION_RE.findall(text)
 
 
 def extract_urgency(text: str) -> list[str]:

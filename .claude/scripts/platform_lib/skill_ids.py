@@ -7,6 +7,15 @@ A skill has two surface forms that the analytics scripts kept converting ad-hoc
 first hyphen/colon is the framework separator, so multi-word skill names
 (`com-skill-analytics`) round-trip correctly.
 """
+import re
+
+# The six project framework prefixes. Single source of truth — scripts that need to
+# recognise skill references (e.g. orc:intake) derive their regex from this instead of
+# hard-coding a (previously stale) project name.
+FRAMEWORKS = ("mat", "psy", "cre", "gro", "orc", "com")
+
+# Matches a skill reference like `orc:intake` / `cre:post-writer` in free text.
+SKILL_MENTION_RE = re.compile(rf"(?:{'|'.join(FRAMEWORKS)}):[\w-]+")
 
 
 def framework_of(skill: str) -> str:

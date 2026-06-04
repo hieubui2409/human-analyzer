@@ -43,7 +43,7 @@ if ! git pull --rebase origin "$BRANCH" 2>&1; then
   if [ -d "$GIT_DIR/rebase-merge" ] || [ -d "$GIT_DIR/rebase-apply" ]; then
     echo "CONFLICT detected during rebase. Aborting."
     git rebase --abort
-    echo "ERROR: Rebase conflicts. Resolve manually then run /lucas:git --push"
+    echo "ERROR: Rebase conflicts. Resolve manually then run /com:git --push"
     exit 1
   fi
   echo "ERROR: Pull --rebase failed."
