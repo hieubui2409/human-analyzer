@@ -33,7 +33,7 @@ Events are named `{DOMAIN}.{action}`. They are not code — they are conventions
 | `MAT.ingested`      | New material added to `docs/materials/`        | MAT pipeline Stage 1 begins                                     |
 | `MAT.analyzed`      | Material processing_status → "analyzed"        | Cross-validation against profile                                |
 | `MAT.integrated`    | Material processing_status → "integrated"      | → `PSY.refresh` + `CRE.recalibrate`                             |
-| `MAT.contradiction` | Contradiction detected (severity: medium+)     | → `PSY.flag` → human review or `PSY.update`                     |
+| `MAT.contradiction` | Contradiction detected (severity: medium+)     | → `PSY.flag` → human review or `PSY.updated`                    |
 | `PSY.refresh`       | Profile sections affected by new material      | Re-read affected files, update if needed                        |
 | `PSY.flag`          | Unresolved contradiction in profile data       | Log to `VALIDATION-NOTES.md`, alert user                        |
 | `PSY.updated`       | Profile file(s) modified                       | → `psy:propagate` cascade + `CRE.recalibrate` if voice-relevant |
@@ -45,6 +45,9 @@ Events are named `{DOMAIN}.{action}`. They are not code — they are conventions
 | `GRO.forecast`      | Career forecast generated                      | Log only (informational, no cascade)                            |
 | `GRO.mentored`      | Mentoring interaction documented               | → `PSY.refresh` (mentoring reveals psychological insights)      |
 | `GRO.profiled`      | Learning profile updated                       | → `CRE.recalibrate` (learning profile changes content style)    |
+| `COM.rules_updated` | Files under `docs/rules/` changed              | → `com:rules --validate` (verify rule consistency)              |
+| `ORC.skill_updated` | Files under `.claude/skills/` changed          | → `orc:bootstrap --quick` (refresh session context)            |
+| `ORC.script_updated`| Files under `.claude/scripts/` changed         | → `orc:bootstrap --quick` (refresh session context)            |
 
 ### Event Flow Diagram
 

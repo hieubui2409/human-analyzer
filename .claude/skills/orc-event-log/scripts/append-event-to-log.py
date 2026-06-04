@@ -11,17 +11,24 @@ from platform_lib.paths import TELEMETRY, EVENT_STREAMS, CASCADE_EVENTS
 from platform_lib.event_routing import routable_events
 
 # Audit-only events not in the routing table (internal lifecycle / CRE / COM signals).
+# Every event a skill's SKILL.md "## Events" table declares it emits must be loggable
+# here, or the emit is rejected at runtime — orc:audit C1 enforces routable⊆loggable and
+# flags any declared-but-unregistered event.
 _AUDIT_EVENT_TYPES = [
     "MAT.archived",
+    "MAT.contradiction",  # emitted by mat:indexer on medium+ contradictions (rules-12 logging table)
     "PSY.crisis",
     "PSY.relation-angle-discovered",
     "CRE.evidence-checked",
     "CRE.angle-discovered",
     "CRE.published",
+    "CRE.privacy_cleared",  # emitted by cre:privacy-guard on a clean scan (rules-14 §CRE.privacy_cleared)
     "ORC.bootstrap",
     "ORC.decision",
     "ORC.classify",
     "ORC.intake",
+    "ORC.audited",  # emitted by orc:audit after an audit run (log only)
+    "ORC.routed",   # emitted by orc:domain-router after routing events downstream
     "COM.privacy",
     "COM.governance",
     "COM.commit",
