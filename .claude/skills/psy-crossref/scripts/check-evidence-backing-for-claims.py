@@ -45,7 +45,7 @@ def get_material_tiers(slug: str) -> dict[str, str]:
     tiers = {}
     if not mat_dir.exists():
         return tiers
-    for f in mat_dir.glob("*.md"):
+    for f in mat_dir.rglob("*.md"):
         fm = extract_frontmatter(f) or {}
         tier = fm.get("evidence_tier", "")
         tiers[f.name] = tier
@@ -61,7 +61,7 @@ def search_claim_in_materials(claim: str, slug: str) -> list[dict]:
     if not keywords:
         return []
     matches = []
-    for f in sorted(mat_dir.glob("*.md")):
+    for f in sorted(mat_dir.rglob("*.md")):
         text = f.read_text(encoding="utf-8").lower()
         fm = extract_frontmatter(f) or {}
         hit_count = sum(1 for kw in keywords if kw in text)

@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import PROFILES, CHAR_DISPLAY
+from platform_lib.paths import PROFILES, CHAR_DISPLAY, resolve_character
 from platform_lib.asset_packages import resolve_post_source
 
 DEFENSE_VOICE_INDICATORS = {
@@ -116,7 +116,7 @@ def main():
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
 
-    result = check_voice_consistency(Path(args.asset_dir), args.character)
+    result = check_voice_consistency(Path(args.asset_dir), resolve_character(args.character))
 
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))

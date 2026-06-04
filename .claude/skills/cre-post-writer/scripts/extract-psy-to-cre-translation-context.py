@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import PROFILES, ALL_CHARS, CHAR_DISPLAY
+from platform_lib.paths import PROFILES, ALL_CHARS, CHAR_DISPLAY, resolve_character
 from platform_lib.markdown_parser import extract_sections
 
 FORMULATION_5P = {
@@ -95,7 +95,7 @@ def main():
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
 
-    chars = [args.character] if args.character else ALL_CHARS
+    chars = [resolve_character(args.character)] if args.character else ALL_CHARS
     results = {}
     for slug in chars:
         results[slug] = extract_translation_context(slug)

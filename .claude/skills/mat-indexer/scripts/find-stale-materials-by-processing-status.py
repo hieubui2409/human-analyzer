@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, resolve_character
 from platform_lib.materials_classifier import extract_frontmatter
 
 
@@ -65,7 +65,7 @@ def main():
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
 
-    chars = [args.character] if args.character else ALL_CHARS
+    chars = [resolve_character(args.character)] if args.character else ALL_CHARS
     report = {}
     for slug in chars:
         report[slug] = find_stale(slug, args.days)
