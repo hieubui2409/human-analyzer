@@ -19,8 +19,14 @@ import json
 import sys
 from typing import Any, Dict, List, Optional
 
-from .cache_store import CacheStore
-from . import verdict_cache_keys as keys
+if __package__ in (None, ""):
+    import sys as _sys
+    _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent.parent))
+    from platform_lib.cache_store import CacheStore
+    from platform_lib import verdict_cache_keys as keys
+else:
+    from .cache_store import CacheStore
+    from . import verdict_cache_keys as keys
 
 # A stored verdict is a small label — scalar values only, bounded size. NOT an excerpt.
 _ALLOWED_VERDICT_KEYS = frozenset({"label", "score", "confidence", "ref", "note", "dimension"})

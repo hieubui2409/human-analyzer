@@ -19,8 +19,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-from . import paths
-from . import fs_guard
+# Dual import: usable both as a package module (from .) and as a direct CLI (`check_fence.py`).
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from platform_lib import paths, fs_guard
+else:
+    from . import paths
+    from . import fs_guard
 
 # Repo-relative POSIX prefixes that are legitimately writable by tooling/docs (not domain content).
 _ALLOWED_META_PREFIXES = (

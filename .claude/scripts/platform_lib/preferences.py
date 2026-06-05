@@ -25,7 +25,12 @@ from pathlib import Path
 
 import yaml
 
-from . import paths
+if __package__ in (None, ""):
+    import sys as _sys
+    _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent.parent))
+    from platform_lib import paths
+else:
+    from . import paths
 
 DEFAULTS = {
     "crossref_rigor": "standard",
