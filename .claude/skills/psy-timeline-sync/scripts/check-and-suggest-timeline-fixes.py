@@ -10,6 +10,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILES, resolve_character
 
 # Known shared events: (event_label, [character_slugs], keyword_patterns)
+#
+# PRECISION RULES for keyword_patterns:
+#   1. Patterns must identify the SPECIFIC EVENT, not a bare topic keyword.
+#      Include cohort markers (e.g. "F15"), role qualifiers, or named participants
+#      so that distinct events sharing a broad topic word are NOT conflated.
+#   2. For the Scholarship X F15 interview, require "F15" in pattern — this
+#      excludes Nhân vật A's unrelated F5 scholarship hits from 2015.
+#   3. For the Nhân vật A→Nhân vật C mentoring, require both names to appear near each
+#      other — this excludes generic mentoring entries that involve other people.
 SHARED_EVENTS = [
     ("Kết nghĩa (sworn brothers)", ["character-a", "character-b"],
      [r"kết\s*nghĩa", r"sworn\s*brother", r"sworn brother"]),
@@ -17,10 +26,26 @@ SHARED_EVENTS = [
      [r"gặp.*[Hh]òa", r"gặp.*[Hh]oa", r"first met.*[Hh]oa", r"[Hh]òa.*gặp"]),
     ("Gambling crisis", ["character-a", "character-b"],
      [r"cờ\s*bạc", r"gambl", r"casino", r"khủng\s*hoảng"]),
+    # Require "F15" AND a phỏng-vấn / interview / selection marker so we match only
+    # the interview event, not cohort-label references ("Scholar F15", "mentee F15")
+    # that appear later in a 2026 mentoring context.
+    # In Nhân vật A's files this event is not explicitly dated (he was the interviewer
+    # but records it as a footnote), so MISSING is the honest result for him.
     ("Scholarship X F15 interview", ["character-a", "character-c"],
-     [r"Scholarship X", r"F15", r"phỏng\s*vấn.*học\s*bổng"]),
-    ("Mentoring sessions", ["character-a", "character-c"],
-     [r"mentor", r"cố\s*vấn"]),
+     [r"Scholarship X\s*F15",
+      r"F15.*phỏng\s*vấn", r"phỏng\s*vấn.*F15",
+      r"F15.*interview", r"interview.*F15",
+      r"Nhân vật A\s+là\s+interviewer", r"interviewer.*F15"]),
+    # Require both the mentor/mentee role AND the other character's name in proximity
+    # so generic "mentor" entries (Nhân vật A mentoring other people in 2021+) are excluded.
+    # Patterns cover both perspectives:
+    #   - Nhân vật A's files: "mentoring Nhân vật C", "mentor.*Nhân vật C", "Nhân vật C.*mentor"
+    #   - Nhân vật C's files: "mentee của Nhân vật A", "Nhân vật A làm mentor", "Nhân vật A.*mentor"
+    ("Mentoring sessions (Nhân vật A→Nhân vật C)", ["character-a", "character-c"],
+     [r"mentor.*[Cc]hiến", r"[Cc]hiến.*mentor",
+      r"mentoring\s+Nguyễn\s+Bách\s+Nhân vật C",
+      r"mentee.*[Hh]iếu", r"[Hh]iếu.*mentor",
+      r"cố\s*vấn.*[Cc]hiến", r"[Cc]hiến.*cố\s*vấn"]),
 ]
 
 # Ordered most-precise → least-precise. The original second tuple element (format
@@ -63,17 +88,52 @@ def normalize_date(raw: str) -> str:
     return s
 
 
+def _extract_date_from_text(text: str) -> str | None:
+    """Return the first date found in `text` using DATE_PATTERNS, normalized.
+
+    Tries patterns from most-precise to least-precise, stopping at first match.
+    """
+    for dpat in DATE_PATTERNS:
+        dm = re.search(dpat, text)
+        if dm:
+            return normalize_date(dm.group(0))
+    return None
+
+
+def _line_containing(full_text: str, match_start: int) -> str:
+    """Return the complete line that contains position match_start in full_text."""
+    line_start = full_text.rfind("\n", 0, match_start) + 1  # +1 skips the \n itself
+    line_end = full_text.find("\n", match_start)
+    if line_end == -1:
+        line_end = len(full_text)
+    return full_text[line_start:line_end]
+
+
 def extract_dates_near_pattern(text: str, patterns: list[str]) -> list[str]:
-    """Find dates within ~80 chars of a matching keyword, normalized + deduplicated."""
-    found_dates = []
+    """Find dates near a matching keyword, normalized + deduplicated.
+
+    Strategy (same-line-first):
+      1. Try to find a date ON THE SAME LINE as the keyword match. This avoids
+         pulling in dates from neighbouring table rows or list items that happen
+         to fall within the 80-char sliding window.
+      2. If the line contains no date, fall back to ±80-char context around the
+         match position.
+
+    The same-line-first heuristic prevents a keyword in one table cell from
+    grabbing dates that belong to a different cell on an adjacent row.
+    """
+    found_dates: list[str] = []
     for kw in patterns:
         for m in re.finditer(kw, text, re.IGNORECASE | re.UNICODE):
-            context = text[max(0, m.start() - 80): m.end() + 80]
-            for dpat in DATE_PATTERNS:
-                dm = re.search(dpat, context)
-                if dm:
-                    found_dates.append(normalize_date(dm.group(0)))
-                    break
+            # Prefer: date on the same line as the keyword
+            line = _line_containing(text, m.start())
+            date = _extract_date_from_text(line)
+            if date is None:
+                # Fallback: ±80-char context window
+                context = text[max(0, m.start() - 80): m.end() + 80]
+                date = _extract_date_from_text(context)
+            if date is not None:
+                found_dates.append(date)
     return list(dict.fromkeys(found_dates))  # preserve order, deduplicate
 
 
