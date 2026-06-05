@@ -232,18 +232,6 @@ class TestCsvSearch:
         assert hits and hits[0][2]["name"] == "complex ptsd"
 
 
-class TestProfileValidator:
-    """Test profile_validator.py module if available."""
-
-    def test_profile_validator_importable(self):
-        """profile_validator should be importable."""
-        try:
-            import platform_lib.profile_validator as pv_mod
-            assert hasattr(pv_mod, "validate_all") or hasattr(pv_mod, "validate_character")
-        except ImportError:
-            pytest.skip("profile_validator not available")
-
-
 class TestFormatters:
     """Test formatters.py module."""
 

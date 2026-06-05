@@ -1,0 +1,30 @@
+name: cross-framework bug_class gate
+
+# Named guard for CLASSES of bug the review cycles closed (missing-module, registry-redefinition,
+# glob-scope) + the deterministic audit/schema/skill-count gates. A class reopening fails here.
+
+on:
+  pull_request:
+    paths:
+      - '.claude/skills/**'
+      - '.claude/scripts/**'
+      - 'tests/**'
+      - 'CLAUDE.md'
+      - '.github/workflows/cross-framework-bug-class.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bug-class:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install pinned deps
+        run: python -m pip install --quiet "pyyaml>=6.0,<7" "jsonschema>=4.0,<5" "pytest>=7,<9"
+      - name: bug_class invariants
+        run: PYTHONPATH=.claude/scripts python -m pytest tests/ -m bug_class -v

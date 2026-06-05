@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "bug_class: cross-cutting regression invariants guarding closed bug classes (run in its own CI gate)",
+    "unit: fast isolated unit test",
+    "gemini: requires the paid Gemini API (skipped in CI; self-skips without a key)",
+]
+# Quiet, deterministic defaults. No network, no cache plugin churn in CI.
+addopts = "-p no:cacheprovider"

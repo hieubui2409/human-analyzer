@@ -124,7 +124,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ---
 
-## Operating Guides (`.claude/operating-guides/`)
+## Operating Guides (`.claude/skills/_framework-shared/references/`)
 
 Project-owned shared operating references — the cross-framework analogue of cleanmatic's per-skill
 `references/`. Skill-specific references live in `{skill}/references/`; cross-skill ones live here.

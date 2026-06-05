@@ -1,0 +1,89 @@
+name: frameworks CI
+
+# Deterministic gates for the 6 frameworks (gro/mat/com/psy/cre/orc) + platform_lib + docs.
+# No API key, no network — re-runs the checks the review cycles ran by hand so a regression
+# (e.g. a centralized registry that a reader still scrapes) is caught on the PR that introduces it.
+
+on:
+  pull_request:
+    paths:
+      - '.claude/skills/**'
+      - '.claude/scripts/**'
+      - 'docs/**'
+      - 'tests/**'
+      - 'eval/**'
+      - 'pyproject.toml'
+      - '.github/workflows/frameworks-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.13']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install pinned deps (no network at test time)
+        run: python -m pip install --quiet "pyyaml>=6.0,<7" "jsonschema>=4.0,<5" "pytest>=7,<9"
+
+      - name: Configure git identity (some tests spawn git repos)
+        run: |
+          git config --global user.email ci@example.com
+          git config --global user.name CI
+          git config --global commit.gpgsign false
+
+      - name: py_compile sweep (all framework scripts + platform_lib)
+        run: |
+          python - <<'PY'
+          import py_compile, sys, pathlib
+          root = pathlib.Path('.')
+          targets = list(root.glob('.claude/skills/*/scripts/*.py')) + list(root.glob('.claude/scripts/platform_lib/*.py'))
+          bad = []
+          for f in targets:
+              try:
+                  py_compile.compile(str(f), doraise=True)
+              except py_compile.PyCompileError as e:
+                  bad.append(f"{f}: {e}")
+          print(f"compiled {len(targets)} files, {len(bad)} errors")
+          if bad:
+              print("\n".join(bad)); sys.exit(1)
+          PY
+
+      - name: import platform_lib sweep
+        run: |
+          PYTHONPATH=.claude/scripts python - <<'PY'
+          import importlib, pathlib, sys
+          mods = [p.stem for p in pathlib.Path('.claude/scripts/platform_lib').glob('*.py') if p.stem != '__init__']
+          bad = []
+          for m in mods:
+              try:
+                  importlib.import_module(f'platform_lib.{m}')
+              except Exception as e:
+                  bad.append(f"{m}: {e!r}")
+          print(f"imported {len(mods)} platform_lib modules, {len(bad)} failures")
+          if bad:
+              print("\n".join(bad)); sys.exit(1)
+          PY
+
+      - name: schema validation (corpus)
+        run: PYTHONPATH=.claude/scripts python .claude/scripts/validate-all-against-schemas.py
+
+      - name: orc:audit — referential integrity (exit 0 = no hard violations)
+        run: PYTHONPATH=.claude/scripts python .claude/skills/orc-audit/scripts/audit-cross-domain-event-consistency.py
+
+      - name: pytest (full suite, deterministic legs only)
+        run: PYTHONPATH=.claude/scripts python -m pytest tests/ -q -m "not gemini"
+
+      - name: eval harness (golden deterministic cases)
+        run: |
+          if [ -f eval/run_evals.py ]; then PYTHONPATH=.claude/scripts python eval/run_evals.py; else echo "no eval harness yet"; fi
