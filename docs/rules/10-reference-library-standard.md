@@ -11,7 +11,7 @@ Three absolute rules for all psychological analysis in this project:
 Every psychological finding, defense mechanism, behavior pattern, and trauma indicator in profiles MUST be linked to `docs/references/` via specific Markdown link.
 
 ```markdown
-[Hội chứng Cứu rỗi](../../references/savior-complex.md)
+[Hội chứng Cứu rỗi](../references/savior-complex.md)
 ```
 
 No "armchair psychology" — every analysis must have a theory backing it.

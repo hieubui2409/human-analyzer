@@ -1,6 +1,6 @@
 ---
 name: psy:profile-lite
-description: "Compress full character profiles into token-efficient summaries (~100-150 lines per character vs ~700-1000 lines full). Caches to .claude/profile-cache/. Auto-invalidates when source profiles change via git. Use when context budget is tight or loading all 3 characters. Triggers: 'lite profile', 'compress profile', 'compact profile', 'profile summary', 'light load'."
+description: "Compress full character profiles into token-efficient summaries (~100-150 lines per character vs ~700-1000 lines full). Caches to .claude/cache/runtime/profile-lite/. Auto-invalidates when source profiles change via git. Use when context budget is tight or loading all 3 characters. Triggers: 'lite profile', 'compress profile', 'compact profile', 'profile summary', 'light load'."
 argument-hint: "[--character <name>|--all|--refresh|--stats]"
 metadata:
   author: hieubt
@@ -39,7 +39,7 @@ Full load burns 25% of context before any work starts. Lite mode gives 95% reduc
 
 ## Cache Location
 
-`.claude/profile-cache/{character-slug}-lite.md`
+`.claude/cache/runtime/profile-lite/{character-slug}-lite.md`
 
 Files:
 
@@ -51,7 +51,7 @@ Files:
 ## Cache Invalidation
 
 ```json
-// .claude/profile-cache/cache-metadata.json
+// .claude/cache/runtime/profile-lite/cache-metadata.json
 {
   "character-a": {
     "source_hash": "{git hash of docs/profiles/character-a/}",

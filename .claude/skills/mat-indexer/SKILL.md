@@ -138,7 +138,7 @@ Focused mode — only run contradiction detection:
 
 Evidence coverage gap analysis:
 
-1. For each profile section (21 files per character):
+1. For each profile section (25 files per character):
    - Count how many materials reference/support this section
    - Assess evidence tier distribution
    - Flag sections with no material backing (T5-only or gap)

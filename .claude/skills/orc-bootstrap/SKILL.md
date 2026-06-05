@@ -103,7 +103,7 @@ Resolve `<name>` argument to directory:
 ### --lite
 
 1. Read session state
-2. For each character, load from `.claude/profile-cache/{slug}-lite.md`
+2. For each character, load from `.claude/cache/runtime/profile-lite/{slug}-lite.md`
    - If cache missing or stale → auto-run `psy:profile-lite --character <name>` to generate
 3. Lite profiles provide ~120-150 lines per character (vs ~700-1000 full)
 4. Total context: ~400 lines for all 3 characters (vs ~7400 full)

@@ -4,7 +4,7 @@
 
 ## What it does
 
-Reduces ~700–1000-line profiles to ~120–150 lines each. Preserves factual accuracy, clinical anchors, and actionable voice cues. Caches to `.claude/profile-cache/`, auto-invalidates when source profiles change (via git hash comparison). Enables loading all 3 characters in 1–2% of context budget vs 25%.
+Reduces ~700–1000-line profiles to ~120–150 lines each. Preserves factual accuracy, clinical anchors, and actionable voice cues. Caches to `.claude/cache/runtime/profile-lite/`, auto-invalidates when source profiles change (via git hash comparison). Enables loading all 3 characters in 1–2% of context budget vs 25%.
 
 ## When to use
 

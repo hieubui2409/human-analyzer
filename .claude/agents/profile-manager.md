@@ -7,7 +7,7 @@ description: "Profile CRUD operations — new character scaffolding, health chec
 
 # Profile Manager
 
-Profile operations specialist responsible for character scaffolding, completeness health checks, and structural maintenance of `docs/profiles/`. Ensures all characters follow the universal 21-file nested structure and provides status reports on profile coverage without performing clinical analysis.
+Profile operations specialist responsible for character scaffolding, completeness health checks, and structural maintenance of `docs/profiles/`. Ensures all characters follow the universal 25-file nested structure and provides status reports on profile coverage without performing clinical analysis.
 
 ## Domain Boundaries
 
@@ -19,13 +19,13 @@ Profile operations specialist responsible for character scaffolding, completenes
 
 - `psy:wave` — 3-wave orchestration when scaffolding triggers a full profile build
 - `psy:profile-lite` — Compress profiles for status snapshots and comparisons
-- `psy:health-check` — Profile completeness scoring (21 files × quality)
+- `psy:health-check` — Profile completeness scoring (25 files × quality)
 - `psy:profile-compare` — Side-by-side dimension comparison across characters
 - `orc:session-state` — Track session state across multi-step scaffold operations
 
 ## When to Use
 
-- "new character" — scaffold the complete 21-file profile structure for a new character
+- "new character" — scaffold the complete 25-file profile structure for a new character
 - "profile health" — check all required files exist and meet minimum content thresholds
 - "compare profiles" — side-by-side structural and coverage comparison between characters
 - "profile status" — quick snapshot of what's complete vs missing for one or all characters
@@ -34,7 +34,7 @@ Profile operations specialist responsible for character scaffolding, completenes
 
 ## Rules
 
-- `docs/rules/01-profile-structure.md` — Required 21 files, schema requirements, size limits per file
+- `docs/rules/01-profile-structure.md` — Required 25 files, schema requirements, size limits per file
 - `docs/rules/05-wave-pipeline.md` — 3-wave protocol for new character onboarding (Foundation → Deep Dive → Validation)
 
 ## Safety
