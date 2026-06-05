@@ -42,6 +42,10 @@ def load_scenarios():
 
 
 ALL_SCENARIOS = load_scenarios()
+# Domain-routing test applies only to scenarios that declare expected_route.
+# Orchestration scenarios (e.g. R3/R4) carry expected_skills instead and are
+# covered by TestRoutingCoverage, not the keyword router parametrization.
+ROUTING_SCENARIOS = [s for s in ALL_SCENARIOS if s.get("expected_route") is not None]
 
 
 def route_task(description: str) -> dict:
@@ -55,14 +59,12 @@ def route_task(description: str) -> dict:
 
 @pytest.mark.parametrize(
     "scenario",
-    ALL_SCENARIOS,
-    ids=[f"{s['id']}-{s['name']}" for s in ALL_SCENARIOS],
+    ROUTING_SCENARIOS,
+    ids=[f"{s['id']}-{s['name']}" for s in ROUTING_SCENARIOS],
 )
 def test_scenario_routing(scenario):
     """Each scenario's expected domain should appear as domain or best_domain."""
-    expected = scenario.get("expected_route")
-    if expected is None:
-        pytest.skip("No expected_route defined")
+    expected = scenario["expected_route"]
 
     result = route_task(scenario["input"])
     actual = result["domain"]
