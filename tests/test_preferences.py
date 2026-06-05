@@ -19,7 +19,33 @@ def prefs(tmp_path, monkeypatch):
 
 
 def test_defaults_when_missing(prefs):
-    assert prefs.load() == {"crossref_rigor": "standard", "cre_action_prompting": "standard"}
+    assert prefs.load() == {
+        "crossref_rigor": "standard",
+        "cre_action_prompting": "standard",
+        "humanize_strictness": "balanced",
+    }
+
+
+def test_humanize_strictness_default_is_balanced(prefs):
+    assert prefs.load()["humanize_strictness"] == "balanced"
+
+
+def test_humanize_strictness_valid_set_persists(prefs):
+    prefs.set_key("humanize_strictness=high")
+    assert prefs.load()["humanize_strictness"] == "high"
+
+
+def test_humanize_strictness_invalid_writes_nothing(prefs):
+    with pytest.raises(ValueError):
+        prefs.set_key("humanize_strictness=ultra")
+    assert prefs.load()["humanize_strictness"] == "balanced"  # default, no write
+
+
+def test_humanize_strictness_merge_preserves_other_knobs(prefs):
+    prefs.set_key("crossref_rigor=deep")
+    prefs.set_key("humanize_strictness=conservative")
+    got = prefs.load()
+    assert got["crossref_rigor"] == "deep" and got["humanize_strictness"] == "conservative"
 
 
 def test_set_and_load(prefs):

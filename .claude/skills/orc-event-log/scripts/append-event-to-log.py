@@ -23,6 +23,7 @@ _AUDIT_EVENT_TYPES = [
     "CRE.angle-discovered",
     "CRE.published",
     "CRE.privacy_cleared",  # emitted by cre:privacy-guard on a clean scan (rules-14 §CRE.privacy_cleared)
+    "CRE.humanized",  # emitted by cre:humanize after a scan/rewrite (log only)
     "ORC.bootstrap",
     "ORC.decision",
     "ORC.classify",

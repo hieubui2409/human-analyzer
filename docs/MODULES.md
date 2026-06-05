@@ -1,10 +1,10 @@
 # MODULES — Skill Grouping & Cross-Framework Dependency Map
 
-Navigation map for the **58 project-owned skills** across 6 frameworks. Semi-derived from each
+Navigation map for the **59 project-owned skills** across 6 frameworks. Semi-derived from each
 `SKILL.md` `metadata.dependencies` frontmatter + the CLAUDE.md catalog — **regenerate after skill
 changes** (`orc:skill-stocktake --quick` catches count drift; `--conformance` checks structure).
 
-Count reconciles with CLAUDE.md: **ORC 17 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 4 = 58**.
+Count reconciles with CLAUDE.md: **ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 4 = 59**.
 ck-origin skills (`cook`, `plan`, `scout`, `skill-creator`, `/ck:*`, `/ckm:*`) are **excluded** — they
 are dev tools used read-only, not part of the framework catalog.
 
@@ -38,19 +38,20 @@ are dev tools used read-only, not part of the framework catalog.
 | `psy:health-check`          | Profile completeness scoring               | —                                                              |
 | `psy:relation-intelligence` | Mine dyad graph for content angles         | —                                                              |
 
-## CRE — Content Creation (9)
+## CRE — Content Creation (10)
 
-| Skill                  | Purpose                                  | Depends on                                                     |
-| ---------------------- | ---------------------------------------- | -------------------------------------------------------------- |
-| `cre:post-writer`      | End-to-end content pipeline              | (delegates `cre:evidence-scanner`)                             |
-| `cre:exploring`        | 7-question exploration → CONTEXT.md      | —                                                              |
-| `cre:angle-discovery`  | Mine 6 frameworks → ranked angles        | —                                                              |
-| `cre:multiplatform`    | 1→N platform-native variants             | `cre:evidence-scanner`, `cre:voice-audit`, `cre:privacy-guard` |
-| `cre:repurpose`        | Adapt content 1→1 across platforms       | —                                                              |
-| `cre:prompt-leverage`  | 5-layer prompt strengthening             | `cre:exploring`                                                |
-| `cre:evidence-scanner` | Per-claim evidence-tier + Rule-09 gate   | —                                                              |
-| `cre:voice-audit`      | Voice/tone consistency check             | `orc:bootstrap`                                                |
-| `cre:privacy-guard`    | Pre-publish privacy/confidentiality scan | —                                                              |
+| Skill                  | Purpose                                  | Depends on                                                                     |
+| ---------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
+| `cre:post-writer`      | End-to-end content pipeline              | (delegates `cre:humanize`, `cre:evidence-scanner`)                            |
+| `cre:exploring`        | 7-question exploration → CONTEXT.md      | —                                                                             |
+| `cre:angle-discovery`  | Mine 6 frameworks → ranked angles        | —                                                                             |
+| `cre:multiplatform`    | 1→N platform-native variants             | `cre:humanize`, `cre:evidence-scanner`, `cre:voice-audit`, `cre:privacy-guard` |
+| `cre:repurpose`        | Adapt content 1→1 across platforms       | —                                                                             |
+| `cre:prompt-leverage`  | 5-layer prompt strengthening             | `cre:exploring`                                                               |
+| `cre:evidence-scanner` | Per-claim evidence-tier + Rule-09 gate   | —                                                                             |
+| `cre:humanize`         | De-AI-slop scan (VN+EN) + opt-in rewrite | —                                                                             |
+| `cre:voice-audit`      | Voice/tone consistency check             | `orc:bootstrap`                                                               |
+| `cre:privacy-guard`    | Pre-publish privacy/confidentiality scan | —                                                                             |
 
 ## GRO — Growth (8)
 

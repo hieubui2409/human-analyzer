@@ -13,6 +13,7 @@ metadata:
       "cre:prompt-leverage",
       "orc:bootstrap",
       "cre:privacy-guard",
+      "cre:humanize",
       "cre:voice-audit",
       "cre:evidence-scanner",
     ]
@@ -152,11 +153,17 @@ Based on type + platform, generate draft following structure:
 
 ### Phase 5: Mandatory Validation Gates
 
-Before reporting complete, run these automated checks:
+Before reporting complete, run these automated checks **in order** (de-slop generic prose
+first, then verify character fit — running voice-audit before a rewrite would invalidate it):
 
 1. **Privacy scan** — `cre:privacy-guard --file {post_path}` (BLOCKS if violations found)
-2. **Voice audit** — `cre:voice-audit --file {post_path}` (BLOCKS if HIGH drift)
-3. **Clinical leak check** — if post contains clinical terms, `psy:ref-audit --term {term}` to verify accuracy
+2. **Humanize (de-AI-slop)** — `cre:humanize --path {post_path}` (scan; on findings under
+   `assets/`, the LLM rewrites per the cre:humanize contract). A rewrite mutates the text, so
+   re-chain the gates on the rewritten version **in the canonical order defined by the
+   cre:humanize `--rewrite` contract** (privacy-guard → evidence-scanner → voice-audit).
+   **One-shot:** if a re-chained gate FAILs post-rewrite, HOLD + report (no auto re-loop).
+3. **Voice audit** — `cre:voice-audit --file {post_path}` (BLOCKS if HIGH drift)
+4. **Clinical leak check** — if post contains clinical terms, `psy:ref-audit --term {term}` to verify accuracy
 
 ### Phase 6: Profile→Content Alignment Check
 

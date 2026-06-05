@@ -1,13 +1,13 @@
 ---
 name: cre:multiplatform
-description: "Generate N platform-NATIVE content variants from one source/angle simultaneously (1→N) — LinkedIn/Facebook/Instagram/TikTok/YouTube/Twitter/blog. Each variant is written native to its platform (not a watermarked cross-post; research: native earns 2-3× engagement, platforms suppress recycled content), gated per-variant by cre:evidence-scanner + cre:voice-audit + cre:privacy-guard before write, with a per-platform privacy threshold. Distinct from cre:repurpose (1→1 post-publish adaptation). Triggers: 'multiplatform', 'all platforms', 'native variants', 'post everywhere', 'generate for all', '1 to many', 'cross-platform native'."
+description: "Generate N platform-NATIVE content variants from one source/angle simultaneously (1→N) — LinkedIn/Facebook/Instagram/TikTok/YouTube/Twitter/blog. Each variant is written native to its platform (not a watermarked cross-post; research: native earns 2-3× engagement, platforms suppress recycled content), gated per-variant by cre:humanize + cre:evidence-scanner + cre:voice-audit + cre:privacy-guard before write, with a per-platform privacy threshold. Distinct from cre:repurpose (1→1 post-publish adaptation). Triggers: 'multiplatform', 'all platforms', 'native variants', 'post everywhere', 'generate for all', '1 to many', 'cross-platform native'."
 argument-hint: "--source <path|angle> --slug <slug> [--platforms active|all|<list>] [--character <slug>] [--dry-run]"
 metadata:
   author: hieubt
   version: "1.0.0"
   category: "cre-framework"
   position: "generation"
-  dependencies: ["cre:evidence-scanner", "cre:voice-audit", "cre:privacy-guard"]
+  dependencies: ["cre:humanize", "cre:evidence-scanner", "cre:voice-audit", "cre:privacy-guard"]
 ---
 
 # cre:multiplatform — 1→N Platform-Native Generation
@@ -28,7 +28,7 @@ or an existing post path.
 | -------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | Scaffold | `generate-native-variants-for-platforms.py`    | Resolve platforms, create each `assets/{platform}/{slug}/` package, emit per-platform `brief.json` (native structure + constraints + privacy threshold + source). Deterministic. |
 | Write    | **LLM**                                        | Write the NATIVE `post.md` per platform FROM the brief + VOICE PROFILE + PSY defense gates. Heuristic. NOT a reformat of one master.   |
-| Gate     | `cre:evidence-scanner` + `cre:voice-audit` + `cre:privacy-guard` | Per variant, before publish-ready write. Any FAIL → variant HELD (not written), reported. |
+| Gate     | `cre:humanize` + `cre:evidence-scanner` + `cre:voice-audit` + `cre:privacy-guard` | Per variant, before publish-ready write. humanize de-slops first (rewrite re-chains the others). Any FAIL → variant HELD (not written), reported. |
 
 ## Usage
 
@@ -43,7 +43,7 @@ $PY $SK/generate-native-variants-for-platforms.py \
 #   → assets/{linkedin,facebook,blog}/260526-my-slug/{brief.json, post.md placeholder, images/}
 
 # 2. LLM writes a NATIVE post.md per platform FROM each brief.json
-# 3. per variant: run the 3 gates; on all-pass, write publish-ready post.txt + emit CRE.published
+# 3. per variant: run the 4 gates; on all-pass, write publish-ready post.txt + emit CRE.published
 ```
 
 `--platforms`: `active` (default — only `assets/` dirs that exist: blog/facebook/linkedin),
@@ -52,11 +52,16 @@ without writing. Default scope = **active only** so generation isn't wasted on u
 
 ## Per-Variant Gates (FAIL → HELD)
 
-Each variant must pass **all three** before its publish-ready copy is written:
+Each variant must pass **all four** before its publish-ready copy is written (humanize runs
+first so a de-slop rewrite re-chains the downstream gates on the rewritten text):
 
-1. `cre:evidence-scanner` — per-claim tier gate (T4/T5 or Rule-09 leak → FAIL).
-2. `cre:voice-audit` — native structure didn't drift the character voice.
-3. `cre:privacy-guard` — PII / privacy-tag / clinical-term leak, at the platform's
+1. `cre:humanize` — generic AI-tell scan; on findings under `assets/`, the LLM rewrites the
+   variant (one-shot; a post-rewrite gate FAIL → variant HELD, no re-loop). A rewrite re-chains
+   the gates below **in the canonical order of the cre:humanize `--rewrite` contract**
+   (privacy-guard → evidence-scanner → voice-audit).
+2. `cre:evidence-scanner` — per-claim tier gate (T4/T5 or Rule-09 leak → FAIL).
+3. `cre:voice-audit` — native structure didn't drift the character voice.
+4. `cre:privacy-guard` — PII / privacy-tag / clinical-term leak, at the platform's
    `privacy_threshold` (LinkedIn **strict** — employer/colleague names; blog **permissive**).
 
 A variant that fails any gate is **HELD** (not written) and reported — the other variants
@@ -91,6 +96,6 @@ $PY .claude/skills/orc-event-log/scripts/append-event-to-log.py \
 - `cre:angle-discovery` (B7) — `--source <angle>` feeds this skill.
 - `cre:repurpose` — 1→1 post-publish adaptation (shares platform_constraints).
 - `cre:post-writer` — single-platform full pipeline.
-- `cre:evidence-scanner` / `cre:voice-audit` / `cre:privacy-guard` — per-variant gates.
+- `cre:humanize` / `cre:evidence-scanner` / `cre:voice-audit` / `cre:privacy-guard` — per-variant gates.
 - Rule 03 (`content-creation-pipeline`) — platform guidelines (source of the constraints).
 - Rule 14 (`cre-evidence-and-events`) — CRE events + evidence-tier permissions.

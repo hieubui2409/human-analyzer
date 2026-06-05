@@ -16,6 +16,9 @@ Knobs (all optional in the file):
                         LLM-judgment dimensions (depth of probing, not verbosity). Advisory: read LLM-side.
   cre_action_prompting  minimal | standard | proactive (default standard) — how many next-step suggestions
                         CRE skills offer at turn boundaries. Advisory: read LLM-side.
+  humanize_strictness   high | balanced | conservative (default balanced) — how aggressively the
+                        humanizer_patterns scanner flags AI-tells. The lib stays preference-agnostic (takes an
+                        explicit `strictness` arg); cre:humanize + the CRE gates resolve this knob and pass it in.
 This module only stores closed-enum values; it judges nothing (script-vs-LLM split).
 """
 
@@ -35,10 +38,12 @@ else:
 DEFAULTS = {
     "crossref_rigor": "standard",
     "cre_action_prompting": "standard",
+    "humanize_strictness": "balanced",
 }
 ENUMS = {
     "crossref_rigor": ["light", "standard", "deep"],
     "cre_action_prompting": ["minimal", "standard", "proactive"],
+    "humanize_strictness": ["high", "balanced", "conservative"],
 }
 
 

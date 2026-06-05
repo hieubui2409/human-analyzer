@@ -37,6 +37,7 @@ STEPS = [
     ("MAT", "indexer · stale materials", [f"{SKILLS}/mat-indexer/scripts/find-stale-materials-by-processing-status.py", "--character", "test-alpha"]),
     ("MAT", "loader · inventory", [f"{SKILLS}/mat-loader/scripts/inventory-materials-with-frontmatter-status.py", "--character", "test-alpha"]),
     ("MAT", "loader · dup detection", [f"{SKILLS}/mat-loader/scripts/detect-duplicate-materials-by-size-and-content-hash.py", "--character", "test-alpha"]),
+    ("CRE", "humanize · scan ai-tells", [f"{SKILLS}/cre-humanize/scripts/scan-content-for-ai-tells.py", "--path", str(REPO / "eval" / "fixtures" / "ai-slop-sample-vi.md"), "--strictness", "balanced"]),
     ("CRE", "privacy-guard · scan assets", [f"{SKILLS}/cre-privacy-guard/scripts/scan-assets-for-privacy-violations.py"]),
     ("CRE", "privacy-guard · confidential names", [f"{SKILLS}/cre-privacy-guard/scripts/extract-confidential-names-from-all-profiles.py"]),
     ("LIB", "verdict_cache · crisis is never-cached", ["-m:platform_lib.verdict_cache", "--check", "crisis_assess", "--ids", "n1", "--bodies-file", str(FIXTURE / "_bodies.json")]),
@@ -45,7 +46,7 @@ STEPS = [
 ]
 
 # Scripts whose exit 1 means "ran, flagged findings/threshold" (a deterministic verdict, not an error).
-_FINDINGS_OK = {"health-check · completeness", "validate growth", "timeline-sync"}
+_FINDINGS_OK = {"health-check · completeness", "validate growth", "timeline-sync", "humanize · scan ai-tells"}
 
 
 def run_step(label, argv):

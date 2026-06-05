@@ -2,7 +2,7 @@
 
 Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no real PII). Deterministic legs only (no API key). Generated: 2026-06-05T00:00:00Z.
 
-**16/16 steps exit 0.**
+**17/17 steps exit 0.**
 
 | Framework | Feature | Status | Output head |
 |---|---|---|---|
@@ -17,6 +17,7 @@ Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no
 | MAT | indexer · stale materials | OK | ====================================================================== |
 | MAT | loader · inventory | OK | ====================================================================== |
 | MAT | loader · dup detection | OK | ## Duplicate Material Detection |
+| CRE | humanize · scan ai-tells | FINDINGS | Scan: /home/user/human-analyzer/eval/fixtures/ai-slop-sample-vi.md  (strictness=balanced, files=1) |
 | CRE | privacy-guard · scan assets | OK | | Severity | File | Line | Violation | Context | |
 | CRE | privacy-guard · confidential names | OK | ## Confidential Names Extracted from Profiles |
 | LIB | verdict_cache · crisis is never-cached | OK | {"hit": false, "verdict": null, "never_cached": true} |
@@ -245,6 +246,26 @@ Filtered to: test-alpha
 No duplicate pairs found.
 ```
 
+### [CRE] humanize · scan ai-tells
+`FINDINGS`
+```
+Scan: /home/user/human-analyzer/eval/fixtures/ai-slop-sample-vi.md  (strictness=balanced, files=1)
+  Findings: 15
+
+  • /home/user/human-analyzer/eval/fixtures/ai-slop-sample-vi.md  (15)
+      [high  ] formulaic_opener   @0     Trong thế giới ngày nay
+      [high  ] filler_phrase      @25    không thể phủ nhận rằng
+      [high  ] filler_phrase      @59    đáng chú ý là
+      [medium] filler_phrase      @85    Điều này cho phép
+      [low   ] filler_phrase      @112   tận dụng
+      [medium] filler_phrase      @121   dữ liệu tươi
+      [medium] filler_phrase      @134   một cách hiệu
+      [medium] filler_phrase      @152   nhằm mục đích
+      [low   ] filler_phrase      @194   mạnh mẽ
+      [low   ] filler_phrase      @205   toàn diện
+      [medium] filler_phrase      @216   Nó đóng vai trò
+```
+
 ### [CRE] privacy-guard · scan assets
 `OK`
 ```
@@ -285,6 +306,7 @@ These names MUST NOT appear unredacted in assets/:
 ```
 {
   "crossref_rigor": "standard",
-  "cre_action_prompting": "standard"
+  "cre_action_prompting": "standard",
+  "humanize_strictness": "balanced"
 }
 ```
