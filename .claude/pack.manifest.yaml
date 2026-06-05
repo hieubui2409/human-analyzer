@@ -1,0 +1,30 @@
+# Reproducible-pack manifest for the 6-framework toolkit.
+# Same source + this manifest ⇒ byte-identical tar.gz (tools/pack/build_pack.py). The safety_filter is a
+# NON-REMOVABLE backstop applied AFTER these include globs (drops secrets, runtime, and real-character PII).
+name: human-analyzer-frameworks
+version: "0.1.0"
+
+# Repo-relative include globs — the TOOLKIT (skills + shared lib + rules + schemas + guides + synthetic
+# fixture), never the live character corpus (docs/profiles, docs/materials, docs/graph are PII → excluded
+# by safety_filter regardless of what is listed here).
+include:
+  - .claude/skills/orc-*/**/*
+  - .claude/skills/psy-*/**/*
+  - .claude/skills/cre-*/**/*
+  - .claude/skills/gro-*/**/*
+  - .claude/skills/mat-*/**/*
+  - .claude/skills/com-*/**/*
+  - .claude/skills/_framework-shared/**/*
+  - .claude/scripts/**/*
+  - .claude/schemas/**/*
+  - docs/rules/**/*
+  - docs/references/**/*
+  - tests/**/*
+  - e2e/**/*
+  - eval/**/*
+  - CLAUDE.md
+  - README.md
+  - STANDARDIZE.md
+  - pyproject.toml
+  - .github/workflows/frameworks-ci.yml
+  - .github/workflows/cross-framework-bug-class.yml

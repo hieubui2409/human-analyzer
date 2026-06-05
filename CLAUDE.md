@@ -43,14 +43,14 @@ docs/
 ├── materials/{character}/  ← MAT source materials w/ evidence tiers T1–T5 + CRAAP scores
 ├── references/             ← Clinical theory library (60+ theories), show-don't-tell
 ├── graph/                  ← Cross-character relational dynamics
-└── rules/                  ← 15 modular rule files
+└── rules/                  ← 16 modular rule files
 plans/{reports,templates}/  ← Validation reports + plan templates
 assets/{platform}/          ← CRE output, per platform
 ```
 
 Asset package convention: `assets/{platform}/{YYMMDD}-{slug}/` → `post.txt`, `image-prompts.txt`, `images/`, `README.txt`.
 
-**Navigation docs:** `docs/knowledge-architecture.md` (6-layer knowledge map), `docs/MODULES.md` (55-skill grouping + cross-framework dependency edges), `docs/distilled-principles.md` (5 cross-domain invariants from rules 01–15).
+**Navigation docs:** `docs/knowledge-architecture.md` (6-layer knowledge map), `docs/MODULES.md` (58-skill grouping + cross-framework dependency edges), `docs/distilled-principles.md` (5 cross-domain invariants from rules 01–16).
 
 ---
 
