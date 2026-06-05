@@ -8,7 +8,7 @@ Các hồ sơ đầy đủ rất phong phú (~7.400 dòng tổng cộng cho 3 nh
 
 ## 2. Khái niệm cốt lõi (mô hình tư duy)
 
-- **Vô hiệu hóa nhận thức git**: Các hồ sơ lite lưu trong bộ đệm mã băm git nguồn của họ. Nếu bạn chỉnh sửa hồ sơ, mã băm git thay đổi, bộ đệm trở nên cũ, kỹ năng tái tạo. Không cần xóa bộ đệm thủ công.
+- **Vô hiệu hóa nhận thức git**: Các hồ sơ lite lưu trong bộ đệm mã băm git (commit) + kiểm tra thay đổi chưa commit nguồn của họ. Nếu bạn chỉnh sửa hồ sơ, mã băm git (commit) + kiểm tra thay đổi chưa commit thay đổi, bộ đệm trở nên cũ, kỹ năng tái tạo. Không cần xóa bộ đệm thủ công.
 - **Quy tắc nén**: Sự kiện vẫn chính xác; câu chuyện được nén 3x. Các lý thuyết được đề cập theo tên (không giải thích); các sự kiện dòng thời gian gần đây được ưu tiên hơn những cái cũ; giọng nói được bảo tồn ở cấp độ câu, không phải các phần toàn bộ.
 - **Kiểm tra tính nhất quán trước**: Trước khi nén, kỹ năng có thể tùy chọn chạy `psy:crossref --quick` để cảnh báo nếu các hồ sơ nguồn có mâu thuẫn. Nén-đầu tiên-hỏi-câu hỏi-sau là rủi ro.
 
@@ -50,5 +50,5 @@ Các hồ sơ đầy đủ rất phong phú (~7.400 dòng tổng cộng cho 3 nh
 
 - **Lite ≠ full**: Một hồ sơ lite là một công cụ định hướng nhanh chóng, không xác thực sâu. Nếu bạn cần xác minh độ chính xác lâm sàn hoặc tính nhất quán qua các nhân vật, hãy sử dụng các hồ sơ đầy đủ + psy:crossref.
 - **Nén có thể ẩn sắc thái**: Một psychology/formulation.md tệp mỏng trở thành 2 dòng trong lite. Nếu một mẫu tinh tế, nó có thể bị mất. Kiểm tra `--stats` để xem số dòng; nếu một tệp nguồn là <50 dòng, lite sẽ nén nó nhiều.
-- **Sửa đổi nguồn thủ công mà không commit phá hủy bộ đệm**: Nếu bạn chỉnh sửa tệp hồ sơ mà không commit, mã băm git không thay đổi, bộ đệm vẫn cũ. Commit hoặc sử dụng `--refresh` để buộc.
+- **Sửa đổi nguồn thủ công mà không commit phá hủy bộ đệm**: Nếu bạn chỉnh sửa tệp hồ sơ mà không commit, mã băm git (commit) + kiểm tra thay đổi chưa commit không thay đổi, bộ đệm vẫn cũ. Commit hoặc sử dụng `--refresh` để buộc.
 - **Kiểm tra tính nhất quán trước tái tạo là tùy chọn**: Kỹ năng có thể cảnh báo nếu các hồ sơ nguồn mâu thuẫn (qua nội bộ `psy:crossref --quick`). Nếu bạn bỏ qua điều này, một nguồn cũ/mâu thuẫn nén thành lite cũ/mâu thuẫn. Lựa chọn của người dùng.

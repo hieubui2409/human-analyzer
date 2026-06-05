@@ -9,7 +9,7 @@ Bạn cập nhật hồ sơ của Nhân vật A bằng một sự kiện mới, 
 ## 2. Khái niệm cốt lõi (mô hình tư duy)
 
 - **Xác định + LLM**: Các chiều 1–4 (ngày tháng, tham chiếu gia đình, liên kết tâm lý, dữ liệu cứng) chạy kiểm tra dựa trên kịch bản. Các chiều 5–10 (hỗ trợ bằng bằng chứng, sự liên kết của câu chuyện, sự nhất quán về giọng nói) cần sự phán xét của con người — LLM làm điều đó.
-- **Bộ đệm phán quyết**: 6 chiều của LLM sử dụng lại các phán quyết được lưu trong bộ đệm nếu phần hồ sơ không thay đổi (xác minh bằng mã băm git). Điều này tiết kiệm mã thông báo. Các phán quyết khủng hoảng không bao giờ được lưu trong bộ đệm (luôn chạy lại).
+- **Bộ đệm phán quyết**: 6 chiều của LLM sử dụng lại các phán quyết được lưu trong bộ đệm nếu phần hồ sơ không thay đổi (xác minh bằng mã băm nội dung). Điều này tiết kiệm mã thông báo. Các phán quyết khủng hoảng không bao giờ được lưu trong bộ đệm (luôn chạy lại).
 - **Mức độ nghiêm trọng quan trọng**: Sự không khớp ngày tháng là QUAN TRỌNG (một trong hai là sai). Một tông cảm xúc khác là NHỎ (cả hai cảm xúc hợp lệ, chỉ được khung khác nhau).
 
 ## 3. Đường dẫn học tập

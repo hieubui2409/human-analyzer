@@ -8,7 +8,7 @@ Full profiles are rich (~7,400 lines total for 3 characters = ~25,000 tokens). B
 
 ## 2. Core concepts (the mental model)
 
-- **Git-aware invalidation**: Lite profiles cache their source git hash. If you edit the profile, git hash changes, cache becomes stale, skill regenerates. No manual cache-clearing needed.
+- **Git-aware invalidation**: the lite cache is keyed on the source profile's git commit hash AND a working-tree dirty check. Any edit — committed or not — invalidates the cache, so the skill regenerates. No manual cache-clearing needed.
 - **Compression rules**: Facts stay accurate; narrative gets compressed 3x. Theories are mentioned by name (not explained); recent timeline events prioritized over old ones; voice is preserved at sentence level, not full sections.
 - **Pre-consistency check**: Before compressing, the skill can optionally run `psy:crossref --quick` to warn if source profiles have contradictions. Compress-first-ask-questions-later is risky.
 
@@ -50,5 +50,5 @@ Full profiles are rich (~7,400 lines total for 3 characters = ~25,000 tokens). B
 
 - **Lite ≠ full**: A lite profile is a tool for quick orientation, not deep validation. If you need to verify clinical accuracy or cross-character consistency, use full profiles + psy:crossref.
 - **Compression can hide nuance**: A thin-file psychology/formulation.md becomes 2 lines in lite. If a pattern is subtle, it might get lost. Check `--stats` to see line counts; if a source file is < 50 lines, lite will compress it heavily.
-- **Manual source edits without commit break cache**: If you edit a profile file without committing, git hash doesn't change, cache stays stale. Commit or use `--refresh` to force.
+- **Manual source edits without commit break cache**: If you edit a profile file without committing, git commit hash (with uncommitted-edit check) doesn't change, cache stays stale. Commit or use `--refresh` to force.
 - **Pre-regeneration check optional**: The skill can warn if source profiles contradict (via internal `psy:crossref --quick`). If you skip this, a stale/contradictory source compresses into a stale/contradictory lite. User's call.

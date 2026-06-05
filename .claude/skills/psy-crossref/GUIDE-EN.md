@@ -9,7 +9,7 @@ You updated Nhân vật A's profile with a new event, but forgot to update Nhân
 ## 2. Core concepts (the mental model)
 
 - **Deterministic + LLM split**: Dimensions 1–4 (dates, family refs, psychology links, hard facts) run script-based checks. Dimensions 5–10 (evidence backing, narrative coherence, voice consistency) need human judgment — the LLM does that.
-- **Verdict cache**: The 6 LLM dimensions reuse cached verdicts if the profile section hasn't changed (verified by git hash). This saves tokens. Crisis verdicts are never cached (always re-run).
+- **Verdict cache**: The 6 LLM dimensions reuse cached verdicts if the profile section hasn't changed (verified by content hash). This saves tokens. Crisis verdicts are never cached (always re-run).
 - **Severity matters**: A date mismatch is CRITICAL (one of them is wrong). A different emotional tone is MINOR (both feelings valid, just framed differently).
 
 ## 3. Learning path
