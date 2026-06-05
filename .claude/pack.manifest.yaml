@@ -4,9 +4,9 @@
 name: human-analyzer-frameworks
 version: "0.1.0"
 
-# Repo-relative include globs — the TOOLKIT (skills + shared lib + rules + schemas + guides + synthetic
-# fixture), never the live character corpus (docs/profiles, docs/materials, docs/graph are PII → excluded
-# by safety_filter regardless of what is listed here).
+# Repo-relative include globs — the TOOLKIT (skills + agents + hooks + shared lib + rules + schemas +
+# guides + nav docs + synthetic fixture), never the live character corpus (docs/profiles, docs/materials,
+# docs/graph AND docs/references are real-character PII → excluded by safety_filter regardless of this list).
 include:
   - .claude/skills/orc-*/**/*
   - .claude/skills/psy-*/**/*
@@ -15,16 +15,21 @@ include:
   - .claude/skills/mat-*/**/*
   - .claude/skills/com-*/**/*
   - .claude/skills/_framework-shared/**/*
+  - .claude/agents/**/*
+  - .claude/hooks/**/*
   - .claude/scripts/**/*
   - .claude/schemas/**/*
+  - .claude/framework-config.json
+  - .claude/settings.json
   - docs/rules/**/*
-  - docs/references/**/*
+  - docs/knowledge-architecture.md
+  - docs/MODULES.md
+  - docs/distilled-principles.md
   - tests/**/*
   - e2e/**/*
   - eval/**/*
   - CLAUDE.md
   - README.md
-  - STANDARDIZE.md
   - pyproject.toml
   - .github/workflows/frameworks-ci.yml
   - .github/workflows/cross-framework-bug-class.yml
