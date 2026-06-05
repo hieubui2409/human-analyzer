@@ -45,7 +45,8 @@ def scan_character(char_slug: str) -> list[dict]:
     if not mat_dir.exists():
         return []
     results = []
-    for f in sorted(mat_dir.iterdir()):
+    # C1-MAT-10b: use rglob to capture nested materials (was iterdir — missed subdirs)
+    for f in sorted(mat_dir.rglob("*")):
         if f.is_dir():
             continue
         stat = f.stat()

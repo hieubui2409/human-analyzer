@@ -60,14 +60,6 @@ CONNECTIONS = {
 }
 
 
-def load_graph_context() -> str:
-    """Read relational-dynamics.md for context."""
-    graph_file = GRAPH / "relational-dynamics.md"
-    if graph_file.exists():
-        return graph_file.read_text(encoding="utf-8")[:500]
-    return ""
-
-
 def _mirror_relationship_targets(source_slug: str, section: str | None) -> list[dict]:
     """When a cross-relationship file changes, propagate to the mirror file in the other character."""
     targets = []
@@ -207,7 +199,9 @@ def main():
         action = "Update" if t["file_exists"] else "Create"
         print(f"  {i}. {action} {t['target_display']}/{t['file']} — {t['reason']}")
 
-    print(f"\n  Next step: run `psy:crossref --pair {source_slug.split('-')[2]} <target>` after updates")
+    # Use CHAR_DISPLAY for the slug label — safe for any slug length (avoids IndexError on 2-word slugs)
+    source_label = CHAR_DISPLAY.get(source_slug, source_slug)
+    print(f"\n  Next step: run `psy:crossref --pair {source_label} <target>` after updates")
 
 
 if __name__ == "__main__":

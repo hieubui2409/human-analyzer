@@ -1,23 +1,27 @@
 """Archive materials matching filter criteria by setting processing_status: archived."""
 import argparse
 import sys
-from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, resolve_character
-from platform_lib.materials_classifier import extract_frontmatter
+from platform_lib.materials_classifier import extract_frontmatter, tier_for_material
+from platform_lib.markdown_parser import parse_iso_date
 from platform_lib.errors import emit_error
+from datetime import date
 
 
 def parse_frontmatter_date(val) -> date | None:
+    """Parse a frontmatter date value to a date. Returns None on bad input."""
     if not val:
         return None
-    try:
-        return datetime.strptime(str(val), "%Y-%m-%d").date()
-    except ValueError:
-        return None
+    return parse_iso_date(str(val)) if _is_iso_date(str(val)) else None
+
+
+def _is_iso_date(s: str) -> bool:
+    import re
+    return bool(re.match(r"^\d{4}-\d{2}-\d{2}$", s.strip()))
 
 
 def scan_materials(slug: str) -> list[dict]:
@@ -27,11 +31,12 @@ def scan_materials(slug: str) -> list[dict]:
     results = []
     for f in sorted(mat_dir.rglob("*.md")):
         fm = extract_frontmatter(f) or {}
+        # C1-MAT-11b: derive tier from source_category via SOURCE_TO_TIER (MAT-05 canonical)
         results.append({
             "path": f,
             "name": f.name,
             "slug": slug,
-            "tier": fm.get("evidence_tier", ""),
+            "tier": str(tier_for_material(fm)) if fm else "",
             "status": fm.get("processing_status", ""),
             "captured_date": fm.get("captured_date", ""),
             "has_frontmatter": bool(fm),
@@ -81,7 +86,7 @@ def main():
     parser = argparse.ArgumentParser(description="Archive materials by filter criteria")
     parser.add_argument("--character", "-c", help="Character slug or alias")
     parser.add_argument("--before-date", help="Archive files with captured_date before YYYY-MM-DD")
-    parser.add_argument("--tier", help="Evidence tier to match (T1-T5)")
+    parser.add_argument("--tier", help="Evidence tier to match (1-5, derived from source_category)")
     parser.add_argument("--status", help="processing_status to match")
     parser.add_argument("--dry-run", action="store_true", default=True,
                         help="Preview only, no writes (default: True)")
@@ -94,7 +99,7 @@ def main():
     before_date = None
     if args.before_date:
         try:
-            before_date = datetime.strptime(args.before_date, "%Y-%m-%d").date()
+            before_date = parse_iso_date(args.before_date)
         except ValueError:
             emit_error("validation", f"invalid --before-date: {args.before_date!r}")
             print(f"ERROR: invalid --before-date format: {args.before_date!r} (expected YYYY-MM-DD)")

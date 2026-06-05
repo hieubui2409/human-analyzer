@@ -3,9 +3,10 @@ import hashlib
 import re
 from pathlib import Path
 
-import yaml
-
 from platform_lib.paths import MATERIALS, SCHEMAS, ALL_CHARS, CHAR_DISPLAY
+# Canonical frontmatter parser lives in markdown_parser; import here so callers that do
+# `from platform_lib.materials_classifier import extract_frontmatter` get the single impl.
+from platform_lib.markdown_parser import extract_frontmatter as _mp_extract_frontmatter
 
 MATERIAL_TYPES = {
     ".md": "markdown",
@@ -40,9 +41,6 @@ EVIDENCE_TIERS = {
 # Canonical pipeline states ordered from ingestion to retirement.
 PROCESSING_STATES = ["raw", "extracted", "analyzed", "validated", "integrated", "archived"]
 
-FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
-
-
 SCHEMA_PATH = SCHEMAS / "material-schema.yaml"
 
 REQUIRED_FIELDS = [
@@ -68,25 +66,20 @@ SOURCE_TO_TIER = {
 
 
 def extract_frontmatter(filepath: Path) -> dict | None:
-    """Extract YAML frontmatter from a material file. Returns None if no frontmatter."""
-    try:
-        text = filepath.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
-        return None
-    m = FRONTMATTER_RE.match(text)
-    if not m:
-        return None
-    try:
-        result = yaml.safe_load(m.group(1))
-        if not isinstance(result, dict):
-            return None
-        # yaml.safe_load auto-converts dates to datetime.date — stringify them back
-        for key, val in result.items():
-            if hasattr(val, "isoformat"):
-                result[key] = val.isoformat()
-        return result
-    except (yaml.YAMLError, ValueError, TypeError):
-        return None
+    """Extract YAML frontmatter from a material file. Returns None if absent.
+
+    Delegates to the canonical `markdown_parser.extract_frontmatter` (single home — recursive
+    date-stringify + missing-file/non-dict guards) and normalizes its `{}`-on-absent to this
+    module's historical `None`-on-absent contract so existing `if fm is None` callers stay stable.
+    """
+    return _mp_extract_frontmatter(filepath) or None
+
+
+def tier_for_material(fm: dict) -> int:
+    """Canonical evidence tier from a material's frontmatter (MAT-05: tier derives from
+    source_category, NOT the authored evidence_tier field). Unknown/missing → T5 (fail-closed).
+    Single source so mat:archive, mat:indexer and cre:evidence-scanner can never disagree."""
+    return SOURCE_TO_TIER.get((fm or {}).get("source_category", ""), 5)
 
 
 def validate_material_frontmatter(filepath: Path) -> list[str]:

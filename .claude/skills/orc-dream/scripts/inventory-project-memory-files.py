@@ -19,7 +19,9 @@ except ImportError:
 MEMORY_DIR = paths.memory_dir()
 
 MEMORY_TYPE_PATTERNS = {
-    "user": re.compile(r"user|profile|hiếu|hieu", re.IGNORECASE),
+    # Generic tokens only — no character-specific literals (Rule 12: shared logic must
+    # not hardcode character names; those belong in paths.py character resolution).
+    "user": re.compile(r"user|profile", re.IGNORECASE),
     "feedback": re.compile(r"feedback|lesson|learned|calibrat", re.IGNORECASE),
     "project": re.compile(r"project|session|state|wave|arc", re.IGNORECASE),
     "reference": re.compile(r"reference|clinical|theory|ref-", re.IGNORECASE),

@@ -3,27 +3,15 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ROOT
 # Path→event routing is owned by the canonical routing registry so the diff
-# detector and the domain-router cannot drift apart.
-from platform_lib.event_routing import DOMAIN_PATH_RULES as DOMAIN_RULES, GRO_PATH_MARKER
-
-
-def _refine_psy_vs_gro(filepath: str, info: dict) -> dict:
-    """Distinguish GRO (growth/) from PSY (rest of profiles/) changes."""
-    if info["domain"] == "PSY" and GRO_PATH_MARKER in filepath:
-        return {"event": "GRO.profiled", "domain": "GRO"}
-    return info
-
-IGNORE_PATTERNS = [
-    "plans/", ".claude/session-state/", ".claude/cache/",
-    ".claude/teams/", ".claude/tasks/", "node_modules/",
-]
+# detector and the domain-router cannot drift apart. detect_events is the shared
+# canonical implementation (IGNORE_PATTERNS applied, dedup by event:prefix).
+from platform_lib.event_routing import detect_events
 
 
 def get_changed_files(ref: str = "HEAD~1", staged: bool = False) -> list[str]:
@@ -42,34 +30,8 @@ def get_changed_files(ref: str = "HEAD~1", staged: bool = False) -> list[str]:
 
 
 def classify_changes(files: list[str]) -> list[dict]:
-    """Classify changed files into domain events."""
-    events = []
-    seen_events = set()
-
-    for filepath in files:
-        if any(filepath.startswith(ignore) for ignore in IGNORE_PATTERNS):
-            continue
-
-        for prefix, info in DOMAIN_RULES.items():
-            if filepath.startswith(prefix):
-                info = _refine_psy_vs_gro(filepath, info)
-                event_key = f"{info['event']}:{prefix}"
-                if event_key not in seen_events:
-                    seen_events.add(event_key)
-                    events.append({
-                        "event": info["event"],
-                        "domain": info["domain"],
-                        "trigger_prefix": prefix,
-                        "trigger_files": [],
-                        "timestamp": datetime.now().isoformat(timespec="seconds"),
-                    })
-
-                for evt in events:
-                    if evt["event"] == info["event"] and evt["trigger_prefix"] == prefix:
-                        evt["trigger_files"].append(filepath)
-                break
-
-    return events
+    """Classify changed files into domain events (delegates to shared canonical impl)."""
+    return detect_events(files)
 
 
 def main():

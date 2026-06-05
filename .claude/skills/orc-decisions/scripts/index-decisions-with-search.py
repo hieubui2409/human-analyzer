@@ -61,7 +61,7 @@ def main():
     parser.add_argument("--search", help="Search query (matches title, summary, category, character)")
     parser.add_argument("--character", help="Filter by character name or slug")
     parser.add_argument("--list", action="store_true", help="List all decisions")
-    parser.add_argument("--status", choices=["open", "closed", "pending"], help="Filter by status")
+    parser.add_argument("--status", choices=["active", "superseded", "revisit"], help="Filter by status")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
@@ -77,6 +77,10 @@ def main():
 
     if args.search or args.character:
         decisions = filter_decisions(decisions, search=args.search or "", character=args.character or "")
+
+    # --list: show last 20 decisions (sorted newest-first by date then filename)
+    if args.list:
+        decisions = sorted(decisions, key=lambda d: (d["date"], d["file"]), reverse=True)[:20]
 
     if args.json:
         print_json(decisions)
@@ -94,6 +98,8 @@ def main():
 
     if args.search or args.character:
         print(f"\n**Filter applied:** search=`{args.search or ''}` character=`{args.character or ''}`")
+    if args.list:
+        print(f"\n_(showing last 20; use --search to filter)_")
 
 
 if __name__ == "__main__":

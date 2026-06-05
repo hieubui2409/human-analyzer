@@ -33,8 +33,9 @@ from platform_lib.paths import (
     GRAPH, MATERIALS, resolve_character, character_dir, CHAR_DISPLAY,
     list_relationship_files,
 )
-from platform_lib.materials_classifier import extract_frontmatter, SOURCE_TO_TIER
+from platform_lib.materials_classifier import SOURCE_TO_TIER
 from platform_lib.markdown_parser import (
+    extract_frontmatter,
     extract_sections, extract_tags, extract_timeline_events, extract_milestones,
 )
 from platform_lib.errors import emit_error
@@ -103,13 +104,15 @@ def extract_graph_facts(graph_path: Path) -> list[dict]:
             "consent_status": _consent_for_line(ev["event"]),
             "source": graph_path.name,
         })
-    # Section-level dynamic statements (first non-empty lines of publishable sections)
-    sections = extract_sections(graph_path, level=3)
+    # Section-level dynamic statements (first non-empty lines of publishable level-2 sections).
+    # extract_sections at level=2 returns level-2 names ("Relationship Timeline", etc.) which
+    # match PUBLISHABLE_SECTIONS directly. Using level=3 returned sub-section names that never
+    # matched, making the gate a dead no-op (always passed everything through).
+    sections = extract_sections(graph_path, level=2)
     for name, content in sections.items():
         base = name.split("(")[0].strip()
-        if not any(p in name or p == base for p in PUBLISHABLE_SECTIONS) and \
-           not any(p in graph_path.read_text(encoding="utf-8") for p in []):
-            pass
+        if base not in PUBLISHABLE_SECTIONS:
+            continue
         for line in content.splitlines():
             s = line.strip(" -*|")
             if len(s) > 25 and not s.startswith("#") and "|" not in line:

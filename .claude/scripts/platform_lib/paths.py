@@ -148,9 +148,12 @@ CHAR_DISPLAY = {"character-a": "Nhân vật A", "character-b": "Nhân vật B", 
 # cross-character mentions in profile/timeline prose. Single source so the crossref scripts
 # stop re-declaring divergent copies.
 CHAR_SEARCH_ALIASES = {
-    "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật A"],
+    # Canonical + display + ASCII-folded + typo variants per character.
+    # Typo variants (Nhân vật ẩn danh, Nhân vật ẩn danh) cover common Vietnamese IME slip-overs so
+    # classify-work-type and crossref scripts detect all real-world spellings.
+    "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật ẩn danh", "Nhân vật A"],
     "character-b": ["Nhân vật B", "Nhân vật ẩn danh", "Nhân vật B"],
-    "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật C"],
+    "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật ẩn danh", "Nhân vật C"],
 }
 
 # Dynamic character discovery for ALT projects (e2e fixtures, future multi-character corpora).

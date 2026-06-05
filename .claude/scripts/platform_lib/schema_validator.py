@@ -89,11 +89,19 @@ def _stringify_dates(obj):
 
 
 def parse_frontmatter(path: Path) -> dict | None:
-    """YAML frontmatter as a nested dict (preserves craap_score etc.). None if absent."""
+    """YAML frontmatter as a nested dict (preserves craap_score etc.). None if absent.
+
+    Guards: a missing file or a non-mapping frontmatter body (a bare scalar/list between the
+    `---` fences) returns None rather than raising / returning a non-dict that the validator
+    would later index into."""
+    if not path.exists():
+        return None
     m = _FRONTMATTER_RE.match(path.read_text(encoding="utf-8"))
     if not m:
         return None
     data = yaml.safe_load(m.group(1)) or {}
+    if not isinstance(data, dict):
+        return None
     return _stringify_dates(data)
 
 

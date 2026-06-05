@@ -36,10 +36,16 @@ LOCATION_PATTERNS = [
     re.compile(r'\bVietSeeds\b', re.IGNORECASE),
 ]
 
+# C1-CRE-08: Vietnamese phone (10-digit, starts 03/05/07/08/09) checked BEFORE CCCD.
+# CCCD is any 12-digit number. Checked in order longest-match: phone first (10-digit
+# is a strict subset of possible 12-digit strings, but word-boundary anchors separate
+# them). Keeping phone first avoids double-fire on strings like "0987654321xx".
 PII_PATTERNS = [
     (re.compile(r'\b0[35789]\d{8}\b'), "HIGH", "Vietnamese phone"),
     (re.compile(r'[\w.+-]+@[\w-]+\.[\w.]+'), "HIGH", "email address"),
-    (re.compile(r'\b0\d{11}\b'), "HIGH", "Vietnamese CCCD"),
+    # C1-CRE-08: real 12-digit CCCD starts with province code (001-096), not 0-prefix.
+    # Previous pattern \b0\d{11}\b was wrong (required leading 0). Fixed to \b\d{12}\b.
+    (re.compile(r'\b\d{12}\b'), "HIGH", "Vietnamese CCCD"),
 ]
 
 DSM_ICD_PATTERN = re.compile(r'\b[FG]\d{2}(?:\.\d{1,2})?\b')

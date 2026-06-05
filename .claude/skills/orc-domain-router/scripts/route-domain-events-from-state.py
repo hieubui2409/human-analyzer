@@ -9,9 +9,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ROOT
 from platform_lib.event_routing import (
-    DOMAIN_PATH_RULES as DOMAIN_RULES,
-    GRO_PATH_MARKER,
     downstream_for,
+    detect_events,  # canonical shared implementation (applies IGNORE_PATTERNS + dedup)
 )
 
 
@@ -24,27 +23,6 @@ def get_changed_files(ref: str) -> list[str]:
         return [f for f in result.stdout.strip().splitlines() if f] if result.returncode == 0 else []
     except (OSError, subprocess.SubprocessError):
         return []
-
-
-def detect_events(files: list[str]) -> list[dict]:
-    events = []
-    seen = set()
-    for filepath in files:
-        for prefix, info in DOMAIN_RULES.items():
-            if filepath.startswith(prefix):
-                domain = info["domain"]
-                event = info["event"]
-                if domain == "PSY" and GRO_PATH_MARKER in filepath:
-                    event, domain = "GRO.profiled", "GRO"
-                key = event
-                if key not in seen:
-                    seen.add(key)
-                    events.append({"event": event, "domain": domain, "trigger_files": []})
-                for evt in events:
-                    if evt["event"] == event:
-                        evt["trigger_files"].append(filepath)
-                break
-    return events
 
 
 def route_events(events: list[dict]) -> list[dict]:

@@ -8,7 +8,7 @@ LLM to adjudicate. READ-ONLY. Scope = 6 framework prefixes, not ck skills.
 
 Usage:
   check-skill-and-lib-health.py [--json] [--format md|json] [--perf]
-                                [--framework psy|orc|cre|gro|mat|com] [--verbose]
+                                [--framework psy|orc|cre|gro|mat|com]
 """
 from __future__ import annotations
 
@@ -145,7 +145,6 @@ def main() -> int:
     ap.add_argument("--format", choices=["md", "json"], default="md")
     ap.add_argument("--perf", action="store_true", help="include script perf (needs telemetry)")
     ap.add_argument("--framework", choices=FRAMEWORKS)
-    ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
     data = gather(args.framework, args.perf)
     if args.json or args.format == "json":

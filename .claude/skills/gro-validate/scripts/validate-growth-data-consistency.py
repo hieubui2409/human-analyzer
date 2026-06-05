@@ -11,7 +11,7 @@ from platform_lib.paths import (
     ALL_CHARS, CHAR_DISPLAY, GRO_PROFILE_FILES, MATERIALS, PROFILES, resolve_character,
     list_relationship_files,
 )
-from platform_lib.markdown_parser import extract_frontmatter
+from platform_lib.markdown_parser import extract_frontmatter, parse_iso_date
 
 
 REQUIRED_FM_FIELDS = ["character", "domain", "type", "tags", "last_updated", "updated_by", "confidence"]
@@ -211,10 +211,15 @@ def validate_staleness(slug: str, stale_days: int = 90) -> list[Finding]:
         if isinstance(last_updated, str):
             last_updated = last_updated.strip('"')
 
+        # C1-LIB-10: use canonical parse_iso_date instead of inline strptime
         try:
-            updated_date = datetime.strptime(str(last_updated), "%Y-%m-%d")
-            if updated_date < stale_threshold:
-                days_old = (now - updated_date).days
+            d = parse_iso_date(str(last_updated)) if last_updated else None
+            if d is None:
+                raise ValueError("no date")
+            from datetime import datetime as _dt
+            updated_dt = _dt(d.year, d.month, d.day)
+            if updated_dt < stale_threshold:
+                days_old = (now - updated_dt).days
                 findings.append(Finding("Staleness", "WARN",
                                         f"Last updated {days_old} days ago ({last_updated})", rel_path))
         except (ValueError, TypeError):

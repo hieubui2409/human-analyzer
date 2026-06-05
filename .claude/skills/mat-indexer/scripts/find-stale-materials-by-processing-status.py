@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, resolve_character
 from platform_lib.materials_classifier import extract_frontmatter
+from platform_lib.markdown_parser import parse_iso_date
 
 
 def find_stale(slug: str, stale_days: int = 7) -> list[dict]:
@@ -39,14 +40,16 @@ def find_stale(slug: str, stale_days: int = 7) -> list[dict]:
             continue
 
         last_updated = str(fm.get("last_updated", ""))
+        # C1-LIB-10: use canonical parse_iso_date instead of inline strptime
         try:
-            updated_date = datetime.strptime(last_updated, "%Y-%m-%d")
-            days_stale = (datetime.now() - updated_date).days
+            updated_date_obj = parse_iso_date(last_updated) if last_updated else None
+            updated_dt = datetime(updated_date_obj.year, updated_date_obj.month, updated_date_obj.day) if updated_date_obj else None
+            days_stale = (datetime.now() - updated_dt).days if updated_dt else -1
         except ValueError:
             days_stale = -1
-            updated_date = None
+            updated_dt = None
 
-        if updated_date is None or updated_date < cutoff:
+        if updated_dt is None or updated_dt < cutoff:
             results.append({
                 "file": fpath.name,
                 "path": str(fpath.relative_to(MATERIALS)),

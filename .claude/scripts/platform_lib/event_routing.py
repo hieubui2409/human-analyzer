@@ -223,9 +223,62 @@ DOMAIN_PATH_RULES: dict[str, dict] = {
 # Files under docs/profiles/ containing this path segment are rerouted to GRO.profiled.
 GRO_PATH_MARKER: str = "/growth/"
 
+# Paths to ignore in diff-based event detection (noise that never produces domain events).
+IGNORE_PATTERNS: list[str] = [
+    "plans/", ".claude/session-state/", ".claude/cache/",
+    ".claude/teams/", ".claude/tasks/", "node_modules/",
+]
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def detect_events(changed_files: list[str]) -> list[dict]:
+    """Classify changed files into domain events.
+
+    Canonical shared implementation for orc-domain-router and orc-session-state
+    so both detectors remain in sync. Applies IGNORE_PATTERNS and deduplicates
+    by event:prefix key (stricter session-state semantics: same event from the
+    same path prefix is only emitted once).
+
+    Args:
+        changed_files: repo-relative file paths from ``git diff --name-only``
+
+    Returns:
+        List of event dicts: {event, domain, trigger_prefix, trigger_files, timestamp}
+    """
+    from datetime import datetime
+
+    events: list[dict] = []
+    seen_events: set[str] = set()
+
+    for filepath in changed_files:
+        # Drop noise paths that never produce meaningful domain events.
+        if any(filepath.startswith(pat) for pat in IGNORE_PATTERNS):
+            continue
+
+        for prefix, info in DOMAIN_PATH_RULES.items():
+            if filepath.startswith(prefix):
+                # Distinguish GRO growth/ from PSY rest-of-profiles/.
+                if info["domain"] == "PSY" and GRO_PATH_MARKER in filepath:
+                    info = {"event": "GRO.profiled", "domain": "GRO"}
+                event_key = f"{info['event']}:{prefix}"
+                if event_key not in seen_events:
+                    seen_events.add(event_key)
+                    events.append({
+                        "event": info["event"],
+                        "domain": info["domain"],
+                        "trigger_prefix": prefix,
+                        "trigger_files": [],
+                        "timestamp": datetime.now().isoformat(timespec="seconds"),
+                    })
+                for evt in events:
+                    if evt["event"] == info["event"] and evt["trigger_prefix"] == prefix:
+                        evt["trigger_files"].append(filepath)
+                break
+
+    return events
 
 
 def downstream_for(event: str) -> list[dict]:

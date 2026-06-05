@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import PROFILES, REFERENCES
 from platform_lib.clinical_terms import REFERENCE_REQUIRED_SECTIONS
+from platform_lib.errors import emit_error  # noqa: F401 — used for IO/decode errors
 
 REQUIRED_SECTIONS = REFERENCE_REQUIRED_SECTIONS
 
@@ -44,8 +45,8 @@ def count_citations(theory_name: str, theory_stem: str) -> int:
                     if len(pat) > 4 and pat in text:
                         count += 1
                         break
-            except Exception:
-                pass
+            except (OSError, UnicodeError) as exc:
+                emit_error("io", str(exc), {"file": str(md_file)})
     return count
 
 

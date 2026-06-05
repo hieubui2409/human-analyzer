@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
@@ -80,15 +79,6 @@ def gather_invocations(days: int, framework: str | None) -> dict:
     return {"counts": dict(counts), "by_day": dict(sorted(by_day.items()))}
 
 
-def _sessions_dir() -> Path:
-    env = os.environ.get("CK_SESSIONS_DIR")
-    if env:
-        return Path(env)
-    # Claude Code encodes the project path by replacing every '/' with '-'.
-    enc = str(paths.ROOT).replace("/", "-")
-    return Path.home() / ".claude" / "projects" / enc
-
-
 def _rec_ts(rec: dict) -> datetime | None:
     """Session-JSONL turn timestamp (top-level 'timestamp', ISO-8601)."""
     raw = rec.get("timestamp", "")
@@ -106,7 +96,7 @@ def gather_tokens(days: int = 36500, framework: str | None = None) -> dict[str, 
     Best-effort: a span that opens before the cutoff is simply not credited for its
     pre-cutoff turns — directional, not billing-exact.
     """
-    sdir = _sessions_dir()
+    sdir = paths.sessions_dir()
     tokens: dict[str, int] = defaultdict(int)
     if not sdir.exists():
         return {}

@@ -60,11 +60,19 @@ def _git_commit_count(skill_dir: Path) -> int:
 
 
 def _event_log_mentions(skill_name: str) -> int:
-    """Count references to this skill as an event `source` across B5 streams."""
-    if skill_name is None or not paths.SESSION_STATE.exists():
+    """Count references to this skill as an event `source` across telemetry event streams.
+
+    Reads the canonical TELEMETRY event sinks (paths.EVENT_STREAMS + invocations.jsonl),
+    NOT session-state/ which holds mutable JSON state — not JSONL event logs.
+    """
+    if skill_name is None:
         return 0
+    # Gather all real JSONL sinks: framework partitions + invocations (written by I1 hook).
+    sinks = list(paths.EVENT_STREAMS.values()) + [paths.TELEMETRY / "invocations.jsonl"]
     n = 0
-    for jl in paths.SESSION_STATE.glob("*.jsonl"):
+    for jl in sinks:
+        if not jl.exists():
+            continue
         try:
             n += sum(1 for line in jl.read_text(encoding="utf-8").splitlines()
                      if skill_name in line)

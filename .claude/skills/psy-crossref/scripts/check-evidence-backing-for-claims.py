@@ -1,8 +1,12 @@
-"""Dimension 5: Check profile psychological claims have evidence backing ≥T3."""
+"""Dimension 5: Gather profile psychological claims and their material evidence signals.
+
+GATHER-ONLY (Golden Rule): this script emits deterministic signals — claim extraction,
+material keyword matching, tier lookup. It does NOT emit severity verdicts (MAJOR/MINOR).
+LLM adjudication is required to decide whether a claim is adequately evidenced.
+"""
 import argparse
 import json
 import re
-import sys
 import sys
 from pathlib import Path
 
@@ -74,10 +78,10 @@ def search_claim_in_materials(claim: str, slug: str) -> list[dict]:
     return matches
 
 
-def check_character(slug: str) -> list[dict]:
-    """Check evidence backing for all claims in a character's profile."""
+def gather_character(slug: str) -> list[dict]:
+    """Gather evidence signals for all claims in a character's profile."""
     profile_dir = PROFILES / slug
-    findings = []
+    signals = []
     for rel_path in CLAIM_FILES:
         fpath = profile_dir / rel_path
         if not fpath.exists():
@@ -96,60 +100,56 @@ def check_character(slug: str) -> list[dict]:
                             best_tier = tier_num
                     except ValueError:
                         pass
-            severity = "OK"
-            if not matches:
-                severity = "MAJOR"
-            elif best_tier is None or best_tier > 3:
-                severity = "MINOR"
-            if severity != "OK":
-                findings.append({
-                    "file": rel_path,
-                    "claim": claim[:80],
-                    "best_tier": f"T{best_tier}" if best_tier else "none",
-                    "material_matches": len(matches),
-                    "severity": severity,
-                })
-    return findings
+            keyword_list = [w.lower() for w in claim.split() if len(w) > 3]
+            signals.append({
+                "file": rel_path,
+                "claim": claim[:80],
+                "best_tier": f"T{best_tier}" if best_tier else "none",
+                "material_matches": len(matches),
+                "keyword_hit_ratio": f"{len(matches)}/{max(1, len(keyword_list))}",
+                "needs_llm_adjudication": True,
+            })
+    return signals
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Check evidence backing for profile claims (Dim 5)")
+    parser = argparse.ArgumentParser(
+        description="Gather evidence signals for profile claims (Dim 5) — LLM adjudicates verdicts"
+    )
     parser.add_argument("--character", "-c", help="Character slug or alias")
     parser.add_argument("--json", dest="json_out", action="store_true")
     args = parser.parse_args()
 
     chars = [resolve_character(args.character)] if args.character else ALL_CHARS
 
-    all_findings: dict[str, list[dict]] = {}
+    all_signals: dict[str, list[dict]] = {}
     for slug in chars:
-        all_findings[slug] = check_character(slug)
+        all_signals[slug] = gather_character(slug)
 
     if args.json_out:
-        print(json.dumps(all_findings, indent=2, ensure_ascii=False))
+        print(json.dumps(all_signals, indent=2, ensure_ascii=False))
         return
 
     print(f"\n{'='*70}")
-    print("  Dimension 5: Evidence Backing Check")
+    print("  Dimension 5: Evidence Backing Signals (GATHER-ONLY)")
+    print("  NOTE: Verdict (adequate/inadequate) requires LLM adjudication.")
     print(f"{'='*70}")
 
-    total_issues = 0
-    for slug, findings in all_findings.items():
+    for slug, signals in all_signals.items():
         display = CHAR_DISPLAY.get(slug, slug)
         print(f"\n  {display} ({slug})")
-        if not findings:
-            print("    All claims have adequate evidence backing.")
+        if not signals:
+            print("    No claims extracted.")
             continue
-        majors = [f for f in findings if f["severity"] == "MAJOR"]
-        minors = [f for f in findings if f["severity"] == "MINOR"]
-        print(f"    MAJOR (no evidence): {len(majors)} | MINOR (T4+ only): {len(minors)}")
-        print(f"\n    {'Severity':<8s} {'File':<35s} {'Best Tier':<10s} Claim")
-        print(f"    {'-'*8} {'-'*35} {'-'*10} {'-'*40}")
-        for f in findings:
-            print(f"    {f['severity']:<8s} {f['file']:<35s} {f['best_tier']:<10s} {f['claim']}")
-        total_issues += len(findings)
+        no_match = [s for s in signals if s["material_matches"] == 0]
+        low_tier = [s for s in signals if s["material_matches"] > 0 and s["best_tier"] not in ("T1", "T2", "T3")]
+        print(f"    Total signals: {len(signals)} | No material match: {len(no_match)} | Tier>T3: {len(low_tier)}")
+        print(f"\n    {'File':<35s} {'Best Tier':<10s} {'Matches':<8s} Claim")
+        print(f"    {'-'*35} {'-'*10} {'-'*8} {'-'*40}")
+        for s in signals:
+            print(f"    {s['file']:<35s} {s['best_tier']:<10s} {s['material_matches']:<8d} {s['claim']}")
 
-    print(f"\n  TOTAL ISSUES: {total_issues}")
-    sys.exit(1 if total_issues > 0 else 0)
+    print(f"\n  All signals require LLM adjudication before verdict assignment.")
 
 
 if __name__ == "__main__":

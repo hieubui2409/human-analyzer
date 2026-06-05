@@ -23,10 +23,11 @@ from platform_lib import paths  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
 from platform_lib.errors import emit_error  # noqa: E402
 from platform_lib.markdown_parser import parse_iso_date  # noqa: E402
+from platform_lib.platform_constraints import ALL_PLATFORMS as EXPECTED_PLATFORMS  # noqa: E402
 
 ASSETS_DIR = paths.ASSETS  # module-level, monkeypatchable in tests
-# Known target platforms — show even at zero posts so gaps stay visible.
-EXPECTED_PLATFORMS = ["facebook", "blog", "linkedin", "instagram", "tiktok", "youtube", "twitter"]
+# Known target platforms from platform_constraints.ALL_PLATFORMS (single source of truth).
+# Show even at zero posts so gaps stay visible.
 PKG_DATE = re.compile(r"^(\d{6})-")  # YYMMDD prefix of an asset package dir
 
 

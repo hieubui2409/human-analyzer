@@ -39,14 +39,16 @@ SECTION_KEYWORDS = {
     "growth/mentoring-map.md": ["mentor", "mentoring", "kram", "developmental network", "mentee"],
 }
 
+CROSS_REL_KEYWORDS = ["sworn", "kết nghĩa", "mentor", "mentee", "indirect", "relationship"]
 
-def count_material_references(slug: str, section: str) -> dict:
+
+def count_material_references(slug: str, section: str, local_keywords: dict) -> dict:
     """Count materials that reference a profile section via keyword matching."""
     mdir = MATERIALS / slug
     if not mdir.exists():
         return {"count": 0, "tiers": [], "materials": []}
 
-    keywords = SECTION_KEYWORDS.get(section, [section.split("/")[-1].replace(".md", "").split("-")])
+    keywords = local_keywords.get(section, [section.split("/")[-1].replace(".md", "").split("-")])
     if isinstance(keywords[0], list):
         keywords = keywords[0]
 
@@ -73,20 +75,26 @@ def count_material_references(slug: str, section: str) -> dict:
     return {"count": count, "tiers": sorted(set(tiers)), "materials": material_names}
 
 
-CROSS_REL_KEYWORDS = ["sworn", "kết nghĩa", "mentor", "mentee", "indirect", "relationship"]
-
-
 def analyze_character(slug: str) -> list[dict]:
-    """Analyze coverage for all profile sections (base + cross-relationship)."""
+    """Analyze coverage for all profile sections (base + cross-relationship).
+
+    C1-MAT-13: build a per-character local copy of SECTION_KEYWORDS so that
+    relationship-file entries for one character never mutate the module-level dict
+    and bleed into subsequent characters (non-idempotent cross-character run).
+    """
+    # Per-character local copy — mutations stay isolated to this call
+    local_keywords = dict(SECTION_KEYWORDS)
+
     sections = list(PROFILE_FILES)
     for rf in list_relationship_files(slug):
         rel_section = f"relationships/{rf.name}"
         sections.append(rel_section)
-        if rel_section not in SECTION_KEYWORDS:
-            SECTION_KEYWORDS[rel_section] = CROSS_REL_KEYWORDS + [rf.stem.replace("-", " ")]
+        if rel_section not in local_keywords:
+            local_keywords[rel_section] = CROSS_REL_KEYWORDS + [rf.stem.replace("-", " ")]
+
     results = []
     for section in sections:
-        refs = count_material_references(slug, section)
+        refs = count_material_references(slug, section, local_keywords)
         if refs["count"] == 0:
             gap_status = "empty"
         elif refs["count"] <= 2:
