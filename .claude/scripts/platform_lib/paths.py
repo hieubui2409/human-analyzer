@@ -123,6 +123,19 @@ CHAR_SEARCH_ALIASES = {
     "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật C"],
 }
 
+# Dynamic character discovery for ALT projects (e2e fixtures, future multi-character corpora).
+# The real project keeps the curated alias map above (rich VN aliases can't be auto-derived). But when
+# PMC_PROJECT_ROOT points at a DIFFERENT project (an e2e fixture) whose profile slugs are not the curated
+# three, discover the roster from docs/profiles/ — honoring the "resolve characters dynamically" principle
+# and letting tooling run against any synthetic corpus without code edits.
+if os.environ.get("PMC_PROJECT_ROOT") and PROFILES.exists():
+    _discovered = sorted(d.name for d in PROFILES.iterdir() if d.is_dir() and (d / "INDEX.md").exists())
+    if _discovered and set(_discovered) != set(ALL_CHARS):
+        ALL_CHARS = _discovered
+        CHARACTERS = {slug: slug for slug in _discovered}          # identity aliases (no curated VN names)
+        CHAR_DISPLAY = {slug: slug for slug in _discovered}
+        CHAR_SEARCH_ALIASES = {slug: [slug] for slug in _discovered}
+
 # All unordered dyad pairs, derived (never hand-listed — hand-lists drifted to 2/3 pairs).
 CHARACTER_PAIRS = list(itertools.combinations(ALL_CHARS, 2))
 

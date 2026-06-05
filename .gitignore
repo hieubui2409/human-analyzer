@@ -45,3 +45,7 @@ plans/visuals/knowledge-graph-*.html
 .cache/
 # Gemini CLI settings (contains user-specific config)
 .gemini/
+
+# e2e fixture runtime artifacts (regenerated each run)
+e2e/synthetic-project/.cache/
+e2e/synthetic-project/_bodies.json
