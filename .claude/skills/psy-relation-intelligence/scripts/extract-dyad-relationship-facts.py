@@ -24,6 +24,7 @@ import argparse
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
@@ -37,6 +38,13 @@ from platform_lib.markdown_parser import (
     extract_sections, extract_tags, extract_timeline_events, extract_milestones,
 )
 from platform_lib.errors import emit_error
+
+def _fold_ascii(s: str) -> str:
+    """Strip diacritics and lowercase — so Vietnamese 'chết' matches ASCII pattern 'chet'."""
+    return "".join(
+        c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn"
+    ).lower()
+
 
 # Graph sections worth mining for publishable facts (exclude clinical-only sections).
 PUBLISHABLE_SECTIONS = {
@@ -75,8 +83,10 @@ def find_dyad_graph(slug_a: str, slug_b: str) -> Path | None:
 
 
 def _consent_for_line(line_text: str) -> str:
-    """BLOCKED if a Rule-09 tag OR a crisis/self-harm marker is present (fail-closed)."""
-    if extract_tags(line_text) or _CRISIS_RE.search(line_text):
+    """BLOCKED if a Rule-09 tag OR a crisis/self-harm marker is present (fail-closed).
+    Crisis regex runs on both raw and diacritic-folded text so Vietnamese accented words
+    (e.g. 'chết' → 'chet') are caught even when the corpus uses proper Unicode spelling."""
+    if extract_tags(line_text) or _CRISIS_RE.search(line_text) or _CRISIS_RE.search(_fold_ascii(line_text)):
         return "BLOCKED"
     return "OK"
 

@@ -14,16 +14,19 @@ from .paths import SKILLS, PLATFORM_LIB
 from .skill_ids import FRAMEWORKS, framework_of
 
 
-def framework_script_dirs() -> Iterator[tuple[str, Path]]:
-    """Yield (framework, skill_dir) for every project framework-skill directory."""
-    for d in sorted(SKILLS.iterdir()):
+def framework_script_dirs(skills_dir: Path | None = None) -> Iterator[tuple[str, Path]]:
+    """Yield (framework, skill_dir) for every project framework-skill directory.
+    skills_dir overrides the module-level SKILLS default (used by tests)."""
+    base = skills_dir if skills_dir is not None else SKILLS
+    for d in sorted(base.iterdir()):
         if d.is_dir() and framework_of(d.name) in FRAMEWORKS:
             yield framework_of(d.name), d
 
 
-def framework_scripts() -> Iterator[Path]:
-    """Yield every .py under a framework skill's scripts/ directory."""
-    for _, d in framework_script_dirs():
+def framework_scripts(skills_dir: Path | None = None) -> Iterator[Path]:
+    """Yield every .py under a framework skill's scripts/ directory.
+    skills_dir overrides the module-level SKILLS default (used by tests)."""
+    for _, d in framework_script_dirs(skills_dir=skills_dir):
         yield from sorted((d / "scripts").glob("*.py")) if (d / "scripts").is_dir() \
             else sorted(d.glob("scripts/*.py"))
 
@@ -52,10 +55,13 @@ def platform_lib_imports_of(path: Path) -> set[str]:
     return mods
 
 
-def platform_lib_importer_counts() -> dict[str, int]:
-    """For each platform_lib module, how many framework scripts import it (fan-in)."""
-    counts: dict[str, int] = {m.stem: 0 for m in PLATFORM_LIB.glob("*.py") if m.stem != "__init__"}
-    for script in framework_scripts():
+def platform_lib_importer_counts(skills_dir: Path | None = None,
+                                  platform_lib: Path | None = None) -> dict[str, int]:
+    """For each platform_lib module, how many framework scripts import it (fan-in).
+    skills_dir / platform_lib override defaults (used by tests to isolate a fixture tree)."""
+    lib = platform_lib if platform_lib is not None else PLATFORM_LIB
+    counts: dict[str, int] = {m.stem: 0 for m in lib.glob("*.py") if m.stem != "__init__"}
+    for script in framework_scripts(skills_dir=skills_dir):
         for name in platform_lib_imports_of(script):
             if name in counts:
                 counts[name] += 1

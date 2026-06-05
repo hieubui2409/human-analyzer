@@ -67,7 +67,9 @@ def scan_memories() -> list[dict]:
         fm = extract_frontmatter(f)
         text = f.read_text(encoding="utf-8")
         missing = [k for k in REQUIRED_FIELDS if not fm.get(k)]
-        mtype = fm.get("type", "")
+        # `type` may live at the top level OR under a `metadata:` block (both shapes in use).
+        meta = fm.get("metadata") or {}
+        mtype = fm.get("type") or (meta.get("type") if isinstance(meta, dict) else None) or ""
         out.append({
             "file": f.name,
             "name": fm.get("name", ""),

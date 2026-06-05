@@ -122,7 +122,7 @@ All 3 characters have `identity/writing-voice.md` with `## Voice Profile (Struct
 
 Per-asset voice verdicts reuse the re-runnable verdict cache (keyed on the asset content) so an unchanged
 asset is not re-judged; `--fresh` forces a re-judge. Contract:
-[`verdict-cache-contract.md`](../../operating-guides/verdict-cache-contract.md).
+[`verdict-cache-contract.md`](../_framework-shared/references/verdict-cache-contract.md).
 
 ## See Also
 

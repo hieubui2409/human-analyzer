@@ -98,7 +98,7 @@ def _rec_ts(rec: dict) -> datetime | None:
         return None
 
 
-def gather_tokens(days: int, framework: str | None) -> dict[str, int]:
+def gather_tokens(days: int = 36500, framework: str | None = None) -> dict[str, int]:
     """Per-skill token attribution across session transcripts within the same window.
 
     Honors --days (skip turns older than the cutoff) and --framework (skip spans for

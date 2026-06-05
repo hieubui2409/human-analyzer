@@ -109,6 +109,14 @@ class Graph:
                 result.add(src)
         return result
 
+    def get_edge_data(self, src: str, dst: str) -> dict | None:
+        """Return edge attrs dict for (src, dst) or None if absent (mirrors networkx API)."""
+        return self.adj.get(src, {}).get(dst)
+
+    def __contains__(self, node: str) -> bool:
+        """Support `node in G` membership test (mirrors networkx DiGraph)."""
+        return node in self.nodes
+
 
 # ---------------------------------------------------------------------------
 # BFS ego-subgraph (replaces nx.ego_graph + nx.single_source_shortest_path_length)

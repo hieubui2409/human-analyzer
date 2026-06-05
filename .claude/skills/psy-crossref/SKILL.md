@@ -34,7 +34,7 @@ Detect inconsistencies between character profiles. Timeline conflicts, relations
 > **Verdict cache:** the 6 LLM-judgment dimensions (5–10) reuse a re-runnable verdict cache keyed on the
 > profile section content — an unchanged section is not re-judged (crisis/narrative-twist verdicts are never
 > cached). `--fresh` forces a full re-judge. Contract:
-> [`verdict-cache-contract.md`](../../operating-guides/verdict-cache-contract.md) (shared across
+> [`verdict-cache-contract.md`](../_framework-shared/references/verdict-cache-contract.md) (shared across
 > psy:crossref · cre:voice-audit · psy:propagate).
 
 ## Character Pairs

@@ -315,30 +315,9 @@ def test_graph_context_max_files_cap(kg):
     assert len(mod.graph_context("alpha", max_files=3)["files"]) == 3
 
 
-def test_undirected_projection_invalidated_on_rebuild(kg):
-    mod, root = kg
-    _w(root, "docs/references/a.md", "# a")
-    mod.get_graph(force_rebuild=True)
-    u1 = mod._undirected()
-    _w(root, "docs/references/b.md", "# b")
-    mod.get_graph(force_rebuild=True)
-    u2 = mod._undirected()
-    assert u1 is not u2 and "docs/references/b.md" in u2
+# test_undirected_projection_invalidated_on_rebuild — DELETED: _undirected() removed
+# when knowledge_graph was minimized (networkx + embedding modules removed). The
+# undirected-projection cache is no longer part of the public API.
 
-
-def test_embedding_layer_is_firm_only(kg, monkeypatch):
-    """_add_embedding_edges must add only firm (not needs_review) embedding edges; the
-    review-band pair is excluded from the graph even when cached_embedding_edges yields it."""
-    mod, root = kg
-    for n in ("a", "b", "c"):
-        _w(root, f"docs/references/{n}.md", f"# {n}")
-    a, b, c = (f"docs/references/{n}.md" for n in ("a", "b", "c"))
-    from platform_lib import knowledge_graph_embeddings as kge
-    # a–b firm (0.82); a–c review-band (0.70, needs_review True) → must be dropped
-    monkeypatch.setattr(kge, "cached_embedding_edges",
-                        lambda *a_, **k_: [(a, b, 0.82, False), (a, c, 0.70, True)])
-    G = mod.get_graph(force_rebuild=True)
-    emb = [(u, v, d) for u, v, d in G.edges(data=True) if d.get("source") == "embedding"]
-    assert all(not d["needs_review"] for _, _, d in emb)          # no review edge in graph
-    assert any({u, v} == {a, b} for u, v, _ in emb)               # firm edge present
-    assert not any({u, v} == {a, c} for u, v, _ in emb)           # review edge excluded
+# test_embedding_layer_is_firm_only — DELETED: knowledge_graph_embeddings module
+# was deleted in the KG minimization. Layer-3 (embedding edges) no longer exists.

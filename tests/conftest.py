@@ -56,7 +56,6 @@ def patch_platform_paths(monkeypatch):
     """Redirect platform_lib.paths globals to mock-data for the duration of a test."""
     import platform_lib.paths as paths_mod
     import platform_lib.materials_classifier as mat_mod
-    import platform_lib.profile_validator as val_mod
 
     mock_profiles = MOCK_DATA_DIR / "profiles"
     mock_materials = MOCK_DATA_DIR / "materials"
@@ -88,10 +87,8 @@ def patch_platform_paths(monkeypatch):
     monkeypatch.setattr(mat_mod, "ALL_CHARS", ["test-alpha", "test-beta"])
     monkeypatch.setattr(mat_mod, "CHAR_DISPLAY", {"test-alpha": "Alpha", "test-beta": "Beta"})
 
-    # Patch profile_validator
-    monkeypatch.setattr(val_mod, "PROFILES", mock_profiles)
-    monkeypatch.setattr(val_mod, "ALL_CHARS", ["test-alpha", "test-beta"])
-    monkeypatch.setattr(val_mod, "CHAR_DISPLAY", {"test-alpha": "Alpha", "test-beta": "Beta"})
+    # schema_validator (the replacement for the removed profile_validator) reads paths dynamically,
+    # so patching paths_mod above is sufficient — no module-global copies to patch here.
 
     return {
         "profiles": mock_profiles,

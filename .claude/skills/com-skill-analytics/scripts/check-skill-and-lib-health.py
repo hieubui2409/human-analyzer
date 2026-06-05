@@ -83,8 +83,9 @@ def check_skill(d: Path) -> dict:
 
 
 def importer_counts() -> dict[str, int]:
-    """Count framework scripts importing each platform_lib module (shared introspection)."""
-    return platform_lib_importer_counts()
+    """Count framework scripts importing each platform_lib module (shared introspection).
+    Passes module-level SKILLS_DIR / PLATFORM_LIB so tests can override via monkeypatch."""
+    return platform_lib_importer_counts(skills_dir=SKILLS_DIR, platform_lib=PLATFORM_LIB)
 
 
 def perf_summary() -> dict[str, dict]:

@@ -65,7 +65,7 @@ def gather() -> dict:
     adjacency: dict[str, list[str]] = {}
     fanin: dict[str, int] = defaultdict(int)
     all_modules = {m.stem for m in PLATFORM_LIB.glob("*.py") if m.stem != "__init__"}
-    for s in _framework_scripts():
+    for s in _framework_scripts(skills_dir=SKILLS_DIR):
         try:
             rel = str(s.relative_to(paths.ROOT))
         except ValueError:

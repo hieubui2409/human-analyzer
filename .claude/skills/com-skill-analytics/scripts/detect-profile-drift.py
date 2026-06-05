@@ -89,9 +89,16 @@ def _profile_md_files(character: str | None):
     root = PROFILES
     if not root.exists():
         return []
-    # Resolve aliases (e.g. "hieu" → "character-a") so --character doesn't silently
-    # point at a non-existent dir and scan nothing.
-    chars = [root / resolve_character(character)] if character else [d for d in root.iterdir() if d.is_dir()]
+    if character:
+        # Resolve aliases (e.g. "hieu" → "character-a"); fall back to direct slug
+        # lookup so tests that inject a fixture PROFILES dir work with arbitrary names.
+        try:
+            resolved = resolve_character(character)
+        except ValueError:
+            resolved = character
+        chars = [root / resolved]
+    else:
+        chars = [d for d in root.iterdir() if d.is_dir()]
     files = []
     for c in chars:
         if c.is_dir():
