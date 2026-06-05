@@ -190,7 +190,10 @@ def route_task(description: str) -> dict:
         "confidence": round(confidence, 2),
         "score": best_score,
         "matched_keywords": scores[best_domain]["matched"],
-        "suggested_skill": scores[best_domain]["skills"][0] if scores[best_domain]["skills"] else "",
+        # No keyword matched (all scores 0 → UNKNOWN): emit no skill. max() over a 0-tie returns
+        # the first domain arbitrarily, so without the best_score>0 guard this leaked "mat:loader".
+        "suggested_skill": (scores[best_domain]["skills"][0]
+                            if best_score > 0 and scores[best_domain]["skills"] else ""),
         "all_scores": {d: s["score"] for d, s in scores.items()},
         "suggestions": suggestions,
         "best_domain": best_domain if best_score > 0 else "UNKNOWN",
