@@ -46,10 +46,14 @@ class TestCreateInstinct:
         inst = instinct_store.create_instinct("workflow tip", "process")
         assert inst["pinned"] is True
 
-    def test_text_truncation(self):
+    def test_text_stored_full_not_truncated(self):
+        # The store keeps the FULL text (truncation happens only at display via _disp), so two
+        # distinct learnings sharing a 140-char prefix no longer falsely merge on dedup.
         long_text = "x" * 200
         inst = instinct_store.create_instinct(long_text, "psychology")
-        assert len(inst["text"]) == 140
+        assert inst["text"] == long_text
+        if hasattr(instinct_store, "_disp"):
+            assert len(instinct_store._disp(inst["text"])) <= 140
 
 
 class TestAppendAndLoad:
@@ -230,28 +234,10 @@ class TestPromotionCandidates:
         assert len(candidates) == 0
 
 
-class TestUpdateInstinct:
-    def test_update_fields(self):
-        inst = instinct_store.create_instinct("test", "psychology")
-        instinct_store.append_instinct(inst)
-        result = instinct_store.update_instinct(inst["id"], confidence=0.9, tags=["updated"])
-        assert result["confidence"] == 0.9
-        assert result["tags"] == ["updated"]
-        reloaded = instinct_store.load_instincts()
-        assert reloaded[0]["confidence"] == 0.9
-
-    def test_update_missing_id_raises(self):
-        with pytest.raises(KeyError):
-            instinct_store.update_instinct("nonexistent-id", confidence=0.5)
-
-    def test_update_immutable_field_raises(self):
-        inst = instinct_store.create_instinct("test", "psychology")
-        instinct_store.append_instinct(inst)
-        with pytest.raises(ValueError, match="immutable"):
-            instinct_store.update_instinct(inst["id"], id="new-id")
-        with pytest.raises(ValueError, match="immutable"):
-            instinct_store.update_instinct(inst["id"], created_at="2020-01-01")
-
+# NOTE: update_instinct + _IMMUTABLE_FIELDS were removed as verified-dead code (no consumer); the
+# instinct lifecycle is create → append → reinforce/decay → archive. Tests for the removed mutator are
+# gone with it; the reinforce edge case below remains valid.
+class TestReinforceEdgeCases:
     def test_reinforce_missing_id_raises(self):
         with pytest.raises(KeyError):
             instinct_store.reinforce("nonexistent-id")
