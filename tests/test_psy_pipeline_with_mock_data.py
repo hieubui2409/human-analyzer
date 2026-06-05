@@ -25,11 +25,11 @@ def run_script(skill, script, args=None):
 class TestWaveGates:
     def test_check_wave_gates_with_character(self):
         r = run_script("psy-wave", "check-wave-gates.py", ["--character", "character-a", "--wave", "1"])
-        assert r.returncode == 0 or r.stdout.strip()
+        assert (r.returncode == 0 or r.stdout.strip()) and "Traceback" not in r.stderr
 
     def test_track_wave_progress(self):
         r = run_script("psy-wave", "track-wave-progress-from-index.py", ["--character", "character-a"])
-        assert r.returncode == 0 or r.stdout.strip()
+        assert (r.returncode == 0 or r.stdout.strip()) and "Traceback" not in r.stderr
 
 
 class TestCrisis:

@@ -191,21 +191,15 @@ class TestEnvUtils:
             pytest.skip("env_utils not available")
 
     def test_load_env_handles_missing_env(self):
-        """load_env should handle missing .env gracefully."""
+        """load_env should handle missing .env gracefully (dict/None, or a clean FileNotFoundError)."""
+        import platform_lib.env_utils as eu_mod
+        assert hasattr(eu_mod, "load_env"), "env_utils must expose load_env"
         try:
-            import platform_lib.env_utils as eu_mod
-            if not hasattr(eu_mod, "load_env"):
-                pytest.skip("load_env not available")
-
-            # Should not crash on missing file
             result = eu_mod.load_env("/nonexistent/.env")
-            # Should return dict or None
-            assert isinstance(result, dict) or result is None
         except FileNotFoundError:
-            # Acceptable behavior
-            pass
-        except Exception:
-            pytest.skip("load_env implementation incompatible")
+            return  # explicit missing-file signal is acceptable behavior
+        # any OTHER exception now FAILS the test instead of being masked as a skip
+        assert isinstance(result, dict) or result is None
 
 
 class TestCsvSearch:

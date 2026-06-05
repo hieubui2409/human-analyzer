@@ -111,7 +111,8 @@ def test_cache_root_split_committed_vs_runtime(tmp_path, monkeypatch):
 
 
 def test_encoding_configure_is_noop_on_posix():
-    encoding_utils.configure_utf8_console()  # must not raise
+    # must not raise and returns nothing (a pure side-effecting console-encoding setup)
+    assert encoding_utils.configure_utf8_console() is None
 
 
 @pytest.fixture(autouse=True)
