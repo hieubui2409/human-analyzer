@@ -109,6 +109,12 @@ When a section changes in the source character, these sections in connected char
 /psy:propagate --character chien --json                  # machine-readable output
 ```
 
+## Verdict-cache inheritance
+
+When a change fans across the dyad graph, pass the SOURCE verdict as `inherited_context` to unchanged
+neighbours and roll up "N of M neighbours carry the flag" — an economic reuse only, never a safety decision.
+Contract: [`verdict-cache-contract.md`](../../operating-guides/verdict-cache-contract.md).
+
 ## See Also
 
 - `psy:crossref` — validate consistency after propagation

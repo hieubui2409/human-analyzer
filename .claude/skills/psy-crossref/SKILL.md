@@ -29,6 +29,13 @@ Detect inconsistencies between character profiles. Timeline conflicts, relations
 | `--report`               | Generate formal report to plans/reports/       |
 | `--extended`             | Include all 10 dimensions (default: 4 core)    |
 | `--dimension <1-10>`     | Run specific dimension only                    |
+| `--fresh`                | Bypass the verdict cache; re-judge every dimension |
+
+> **Verdict cache:** the 6 LLM-judgment dimensions (5–10) reuse a re-runnable verdict cache keyed on the
+> profile section content — an unchanged section is not re-judged (crisis/narrative-twist verdicts are never
+> cached). `--fresh` forces a full re-judge. Contract:
+> [`verdict-cache-contract.md`](../../operating-guides/verdict-cache-contract.md) (shared across
+> psy:crossref · cre:voice-audit · psy:propagate).
 
 ## Character Pairs
 

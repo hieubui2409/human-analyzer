@@ -124,6 +124,22 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ---
 
+## Operating Guides (`.claude/operating-guides/`)
+
+Project-owned shared operating references — the cross-framework analogue of cleanmatic's per-skill
+`references/`. Skill-specific references live in `{skill}/references/`; cross-skill ones live here.
+
+| Guide | Load | Purpose |
+| --- | --- | --- |
+| `gates-and-anti-rationalization.md` | **every turn** | High-salience `<GATE-*>` restatement of the self-decision rules + anti-rationalization table |
+| `verdict-cache-contract.md` | when running psy:crossref / cre:voice-audit / psy:propagate | re-runnable LLM-verdict cache (lookup-before-judge, `--fresh`, NEVER_CACHED) |
+| `skill-doc-spine-template.md` | when authoring skill docs | the 4-doc spine standard (SKILL + README + GUIDE-EN/VI) |
+
+Load on demand: pull a guide only when its skill/flag is active — except `gates-and-anti-rationalization.md`,
+loaded every turn. The Skills Catalog below stays the navigational index (not deleted).
+
+---
+
 ## Skills Catalog (`.claude/skills/`)
 
 58 framework skills (ORC 17 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 4). Invoke as `{framework}:{skill}`.
