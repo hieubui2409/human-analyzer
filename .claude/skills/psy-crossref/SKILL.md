@@ -281,7 +281,7 @@ For each shared reference:
 
 - READ-ONLY — never modifies profile files
 - Only writes report files
-- Scope: cross-character validation for ck-marketing profiles. Does NOT edit profiles or create content.
+- Scope: cross-character validation for human-analyzer profiles. Does NOT edit profiles or create content.
 
 ## Examples
 

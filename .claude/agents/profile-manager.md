@@ -21,7 +21,7 @@ Profile operations specialist responsible for character scaffolding, completenes
 - `psy:profile-lite` — Compress profiles for status snapshots and comparisons
 - `psy:health-check` — Profile completeness scoring (21 files × quality)
 - `psy:profile-compare` — Side-by-side dimension comparison across characters
-- `mpc:session-state` — Track session state across multi-step scaffold operations
+- `orc:session-state` — Track session state across multi-step scaffold operations
 
 ## When to Use
 

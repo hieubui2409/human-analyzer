@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
+from platform_lib import paths
 from platform_lib.formatters import print_table, print_json
 try:
     from platform_lib.instinct_store import load_instincts, get_promotion_candidates, INSTINCT_FILE
@@ -13,7 +14,9 @@ try:
 except ImportError:
     _HAS_INSTINCTS = False
 
-MEMORY_DIR = Path.home() / ".claude" / "projects" / "-home-hieubt-Documents-ck-marketing" / "memory"
+# Single home for memory-dir resolution (paths.memory_dir) — derives the slug from the live
+# project root, so it never points at a stale machine path. CK_MEMORY_DIR overrides in tests.
+MEMORY_DIR = paths.memory_dir()
 
 MEMORY_TYPE_PATTERNS = {
     "user": re.compile(r"user|profile|hiếu|hieu", re.IGNORECASE),

@@ -200,7 +200,7 @@ Q5: Any specific angle or reference? → [free text or "no"]
 - Uses slugified dates to prevent naming conflicts
 - Sensitive content flagged before output
 - Never auto-publishes — user must manually post
-- Scope: content generation for ck-marketing. Writes to assets/ only.
+- Scope: content generation for human-analyzer. Writes to assets/ only.
 
 ## Examples
 

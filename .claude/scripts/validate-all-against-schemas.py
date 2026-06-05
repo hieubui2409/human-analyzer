@@ -52,7 +52,10 @@ def main() -> int:
 
     print(f"\nSchema validation — {passed} PASS, {len(failures)} FAIL, {skipped} SKIP\n")
     for r in failures:
-        rel = r["file"].split("ck-marketing/")[-1]
+        try:
+            rel = str(Path(r["file"]).resolve().relative_to(paths.ROOT))
+        except (ValueError, OSError):
+            rel = r["file"]
         print(f"  ✗ {rel}  [{r['schema']}]")
         for v in r["violations"][:6]:
             print(f"      {v['field']}: {v['message']}  ({v['rule']})")

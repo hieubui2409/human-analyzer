@@ -161,7 +161,7 @@ If `--from-context` or no arguments:
 
 - READ-ONLY — never modifies profile files or content
 - Only writes the strengthened prompt output (to stdout or plan dir)
-- Scope: prompt preparation for ck-marketing content. Does NOT handle content creation itself.
+- Scope: prompt preparation for human-analyzer content. Does NOT handle content creation itself.
 
 ## Examples
 

@@ -137,7 +137,7 @@ Each decision stored as markdown in `.claude/decisions/`:
 
 - Decisions are append-only — never delete, only supersede
 - Old decisions kept for historical context
-- Scope: decision records for ck-marketing character work. Does NOT handle implementation.
+- Scope: decision records for human-analyzer character work. Does NOT handle implementation.
 
 ## Examples
 

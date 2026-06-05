@@ -1,5 +1,5 @@
 #!/bin/bash
-# ck-git-dispatcher — Main git dispatcher for ck-marketing project
+# ck-git-dispatcher — Main git dispatcher for human-analyzer project
 # Usage: ck-git-dispatcher.sh [FLAGS] [-m "msg"]
 # Flags: --commit --push --sync --all --dry-run
 # Default (no flags): --commit --push

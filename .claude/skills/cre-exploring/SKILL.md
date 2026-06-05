@@ -197,7 +197,7 @@ After completing exploration:
 - READ-ONLY for profile files — only writes CONTEXT.md
 - Never skips questions — each decision must be explicitly locked
 - Always shows summary before finalizing
-- Scope: content exploration for ck-marketing. Does NOT handle implementation or content creation.
+- Scope: content exploration for human-analyzer. Does NOT handle implementation or content creation.
 
 ## Examples
 

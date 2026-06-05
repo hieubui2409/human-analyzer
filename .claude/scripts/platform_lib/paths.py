@@ -69,6 +69,19 @@ def runtime_cache_dir(name: str) -> Path:
     return d
 
 
+def memory_dir() -> Path:
+    """Claude Code's per-project persistent memory dir: ~/.claude/projects/{encoded-root}/memory.
+
+    The slug is the absolute project root with '/' → '-' (Claude Code's project-id convention),
+    so it resolves dynamically per checkout — never a hardcoded machine path. CK_MEMORY_DIR
+    overrides it (tests point it at a tmp dir to isolate memory writes)."""
+    env = os.environ.get("CK_MEMORY_DIR")
+    if env:
+        return Path(env)
+    enc = str(ROOT).replace("/", "-")
+    return Path.home() / ".claude" / "projects" / enc / "memory"
+
+
 # profile-lite is a cheap-to-rebuild compression cache → runtime subtree.
 PROFILE_CACHE = CACHE_ROOT / "runtime" / "profile-lite"
 

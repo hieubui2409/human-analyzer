@@ -184,7 +184,7 @@ Force regeneration regardless of cache state. Useful after major profile overhau
 - Lite profiles are DERIVED — never edit them directly
 - If a lite profile seems wrong, fix the SOURCE profile files
 - Cache auto-invalidates when sources change
-- Scope: profile compression for ck-marketing. Does NOT modify source profiles.
+- Scope: profile compression for human-analyzer. Does NOT modify source profiles.
 
 ## Examples
 

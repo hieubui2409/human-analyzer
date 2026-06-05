@@ -334,7 +334,7 @@ categories:
     - id: R3
       name: event_replay
       input: "Replay the last MAT.integrated event and verify downstream actions were taken"
-      expected_skills: [mpc:event-log, mpc:session-state]
+      expected_skills: [orc:event-log, orc:session-state]
       expected_actions:
         - query_event_log
         - find_mat_integrated_event
@@ -346,7 +346,7 @@ categories:
     - id: R4
       name: session_restore
       input: "What happened in the last session? What's the current state?"
-      expected_skills: [mpc:session-state, mpc:bootstrap]
+      expected_skills: [orc:session-state, orc:bootstrap]
       expected_actions:
         - read_session_state
         - summarize_recent_events

@@ -1,4 +1,4 @@
-"""Shared pytest fixtures for ck-marketing test suite.
+"""Shared pytest fixtures for human-analyzer test suite.
 
 Monkeypatches platform_lib.paths to point at tests/mock-data/
 so scripts under test never touch real docs/profiles, docs/materials, docs/references.

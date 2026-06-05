@@ -6,7 +6,7 @@ Load only the row relevant to the active task — except `gates-and-anti-rationa
 |----------|-----------------|-------------|------------|
 | `orc:agent-memory` | agent memory | Persistent memory for CK-domain agents (psychologist, content-strategist, growth | ../../orc-agent-memory/GUIDE-EN.md |
 | `orc:audit` | event audit | Audit cross-domain event consistency — verify all declarations match | ../../orc-audit/GUIDE-EN.md |
-| `orc:bootstrap` | bootstrap | Bootstrap project context for ck-marketing sessions | ../../orc-bootstrap/GUIDE-EN.md |
+| `orc:bootstrap` | bootstrap | Bootstrap project context for human-analyzer sessions | ../../orc-bootstrap/GUIDE-EN.md |
 | `orc:cascade` | cascade | Orchestrate multi-step event cascades across domains | ../../orc-cascade/GUIDE-EN.md |
 | `orc:classify` | N/A | Classify task risk level and determine workflow ceremony before implementation | ../../orc-classify/GUIDE-EN.md |
 | `orc:compounding` | compound | Extract durable learnings after content or profile work | ../../orc-compounding/GUIDE-EN.md |

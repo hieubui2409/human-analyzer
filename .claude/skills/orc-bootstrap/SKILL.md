@@ -1,6 +1,6 @@
 ---
 name: orc:bootstrap
-description: "Bootstrap project context for ck-marketing sessions. Systematically load character profiles, active arcs, recent git changes, and session state. Use at session start, when switching focus between characters, or when context feels stale. Triggers: 'bootstrap', 'load context', 'refresh context', 'catch me up'."
+description: "Bootstrap project context for human-analyzer sessions. Systematically load character profiles, active arcs, recent git changes, and session state. Use at session start, when switching focus between characters, or when context feels stale. Triggers: 'bootstrap', 'load context', 'refresh context', 'catch me up'."
 argument-hint: "[--full|--character <name>|--recent|--quick|--lite|--intent <task>]"
 metadata:
   author: hieubt
@@ -12,7 +12,7 @@ metadata:
 
 # Project Context Bootstrap
 
-Systematically load ck-marketing context into session. Prevents context drift across 3 complex character profiles + clinical references + GRO growth domain.
+Systematically load human-analyzer context into session. Prevents context drift across 3 complex character profiles + clinical references + GRO growth domain.
 
 ## Default (No Arguments)
 
@@ -169,7 +169,7 @@ When loading profiles, read in this order (most important first):
 
 - This skill is READ-ONLY — never modifies any files
 - Does NOT handle sensitive data beyond what's in git
-- Scope: ck-marketing project context loading. Does NOT handle code implementation, content creation, or analysis.
+- Scope: human-analyzer project context loading. Does NOT handle code implementation, content creation, or analysis.
 
 ## Examples
 

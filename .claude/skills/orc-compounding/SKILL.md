@@ -129,7 +129,7 @@ Same as `--session` but skip confirmation. Write all candidates to memory.
 
 ## Memory Output Format
 
-Write to project memory at `.claude/projects/-home-hieubt-Documents-ck-marketing/memory/`:
+Write to project memory at `.claude/projects/{encoded-project-root}/memory/`:
 
 ```markdown
 ---
@@ -207,7 +207,7 @@ When `--character` is used, filter instinct categories to `psychology` + `growth
 - READ-ONLY for profile/content files — only writes to memory directory
 - Never modifies profile files, content assets, or plans
 - Always confirms before writing to memory (unless --auto)
-- Scope: learning extraction for ck-marketing. Does NOT handle implementation, content creation, or code changes.
+- Scope: learning extraction for human-analyzer. Does NOT handle implementation, content creation, or code changes.
 
 ## Examples
 

@@ -25,7 +25,7 @@ Monitor({
   description: "session health monitor",
   persistent: true,
   timeout_ms: 300000,
-  command: "$HOME/.claude/skills/.venv/bin/python3 $HOME/Documents/ck-marketing/.claude/skills/com-health-check/scripts/monitor-session-health.py --target main --verbosity warn --poll 30"
+  command: "$CLAUDE_PROJECT_DIR/.claude/skills/.venv/bin/python3 $CLAUDE_PROJECT_DIR/.claude/skills/com-health-check/scripts/monitor-session-health.py --target main --verbosity warn --poll 30"
 })
 ```
 
@@ -38,7 +38,7 @@ Monitor({
   description: "subagent health monitor",
   persistent: true,
   timeout_ms: 300000,
-  command: "$HOME/.claude/skills/.venv/bin/python3 $HOME/Documents/ck-marketing/.claude/skills/com-health-check/scripts/monitor-session-health.py --target all --verbosity warn --poll 30 --team-name {TEAM_NAME}"
+  command: "$CLAUDE_PROJECT_DIR/.claude/skills/.venv/bin/python3 $CLAUDE_PROJECT_DIR/.claude/skills/com-health-check/scripts/monitor-session-health.py --target all --verbosity warn --poll 30 --team-name {TEAM_NAME}"
 })
 ```
 
