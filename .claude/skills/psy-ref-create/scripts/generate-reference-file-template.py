@@ -1,7 +1,6 @@
 """Generate a reference file template with mandatory schema fields for psy:ref-create."""
 import argparse
 import sys
-from datetime import date
 
 
 VALID_DOMAINS = [
@@ -13,62 +12,40 @@ VALID_DOMAINS = [
 
 def generate_template(theory_name: str, domain: str = "clinical", author: str = "") -> str:
     """Generate reference markdown with mandatory schema fields."""
-    slug = theory_name.lower().replace(" ", "-").replace("'", "").replace("(", "").replace(")", "")
-    today = date.today().isoformat()
+    # Vietnamese house style: heading-validated per Rule 10 (REFERENCE_REQUIRED_SECTIONS =
+    # Định nghĩa · Nguồn gốc · Cơ chế · Case Study). No YAML frontmatter — the live corpus
+    # starts at the H1 title. `domain` is kept as a CLI hint only (placed in the TL;DR comment).
+    citation = author or "Tác giả (Năm). *Tựa đề*. Nhà xuất bản."
 
-    return f"""---
-reference_id: REF_{slug.upper().replace('-', '_')}
-title: "{theory_name}"
-domain: {domain}
-authors: [{author or '"Author Name"'}]
-year: null
-type: theory
-status: draft
-confidence: unverified
-tags: [{domain}]
-last_updated: {today}
-updated_by: psy:ref-create
----
+    return f"""# {theory_name}
 
-# {theory_name}
+> **Định nghĩa ngắn (TL;DR)**: <một câu cô đọng nắm bắt cốt lõi lý thuyết> _(domain: {domain})_.
 
-## Overview
+## 1. Định nghĩa (Definition)
 
-Brief description of the theory and its relevance to character profiling.
+- <Định nghĩa rõ ràng lý thuyết và mức liên quan tới việc lập hồ sơ nhân vật>.
+- **Nguồn trích dẫn (Mandatory)**: {citation}
 
-## Key Concepts
+## 2. Nguồn gốc (Origin)
 
-- **Concept 1**: Description
-- **Concept 2**: Description
-- **Concept 3**: Description
+- <Lý thuyết phát sinh từ đâu / điều kiện hình thành>.
 
-## Diagnostic Markers
+## 3. Cơ chế (Mechanism)
 
-Observable indicators that this theory applies to a character:
+- **<Cơ chế 1>**: <mô tả vận hành>.
+- **<Cơ chế 2>**: <mô tả vận hành>.
 
-| Marker | Observable Behavior | Profile Section |
-|--------|-------------------|-----------------|
-| Marker 1 | Behavior description | psychology/formulation.md |
-| Marker 2 | Behavior description | psychology/defense-mechanisms.md |
+## 4. Case Study áp dụng vào Dự án
 
-## Therapeutic Implications
+### <Tên nhân vật>
 
-How this theory informs understanding and intervention:
+- **Bối cảnh / Triggers**: <tình huống kích hoạt, kèm evidence>.
+- **Biểu hiện thực tế**: <hành vi quan sát được>.
+- **Phân tích lâm sàng**: <diễn giải qua lăng kính lý thuyết này>.
 
-- Implication 1
-- Implication 2
+## 5. Liên kết (Cross-References)
 
-## Application to Characters
-
-### Character-Specific Notes
-
-- **Nhân vật A**: (applicability notes)
-- **Nhân vật B**: (applicability notes)
-- **Nhân vật C**: (applicability notes)
-
-## Citations
-
-- Author, A. (Year). *Title*. Publisher. DOI/URL
+- [<Reference liên quan>](./<slug>.md) — <quan hệ>.
 """
 
 
