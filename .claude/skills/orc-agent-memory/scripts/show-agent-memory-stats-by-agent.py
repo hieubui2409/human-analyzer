@@ -55,8 +55,8 @@ def main():
             for inst in active:
                 cat = inst.get("category", "")
                 instincts_by_cat.setdefault(cat, []).append(inst)
-        except Exception:
-            pass
+        except (OSError, ValueError):
+            pass  # advisory stats: missing/corrupt instinct store degrades to empty, not a crash
 
     rows = []
     for agent, stats in sorted(agent_stats.items()):

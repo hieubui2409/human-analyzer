@@ -32,18 +32,20 @@ def parse_dob_from_identity(char_dir: Path) -> date | None:
     if not identity.exists():
         return None
     text = identity.read_text(encoding="utf-8")
-    # Look for patterns like: 24/09/1997 or 1997-09-24
-    for pat in [r"(\d{2}/\d{2}/\d{4})", r"(\d{4}-\d{2}-\d{2})"]:
-        m = re.search(pat, text)
-        if m:
-            raw = m.group(1)
-            try:
-                if "/" in raw:
-                    return datetime.strptime(raw, "%d/%m/%Y").date()
-                else:
-                    return datetime.strptime(raw, "%Y-%m-%d").date()
-            except ValueError:
-                continue
+    # Prefer the explicit birth-date row ("Ngày sinh | DD/MM/YYYY"); fall back to the first date in
+    # the file when no such row exists (profile templates without the field — e.g. synthetic fixtures).
+    # The fallback keeps the deterministic record count stable for fixtures lacking a DOB row.
+    birth_line = next((ln for ln in text.splitlines()
+                       if re.search(r"ngày\s*sinh|date\s*of\s*birth|\bDOB\b", ln, re.IGNORECASE)), None)
+    haystacks = [birth_line, text] if birth_line else [text]
+    for hay in haystacks:
+        for pat, fmt in ((r"\d{2}/\d{2}/\d{4}", "%d/%m/%Y"), (r"\d{4}-\d{2}-\d{2}", "%Y-%m-%d")):
+            m = re.search(pat, hay)
+            if m:
+                try:
+                    return datetime.strptime(m.group(0), fmt).date()
+                except ValueError:
+                    continue
     return None
 
 

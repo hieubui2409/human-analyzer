@@ -53,8 +53,8 @@ def scan_character(char_slug: str) -> list[dict]:
         lines = 0
         try:
             lines = len(f.read_text(encoding="utf-8", errors="replace").splitlines())
-        except Exception:
-            pass
+        except OSError:
+            pass  # inventory: an unreadable file reports 0 lines rather than aborting the scan
         results.append({
             "character": CHAR_DISPLAY.get(char_slug, char_slug),
             "filename": f.name,

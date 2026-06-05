@@ -7,6 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, GRAPH, PROFILES, resolve_character, list_relationship_files
+from platform_lib.markdown_parser import parse_table_rows
 
 # Section → affected sections in connected characters (by connection strength)
 PROPAGATION_MAP = {
@@ -52,12 +53,36 @@ PROPAGATION_MAP = {
     },
 }
 
-# Connection map: source → {target: strength}
-CONNECTIONS = {
-    "character-a": {"character-b": "high", "character-c": "medium"},
-    "character-b": {"character-a": "high", "character-c": "low"},
-    "character-c": {"character-a": "medium", "character-b": "low"},
-}
+def _load_connections() -> dict:
+    """Derive the source→{target: strength} map from the dyad-strength table in the KG
+    (`docs/graph/relational-dynamics.md`) — the single source of relational truth — instead of a
+    hand-maintained literal that drifts from it. Rows look like `| Nhân vật A ↔ Nhân vật B | … | done | high |`.
+    Symmetric (a↔b). Falls back to an empty map (no cross-char propagation) if the graph is absent.
+    """
+    graph_file = GRAPH / "relational-dynamics.md"
+    if not graph_file.exists():
+        return {}
+    display_to_slug = {disp: slug for slug, disp in CHAR_DISPLAY.items()}
+    strengths = {"high", "medium", "low"}
+    conn: dict = {}
+    for cells in parse_table_rows(graph_file.read_text(encoding="utf-8")):
+        if "↔" not in cells[0]:
+            continue
+        strength = next((c.strip().lower() for c in reversed(cells) if c.strip().lower() in strengths), None)
+        if not strength:
+            continue
+        parts = [p.strip() for p in cells[0].split("↔")]
+        if len(parts) != 2:
+            continue
+        a, b = display_to_slug.get(parts[0]), display_to_slug.get(parts[1])
+        if a and b:
+            conn.setdefault(a, {})[b] = strength
+            conn.setdefault(b, {})[a] = strength
+    return conn
+
+
+# Connection map: source → {target: strength}, derived from the KG (single source of truth).
+CONNECTIONS = _load_connections()
 
 
 def _mirror_relationship_targets(source_slug: str, section: str | None) -> list[dict]:

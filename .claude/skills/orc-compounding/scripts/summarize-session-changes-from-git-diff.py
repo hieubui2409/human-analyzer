@@ -109,8 +109,8 @@ def main():
     if _HAS_INSTINCTS:
         try:
             active_instincts = len(load_instincts(status="active"))
-        except Exception:
-            pass
+        except (OSError, ValueError):
+            pass  # advisory count: missing/corrupt instinct store degrades to 0, not a crash
 
     result = {
         "total_files_changed": len(all_files),

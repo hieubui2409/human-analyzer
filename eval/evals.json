@@ -24,7 +24,8 @@
       "script": ".claude/skills/psy-crossref/scripts/check-timeline-date-consistency.py",
       "args": ["--json"],
       "extract": {"len": "."},
-      "expected": 12
+      "_note": "Was 12 under a DOB-parse bug that matched the first ISO date in core.md (the `last_updated` frontmatter) as the birth date → every event flagged BEFORE_DOB. Corrected to scope the DOB to the explicit birth-date row → 2 genuine BEFORE_DOB records on the fixture (C2-PSY-27).",
+      "expected": 2
     },
     {
       "id": "mat-dedup-zero-false-pairs",

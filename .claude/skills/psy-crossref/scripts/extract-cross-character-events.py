@@ -59,17 +59,16 @@ def compare_pair(char1: str, char2: str) -> list[list[str]]:
 
 
 def main():
+    # Derive the short --pair keys ("hieu-hoa") from the canonical roster so this scales to any
+    # character set instead of a hardcoded 3-character literal (which would reject the synthetic
+    # roster and any 4th character). Short key = the slug's last name token.
+    pair_map = {f"{c1.split('-')[-1]}-{c2.split('-')[-1]}": (c1, c2) for c1, c2 in PAIRS}
+
     parser = argparse.ArgumentParser(description="Extract cross-character timeline events")
-    parser.add_argument("--pair", choices=["hieu-hoa", "hieu-chien", "hoa-chien"],
-                        help="Filter to specific pair")
+    parser.add_argument("--pair", choices=sorted(pair_map), help="Filter to specific pair")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
-    pair_map = {
-        "hieu-hoa": ("character-a", "character-b"),
-        "hieu-chien": ("character-a", "character-c"),
-        "hoa-chien": ("character-b", "character-c"),
-    }
     pairs = [pair_map[args.pair]] if args.pair else PAIRS
 
     if args.json:
