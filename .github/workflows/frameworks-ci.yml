@@ -42,12 +42,15 @@ jobs:
           git config --global user.name CI
           git config --global commit.gpgsign false
 
-      - name: py_compile sweep (all framework scripts + platform_lib)
+      - name: py_compile sweep (6 framework scripts + platform_lib + pack tools)
         run: |
           python - <<'PY'
           import py_compile, sys, pathlib
           root = pathlib.Path('.')
-          targets = list(root.glob('.claude/skills/*/scripts/*.py')) + list(root.glob('.claude/scripts/platform_lib/*.py'))
+          # Scope to the 6 frameworks only — ck/ckm skills are out of scope (and may use newer py syntax).
+          fw = ("orc", "psy", "cre", "gro", "mat", "com")
+          targets = [p for f in fw for p in root.glob(f'.claude/skills/{f}-*/scripts/*.py')]
+          targets += list(root.glob('.claude/scripts/platform_lib/*.py')) + list(root.glob('tools/pack/*.py'))
           bad = []
           for f in targets:
               try:

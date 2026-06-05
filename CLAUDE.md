@@ -134,6 +134,7 @@ Project-owned shared operating references — the cross-framework analogue of cl
 | `gates-and-anti-rationalization.md` | **every turn** | High-salience `<GATE-*>` restatement of the self-decision rules + anti-rationalization table |
 | `verdict-cache-contract.md` | when running psy:crossref / cre:voice-audit / psy:propagate | re-runnable LLM-verdict cache (lookup-before-judge, `--fresh`, NEVER_CACHED) |
 | `skill-doc-spine-template.md` | when authoring skill docs | the 4-doc spine standard (SKILL + README + GUIDE-EN/VI) |
+| `{orc,psy,cre,gro,mat,com}-operating-guide.md` | when working in that framework | per-framework skill → trigger → GUIDE routing table (load-on-demand) |
 
 Load on demand: pull a guide only when its skill/flag is active — except `gates-and-anti-rationalization.md`,
 loaded every turn. The Skills Catalog below stays the navigational index (not deleted).
