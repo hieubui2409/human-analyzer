@@ -12,7 +12,7 @@ metadata:
 
 # Project Rules Validation
 
-Validate changed files against `docs/rules/*.md` (14 rules). Thin orchestrator — routes to specialized skills, does not duplicate their logic.
+Validate changed files against `docs/rules/*.md` (16 rules). Thin orchestrator — routes to specialized skills, does not duplicate their logic.
 
 ## Default (No Arguments)
 
@@ -23,7 +23,7 @@ Validate uncommitted changes against matching rules.
 | Flag              | Purpose                                            |
 | ----------------- | -------------------------------------------------- |
 | `--validate`      | Validate changed files against rules               |
-| `--list`          | List all 14 rules with status                      |
+| `--list`          | List all 16 rules with status                      |
 | `--check <rule#>` | Validate against specific rule (e.g. `--check 01`) |
 | `--scope <scope>` | uncommitted (default), all, or path                |
 
@@ -45,6 +45,8 @@ Validate uncommitted changes against matching rules.
 | 12     | orc-orchestration          | Check event references valid                               |
 | 13     | orc-workflow               | N/A (process rule, not file rule)                          |
 | 14     | cre-evidence-and-events    | Check evidence tier compliance in assets/                  |
+| 15     | gro-framework              | Delegate → `gro:validate` (growth/ data + date alignment)  |
+| 16     | knowledge-graph            | Delegate → `orc:graph --validate` (graph schema/integrity) |
 
 ## Validation Workflow
 
@@ -72,11 +74,12 @@ git ls-files '<path>/*.md'
 | `docs/profiles/*/darkness/*`       | 01, 06, 09                     |
 | `docs/profiles/*/light/*`          | 01                             |
 | `docs/profiles/*/evidence/*`       | 01, 09                         |
+| `docs/profiles/*/growth/*`         | 01, 15                         |
 | `docs/profiles/*/INDEX.md`         | 01                             |
 | `docs/profiles/*/CURRENT-STATE.md` | 01                             |
 | `docs/materials/*`                 | 04, 11                         |
 | `docs/references/*`                | 02, 10                         |
-| `docs/graph/*`                     | 08                             |
+| `docs/graph/*`                     | 08, 16                         |
 | `docs/rules/*`                     | (meta — rule files themselves) |
 | `assets/*`                         | 03, 09, 14                     |
 

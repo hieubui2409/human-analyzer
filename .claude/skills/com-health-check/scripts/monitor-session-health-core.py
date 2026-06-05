@@ -5,7 +5,7 @@ Layers: process liveness, file freshness, content inspection, error classificati
 import json
 import os
 import time
-from dataclasses import dataclass, field, field
+from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 

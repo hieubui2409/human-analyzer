@@ -39,16 +39,9 @@ LINK_RE = re.compile(r"\[\[([a-z0-9][a-z0-9-]*)\]\]")
 INDEX_LINK_RE = re.compile(r"\]\(([^)]+\.md)\)")
 
 
-def _memory_dir() -> Path:
-    env = os.environ.get("CK_MEMORY_DIR")
-    if env:
-        return Path(env)
-    enc = str(paths.ROOT).replace("/", "-")
-    return Path.home() / ".claude" / "projects" / enc / "memory"
-
-
-# Module-level, monkeypatchable in tests.
-MEMORY_DIR = _memory_dir()
+# Module-level, monkeypatchable in tests. Memory-dir resolution lives once in paths.memory_dir
+# (honors CK_MEMORY_DIR); this module no longer re-rolls the slug derivation (DRY).
+MEMORY_DIR = paths.memory_dir()
 
 
 def _age_days(p: Path) -> int:
@@ -67,7 +60,9 @@ def scan_memories() -> list[dict]:
         fm = extract_frontmatter(f)
         text = f.read_text(encoding="utf-8")
         missing = [k for k in REQUIRED_FIELDS if not fm.get(k)]
-        mtype = fm.get("type", "")
+        # `type` may live at the top level OR under a `metadata:` block (both shapes in use).
+        meta = fm.get("metadata") or {}
+        mtype = fm.get("type") or (meta.get("type") if isinstance(meta, dict) else None) or ""
         out.append({
             "file": f.name,
             "name": fm.get("name", ""),

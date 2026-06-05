@@ -74,19 +74,24 @@ For each material file with `processing_status` in [raw, extracted, analyzed]:
    - Flag over-rated materials (e.g., T1 assigned to hearsay)
    - Suggest tier adjustments
 
-### Stage 4: Integration Gate
+### Stage 4: Integration Gate (LLM step — not script-automated)
 
-For each material ready for integration:
+Stage 4 is an **LLM judgment step**, not a script. After reviewing the contradiction and
+coverage output above, the LLM decides whether each material is ready for integration:
 
-1. **Pre-integration checklist:**
+1. **Pre-integration checklist (LLM reviews):**
    - [ ] No HIGH/CRITICAL contradictions unresolved
-   - [ ] Evidence tier verified
+   - [ ] Evidence tier appropriate for source_category
    - [ ] CRAAP score ≥ 15/25
    - [ ] Confidentiality tags applied
    - [ ] Cross-character references identified
 
-2. **If PASS:** Set `processing_status: validated` → emit `MAT.integrated` event
-3. **If FAIL:** Set `processing_status: analyzed` with failure reason → flag for review
+2. **If PASS:** LLM updates `processing_status: validated` in frontmatter, then invokes
+   `orc:event-log` to emit `MAT.integrated` → triggers PSY.refresh cascade.
+3. **If FAIL:** LLM sets `processing_status: analyzed` with a note, flags for human review.
+
+The scripts in this skill only GATHER data; the integration decision and event emission
+are always performed by the LLM via `orc:event-log`.
 
 ### Output
 
@@ -133,7 +138,7 @@ Focused mode — only run contradiction detection:
 
 Evidence coverage gap analysis:
 
-1. For each profile section (21 files per character):
+1. For each profile section (25 files per character):
    - Count how many materials reference/support this section
    - Assess evidence tier distribution
    - Flag sections with no material backing (T5-only or gap)
@@ -150,17 +155,21 @@ Find materials stuck in pipeline:
 
 ## Scripts
 
-| Script                                                   | Purpose                                                |
-| -------------------------------------------------------- | ------------------------------------------------------ |
-| `scripts/detect-contradictions-materials-vs-profiles.py` | Scan materials for claims and compare against profiles |
-| `scripts/evidence-coverage-gap-analysis.py`              | Map which profile sections lack material backing       |
+| Script                                                             | Purpose                                                |
+| ------------------------------------------------------------------ | ------------------------------------------------------ |
+| `scripts/detect-contradictions-materials-vs-profiles.py`          | Scan materials for claims and compare against profiles |
+| `scripts/analyze-evidence-coverage-gaps-per-profile-section.py`   | Map which profile sections lack material backing       |
+| `scripts/find-stale-materials-by-processing-status.py`            | Find materials stuck at raw/extracted past threshold   |
 
-## Event Emissions
+## Event Emissions (LLM-driven via `orc:event-log`)
 
-| Event               | Condition                       | Downstream                      |
-| ------------------- | ------------------------------- | ------------------------------- |
-| `MAT.integrated`    | Material passes Stage 4 gate    | → PSY.refresh + CRE.recalibrate |
-| `MAT.contradiction` | Contradiction severity ≥ MEDIUM | → PSY.flag → user review        |
+Events are **not emitted by scripts**. After Stage 3 script output, the LLM invokes
+`orc:event-log` to record events:
+
+| Event               | Condition                              | Downstream                      |
+| ------------------- | -------------------------------------- | ------------------------------- |
+| `MAT.integrated`    | LLM: material passes Stage 4 gate      | → PSY.refresh + CRE.recalibrate |
+| `MAT.contradiction` | LLM: contradiction severity ≥ MEDIUM   | → PSY.flag → user review        |
 
 ## Safety
 

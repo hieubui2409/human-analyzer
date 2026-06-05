@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILES, resolve_character
-from platform_lib.markdown_parser import extract_sections, extract_frontmatter
+from platform_lib.markdown_parser import parse_table_rows
 
 
 STATUS_PATTERNS = {
@@ -19,46 +19,97 @@ STATUS_PATTERNS = {
 }
 
 
-def _is_table_header_or_separator(col1: str) -> bool:
-    """Check if a table row is a header or separator line."""
-    stripped = col1.strip().strip("*").lower()
-    if all(c in "-: " for c in stripped):
-        return True
-    header_terms = {"field", "description", "milestone", "mốc", "sự kiện",
-                    "event", "date", "period", "status", "giai đoạn",
-                    "năm", "tuổi", "insight", "câu hỏi", "nguồn gốc", "ý nghĩa"}
-    return stripped in header_terms
+# Header-term vocabularies for column-aware table mapping. Substring-matched against
+# lowercased header cells so labels like "Vai trò (Role)" or "Sự kiện" are recognised.
+EVENT_HEADERS = ("sự kiện", "milestone", "mốc", "cột mốc", "event", "achievement", "description", "hoạt động")
+DATE_HEADERS = ("năm", "year", "date", "period", "giai đoạn", "thời gian", "ngày")
+DETAIL_HEADERS = ("impact", "tác động", "ý nghĩa", "ghi chú", "note", "status", "trạng thái")
+# Any cell matching these marks a row as a header (so it is skipped as data).
+_HEADER_HINTS = EVENT_HEADERS + DATE_HEADERS + DETAIL_HEADERS + (
+    "tuổi", "age", "field", "insight", "câu hỏi", "nguồn gốc", "vai trò", "mức độ", "vị trí", "công ty")
+
+
+def _is_header_row(low_cells: list[str]) -> bool:
+    return any(any(term in cell for term in _HEADER_HINTS) for cell in low_cells)
+
+
+def _col_index(low_cells: list[str], wanted: tuple) -> int | None:
+    for i, cell in enumerate(low_cells):
+        if any(term in cell for term in wanted):
+            return i
+    return None
+
+
+def _cell(cells: list[str], idx, default: str = "") -> str:
+    if idx is None or idx >= len(cells):
+        return default
+    return cells[idx].strip().strip("*").strip()
+
+
+def _gather_status_signals(cells: list[str]) -> list[str]:
+    """Return ALL matched status keywords found across the row cells.
+    Leaves final achieved/planned/missed adjudication to the LLM — do not pick one winner
+    when multiple patterns match (e.g. a milestone can be 'planned' AND marked 'in_progress').
+    Empty list means no status signal detected.
+    """
+    full_text = " ".join(cells)
+    matched = [name for name, pattern in STATUS_PATTERNS.items() if pattern.search(full_text)]
+    return matched
+
+
+def _detect_status(cells: list[str]) -> str:
+    """Legacy single-winner status for backward-compat summary counts.
+    Prefers more specific signals: achieved > missed > in_progress > planned.
+    Use status_signals (all signals) for LLM adjudication.
+    """
+    signals = _gather_status_signals(cells)
+    if not signals:
+        return "unknown"
+    # Precedence: achieved > missed > in_progress > planned
+    for preferred in ("achieved", "missed", "in_progress", "planned"):
+        if preferred in signals:
+            return preferred
+    return signals[0]
 
 
 def parse_milestone_table(text: str) -> list[dict]:
-    """Parse milestone table rows from markdown (line-by-line to avoid cross-line matching)."""
+    """Parse milestone tables, mapping columns by header so wide (4-5 col) tables are read
+    correctly and status is detected across ALL cells (incl. a trailing Impact column)."""
     milestones = []
-    row_pattern = re.compile(r'\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|')
+    e_i = d_i = det_i = None
+    header_seen = False
 
-    for line in text.splitlines():
-        match = row_pattern.search(line)
-        if not match:
+    for cells in parse_table_rows(text):
+        low = [c.strip().strip("*").lower() for c in cells]
+        if _is_header_row(low):
+            e_i = _col_index(low, EVENT_HEADERS)
+            d_i = _col_index(low, DATE_HEADERS)
+            det_i = _col_index(low, DETAIL_HEADERS)
+            header_seen = True
             continue
 
-        col1 = match.group(1).strip().strip("*")
-        col2 = match.group(2).strip()
-        col3 = match.group(3).strip()
+        status = _detect_status(cells)
 
-        if _is_table_header_or_separator(col1):
+        if header_seen and e_i is not None:
+            desc = _cell(cells, e_i)
+            date = _cell(cells, d_i)
+            detail = _cell(cells, det_i)
+        else:
+            # No recognised header — fall back to positional: longest cell = event text.
+            desc = max((c.strip().strip("*") for c in cells), key=len, default="")
+            date = _cell(cells, 0)
+            detail = ""
+
+        if not desc:
             continue
-
-        status = "unknown"
-        full_text = f"{col1} {col2} {col3}"
-        for status_name, pattern in STATUS_PATTERNS.items():
-            if pattern.search(full_text):
-                status = status_name
-                break
 
         milestones.append({
-            "description": col1[:60],
-            "date_or_period": col2[:30],
-            "detail": col3[:60],
+            "description": desc[:80],
+            "date_or_period": date[:30],
+            "detail": detail[:80],
             "status": status,
+            # All raw status signals found in this row; LLM uses this for adjudication
+            "status_signals": _gather_status_signals(cells),
         })
 
     return milestones
@@ -79,37 +130,41 @@ def extract_milestones(slug: str) -> dict:
     return result
 
 
+# A career-history table is identified by its header (NOT by row keywords, which leaked
+# role-salience rows like "Worker | Rất cao" via the substring "work"). These terms
+# appear in the history-table header ("Giai đoạn | Vị trí | Công ty …" / "… | Hoạt động")
+# but NOT in the role-salience header ("Vai trò | Mức độ nổi bật | Ghi chú").
+_CAREER_TABLE_HEADERS = ("vị trí", "công ty", "position", "company", "hoạt động", "career", "chức danh")
+
+
 def extract_career_milestones(slug: str) -> list[dict]:
-    """Extract career-specific milestones from growth/career-path.md."""
+    """Extract career-history rows from growth/career-path.md, scoped by table header so
+    role-salience / performance-review tables are not mis-read as career milestones."""
     cp_file = PROFILES / slug / "growth" / "career-path.md"
     if not cp_file.exists():
         return []
 
     text = cp_file.read_text(encoding="utf-8")
     career_milestones = []
+    in_career_table = False
 
-    row_pattern = re.compile(r'\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|')
-    for line in text.splitlines():
-        match = row_pattern.search(line)
-        if not match:
+    for cells in parse_table_rows(text):
+        low = [c.strip().strip("*").lower() for c in cells]
+        if _is_header_row(low):
+            in_career_table = "giai đoạn" in " ".join(low) and any(
+                term in cell for cell in low for term in _CAREER_TABLE_HEADERS)
+            continue
+        if not in_career_table:
             continue
 
-        col1 = match.group(1).strip().strip("*")
-        col2 = match.group(2).strip()
-        col3 = match.group(3).strip()
-
-        if _is_table_header_or_separator(col1):
+        desc = _cell(cells, 0)
+        if not desc:
             continue
-
-        is_career = any(kw in f"{col1} {col2} {col3}".lower()
-                        for kw in ["job", "career", "work", "salary", "lương", "công ty",
-                                   "company", "role", "position", "intern", "thực tập"])
-        if is_career:
-            career_milestones.append({
-                "description": col1[:60],
-                "period": col2[:30],
-                "detail": col3[:60],
-            })
+        career_milestones.append({
+            "description": desc[:60],
+            "period": _cell(cells, 1)[:30],
+            "detail": _cell(cells, 2)[:60],
+        })
 
     return career_milestones[:10]
 
@@ -160,6 +215,8 @@ def gather_character(slug: str) -> dict:
 def main():
     parser = argparse.ArgumentParser(description="Gather career milestone tracking data")
     parser.add_argument("--character", "-c", help="Character slug or alias")
+    parser.add_argument("--all", dest="all_chars", action="store_true",
+                        help="Track all characters (default when no --character given)")
     parser.add_argument("--json", dest="json_out", action="store_true", help="JSON output")
     parser.add_argument("--pending-only", action="store_true", help="Show only planned/unachieved")
     args = parser.parse_args()

@@ -98,7 +98,7 @@ Start from clinical theories → find where they apply in character profiles. Di
 
 - READ-ONLY — never modifies profile or reference files
 - Only outputs mapping reports
-- Scope: theory-to-profile mapping for ck-marketing. Does NOT create or edit content.
+- Scope: theory-to-profile mapping for human-analyzer. Does NOT create or edit content.
 
 ## Examples
 

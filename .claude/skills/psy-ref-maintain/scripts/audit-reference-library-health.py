@@ -8,12 +8,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import PROFILES, REFERENCES
+from platform_lib.clinical_terms import REFERENCE_REQUIRED_SECTIONS
+from platform_lib.errors import emit_error  # noqa: F401 — used for IO/decode errors
 
-REQUIRED_SECTIONS = [
-    "core concept",
-    "clinical application",
-    "profile implication",
-]
+REQUIRED_SECTIONS = REFERENCE_REQUIRED_SECTIONS
 
 INDEX_FILE = REFERENCES / "INDEX.md"
 
@@ -47,8 +45,8 @@ def count_citations(theory_name: str, theory_stem: str) -> int:
                     if len(pat) > 4 and pat in text:
                         count += 1
                         break
-            except Exception:
-                pass
+            except (OSError, UnicodeError) as exc:
+                emit_error("io", str(exc), {"file": str(md_file)})
     return count
 
 
@@ -57,7 +55,7 @@ def check_schema(text: str) -> list[str]:
     text_lower = text.lower()
     missing = []
     for sec in REQUIRED_SECTIONS:
-        if sec not in text_lower:
+        if sec.lower() not in text_lower:
             missing.append(sec)
     return missing
 

@@ -5,21 +5,14 @@ import sys
 import argparse
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import CHAR_DISPLAY, character_dir, list_relationship_files
+from platform_lib.paths import (
+    CHAR_DISPLAY, character_dir, list_relationship_files, CHARACTER_PAIRS, CHAR_SEARCH_ALIASES,
+)
 from platform_lib.markdown_parser import find_cross_references
 from platform_lib.formatters import print_table, print_json
 
-PAIRS = [
-    ("character-a", "character-b"),
-    ("character-a", "character-c"),
-    ("character-b", "character-c"),
-]
-
-CHAR_ALIASES = {
-    "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật A"],
-    "character-b": ["Nhân vật B", "Nhân vật ẩn danh", "Nhân vật B"],
-    "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật C"],
-}
+PAIRS = CHARACTER_PAIRS
+CHAR_ALIASES = CHAR_SEARCH_ALIASES
 
 CHECK_FILES = ["timeline/overview.md", "relationships/family.md"]
 

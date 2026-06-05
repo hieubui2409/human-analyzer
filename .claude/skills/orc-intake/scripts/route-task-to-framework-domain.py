@@ -13,6 +13,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 CONFIDENCE_THRESHOLD = 0.5
 
+# ADVISORY routing only — keyword sets score which DOMAIN a task belongs to; the per-domain
+# `skills` lists are ILLUSTRATIVE entry points, NOT an exhaustive catalog (the LLM picks the
+# final skill from the live catalog after this gathers a domain suggestion). Deliberately not
+# generated from the skill dirs: this is a heuristic router, not a source of truth for which
+# skills exist (see com:skill-stocktake / orc:skill-stocktake for the authoritative catalog).
 DOMAIN_KEYWORDS = {
     "MAT": {
         "keywords": [
@@ -185,7 +190,10 @@ def route_task(description: str) -> dict:
         "confidence": round(confidence, 2),
         "score": best_score,
         "matched_keywords": scores[best_domain]["matched"],
-        "suggested_skill": scores[best_domain]["skills"][0] if scores[best_domain]["skills"] else "",
+        # No keyword matched (all scores 0 → UNKNOWN): emit no skill. max() over a 0-tie returns
+        # the first domain arbitrarily, so without the best_score>0 guard this leaked "mat:loader".
+        "suggested_skill": (scores[best_domain]["skills"][0]
+                            if best_score > 0 and scores[best_domain]["skills"] else ""),
         "all_scores": {d: s["score"] for d, s in scores.items()},
         "suggestions": suggestions,
         "best_domain": best_domain if best_score > 0 else "UNKNOWN",

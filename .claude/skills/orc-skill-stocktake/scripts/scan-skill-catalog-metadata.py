@@ -84,10 +84,15 @@ def catalog_in_claude_md() -> set[str]:
 
 
 def declared_total() -> int | None:
-    """The 'NN skills' count line in CLAUDE.md Scripts Infrastructure, if present."""
+    """The 'NN framework skills' count line in CLAUDE.md Skills Catalog, if present.
+
+    Matches both forms:
+      59 framework skills (ORC 17 ...)   ← current CLAUDE.md format
+      59 skills (orc/mat/...)            ← alternate format
+    """
     if not CLAUDE_MD.exists():
         return None
-    m = re.search(r"(\d+)\s+skills\s*\(orc/mat/psy/cre/gro/com\)", CLAUDE_MD.read_text(encoding="utf-8"))
+    m = re.search(r"(\d+)\s+(?:framework\s+)?skills?\b", CLAUDE_MD.read_text(encoding="utf-8"))
     return int(m.group(1)) if m else None
 
 

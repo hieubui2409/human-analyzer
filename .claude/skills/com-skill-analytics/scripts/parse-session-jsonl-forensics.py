@@ -28,17 +28,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
 from platform_lib.errors import emit_error  # noqa: E402
+from platform_lib.markdown_parser import parse_iso_date  # noqa: E402
 
 
-def _sessions_dir() -> Path:
-    env = os.environ.get("CK_SESSIONS_DIR")
-    if env:
-        return Path(env)
-    return Path.home() / ".claude" / "projects" / str(paths.ROOT).replace("/", "-")
-
-
-# Module-level, monkeypatchable in tests.
-SESSIONS_DIR = _sessions_dir()
+# Module-level, monkeypatchable in tests. Slug derivation lives once in paths.sessions_dir
+# (honors CK_SESSIONS_DIR); this module no longer re-rolls projects/{slug} (DRY).
+SESSIONS_DIR = paths.sessions_dir()
 _TOKEN_KEYS = ("input_tokens", "output_tokens", "cache_read_input_tokens",
                "cache_creation_input_tokens")
 
@@ -172,7 +167,7 @@ def main() -> int:
     since = None
     if args.since:
         try:
-            since = date.fromisoformat(args.since)
+            since = parse_iso_date(args.since)
         except ValueError:
             emit_error("validation", f"bad --since: {args.since!r}")
             print(f"error: --since must be YYYY-MM-DD, got {args.since!r}", file=sys.stderr)

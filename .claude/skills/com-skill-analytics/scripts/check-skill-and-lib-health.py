@@ -8,7 +8,7 @@ LLM to adjudicate. READ-ONLY. Scope = 6 framework prefixes, not ck skills.
 
 Usage:
   check-skill-and-lib-health.py [--json] [--format md|json] [--perf]
-                                [--framework psy|orc|cre|gro|mat|com] [--verbose]
+                                [--framework psy|orc|cre|gro|mat|com]
 """
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from platform_lib import paths  # noqa: E402
 from platform_lib.markdown_parser import extract_frontmatter  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
+from platform_lib.skill_imports import platform_lib_importer_counts  # noqa: E402
 
 SKILLS_DIR = paths.ROOT / ".claude" / "skills"
 PLATFORM_LIB = paths.ROOT / ".claude" / "scripts" / "platform_lib"
@@ -82,25 +83,9 @@ def check_skill(d: Path) -> dict:
 
 
 def importer_counts() -> dict[str, int]:
-    """Count framework scripts importing each platform_lib module."""
-    counts: dict[str, int] = {m.stem: 0 for m in PLATFORM_LIB.glob("*.py") if m.stem != "__init__"}
-    for _, d in framework_skill_dirs():
-        for s in d.glob("scripts/*.py"):
-            try:
-                tree = ast.parse(s.read_text(encoding="utf-8"))
-            except (SyntaxError, OSError, UnicodeDecodeError):
-                continue
-            for node in ast.walk(tree):
-                mod = None
-                if isinstance(node, ast.ImportFrom) and node.module:
-                    mod = node.module
-                elif isinstance(node, ast.Import):
-                    mod = node.names[0].name if node.names else None
-                if mod and mod.startswith("platform_lib."):
-                    name = mod.split(".", 2)[1]
-                    if name in counts:
-                        counts[name] += 1
-    return counts
+    """Count framework scripts importing each platform_lib module (shared introspection).
+    Passes module-level SKILLS_DIR / PLATFORM_LIB so tests can override via monkeypatch."""
+    return platform_lib_importer_counts(skills_dir=SKILLS_DIR, platform_lib=PLATFORM_LIB)
 
 
 def perf_summary() -> dict[str, dict]:
@@ -160,7 +145,6 @@ def main() -> int:
     ap.add_argument("--format", choices=["md", "json"], default="md")
     ap.add_argument("--perf", action="store_true", help="include script perf (needs telemetry)")
     ap.add_argument("--framework", choices=FRAMEWORKS)
-    ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
     data = gather(args.framework, args.perf)
     if args.json or args.format == "json":

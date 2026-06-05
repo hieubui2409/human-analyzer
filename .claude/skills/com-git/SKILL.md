@@ -1,6 +1,6 @@
 ---
 name: com:git
-description: "Git commit & push with conventional commit format for ck-marketing. Use when user says 'commit', 'push', 'save changes'. Smart file selection, preview, auto-rebase. Excludes .env/credentials. Never force-pushes to protected branches."
+description: "Git commit & push with conventional commit format for human-analyzer. Use when user says 'commit', 'push', 'save changes'. Smart file selection, preview, auto-rebase. Excludes .env/credentials. Never force-pushes to protected branches."
 argument-hint: "--commit|--push|--sync [--auto|--all|--dry-run] [-m 'msg']"
 metadata:
   author: hieubt
@@ -10,7 +10,7 @@ metadata:
   dependencies: []
 ---
 
-# Git Operations for ck-marketing
+# Git Operations for human-analyzer
 
 Commit, push, sync with conventional commit format. No ticket prefix required.
 

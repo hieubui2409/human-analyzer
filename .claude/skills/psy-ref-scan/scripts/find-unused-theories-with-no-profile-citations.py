@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sc
 from platform_lib.paths import REFERENCES, ALL_CHARS, CHAR_DISPLAY, character_dir, CLINICAL_PROFILE_FILES
 from platform_lib.clinical_terms import build_reference_index
 from platform_lib.formatters import print_table, print_json
+from platform_lib.errors import emit_error
 
 # Suggested characters per theory category based on project knowledge
 CATEGORY_CHAR_HINTS = {
@@ -35,7 +36,8 @@ def is_cited_anywhere(theory_name: str, key_terms: list[str]) -> bool:
                 continue
             try:
                 text = fpath.read_text(encoding="utf-8", errors="replace").lower()
-            except Exception:
+            except (OSError, UnicodeError) as exc:
+                emit_error("io", str(exc), {"file": str(fpath)})
                 continue
             if needle_theory in text:
                 return True

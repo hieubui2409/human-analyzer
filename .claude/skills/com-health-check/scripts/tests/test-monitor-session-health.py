@@ -255,7 +255,7 @@ class TestResolveProjectSlug:
         assert slug == "-home-user-project"
 
     def test_keeps_leading_dash(self):
-        slug = core.resolve_project_slug("/home/hieubt/Documents/ck-marketing")
+        slug = core.resolve_project_slug("/home/user/human-analyzer")
         assert slug.startswith("-")
 
 

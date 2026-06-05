@@ -189,7 +189,9 @@ def audit_skill(d: Path) -> dict:
 def collect(skills_dir: Path, scope: str) -> tuple[list[dict], list[str], list[str]]:
     records, excluded, orphans = [], [], []
     for d in sorted(skills_dir.iterdir()):
-        if not d.is_dir() or d.name.startswith("."):
+        # Skip dotdirs and `_`-prefixed shared-resource dirs (e.g. _shared, _framework-shared) —
+        # they hold cross-skill references, not skills, so they must not count as skills/orphans.
+        if not d.is_dir() or d.name.startswith((".", "_")):
             continue
         owned = _is_project_owned(d)
         if scope == "project-owned" and not owned:

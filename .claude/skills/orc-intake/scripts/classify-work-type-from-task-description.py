@@ -10,8 +10,10 @@ import re
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, CHAR_SEARCH_ALIASES
 from platform_lib.formatters import print_json
+from platform_lib.skill_ids import SKILL_MENTION_RE
+from platform_lib.platform_constraints import ALL_PLATFORMS as PLATFORMS
 
 ACTION_KEYWORDS = {
     "write": ["write", "draft", "create post", "compose", "viết", "tạo bài", "soạn"],
@@ -48,7 +50,7 @@ OBJECT_KEYWORDS = {
                "nghề nghiệp", "năng lực", "hướng nghiệp", "sự nghiệp"],
 }
 
-PLATFORMS = ["facebook", "linkedin", "instagram", "tiktok", "youtube", "twitter", "blog"]
+# PLATFORMS imported from platform_constraints.ALL_PLATFORMS (single source of truth).
 
 URGENCY_MARKERS = ["urgent", "asap", "now", "immediately", "gấp", "ngay", "khẩn",
                     "deadline", "today", "tonight", "hôm nay", "tối nay"]
@@ -56,10 +58,12 @@ URGENCY_MARKERS = ["urgent", "asap", "now", "immediately", "gấp", "ngay", "kh�
 MULTI_STEP_MARKERS = ["then", "after that", "and also", "rồi", "sau đó", "đồng thời",
                        "step 1", "step 2", "first", "second", "next"]
 
+# Alias→slug lookup built from paths.CHAR_SEARCH_ALIASES (single canonical source).
+# Preserves all typo variants (Nhân vật ẩn danh, Nhân vật ẩn danh) which are defined there.
 CHARACTER_ALIASES = {
-    "hiếu": "character-a", "hieu": "character-a", "Nhân vật ẩn danh": "character-a",
-    "hòa": "character-b", "hoa": "character-b",
-    "chiến": "character-c", "chien": "character-c", "Nhân vật ẩn danh": "character-c",
+    alias.lower(): slug
+    for slug, aliases in CHAR_SEARCH_ALIASES.items()
+    for alias in aliases
 }
 
 
@@ -98,7 +102,7 @@ def extract_file_references(text: str) -> list[str]:
 
 
 def extract_skill_mentions(text: str) -> list[str]:
-    return re.findall(r'lucas:\w[\w-]*', text)
+    return SKILL_MENTION_RE.findall(text)
 
 
 def extract_urgency(text: str) -> list[str]:

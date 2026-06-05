@@ -4,9 +4,10 @@ import os
 from pathlib import Path
 
 import pytest
+from venv_python import VENV_PYTHON
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-PYTHON = str(Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3")
+PYTHON = str(VENV_PYTHON)
 MOCK_DATA = PROJECT_ROOT / "tests" / "mock-data"
 ENV = {
     **os.environ,
@@ -46,7 +47,7 @@ class TestPrivacyGuard:
     def test_scan_assets_privacy(self):
         r = run_script("cre-privacy-guard", "scan-assets-for-privacy-violations.py", ["--dir", "assets/"])
         # returncode 2 = found violations (expected), 0 = clean
-        assert r.returncode in (0, 2) or r.stdout.strip()
+        assert (r.returncode in (0, 2) or r.stdout.strip()) and "Traceback" not in r.stderr
 
 
 class TestPostWriter:

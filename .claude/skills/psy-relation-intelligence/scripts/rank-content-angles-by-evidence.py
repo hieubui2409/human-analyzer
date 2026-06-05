@@ -29,16 +29,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-# evidence tier (1-5) → strength weight; None/unknown → weak-but-not-zero
-_TIER_STRENGTH = {1: 1.0, 2: 0.85, 3: 0.55, 4: 0.25, 5: 0.15}
-_NO_EVIDENCE_STRENGTH = 0.3
-_CONSENT_FACTOR = {"OK": 1.0, "REVIEW": 0.5, "BLOCKED": 0.05}
-
-
-def _evidence_strength(tier) -> float:
-    if tier is None:
-        return _NO_EVIDENCE_STRENGTH
-    return _TIER_STRENGTH.get(int(tier), 0.15)
+from platform_lib.angle_scoring import (
+    evidence_strength as _evidence_strength, consent_factor as _consent_factor,
+)
 
 
 def resolve_from_facts(angle: dict, facts_by_id: dict) -> tuple:
@@ -60,8 +53,7 @@ def score_angle(angle: dict, facts_by_id: dict) -> dict:
     coherence = float(angle.get("coherence", 0.5))
     publishability = float(angle.get("publishability", 0.5))
     strength = _evidence_strength(tier)
-    consent_factor = _CONSENT_FACTOR.get(consent, 0.05)
-    score = round(strength * coherence * publishability * consent_factor, 4)
+    score = round(strength * coherence * publishability * _consent_factor(consent), 4)
     return {
         **angle,
         "evidence_tier": f"T{tier}" if tier else "—",

@@ -118,6 +118,12 @@ All 3 characters have `identity/writing-voice.md` with `## Voice Profile (Struct
 - Writes only to stdout or plans/reports/ (with --report)
 - Scope: voice/tone consistency validation. Does NOT create or edit content, modify profiles, or manage references.
 
+## Verdict cache
+
+Per-asset voice verdicts reuse the re-runnable verdict cache (keyed on the asset content) so an unchanged
+asset is not re-judged; `--fresh` forces a re-judge. Contract:
+[`verdict-cache-contract.md`](../_framework-shared/references/verdict-cache-contract.md).
+
 ## See Also
 
 cre:post-writer, cre:repurpose, psy:crossref

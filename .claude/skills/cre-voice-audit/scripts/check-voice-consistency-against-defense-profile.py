@@ -7,8 +7,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import PROFILES, CHAR_DISPLAY
-from platform_lib.markdown_parser import extract_sections
+from platform_lib.paths import PROFILES, CHAR_DISPLAY, resolve_character
+from platform_lib.asset_packages import resolve_post_source
 
 DEFENSE_VOICE_INDICATORS = {
     "intellectualization": {
@@ -58,10 +58,15 @@ def detect_active_defenses(slug: str) -> list[str]:
 
 
 def check_voice_consistency(asset_dir: Path, slug: str) -> dict:
-    """Check if content voice aligns with defense hierarchy."""
-    post_file = asset_dir / "post.txt"
-    if not post_file.exists():
-        return {"error": f"post.txt not found in {asset_dir}"}
+    """Gather voice/defense keyword signals for a package (advisory — LLM adjudicates).
+
+    Reads the post in either Rule-03 form (post.md source-of-truth or post.txt mirror).
+    Emits per-defense hit counts plus a descriptive signal; it does NOT issue a GO/NOGO
+    verdict — keyword tallies are too coarse to decide alignment on their own.
+    """
+    post_file = resolve_post_source(asset_dir)
+    if post_file is None:
+        return {"error": f"no post.md or post.txt found in {asset_dir}"}
 
     try:
         content = post_file.read_text(encoding="utf-8").lower()
@@ -77,24 +82,26 @@ def check_voice_consistency(asset_dir: Path, slug: str) -> dict:
         expected_hits = sum(1 for kw in indicators.get("expected", []) if kw in content)
         misaligned_hits = sum(1 for kw in indicators.get("misaligned", []) if kw in content)
 
+        # Descriptive signal from the gathered counts — advisory only, not a verdict.
         if expected_hits > 0 and misaligned_hits == 0:
-            consistency = "ALIGNED"
+            signal = "expected-only"
         elif misaligned_hits > expected_hits:
-            consistency = "MISALIGNED"
+            signal = "misaligned-leaning"
         elif expected_hits == 0 and misaligned_hits == 0:
-            consistency = "NEUTRAL"
+            signal = "no-signal"
         else:
-            consistency = "MIXED"
+            signal = "mixed"
 
         checks.append({
             "defense_active": mechanism,
             "expected_voice_hits": expected_hits,
             "misaligned_voice_hits": misaligned_hits,
-            "consistency": consistency,
+            "signal": signal,
         })
 
     return {
         "asset_dir": str(asset_dir),
+        "post_file": post_file.name,
         "character": slug,
         "display_name": display,
         "active_defenses": active_defenses,
@@ -109,26 +116,29 @@ def main():
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
 
-    result = check_voice_consistency(Path(args.asset_dir), args.character)
+    result = check_voice_consistency(Path(args.asset_dir), resolve_character(args.character))
 
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
-        has_misaligned = any(c["consistency"] == "MISALIGNED" for c in result.get("checks", []))
-        sys.exit(1 if has_misaligned else 0)
+        # Advisory tool: exit non-zero only on hard error, never on a keyword signal.
+        sys.exit(1 if "error" in result else 0)
 
     if "error" in result:
         print(f"Error: {result['error']}", file=sys.stderr)
         sys.exit(1)
 
     print(f"\n  Character: {result['display_name']} ({result['character']})")
-    print(f"  Asset: {result['asset_dir']}")
+    print(f"  Asset: {result['asset_dir']} (read {result['post_file']})")
     print(f"  Active defenses: {', '.join(result['active_defenses'])}")
-    print(f"\n  {'Defense':<24s} {'Expected':<10s} {'Misaligned':<12s} {'Status':<12s}")
-    print(f"  {'-'*24} {'-'*10} {'-'*12} {'-'*12}")
+    print(f"\n  {'Defense':<24s} {'Expected':<10s} {'Misaligned':<12s} {'Signal':<18s}")
+    print(f"  {'-'*24} {'-'*10} {'-'*12} {'-'*18}")
 
     for check in result["checks"]:
-        icon = {"ALIGNED": "✓", "MISALIGNED": "✗", "NEUTRAL": "○", "MIXED": "~"}.get(check["consistency"], "?")
-        print(f"  {icon} {check['defense_active']:<22s} {check['expected_voice_hits']:<10d} {check['misaligned_voice_hits']:<12d} {check['consistency']:<12s}")
+        icon = {"expected-only": "✓", "misaligned-leaning": "✗",
+                "no-signal": "○", "mixed": "~"}.get(check["signal"], "?")
+        print(f"  {icon} {check['defense_active']:<22s} {check['expected_voice_hits']:<10d} "
+              f"{check['misaligned_voice_hits']:<12d} {check['signal']:<18s}")
+    print("\n  [advisory] Keyword tallies are signals, not a verdict — LLM decides voice alignment.")
 
 
 if __name__ == "__main__":

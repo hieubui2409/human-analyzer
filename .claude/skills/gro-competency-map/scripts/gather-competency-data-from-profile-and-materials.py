@@ -1,14 +1,13 @@
 """Gather competency data from growth/competencies.md, identity/core.md, and materials for LLM assessment."""
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, PROFILES, resolve_character
-from platform_lib.markdown_parser import extract_sections, extract_frontmatter
+from platform_lib.markdown_parser import extract_sections, extract_frontmatter, parse_dreyfus_skills
 
 
 DREYFUS_LEVELS = {
@@ -45,16 +44,12 @@ def extract_competencies_from_profile(slug: str) -> dict:
     result["frontmatter"] = extract_frontmatter(comp_file) or {}
     result["sections"] = extract_sections(comp_file)
 
-    dreyfus_pattern = re.compile(r'\|\s*\*{0,2}(.+?)\*{0,2}\s*\|\s*(\d)\s*')
-    for match in dreyfus_pattern.finditer(text):
-        skill_name = match.group(1).strip().strip("*")
-        level = int(match.group(2))
-        if 1 <= level <= 7 and len(skill_name) > 1:
-            result["skills_found"].append({
-                "name": skill_name,
-                "level": level,
-                "level_name": DREYFUS_LEVELS.get(level, "Unknown"),
-            })
+    for skill in parse_dreyfus_skills(text):
+        result["skills_found"].append({
+            "name": skill["name"],
+            "level": skill["level"],
+            "level_name": DREYFUS_LEVELS.get(skill["level"], "Unknown"),
+        })
 
     return result
 

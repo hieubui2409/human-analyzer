@@ -13,13 +13,19 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sc
 from platform_lib.clinical_terms import COMPILED_PATTERNS
 from platform_lib.paths import ASSETS, ROOT, PRIVACY_AUDIT
 from platform_lib.formatters import print_table, severity_badge, eprint
+from platform_lib.privacy_tags import load_confidential_names
 
+# Rule-09 privacy tags — leaking any of these into published content is a CRITICAL breach.
+# CONFIDENTIAL carries an optional ": {person}" payload (the real grammar in the corpus),
+# so the regex must match both the bare and the named form.
 PRIVACY_TAG_PATTERNS = [
-    (re.compile(r'\[PRIVATE\]', re.IGNORECASE), "HIGH", "PRIVATE tag"),
-    (re.compile(r'\[CONFIDENTIAL\]', re.IGNORECASE), "HIGH", "CONFIDENTIAL tag"),
-    (re.compile(r'\[ANONYMIZE\]', re.IGNORECASE), "HIGH", "ANONYMIZE tag"),
-    (re.compile(r'\[DRAFT\]', re.IGNORECASE), "MEDIUM", "DRAFT tag"),
+    (re.compile(r'\[PRIVATE\]', re.IGNORECASE), "CRITICAL", "PRIVATE tag"),
+    (re.compile(r'\[CONFIDENTIAL(?::[^\]]*)?\]', re.IGNORECASE), "CRITICAL", "CONFIDENTIAL tag"),
+    (re.compile(r'\[ANONYMIZE\]', re.IGNORECASE), "CRITICAL", "ANONYMIZE tag"),
+    # Publication-readiness markers — not Rule-09 privacy tags, but finding them inside a
+    # published asset means unpublishable content leaked, so the guard still flags them.
     (re.compile(r'\[DO NOT PUBLISH\]', re.IGNORECASE), "HIGH", "DO NOT PUBLISH tag"),
+    (re.compile(r'\[DRAFT\]', re.IGNORECASE), "MEDIUM", "DRAFT tag"),
 ]
 
 LOCATION_PATTERNS = [
@@ -30,10 +36,16 @@ LOCATION_PATTERNS = [
     re.compile(r'\bVietSeeds\b', re.IGNORECASE),
 ]
 
+# C1-CRE-08: Vietnamese phone (10-digit, starts 03/05/07/08/09) checked BEFORE CCCD.
+# CCCD is any 12-digit number. Checked in order longest-match: phone first (10-digit
+# is a strict subset of possible 12-digit strings, but word-boundary anchors separate
+# them). Keeping phone first avoids double-fire on strings like "0987654321xx".
 PII_PATTERNS = [
     (re.compile(r'\b0[35789]\d{8}\b'), "HIGH", "Vietnamese phone"),
     (re.compile(r'[\w.+-]+@[\w-]+\.[\w.]+'), "HIGH", "email address"),
-    (re.compile(r'\b0\d{11}\b'), "HIGH", "Vietnamese CCCD"),
+    # C1-CRE-08: real 12-digit CCCD starts with province code (001-096), not 0-prefix.
+    # Previous pattern \b0\d{11}\b was wrong (required leading 0). Fixed to \b\d{12}\b.
+    (re.compile(r'\b\d{12}\b'), "HIGH", "Vietnamese CCCD"),
 ]
 
 DSM_ICD_PATTERN = re.compile(r'\b[FG]\d{2}(?:\.\d{1,2})?\b')
@@ -58,7 +70,28 @@ def _in_clinical_expected(fpath: Path) -> bool:
     return any(d in s for d in CLINICAL_EXPECTED_DIRS)
 
 
-def scan_file(fpath: Path, rel_base: Path) -> list[list[str]]:
+def _in_assets(fpath: Path) -> bool:
+    """Published content lives under assets/ — only there is a real-name appearance a leak."""
+    try:
+        fpath.resolve().relative_to(ASSETS.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def _build_name_patterns(names: set[str]) -> list[tuple[re.Pattern, str]]:
+    """Word-boundary matchers for each Rule-09 confidential person name."""
+    pats = []
+    for name in sorted(names):
+        cleaned = name.strip()
+        if len(cleaned) < 2:
+            continue  # too short to match safely
+        pats.append((re.compile(rf'(?<!\w){re.escape(cleaned)}(?!\w)', re.IGNORECASE), cleaned))
+    return pats
+
+
+def scan_file(fpath: Path, rel_base: Path,
+              name_patterns: list[tuple[re.Pattern, str]] | None = None) -> list[list[str]]:
     violations = []
     try:
         lines = fpath.read_text(encoding="utf-8").splitlines()
@@ -66,6 +99,9 @@ def scan_file(fpath: Path, rel_base: Path) -> list[list[str]]:
         return violations
     rel = str(fpath.relative_to(rel_base))
     in_clinical_zone = _in_clinical_expected(fpath)
+    # Real-name leak detection applies only to published assets; profiles/materials are
+    # expected to contain these names verbatim (that is where the tags are authored).
+    check_names = bool(name_patterns) and _in_assets(fpath)
 
     for i, line_text in enumerate(lines, 1):
         for pat, sev, label in PRIVACY_TAG_PATTERNS:
@@ -74,6 +110,15 @@ def scan_file(fpath: Path, rel_base: Path) -> list[list[str]]:
                     severity_badge(sev), rel, str(i), label,
                     line_text.strip()[:60],
                 ])
+
+        if check_names:
+            for npat, person in name_patterns:
+                if npat.search(line_text):
+                    violations.append([
+                        severity_badge("CRITICAL"), rel, str(i),
+                        f"confidential-name leak: {person}",
+                        line_text.strip()[:60],
+                    ])
 
         for ppat, psev, plabel in PII_PATTERNS:
             if ppat.search(line_text):
@@ -108,8 +153,10 @@ def scan_file(fpath: Path, rel_base: Path) -> list[list[str]]:
     return violations
 
 
-def scan_dirs(dirs: list[str], severity_filter: str = "all") -> tuple[list[list[str]], int]:
+def scan_dirs(dirs: list[str], severity_filter: str = "all",
+              check_name_leaks: bool = True) -> tuple[list[list[str]], int]:
     """Scan multiple directories, return (violations, files_scanned)."""
+    name_patterns = _build_name_patterns(load_confidential_names()) if check_name_leaks else None
     all_violations: list[list[str]] = []
     files_scanned = 0
     for d in dirs:
@@ -121,7 +168,7 @@ def scan_dirs(dirs: list[str], severity_filter: str = "all") -> tuple[list[list[
             if fpath.suffix.lower() not in SCAN_EXTENSIONS:
                 continue
             files_scanned += 1
-            all_violations.extend(scan_file(fpath, scan_root))
+            all_violations.extend(scan_file(fpath, scan_root, name_patterns))
 
     if severity_filter != "all":
         badge = severity_badge(severity_filter)
@@ -132,6 +179,7 @@ def scan_dirs(dirs: list[str], severity_filter: str = "all") -> tuple[list[list[
 def append_audit_log(dirs: list[str], files_scanned: int, violations: list[list[str]]) -> None:
     """Append one JSONL line to the audit log."""
     AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
+    crit = sum(1 for v in violations if v[0] == severity_badge("CRITICAL"))
     high = sum(1 for v in violations if v[0] == severity_badge("HIGH"))
     med = sum(1 for v in violations if v[0] == severity_badge("MEDIUM"))
     low = sum(1 for v in violations if v[0] == severity_badge("LOW"))
@@ -140,7 +188,7 @@ def append_audit_log(dirs: list[str], files_scanned: int, violations: list[list[
         "scan_scope": dirs,
         "files_scanned": files_scanned,
         "findings_count": len(violations),
-        "critical": high,
+        "critical": crit,
         "high": high,
         "medium": med,
         "low": low,
@@ -160,9 +208,11 @@ def main():
                         help="Scan assets/ + docs/profiles/ + docs/materials/ + docs/graph/")
     parser.add_argument("--audit-log", action="store_true", help="Append summary to JSONL audit log")
     parser.add_argument(
-        "--severity", choices=["HIGH", "MEDIUM", "LOW", "all"], default="all",
+        "--severity", choices=["CRITICAL", "HIGH", "MEDIUM", "LOW", "all"], default="all",
         help="Filter by severity"
     )
+    parser.add_argument("--no-name-leak-check", action="store_true",
+                        help="Skip loading [CONFIDENTIAL: name] profile names (faster, tags-only)")
     args = parser.parse_args()
 
     if args.cross_framework:
@@ -174,21 +224,25 @@ def main():
     else:
         dirs = [str(ASSETS)]
 
-    all_violations, files_scanned = scan_dirs(dirs, args.severity)
+    all_violations, files_scanned = scan_dirs(
+        dirs, args.severity, check_name_leaks=not args.no_name_leak_check)
 
     headers = ["Severity", "File", "Line", "Violation", "Context"]
     print_table(headers, all_violations)
 
+    crit = sum(1 for v in all_violations if v[0] == severity_badge("CRITICAL"))
     high = sum(1 for v in all_violations if v[0] == severity_badge("HIGH"))
     med = sum(1 for v in all_violations if v[0] == severity_badge("MEDIUM"))
     low = sum(1 for v in all_violations if v[0] == severity_badge("LOW"))
-    eprint(f"[OK] {files_scanned} files scanned, {len(all_violations)} violations — HIGH={high} MEDIUM={med} LOW={low}")
+    eprint(f"[OK] {files_scanned} files scanned, {len(all_violations)} violations — "
+           f"CRITICAL={crit} HIGH={high} MEDIUM={med} LOW={low}")
 
     if args.audit_log:
         append_audit_log(dirs, files_scanned, all_violations)
         eprint(f"[LOG] Appended to {AUDIT_LOG}")
 
-    if high > 0:
+    # Exit non-zero on any CRITICAL (Rule-09 leak) or HIGH finding — gates the publish pipeline.
+    if crit > 0 or high > 0:
         sys.exit(2)
 
 

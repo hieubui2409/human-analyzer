@@ -13,7 +13,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, character_dir
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, character_dir, CHARACTER_PAIRS, CHAR_SEARCH_ALIASES
 from platform_lib.markdown_parser import extract_timeline_events
 from platform_lib.formatters import print_json, print_table
 
@@ -32,23 +32,31 @@ def parse_dob_from_identity(char_dir: Path) -> date | None:
     if not identity.exists():
         return None
     text = identity.read_text(encoding="utf-8")
-    # Look for patterns like: 24/09/1997 or 1997-09-24
-    for pat in [r"(\d{2}/\d{2}/\d{4})", r"(\d{4}-\d{2}-\d{2})"]:
-        m = re.search(pat, text)
-        if m:
-            raw = m.group(1)
-            try:
-                if "/" in raw:
-                    return datetime.strptime(raw, "%d/%m/%Y").date()
-                else:
-                    return datetime.strptime(raw, "%Y-%m-%d").date()
-            except ValueError:
-                continue
+    # Prefer the explicit birth-date row ("Ngày sinh | DD/MM/YYYY"); fall back to the first date in
+    # the file when no such row exists (profile templates without the field — e.g. synthetic fixtures).
+    # The fallback keeps the deterministic record count stable for fixtures lacking a DOB row.
+    birth_line = next((ln for ln in text.splitlines()
+                       if re.search(r"ngày\s*sinh|date\s*of\s*birth|\bDOB\b", ln, re.IGNORECASE)), None)
+    haystacks = [birth_line, text] if birth_line else [text]
+    for hay in haystacks:
+        for pat, fmt in ((r"\d{2}/\d{2}/\d{4}", "%d/%m/%Y"), (r"\d{4}-\d{2}-\d{2}", "%Y-%m-%d")):
+            m = re.search(pat, hay)
+            if m:
+                try:
+                    return datetime.strptime(m.group(0), fmt).date()
+                except ValueError:
+                    continue
     return None
 
 
 def parse_event_date(date_str: str) -> date | None:
-    """Convert event date string to date object. Returns None if unparseable."""
+    """Convert event date string to date object. Returns None if unparseable.
+
+    NOTE: mixed-precision dates are coerced to a full date (MM/YYYY → day 1, YYYY → Jan 1),
+    so an OUT_OF_ORDER flag between e.g. "2026" and "03/2026" is a deterministic OVER-FLAG,
+    not a confirmed error. This is acceptable per the gather-not-judge principle: the script
+    surfaces the candidate, the LLM adjudicates whether the ordering is actually wrong.
+    """
     date_str = date_str.strip()
     formats = ["%d/%m/%Y", "%Y-%m-%d", "%m/%Y", "%Y"]
     for fmt in formats:
@@ -125,22 +133,14 @@ def check_cross_character_date_alignment() -> list[dict]:
     """Find events in one char's timeline that reference another char, compare dates."""
     issues = []
     char_events: dict[str, list] = {}
-    char_aliases = {
-        "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật A"],
-        "character-b": ["Nhân vật B", "Nhân vật ẩn danh", "Nhân vật B"],
-        "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật C"],
-    }
+    char_aliases = CHAR_SEARCH_ALIASES
 
     for slug in ALL_CHARS:
         tf = character_dir(slug) / "timeline/overview.md"
         char_events[slug] = extract_timeline_events(tf) if tf.exists() else []
 
-    pairs = [
-        ("character-a", "character-b"),
-        ("character-a", "character-c"),
-    ]
-
-    for c1, c2 in pairs:
+    # All dyad pairs (was hand-listed with only 2 of 3 → missed hoa↔chiến date conflicts).
+    for c1, c2 in CHARACTER_PAIRS:
         aliases2 = char_aliases[c2]
         for ev in char_events[c1]:
             for alias in aliases2:

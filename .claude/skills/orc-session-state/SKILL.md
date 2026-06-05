@@ -12,7 +12,7 @@ metadata:
 
 # Session State Management
 
-Track structured session state for ck-marketing project. Persists across Stop/Resume cycles via JSON state file + markdown archive.
+Track structured session state for human-analyzer project. Persists across Stop/Resume cycles via JSON state file + markdown archive.
 
 ## Default (No Arguments)
 

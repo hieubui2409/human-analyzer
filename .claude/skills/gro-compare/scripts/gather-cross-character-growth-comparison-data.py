@@ -1,14 +1,16 @@
 """Gather growth data from all characters for cross-character comparison."""
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILES
-from platform_lib.markdown_parser import extract_sections, extract_frontmatter
+from platform_lib.markdown_parser import extract_frontmatter, parse_dreyfus_skills
+from platform_lib.growth_taxonomy import (
+    SUPER_STAGES, KOLB_STYLES, KRAM_NETWORK_TYPES, mentioned_terms,
+)
 
 
 DIMENSIONS = ["career", "competency", "learning", "mentoring"]
@@ -21,44 +23,13 @@ DIMENSION_TO_FILE = {
 }
 
 
-def detect_career_stage(text: str) -> str:
-    text_lower = text.lower()
-    for stage in ["establishment", "exploration", "growth-exploration", "growth", "maintenance"]:
-        if stage in text_lower:
-            return stage
-    return "unknown"
-
-
-def detect_kolb_style(text: str) -> str:
-    text_lower = text.lower()
-    for style in ["diverging", "assimilating", "converging", "accommodating"]:
-        if style in text_lower:
-            return style
-    return "unknown"
-
-
-def detect_network_type(text: str) -> str:
-    text_lower = text.lower()
-    for typology in ["receptive", "traditional", "entrepreneurial", "opportunistic"]:
-        if typology in text_lower:
-            return typology
-    return "unknown"
-
-
-def parse_skills(text: str) -> list[dict]:
-    """Extract Dreyfus skill ratings from competencies.md."""
-    dreyfus_pattern = re.compile(r'^\|\s*\*{0,2}([^|*]+?)\*{0,2}\s*\|\s*(\d)[^|]*\|', re.MULTILINE)
-    skills = []
-    for match in dreyfus_pattern.finditer(text):
-        name = match.group(1).strip().strip("*")
-        level = int(match.group(2))
-        if 1 <= level <= 7 and len(name) > 1:
-            skills.append({"name": name, "level": level})
-    return skills
-
-
 def gather_dimension(slug: str, dimension: str) -> dict:
-    """Gather data for one dimension of one character."""
+    """Gather data for one dimension of one character.
+
+    C1-GRO-09b: single-pick detect_* functions removed. Only `*_mentioned` lists
+    are emitted (deterministic gather). `needs_llm_adjudication: true` signals the
+    LLM that stage/style/network classification requires heuristic judgment.
+    """
     rel_path = DIMENSION_TO_FILE[dimension]
     fpath = PROFILES / slug / rel_path
     result = {"exists": False, "lines": 0}
@@ -73,16 +44,19 @@ def gather_dimension(slug: str, dimension: str) -> dict:
     result["confidence"] = fm.get("confidence", "unknown")
 
     if dimension == "career":
-        result["stage"] = detect_career_stage(text)
+        result["stages_mentioned"] = mentioned_terms(text, SUPER_STAGES)
+        result["needs_llm_adjudication"] = True
     elif dimension == "competency":
-        skills = parse_skills(text)
+        skills = parse_dreyfus_skills(text)
         result["skill_count"] = len(skills)
         result["avg_level"] = round(sum(s["level"] for s in skills) / len(skills), 1) if skills else 0
         result["top_skills"] = sorted(skills, key=lambda s: s["level"], reverse=True)[:3]
     elif dimension == "learning":
-        result["kolb_style"] = detect_kolb_style(text)
+        result["styles_mentioned"] = mentioned_terms(text, KOLB_STYLES)
+        result["needs_llm_adjudication"] = True
     elif dimension == "mentoring":
-        result["network_type"] = detect_network_type(text)
+        result["network_types_mentioned"] = mentioned_terms(text, KRAM_NETWORK_TYPES)
+        result["needs_llm_adjudication"] = True
 
     return result
 
@@ -124,13 +98,13 @@ def main():
         print(f"  {'Character':<12s} ", end="")
 
         if dim == "career":
-            print(f"{'Stage':<18s} {'Lines':<7s} {'Confidence'}")
+            print(f"{'Stages Mentioned':<28s} {'Lines':<7s} {'Confidence'}")
         elif dim == "competency":
             print(f"{'Skills':<8s} {'Avg Lvl':<9s} {'Top Skill':<20s} {'Confidence'}")
         elif dim == "learning":
-            print(f"{'Kolb Style':<16s} {'Lines':<7s} {'Confidence'}")
+            print(f"{'Styles Mentioned':<22s} {'Lines':<7s} {'Confidence'}")
         elif dim == "mentoring":
-            print(f"{'Network Type':<16s} {'Lines':<7s} {'Confidence'}")
+            print(f"{'Network Types Mentioned':<24s} {'Lines':<7s} {'Confidence'}")
 
         print(f"  {'-'*12} {'-'*50}")
 
@@ -143,17 +117,21 @@ def main():
                 continue
 
             if dim == "career":
-                print(f"  {display:<12s} {data['stage']:<18s} {data['lines']:<7d} {data['confidence']}")
+                stages = ", ".join(data["stages_mentioned"]) or "—"
+                print(f"  {display:<12s} {stages:<28s} {data['lines']:<7d} {data['confidence']}")
             elif dim == "competency":
                 top = data["top_skills"][0]["name"] if data.get("top_skills") else "—"
                 print(f"  {display:<12s} {data['skill_count']:<8d} {data['avg_level']:<9.1f} {top:<20s} {data['confidence']}")
             elif dim == "learning":
-                print(f"  {display:<12s} {data['kolb_style']:<16s} {data['lines']:<7d} {data['confidence']}")
+                styles = ", ".join(data["styles_mentioned"]) or "—"
+                print(f"  {display:<12s} {styles:<22s} {data['lines']:<7d} {data['confidence']}")
             elif dim == "mentoring":
-                print(f"  {display:<12s} {data.get('network_type', '—'):<16s} {data['lines']:<7d} {data['confidence']}")
+                nets = ", ".join(data["network_types_mentioned"]) or "—"
+                print(f"  {display:<12s} {nets:<24s} {data['lines']:<7d} {data['confidence']}")
 
     print(f"\n{'='*70}")
-    print(f"  Next: LLM compares trajectories, identifies patterns, cross-character insights")
+    print(f"  needs_llm_adjudication=true on career/learning/mentoring dims —")
+    print(f"  LLM classifies stage/style/network from *_mentioned signal lists.")
     print(f"{'='*70}")
 
 

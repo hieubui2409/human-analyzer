@@ -28,21 +28,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-# weights (sum 1.0) — freshness leads (B7 is proactive/timely), evidence second
+from platform_lib.angle_scoring import (
+    TIER_STRENGTH, evidence_strength as _evidence_strength, consent_factor as _consent_factor,
+)
+
+# weights (sum 1.0) — freshness leads (proactive/timely), evidence second
 W_FRESH, W_EVID, W_FIT = 0.45, 0.40, 0.15
-
-_TIER_STRENGTH = {1: 1.0, 2: 0.85, 3: 0.55, 4: 0.25, 5: 0.15}
-_NO_EVIDENCE_STRENGTH = 0.3
-_CONSENT_FACTOR = {"OK": 1.0, "REVIEW": 0.5, "BLOCKED": 0.05}
-
-
-def _evidence_strength(tier) -> float:
-    if tier is None or tier == "":
-        return _NO_EVIDENCE_STRENGTH
-    try:
-        return _TIER_STRENGTH.get(int(tier), 0.15)
-    except (ValueError, TypeError):
-        return _NO_EVIDENCE_STRENGTH
 
 
 def _platform_fit(angle: dict) -> float:
@@ -59,14 +50,14 @@ def score_angle(angle: dict) -> dict:
     fit = _platform_fit(angle)
     consent = angle.get("consent_status", "OK")
     base = W_FRESH * fresh + W_EVID * evid + W_FIT * fit
-    score = round(base * _CONSENT_FACTOR.get(consent, 0.05), 4)
+    score = round(base * _consent_factor(consent), 4)
     tier = angle.get("evidence_tier")
     return {
         **angle,
         "evidence_tier": f"T{int(tier)}" if str(tier).strip().isdigit() else "—",
         "consent_status": consent,
         "score": score,
-        "speculative": evid <= _TIER_STRENGTH[4],  # T4/T5-only → flagged
+        "speculative": evid <= TIER_STRENGTH[4],  # T4/T5-only → flagged
         "publishable": consent != "BLOCKED" and score >= 0.15,
     }
 

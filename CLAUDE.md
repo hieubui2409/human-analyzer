@@ -43,14 +43,14 @@ docs/
 ├── materials/{character}/  ← MAT source materials w/ evidence tiers T1–T5 + CRAAP scores
 ├── references/             ← Clinical theory library (60+ theories), show-don't-tell
 ├── graph/                  ← Cross-character relational dynamics
-└── rules/                  ← 15 modular rule files
+└── rules/                  ← 16 modular rule files
 plans/{reports,templates}/  ← Validation reports + plan templates
 assets/{platform}/          ← CRE output, per platform
 ```
 
 Asset package convention: `assets/{platform}/{YYMMDD}-{slug}/` → `post.txt`, `image-prompts.txt`, `images/`, `README.txt`.
 
-**Navigation docs:** `docs/knowledge-architecture.md` (6-layer knowledge map), `docs/MODULES.md` (55-skill grouping + cross-framework dependency edges), `docs/distilled-principles.md` (5 cross-domain invariants from rules 01–15).
+**Navigation docs:** `docs/knowledge-architecture.md` (6-layer knowledge map), `docs/MODULES.md` (59-skill grouping + cross-framework dependency edges), `docs/distilled-principles.md` (5 cross-domain invariants from rules 01–16).
 
 ---
 
@@ -101,7 +101,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 
 ---
 
-## Rules (`docs/rules/` — 15 files)
+## Rules (`docs/rules/` — 16 files)
 
 | #   | File                       | Scope                                                         |
 | --- | -------------------------- | ------------------------------------------------------------- |
@@ -120,12 +120,30 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 | 13  | orc-workflow               | End-to-end workflow tracks (MAT→PSY→CRE + GRO cascades)       |
 | 14  | cre-evidence-and-events    | Evidence tier permissions, CRE events, PSY→CRE translation    |
 | 15  | gro-framework              | GRO domain boundaries, profile files, GRO↔PSY boundary        |
+| 16  | knowledge-graph            | KG tier schema, graph integrity, `orc:graph` validation       |
+
+---
+
+## Operating Guides (`.claude/skills/_framework-shared/references/`)
+
+Project-owned shared operating references — the cross-framework analogue of cleanmatic's per-skill
+`references/`. Skill-specific references live in `{skill}/references/`; cross-skill ones live here.
+
+| Guide | Load | Purpose |
+| --- | --- | --- |
+| `gates-and-anti-rationalization.md` | **every turn** | High-salience `<GATE-*>` restatement of the self-decision rules + anti-rationalization table |
+| `verdict-cache-contract.md` | when running psy:crossref / cre:voice-audit / psy:propagate | re-runnable LLM-verdict cache (lookup-before-judge, `--fresh`, NEVER_CACHED) |
+| `skill-doc-spine-template.md` | when authoring skill docs | the 4-doc spine standard (SKILL + README + GUIDE-EN/VI) |
+| `{orc,psy,cre,gro,mat,com}-operating-guide.md` | when working in that framework | per-framework skill → trigger → GUIDE routing table (load-on-demand) |
+
+Load on demand: pull a guide only when its skill/flag is active — except `gates-and-anti-rationalization.md`,
+loaded every turn. The Skills Catalog below stays the navigational index (not deleted).
 
 ---
 
 ## Skills Catalog (`.claude/skills/`)
 
-58 framework skills (ORC 17 · PSY 16 · CRE 9 · GRO 8 · MAT 4 · COM 4). Invoke as `{framework}:{skill}`.
+59 framework skills (ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 4). Invoke as `{framework}:{skill}`.
 
 > Engineer-kit utility skills (`/ck:*`) installed alongside are **not** catalogued here — they are user-invoked dev tools, discoverable via the harness skill list.
 
@@ -185,6 +203,7 @@ GRO.assessed | GRO.mentored → PSY.refresh → CRE.recalibrate
 | `cre:repurpose`        | Adapt content across platforms (1→1)                                       |
 | `cre:voice-audit`      | Audit content voice/tone consistency against writing-voice                 |
 | `cre:evidence-scanner` | Per-claim evidence-tier gate (T1-T5) + Rule-09 leak; post-writer delegates |
+| `cre:humanize`         | De-AI-slop scan (VN+EN tells) + opt-in rewrite; pre-publish, before voice-audit |
 
 ### GRO — Growth
 

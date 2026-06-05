@@ -32,7 +32,7 @@ Consolidate scattered insights into coherent, up-to-date knowledge. Run periodic
 
 ### Phase 1: Scan (--scan)
 
-1. Read all files in project memory: `.claude/projects/-home-hieubt-Documents-ck-marketing/memory/`
+1. Read all files in project memory: `.claude/projects/{encoded-project-root}/memory/`
 2. Read `MEMORY.md` index
 3. Categorize each memory by metadata type:
    - `user` — user preferences
@@ -216,7 +216,7 @@ Dream should be suggested (not forced) when:
 - Memory scan shows 3+ broken `[[name]]` links
 - Active instinct count > 20 (`instinct_store.load_instincts(status="active")`)
 
-Check last dream date via: `ls -t .claude/projects/-home-hieubt-Documents-ck-marketing/memory/.dream-backup/ | head -1`
+Check last dream date via: `ls -t .claude/projects/{encoded-project-root}/memory/.dream-backup/ | head -1`
 
 ## Scripts
 
@@ -230,7 +230,7 @@ Check last dream date via: `ls -t .claude/projects/-home-hieubt-Documents-ck-mar
 - NEVER modifies profile files — only memory directory
 - Always shows before/after for merges
 - Backs up memory state before destructive operations (copy to `memory/.dream-backup/`)
-- Scope: memory maintenance for ck-marketing. Does NOT handle content creation, profile editing, or code changes.
+- Scope: memory maintenance for human-analyzer. Does NOT handle content creation, profile editing, or code changes.
 
 ## Examples
 

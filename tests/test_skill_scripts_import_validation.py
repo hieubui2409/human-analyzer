@@ -7,7 +7,11 @@ import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = PROJECT_ROOT / ".claude" / "skills"
-PYTHON = Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3"
+# The venv is PROJECT-local (.claude/skills/.venv/), not under $HOME. Fall back to the running
+# interpreter (sys.executable) when the project venv is absent — e.g. CI runs pytest on the
+# runner's Python with deps installed there, no project venv on disk.
+_PROJECT_VENV = PROJECT_ROOT / ".claude" / "skills" / ".venv" / "bin" / "python3"
+PYTHON = _PROJECT_VENV if _PROJECT_VENV.exists() else Path(sys.executable)
 DOMAINS = ["mat", "psy", "cre", "gro", "orc", "com"]
 
 

@@ -1,8 +1,13 @@
-"""Dimension 6: Check developmental trajectory plausibility against timeline."""
+"""Dimension 6: Gather developmental trajectory signals from timeline and growth files.
+
+GATHER-ONLY (Golden Rule): this script emits deterministic signals — dated growth/regression
+occurrences, intervention events, phase transitions. It does NOT emit clinical plausibility
+verdicts (unsupported_growth, unexplained_regression, abrupt_phase_transition).
+LLM adjudication is required to assess whether transitions are clinically plausible.
+"""
 import argparse
 import json
 import re
-import sys
 import sys
 from pathlib import Path
 
@@ -53,10 +58,9 @@ def find_keyword_contexts(text: str, keywords: list[str], label: str) -> list[di
     return results
 
 
-def check_character(slug: str) -> list[dict]:
-    """Check developmental trajectory for a character."""
+def gather_character(slug: str) -> dict:
+    """Gather developmental trajectory signals for a character."""
     profile_dir = PROFILES / slug
-    findings = []
 
     growth_file = profile_dir / "psychology" / "growth-edges.md"
     timeline_file = profile_dir / "timeline" / "overview.md"
@@ -70,58 +74,12 @@ def check_character(slug: str) -> list[dict]:
 
     combined_timeline = timeline_text + "\n" + state_text + "\n" + milestones_text
 
-    growth_claims = find_keyword_contexts(growth_text, GROWTH_KEYWORDS, "growth")
-    regression_claims = find_keyword_contexts(growth_text, REGRESSION_KEYWORDS, "regression")
+    growth_occurrences = find_keyword_contexts(growth_text, GROWTH_KEYWORDS, "growth")
+    regression_occurrences = find_keyword_contexts(growth_text, REGRESSION_KEYWORDS, "regression")
+    intervention_occurrences = find_keyword_contexts(combined_timeline, INTERVENTION_KEYWORDS, "intervention")
 
-    timeline_interventions = find_keyword_contexts(combined_timeline, INTERVENTION_KEYWORDS, "intervention")
-    intervention_dates = set()
-    for item in timeline_interventions:
-        intervention_dates.update(item["dates"])
-
-    for claim in growth_claims:
-        if not claim["dates"]:
-            findings.append({
-                "severity": "MINOR",
-                "type": "undated_growth",
-                "message": f"Growth claim without date: {claim['excerpt']}",
-                "file": "psychology/growth-edges.md",
-                "line": claim["line_num"],
-            })
-            continue
-
-        claim_date = claim["dates"][0]
-        has_prior_intervention = False
-        for int_date in intervention_dates:
-            if int_date < claim_date:
-                has_prior_intervention = True
-                break
-
-        if not has_prior_intervention and intervention_dates:
-            findings.append({
-                "severity": "MAJOR",
-                "type": "unsupported_growth",
-                "message": f"Growth claim at {claim_date} without prior intervention documented in timeline",
-                "file": "psychology/growth-edges.md",
-                "line": claim["line_num"],
-                "excerpt": claim["excerpt"],
-            })
-
-    for claim in regression_claims:
-        if claim["dates"]:
-            reg_date = claim["dates"][0]
-            timeline_dates = extract_dates_from_text(combined_timeline)
-            nearby_events = [d for d in timeline_dates
-                            if abs(int(d[:4]) - int(reg_date[:4])) <= 1]
-            if not nearby_events:
-                findings.append({
-                    "severity": "MAJOR",
-                    "type": "unexplained_regression",
-                    "message": f"Regression at {reg_date} without proximate timeline event",
-                    "file": "psychology/growth-edges.md",
-                    "line": claim["line_num"],
-                    "excerpt": claim["excerpt"],
-                })
-
+    # Detect phase transitions (deterministic pattern match only — no plausibility verdict)
+    phase_transitions = []
     if state_file.exists():
         phases = re.findall(r"(?:phase|giai đoạn)\s*\d+[^:]*:\s*([^\n]+)", state_text, re.IGNORECASE)
         for i in range(1, len(phases)):
@@ -129,59 +87,79 @@ def check_character(slug: str) -> list[dict]:
             curr_phase = phases[i].lower()
             prev_is_crisis = any(kw in prev_phase for kw in REGRESSION_KEYWORDS)
             curr_is_growth = any(kw in curr_phase for kw in GROWTH_KEYWORDS)
-            if prev_is_crisis and curr_is_growth:
-                nearby = state_text[state_text.lower().find(phases[i].lower()):
-                                    state_text.lower().find(phases[i].lower()) + 500]
-                has_trigger = any(kw in nearby.lower() for kw in INTERVENTION_KEYWORDS)
-                if not has_trigger:
-                    findings.append({
-                        "severity": "MINOR",
-                        "type": "abrupt_phase_transition",
-                        "message": f"Phase transition from crisis to growth without documented trigger: '{phases[i-1][:40]}' → '{phases[i][:40]}'",
-                        "file": "timeline/state-timeline.md",
-                    })
+            nearby = state_text[state_text.lower().find(phases[i].lower()):
+                                state_text.lower().find(phases[i].lower()) + 500]
+            has_trigger = any(kw in nearby.lower() for kw in INTERVENTION_KEYWORDS)
+            phase_transitions.append({
+                "from_phase": phases[i-1][:60],
+                "to_phase": phases[i][:60],
+                "crisis_to_growth": prev_is_crisis and curr_is_growth,
+                "trigger_documented": has_trigger,
+                "needs_llm_adjudication": True,
+            })
 
-    return findings
+    return {
+        "growth_occurrences": growth_occurrences,
+        "regression_occurrences": regression_occurrences,
+        "intervention_occurrences": intervention_occurrences,
+        "phase_transitions": phase_transitions,
+        "needs_llm_adjudication": True,
+    }
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Check developmental trajectory consistency (Dim 6)")
+    parser = argparse.ArgumentParser(
+        description="Gather developmental trajectory signals (Dim 6) — LLM adjudicates plausibility"
+    )
     parser.add_argument("--character", "-c", help="Character slug or alias")
     parser.add_argument("--json", dest="json_out", action="store_true")
     args = parser.parse_args()
 
     chars = [resolve_character(args.character)] if args.character else ALL_CHARS
 
-    all_findings: dict[str, list[dict]] = {}
+    all_signals: dict[str, dict] = {}
     for slug in chars:
-        all_findings[slug] = check_character(slug)
+        all_signals[slug] = gather_character(slug)
 
     if args.json_out:
-        print(json.dumps(all_findings, indent=2, ensure_ascii=False, default=str))
+        print(json.dumps(all_signals, indent=2, ensure_ascii=False, default=str))
         return
 
     print(f"\n{'='*70}")
-    print("  Dimension 6: Developmental Trajectory Consistency")
+    print("  Dimension 6: Developmental Trajectory Signals (GATHER-ONLY)")
+    print("  NOTE: Clinical plausibility assessment requires LLM adjudication.")
     print(f"{'='*70}")
 
-    total_issues = 0
-    for slug, findings in all_findings.items():
+    for slug, signals in all_signals.items():
         display = CHAR_DISPLAY.get(slug, slug)
         print(f"\n  {display} ({slug})")
-        if not findings:
-            print("    Developmental trajectory is consistent.")
-            continue
-        majors = [f for f in findings if f["severity"] == "MAJOR"]
-        minors = [f for f in findings if f["severity"] == "MINOR"]
-        print(f"    MAJOR: {len(majors)} | MINOR: {len(minors)}")
-        print(f"\n    {'Severity':<8s} {'Type':<25s} Message")
-        print(f"    {'-'*8} {'-'*25} {'-'*50}")
-        for f in findings:
-            print(f"    {f['severity']:<8s} {f['type']:<25s} {f['message'][:70]}")
-        total_issues += len(findings)
+        g = signals["growth_occurrences"]
+        r = signals["regression_occurrences"]
+        iv = signals["intervention_occurrences"]
+        pt = signals["phase_transitions"]
+        print(f"    Growth occurrences: {len(g)} | Regression: {len(r)} | "
+              f"Interventions: {len(iv)} | Phase transitions: {len(pt)}")
 
-    print(f"\n  TOTAL ISSUES: {total_issues}")
-    sys.exit(1 if total_issues > 0 else 0)
+        if g:
+            print(f"\n    Growth occurrences:")
+            for item in g:
+                dates_str = ", ".join(item["dates"]) if item["dates"] else "undated"
+                print(f"      L{item['line_num']} [{dates_str}] {item['excerpt'][:70]}")
+
+        if r:
+            print(f"\n    Regression occurrences:")
+            for item in r:
+                dates_str = ", ".join(item["dates"]) if item["dates"] else "undated"
+                print(f"      L{item['line_num']} [{dates_str}] {item['excerpt'][:70]}")
+
+        if pt:
+            print(f"\n    Phase transitions (crisis→growth / trigger present):")
+            for t in pt:
+                flag = "C→G" if t["crisis_to_growth"] else "   "
+                trigger = "trigger:YES" if t["trigger_documented"] else "trigger:NO "
+                print(f"      [{flag}] [{trigger}] '{t['from_phase'][:35]}' → '{t['to_phase'][:35]}'")
+
+    print(f"\n  All signals require LLM adjudication before plausibility verdict.")
 
 
 if __name__ == "__main__":

@@ -31,7 +31,7 @@ mat:archive is a maintenance operation — runs outside the main pipeline on alr
 | Flag                       | Purpose                                              |
 | -------------------------- | ---------------------------------------------------- |
 | `--character <name>`       | Limit scope to one character                         |
-| `--before-date YYYY-MM-DD` | Match files with date_created before this date       |
+| `--before-date YYYY-MM-DD` | Match files with captured_date before this date      |
 | `--tier <T1-T5>`           | Match files with this evidence tier                  |
 | `--status <status>`        | Match files with this processing_status              |
 | `--dry-run`                | Preview matches without modifying (default behavior) |

@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
-import os
 import sys
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
@@ -45,15 +44,9 @@ def _core():
     return _core_cache
 
 
-def _sessions_dir() -> Path:
-    env = os.environ.get("CK_SESSIONS_DIR")
-    if env:
-        return Path(env)
-    return Path.home() / ".claude" / "projects" / str(paths.ROOT).replace("/", "-")
-
-
 # Module-level, monkeypatchable in tests.
-SESSIONS_DIR = _sessions_dir()
+# Use paths.sessions_dir() — the single canonical home for CK_SESSIONS_DIR env + slug derivation.
+SESSIONS_DIR = paths.sessions_dir()
 
 
 def _agent_type(path: Path) -> str:

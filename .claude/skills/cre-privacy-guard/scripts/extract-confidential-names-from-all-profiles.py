@@ -4,45 +4,12 @@ Output: list of names that MUST NOT appear in assets/."""
 import os
 import sys
 import argparse
-import re
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, character_dir, PROFILES
+from platform_lib.paths import ALL_CHARS, character_dir, resolve_character
 from platform_lib.formatters import print_json, print_table
-
-# Match [CONFIDENTIAL: SomeName] or [CONFIDENTIAL:SomeName]
-CONFIDENTIAL_TAG_RE = re.compile(r"\[CONFIDENTIAL:\s*([^\]]+)\]", re.IGNORECASE)
-# Also match broader privacy tags
-PRIVATE_TAG_RE = re.compile(r"\[(PRIVATE|ANONYMIZE)\]", re.IGNORECASE)
-
-
-def extract_from_file(filepath: Path, char_slug: str) -> list[dict]:
-    if not filepath.exists():
-        return []
-    results = []
-    lines = filepath.read_text(encoding="utf-8").splitlines()
-    for i, line in enumerate(lines, 1):
-        for m in CONFIDENTIAL_TAG_RE.finditer(line):
-            person_name = m.group(1).strip()
-            results.append({
-                "character": CHAR_DISPLAY.get(char_slug, char_slug),
-                "file": filepath.name,
-                "line_no": i,
-                "tag_type": "CONFIDENTIAL",
-                "restricted_name": person_name,
-                "context": line.strip()[:100],
-            })
-        for m in PRIVATE_TAG_RE.finditer(line):
-            results.append({
-                "character": CHAR_DISPLAY.get(char_slug, char_slug),
-                "file": filepath.name,
-                "line_no": i,
-                "tag_type": m.group(1).upper(),
-                "restricted_name": "(unlabeled private content)",
-                "context": line.strip()[:100],
-            })
-    return results
+from platform_lib.privacy_tags import scan_privacy_tags
 
 
 def main():
@@ -55,17 +22,15 @@ def main():
                         help="Print only the unique restricted names (one per line)")
     args = parser.parse_args()
 
-    from platform_lib.paths import resolve_character
-    if args.character:
-        targets = [resolve_character(args.character)]
-    else:
-        targets = ALL_CHARS
+    targets = [resolve_character(args.character)] if args.character else ALL_CHARS
 
     all_entries = []
     for slug in targets:
         cdir = character_dir(slug)
-        for md_file in sorted(cdir.glob("*.md")):
-            all_entries.extend(extract_from_file(md_file, slug))
+        # Walk the nested profile tree — confidential tags live in identity/, relationships/,
+        # darkness/, etc., not only the root-level files.
+        for md_file in sorted(cdir.rglob("*.md")):
+            all_entries.extend(scan_privacy_tags(md_file, slug))
 
     # Unique restricted names
     unique_names = sorted({e["restricted_name"] for e in all_entries

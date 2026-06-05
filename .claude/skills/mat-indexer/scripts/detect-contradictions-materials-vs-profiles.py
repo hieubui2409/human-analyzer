@@ -1,4 +1,14 @@
-"""Detect contradictions between materials and profile data for mat:indexer --contradictions."""
+"""Gather material-claim ↔ profile OVERLAP candidates for mat:indexer --contradictions.
+
+GOLDEN RULE #4 split:
+  - SCRIPT (here, deterministic): for each date/name/event-tagged material claim, find
+    which profile files mention the SAME terms. Emits OVERLAP (shared terms → a candidate
+    the LLM should read for agreement/contradiction) or NO_OVERLAP (claim's terms absent
+    from the profile → a coverage candidate). It does NOT decide CONFIRMS/CONTRADICTS —
+    term co-occurrence says nothing about whether the two AGREE. That is an LLM judgment.
+  - LLM (downstream, see SKILL.md): read each OVERLAP candidate's material line + profile
+    file and adjudicate CONFIRMS / EXTENDS / CONTRADICTS.
+"""
 import argparse
 import json
 import re
@@ -7,9 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, PROFILES, PROFILE_FILES
-from platform_lib.materials_classifier import extract_frontmatter
-from platform_lib.markdown_parser import extract_dates, extract_sections
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, PROFILES, PROFILE_FILES, resolve_character
 
 
 DATE_PATTERN = re.compile(
@@ -94,13 +102,16 @@ def analyze_character(slug: str) -> list[dict]:
             if not search_terms:
                 continue
             profile_hits = find_profile_mentions(slug, search_terms)
-            match_type = "EXTENDS" if not profile_hits else "CONFIRMS"
+            # Deterministic signal only — NOT a CONFIRMS/CONTRADICTS verdict.
+            signal = "OVERLAP" if profile_hits else "NO_OVERLAP"
             results.append({
                 "material": fpath.name,
                 "claim": claim["text"],
                 "dates": claim["dates"],
-                "match_type": match_type,
+                "signal": signal,
+                "shared_terms": sorted({h["term"] for h in profile_hits}),
                 "profile_refs": [h["file"] for h in profile_hits],
+                "needs_llm_adjudication": bool(profile_hits),
             })
     return results
 
@@ -111,7 +122,7 @@ def main():
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
 
-    chars = [args.character] if args.character else ALL_CHARS
+    chars = [resolve_character(args.character)] if args.character else ALL_CHARS
     report = {}
     for slug in chars:
         report[slug] = analyze_character(slug)
@@ -122,16 +133,19 @@ def main():
 
     for slug, results in report.items():
         display = CHAR_DISPLAY.get(slug, slug)
+        overlaps = sum(1 for r in results if r["signal"] == "OVERLAP")
         print(f"\n{'='*70}")
-        print(f"  {display} ({slug}) — {len(results)} claims analyzed")
+        print(f"  {display} ({slug}) — {len(results)} tagged claims, {overlaps} OVERLAP candidates")
         print(f"{'='*70}")
 
         for r in results[:30]:
-            icon = {"CONFIRMS": "✓", "EXTENDS": "→", "CONTRADICTS": "✗"}.get(r["match_type"], "?")
-            print(f"  {icon} [{r['match_type']}] {r['claim'][:80]}")
+            icon = {"OVERLAP": "≈", "NO_OVERLAP": "→"}.get(r["signal"], "?")
+            print(f"  {icon} [{r['signal']}] {r['claim'][:80]}")
             if r["profile_refs"]:
-                print(f"      refs: {', '.join(r['profile_refs'][:3])}")
+                print(f"      shared terms {r['shared_terms'][:3]} in: {', '.join(r['profile_refs'][:3])}")
             print()
+        print("  [advisory] OVERLAP = shared terms only — LLM reads each to judge "
+              "CONFIRMS/EXTENDS/CONTRADICTS.")
 
 
 if __name__ == "__main__":

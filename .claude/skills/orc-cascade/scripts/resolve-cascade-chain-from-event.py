@@ -2,91 +2,11 @@
 import argparse
 import json
 import sys
+from pathlib import Path
 
-EVENT_ROUTING = {
-    "MAT.integrated": {
-        "domain": "MAT",
-        "downstream": [
-            {"skill": "psy:ref-audit", "args": "--discover"},
-            {"skill": "psy:crossref", "args": ""},
-        ],
-        "emits": ["PSY.refresh"],
-    },
-    "MAT.archived": {
-        "domain": "MAT",
-        "downstream": [],
-        "emits": [],
-    },
-    "PSY.refresh": {
-        "domain": "PSY",
-        "downstream": [
-            {"skill": "psy:propagate", "args": ""},
-            {"skill": "cre:voice-audit", "args": ""},
-        ],
-        "emits": ["CRE.recalibrate"],
-    },
-    "PSY.crisis": {
-        "domain": "PSY",
-        "downstream": [
-            {"skill": "psy:crisis-assess", "args": ""},
-        ],
-        "emits": [],
-    },
-    "CRE.recalibrate": {
-        "domain": "CRE",
-        "downstream": [
-            {"skill": "cre:privacy-guard", "args": ""},
-        ],
-        "emits": [],
-    },
-    "GRO.assessed": {
-        "domain": "GRO",
-        "downstream": [
-            {"skill": "cre:post-writer", "args": "--recalibrate"},
-        ],
-        "emits": ["CRE.recalibrate"],
-    },
-    "GRO.forecast": {
-        "domain": "GRO",
-        "downstream": [],
-        "emits": [],
-    },
-    "GRO.mentored": {
-        "domain": "GRO",
-        "downstream": [
-            {"skill": "psy:crossref", "args": "--validate"},
-        ],
-        "emits": ["PSY.refresh"],
-    },
-    "GRO.profiled": {
-        "domain": "GRO",
-        "downstream": [
-            {"skill": "cre:post-writer", "args": "--recalibrate"},
-        ],
-        "emits": ["CRE.recalibrate"],
-    },
-    "COM.rules_updated": {
-        "domain": "COM",
-        "downstream": [
-            {"skill": "com:rules", "args": "--validate"},
-        ],
-        "emits": [],
-    },
-    "ORC.skill_updated": {
-        "domain": "ORC",
-        "downstream": [
-            {"skill": "orc:bootstrap", "args": "--quick"},
-        ],
-        "emits": [],
-    },
-    "ORC.script_updated": {
-        "domain": "ORC",
-        "downstream": [
-            {"skill": "orc:bootstrap", "args": "--quick"},
-        ],
-        "emits": [],
-    },
-}
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+
+from platform_lib.event_routing import EVENT_ROUTING
 
 
 def resolve_chain(trigger: str, max_depth: int) -> dict:

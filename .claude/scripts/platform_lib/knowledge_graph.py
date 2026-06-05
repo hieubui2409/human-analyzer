@@ -1,4 +1,5 @@
-"""Knowledge graph (Layer 1: frontmatter edges) — NetworkX DiGraph over the corpus.
+"""Knowledge graph (Layer 1+2: frontmatter + body-scan edges) — plain Python adjacency
+over the markdown corpus. No networkx/numpy/pyvis dependency.
 
 Builds a deterministic "find related files" graph from markdown frontmatter:
 profiles, materials, references, graph dyads → nodes; `character`, `cross_characters`,
@@ -7,8 +8,7 @@ on demand. Markdown is the source of truth; the graph is derived + disposable.
 
 Layer 1: frontmatter (confidence 0.95). Layer 2: slug-first regex body scan —
 reference stems matched against body text (cites_theory) + character names matched
-cross-file (cross_character), confidence 0.65-0.80. Layer 3 (embedding) extends
-`_build_graph` in a later phase. No existing skill imports this yet — opt-in adoption.
+cross-file (cross_character), confidence 0.65-0.80. No Layer 3 (embedding removed).
 
 Characters are resolved dynamically from the profiles directory (never hardcoded);
 short-name matching uses paths.CHAR_DISPLAY for the diacritic proper-noun form.
@@ -19,11 +19,11 @@ which drops multi-line YAML lists — the field shape this graph depends on).
 from __future__ import annotations
 
 import re
-import time
 import unicodedata
 from collections import Counter
+from dataclasses import dataclass, field
+from typing import Any
 
-import networkx as nx
 import yaml
 
 from . import paths
@@ -35,8 +35,7 @@ REFERENCES = paths.REFERENCES
 GRAPH = paths.GRAPH
 
 _FM_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
-_graph_cache: nx.DiGraph | None = None
-_undirected_cache: nx.Graph | None = None
+_graph_cache: "Graph | None" = None
 
 # Single-token reference slugs that are also generic English homographs: even with
 # repeated mentions their bare appearance is unreliable signal, so drop them entirely
@@ -49,8 +48,112 @@ _CONF_BODY_SINGLE = 0.65  # slug seen once (multi-token slugs only)
 _CONF_BODY_CHAR = 0.70    # character name seen in another character's file
 
 
+# ---------------------------------------------------------------------------
+# Plain-Python graph structure (replaces networkx DiGraph)
+# ---------------------------------------------------------------------------
+
+@dataclass
+class Graph:
+    """Directed adjacency graph. Edges stored as adjacency dict for fast lookup.
+    nodes: {node_id -> attrs dict}
+    adj:   {src -> {dst -> edge_attrs dict}}   (directed)
+    """
+    nodes: dict[str, dict[str, Any]] = field(default_factory=dict)
+    adj: dict[str, dict[str, dict[str, Any]]] = field(default_factory=dict)
+
+    def add_node(self, node: str, **attrs) -> None:
+        if node not in self.nodes:
+            self.nodes[node] = {}
+            self.adj[node] = {}
+        self.nodes[node].update(attrs)
+
+    def add_edge(self, src: str, dst: str, **attrs) -> None:
+        if src not in self.nodes:
+            self.nodes[src] = {}
+            self.adj[src] = {}
+        if dst not in self.nodes:
+            self.nodes[dst] = {}
+            self.adj[dst] = {}
+        self.adj[src][dst] = attrs
+
+    def has_edge(self, src: str, dst: str) -> bool:
+        return dst in self.adj.get(src, {})
+
+    def number_of_nodes(self) -> int:
+        return len(self.nodes)
+
+    def number_of_edges(self) -> int:
+        return sum(len(dsts) for dsts in self.adj.values())
+
+    def edges(self, data: bool = False):
+        """Yield (src, dst) or (src, dst, attrs) tuples."""
+        for src, dsts in self.adj.items():
+            for dst, attrs in dsts.items():
+                yield (src, dst, attrs) if data else (src, dst)
+
+    def out_edges(self, node: str, data: bool = False):
+        for dst, attrs in self.adj.get(node, {}).items():
+            yield (node, dst, attrs) if data else (node, dst)
+
+    def degree(self, node: str) -> int:
+        """Total in+out degree."""
+        out = len(self.adj.get(node, {}))
+        in_ = sum(1 for dsts in self.adj.values() if node in dsts)
+        return out + in_
+
+    def neighbors_undirected(self, node: str) -> set[str]:
+        """All nodes connected to `node` in either direction."""
+        result: set[str] = set(self.adj.get(node, {}).keys())
+        for src, dsts in self.adj.items():
+            if node in dsts:
+                result.add(src)
+        return result
+
+    def get_edge_data(self, src: str, dst: str) -> dict | None:
+        """Return edge attrs dict for (src, dst) or None if absent (mirrors networkx API)."""
+        return self.adj.get(src, {}).get(dst)
+
+    def __contains__(self, node: str) -> bool:
+        """Support `node in G` membership test (mirrors networkx DiGraph)."""
+        return node in self.nodes
+
+
+# ---------------------------------------------------------------------------
+# BFS ego-subgraph (replaces nx.ego_graph + nx.single_source_shortest_path_length)
+# ---------------------------------------------------------------------------
+
+def _bfs_ego(G: Graph, root: str, radius: int) -> tuple[Graph, dict[str, int]]:
+    """BFS over the undirected projection of G within `radius` hops.
+    Returns (ego_subgraph, {node: shortest_distance})."""
+    visited: dict[str, int] = {root: 0}
+    queue = [root]
+    while queue:
+        cur = queue.pop(0)
+        cur_dist = visited[cur]
+        if cur_dist >= radius:
+            continue
+        for nb in G.neighbors_undirected(cur):
+            if nb not in visited:
+                visited[nb] = cur_dist + 1
+                queue.append(nb)
+
+    ego = Graph()
+    for n in visited:
+        ego.add_node(n, **G.nodes.get(n, {}))
+    # Copy directed edges within the ego subgraph
+    for src in visited:
+        for dst, attrs in G.adj.get(src, {}).items():
+            if dst in visited:
+                ego.add_edge(src, dst, **attrs)
+    return ego, visited
+
+
+# ---------------------------------------------------------------------------
+# Frontmatter + body parsing helpers
+# ---------------------------------------------------------------------------
+
 def _parse_yaml_list(val) -> list[str]:
-    """Frontmatter array → list[str]. Handles list / '[a, b]' / 'a' / None."""
+    """Frontmatter array -> list[str]. Handles list / '[a, b]' / 'a' / None."""
     if isinstance(val, list):
         return [str(v).strip() for v in val if v is not None and str(v).strip()]
     if not val or not isinstance(val, str):
@@ -106,7 +209,7 @@ def _fold(s: str) -> str:
 
 
 def _strip_frontmatter(text: str) -> str:
-    """Body text only — drop a leading `---`…`---` frontmatter block if present."""
+    """Body text only -- drop a leading ---...--- frontmatter block if present."""
     m = _FM_RE.match(text)
     return text[m.end():] if m else text
 
@@ -116,7 +219,7 @@ _WS_HYPHEN_RE = re.compile(r"[\s\-]+")
 
 def _build_slug_patterns() -> tuple[re.Pattern | None, dict[str, tuple[str, bool]]]:
     """(combined_rx, {slug: (ref_node, is_single_token)}). One alternation regex over
-    all reference stems → a single findall per body instead of 71 separate scans. Built
+    all reference stems -> a single findall per body instead of 71 separate scans. Built
     per rebuild (not module-level) so refs added mid-session are picked up. Longest slugs
     first so 'complex-ptsd' wins over a bare 'complex' prefix. Hyphens match flexible
     whitespace/hyphen so the slug catches 'Complex PTSD'."""
@@ -158,7 +261,7 @@ def _scan_body_references(body: str, slug_index) -> list[tuple[str, float, int]]
 
 def _corpus_characters() -> dict[str, dict]:
     """char_slug -> {folded_full_rx, display}. Derived from profile subdirectories
-    (dynamic — never a hardcoded character list). Diacritic short name from
+    (dynamic -- never a hardcoded character list). Diacritic short name from
     paths.CHAR_DISPLAY, falling back to the capitalized last slug token."""
     chars: dict[str, dict] = {}
     if not PROFILES.exists():
@@ -185,7 +288,7 @@ def _owning_char(rel: str) -> str:
 def _scan_body_for_characters(body: str, owning: str, chars: dict) -> list[tuple[str, int]]:
     """(char_slug, mention_count) for OTHER characters named in this file's body.
     Full name matched on ASCII-folded body (accent-insensitive); short name matched
-    as the diacritic proper noun (case-sensitive) to avoid folding 'hóa'→'Nhân vật B' FPs."""
+    as the diacritic proper noun (case-sensitive) to avoid folding FPs."""
     folded = _fold(body)
     hits = []
     for slug, meta in chars.items():
@@ -199,12 +302,12 @@ def _scan_body_for_characters(body: str, owning: str, chars: dict) -> list[tuple
     return hits
 
 
-def _add_char_hub(G: nx.DiGraph, char: str) -> None:
+def _add_char_hub(G: Graph, char: str) -> None:
     G.add_node(f"char:{char}", type="character_hub", label=char)
 
 
-def _add_body_edges(G, rel, body, slug_patterns, chars, owning) -> None:
-    """Layer 2 edges for one file. Frontmatter edges (added first) win — an existing
+def _add_body_edges(G: Graph, rel: str, body: str, slug_patterns, chars, owning: str) -> None:
+    """Layer 2 edges for one file. Frontmatter edges (added first) win -- an existing
     (rel, dst) edge is never downgraded to a lower-confidence body edge."""
     for ref_node, conf, n in _scan_body_references(body, slug_patterns):
         if G.has_edge(rel, ref_node):
@@ -233,13 +336,11 @@ def _file_node_type(rel: str) -> str | None:
     return None
 
 
-def _scan_one(G: nx.DiGraph, f, node_type: str, slug_patterns, chars) -> None:
-    """Add one markdown file's node + its Layer 1 (frontmatter) and Layer 2 (body) edges.
-    Every edge it creates has src == this file, so the file fully owns them — that ownership
-    is what lets the incremental rebuild surgically remove just this file's contribution."""
+def _scan_one(G: Graph, f, node_type: str, slug_patterns, chars) -> None:
+    """Add one markdown file's node + its Layer 1 (frontmatter) and Layer 2 (body) edges."""
     rel = str(f.relative_to(paths.ROOT))
     fm, text = _frontmatter(f)
-    attrs = {"type": node_type, "file": rel, "token_count": _token_estimate(text)}
+    attrs: dict[str, Any] = {"type": node_type, "file": rel, "token_count": _token_estimate(text)}
     if node_type == "profile":
         attrs.update(character=fm.get("character", ""), domain=fm.get("domain", ""))
     elif node_type == "material":
@@ -276,8 +377,6 @@ def _scan_one(G: nx.DiGraph, f, node_type: str, slug_patterns, chars) -> None:
 def _corpus_md_files() -> list:
     """All markdown files that become graph nodes (profiles, materials, references, dyads),
     excluding the references INDEX. Sorted for deterministic builds."""
-    # Read the location globals live (not a frozen tuple) so tests that monkeypatch
-    # PROFILES/MATERIALS/REFERENCES/GRAPH at a tmp corpus take effect.
     out = []
     for base, ntype in ((PROFILES, "profile"), (MATERIALS, "material"),
                         (REFERENCES, "reference")):
@@ -291,127 +390,35 @@ def _corpus_md_files() -> list:
     return out
 
 
-def _build_graph() -> nx.DiGraph:
-    G = nx.DiGraph()
+def _build_graph() -> Graph:
+    G = Graph()
     slug_patterns = _build_slug_patterns()
     chars = _corpus_characters()
     for f in _corpus_md_files():
         rel = str(f.relative_to(paths.ROOT))
-        _scan_one(G, f, _file_node_type(rel), slug_patterns, chars)
-    _add_embedding_edges(G)
-    return G
-
-
-def _add_embedding_edges(G: nx.DiGraph) -> None:
-    """Layer 3: file↔file semantic-similarity edges from cached embeddings (cross-lingual,
-    catches Vietnamese terms regex misses). No-op if no cache — graceful degradation, the
-    Layer 1+2 graph still builds. Frontmatter/regex edges (either direction) always win.
-
-    Firm-only: edges flagged needs_review (similarity in the [reviewLow, simThreshold) band)
-    are NOT added to the graph — the corpus is one clinical domain so that band is mostly
-    cross-character noise that buries the relevant references (measured: review band dropped
-    cross-character noise ~38% and surfaced theory refs that the dense graph hid). The full
-    band stays available on demand via cached_embedding_edges(review_low=…) as a review lens."""
-    try:
-        from . import knowledge_graph_embeddings as kge
-    except Exception:  # noqa: BLE001 — numpy/module missing → skip Layer 3
-        return
-    for src, dst, score, review in kge.cached_embedding_edges():
-        if review:  # firm-only into the graph (lens band excluded regardless of config)
-            continue
-        if src not in G or dst not in G or G.has_edge(src, dst) or G.has_edge(dst, src):
-            continue
-        G.add_edge(src, dst, rel_type="semantic_similarity", source="embedding",
-                   confidence=score, similarity_score=score, needs_review=review)
-
-
-def _strip_embedding_edges(G: nx.DiGraph) -> None:
-    """Drop all Layer 3 edges so they can be re-derived from the (possibly updated) embedding
-    cache — embedding edges are file↔file, not owned by any single file's rescan."""
-    G.remove_edges_from([(u, v) for u, v, d in G.edges(data=True)
-                         if d.get("source") == "embedding"])
-
-
-def _remove_file_contribution(G: nx.DiGraph, rel: str) -> None:
-    """Remove a file's own Layer 1/2 edges (out-edges it authored: frontmatter + body) so a
-    rescan re-adds the current set. The node attrs are overwritten by the rescan's add_node."""
-    if rel not in G:
-        return
-    stale = [(u, v) for u, v, d in G.out_edges(rel, data=True)
-             if d.get("source") in ("frontmatter", "body_text")]
-    G.remove_edges_from(stale)
-
-
-def _incremental_rebuild(G: nx.DiGraph, added: set, modified: set, removed: set) -> nx.DiGraph:
-    """Apply only the changed files to an already-loaded graph, then re-derive Layer 3.
-    Cheaper than a full rebuild: rescans the changed files instead of all ~200."""
-    slug_patterns = _build_slug_patterns()
-    chars = _corpus_characters()
-    for rel in removed:
-        if rel in G:
-            G.remove_node(rel)  # also drops every edge touching it
-    for rel in added | modified:
-        _remove_file_contribution(G, rel)
-        f = paths.ROOT / rel
         ntype = _file_node_type(rel)
-        if f.exists() and ntype:
+        if ntype is not None:
             _scan_one(G, f, ntype, slug_patterns, chars)
-    _strip_embedding_edges(G)   # re-derive Layer 3 wholesale (fast; keeps it consistent
-    _add_embedding_edges(G)     # with the current Layer 1/2 edges + embedding cache)
     return G
 
 
-def get_graph(force_rebuild: bool = False) -> nx.DiGraph:
-    """Process-singleton DiGraph with a lazy, never-stale disk cache. Every call cheap-checks
-    per-file SHA256: unchanged → reuse cache; some files changed → incremental rescan of just
-    those; no/corrupt cache → full rebuild. force_rebuild bypasses all caches."""
-    global _graph_cache, _undirected_cache
+def get_graph(force_rebuild: bool = False) -> Graph:
+    """Process-singleton plain adjacency graph. Small corpus (~200 nodes) -> always
+    builds fresh in <1s; module-level memo is invalidated by force_rebuild.
+    The heavy disk-cache/incremental-rebuild machinery has been removed (was tied
+    to networkx serialization and the now-deleted embedding layer)."""
+    global _graph_cache
     if _graph_cache is not None and not force_rebuild:
         return _graph_cache
-    from . import knowledge_graph_cache as cache
-    if force_rebuild:
-        _graph_cache = _build_graph()
-        cache.save(_graph_cache)
-        _undirected_cache = None
-        return _graph_cache
-
-    hashes = cache.current_hashes()
-    loaded = cache.load()
-    if loaded is None:                       # absent / corrupt / version drift → full build
-        _graph_cache = _build_graph()
-        cache.save(_graph_cache, hashes)
-    else:
-        G, meta = loaded
-        added, modified, removed = cache.diff(meta.get("file_hashes", {}), hashes)
-        if added or modified or removed:     # incremental: touch only changed files
-            _graph_cache = _incremental_rebuild(G, added, modified, removed)
-            cache.save(_graph_cache, hashes)
-        else:                                # cache fresh → reuse as-is
-            _graph_cache = G
-    _undirected_cache = None  # invalidate projection alongside the directed graph
+    _graph_cache = _build_graph()
     return _graph_cache
 
 
-def _undirected() -> nx.Graph:
-    """Cached undirected projection — edges are meaningful both ways for ego queries,
-    and to_undirected() is too costly to repeat per call."""
-    global _undirected_cache
-    if _undirected_cache is None:
-        _undirected_cache = get_graph().to_undirected(as_view=False)
-    return _undirected_cache
-
-
-def build_timed() -> tuple[nx.DiGraph, float]:
-    """(graph, build_ms) — for benchmarking; always rebuilds."""
-    t0 = time.perf_counter()
-    G = _build_graph()
-    return G, (time.perf_counter() - t0) * 1000
-
-
-def graph_stats(G: nx.DiGraph | None = None) -> dict:
+def graph_stats(G: "Graph | None" = None) -> dict:
+    """Return node/edge counts by type. `embedding_layer` key removed."""
     G = G or get_graph()
     nodes_by_type: dict[str, int] = {}
-    for _, d in G.nodes(data=True):
+    for _, d in G.nodes.items():
         t = d.get("type", "unknown")
         nodes_by_type[t] = nodes_by_type.get(t, 0) + 1
     edges_by_type: dict[str, int] = {}
@@ -421,23 +428,16 @@ def graph_stats(G: nx.DiGraph | None = None) -> dict:
         edges_by_type[r] = edges_by_type.get(r, 0) + 1
         s = d.get("source", "unknown")
         edges_by_source[s] = edges_by_source.get(s, 0) + 1
-    emb_layer = "disabled"
-    try:
-        from . import knowledge_graph_embeddings as kge
-        emb_layer = "enabled" if kge.cache_exists() else "disabled"
-    except Exception:  # noqa: BLE001
-        pass
     return {
         "nodes": G.number_of_nodes(),
         "edges": G.number_of_edges(),
         "nodes_by_type": dict(sorted(nodes_by_type.items(), key=lambda kv: -kv[1])),
         "edges_by_type": dict(sorted(edges_by_type.items(), key=lambda kv: -kv[1])),
         "edges_by_source": dict(sorted(edges_by_source.items(), key=lambda kv: -kv[1])),
-        "embedding_layer": emb_layer,
     }
 
 
-def validate_graph(G: nx.DiGraph | None = None) -> list[dict]:
+def validate_graph(G: "Graph | None" = None) -> list[dict]:
     """Deterministic consistency issues: missing edge targets, orphan file nodes."""
     G = G or get_graph()
     issues = []
@@ -446,7 +446,7 @@ def validate_graph(G: nx.DiGraph | None = None) -> list[dict]:
         # broken cites_theory shows up as a target node lacking a "type" attribute.
         if d.get("rel_type") == "cites_theory" and not G.nodes[dst].get("type"):
             issues.append({"kind": "missing_reference", "from": src, "target": dst})
-    for n, d in G.nodes(data=True):
+    for n, d in G.nodes.items():
         if d.get("type") in ("profile", "material") and G.degree(n) == 0:
             issues.append({"kind": "orphan", "node": n})
     return issues
@@ -459,34 +459,28 @@ _TIER_RANK = {"T1": 0, "T2": 1, "T3": 2, "T4": 3, "T5": 4}
 _HUB_FILES = ("INDEX.md", "CURRENT-STATE.md")
 
 
-def _resolve_entity(entity: str, G: nx.DiGraph) -> str | None:
-    """User input → graph node key. Accepts a node key, character slug, or file path."""
-    if entity in G:
+def _resolve_entity(entity: str, G: Graph) -> str | None:
+    """User input -> graph node key. Accepts a node key, character slug, or file path."""
+    if entity in G.nodes:
         return entity
     hub = f"char:{entity}"
-    if hub in G:
+    if hub in G.nodes:
         return hub
     for cand in (f"{entity}.md", f"docs/references/{entity}.md"):
-        if cand in G:
+        if cand in G.nodes:
             return cand
     return None
 
 
 def _priority_key(node: str, attrs: dict, dist: int, center: str | None) -> tuple:
     """Sort key. When querying a character, that character's own files + cited theory
-    references group ahead of other characters' files (dense cross_character edges
-    otherwise crowd them out under max_files). Then: 1-hop before far; type
-    (profile<ref<material<dyad); INDEX/CURRENT-STATE float up; materials by tier.
-
-    Known limitation: for a non-character query entity (a reference or material file),
-    `center` is None, so candidates are ordered by type/tier only — the embedding
-    similarity_score is NOT consulted, so semantically closest files are not pulled to the
-    top. Score-aware ordering for non-character entities is a separate, intended improvement."""
+    references group ahead of other characters' files. Then: 1-hop before far; type
+    (profile<ref<material<dyad); INDEX/CURRENT-STATE float up; materials by tier."""
     t = attrs.get("type")
     if center is None:
         group = 0
     elif t == "reference":
-        group = 0  # cited theories are character-agnostic — keep them prominent
+        group = 0  # cited theories are character-agnostic -- keep them prominent
     else:
         group = 0 if _owning_char(node) == center else 1
     far = 1 if dist > 1 else 0
@@ -498,9 +492,9 @@ def _priority_key(node: str, attrs: dict, dist: int, center: str | None) -> tupl
 
 def graph_context(entity: str, hops: int = 2, node_types=None,
                   max_files: int = 50) -> dict:
-    """Primary cross-file discovery API for LLM skills — replaces glob/grep for
+    """Primary cross-file discovery API for LLM skills -- replaces glob/grep for
     relationship queries. Returns priority-ordered markdown paths within `hops` of
-    `entity` plus a token-budget estimate. Unknown entity → empty result (no raise).
+    `entity` plus a token-budget estimate. Unknown entity -> empty result (no raise).
     hops is clamped to [1, 3]; max_files caps the (post-sort) list."""
     G = get_graph()
     root = _resolve_entity(entity, G)
@@ -509,12 +503,11 @@ def graph_context(entity: str, hops: int = 2, node_types=None,
                 "token_estimate": 0, "node_count": 0, "edge_count": 0}
     radius = min(max(hops, 1), 3)
     center = root[len("char:"):] if root.startswith("char:") else None
-    ego = nx.ego_graph(_undirected(), root, radius=radius)
-    dist = nx.single_source_shortest_path_length(ego, root, cutoff=radius)
+    ego, dist = _bfs_ego(G, root, radius)
     allowed = set(node_types) if node_types else None
 
     candidates = []
-    for n, a in ego.nodes(data=True):
+    for n, a in ego.nodes.items():
         t = a.get("type")
         if t is None or t == "character_hub":  # synthetic hubs are not files
             continue
@@ -536,8 +529,3 @@ def graph_context(entity: str, hops: int = 2, node_types=None,
         "node_count": ego.number_of_nodes(),
         "edge_count": ego.number_of_edges(),
     }
-
-
-# Layer-4 interactive visualization lives in its own module to keep this one retrieval-focused;
-# re-exported here for callers. viz imports back lazily (inside its function), so no import cycle.
-from .knowledge_graph_viz import visualize_focus  # noqa: E402,F401

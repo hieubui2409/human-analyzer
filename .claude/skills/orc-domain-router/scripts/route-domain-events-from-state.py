@@ -8,52 +8,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ROOT
-
-DOMAIN_RULES = {
-    "docs/materials/": {"event": "MAT.integrated", "domain": "MAT"},
-    "docs/profiles/": {"event": "PSY.refresh", "domain": "PSY"},
-    "docs/references/": {"event": "PSY.refresh", "domain": "PSY"},
-    "docs/graph/": {"event": "PSY.refresh", "domain": "PSY"},
-    "assets/": {"event": "CRE.recalibrate", "domain": "CRE"},
-    "docs/rules/": {"event": "COM.rules_updated", "domain": "COM"},
-    ".claude/skills/": {"event": "ORC.skill_updated", "domain": "ORC"},
-    ".claude/scripts/": {"event": "ORC.script_updated", "domain": "ORC"},
-}
-
-GRO_PATH_MARKER = "/growth/"
-
-EVENT_ROUTING = {
-    "MAT.integrated": [
-        {"skill": "psy:ref-audit", "args": "--discover", "reason": "New material may reveal reference blind spots"},
-        {"skill": "psy:crossref", "args": "", "reason": "Cross-validate profiles against new material"},
-    ],
-    "PSY.refresh": [
-        {"skill": "psy:propagate", "args": "", "reason": "Detect cross-character cascade needs"},
-        {"skill": "cre:voice-audit", "args": "", "reason": "Profile change may affect content voice"},
-    ],
-    "CRE.recalibrate": [
-        {"skill": "cre:privacy-guard", "args": "", "reason": "New content needs privacy scan"},
-    ],
-    "GRO.assessed": [
-        {"skill": "cre:post-writer", "args": "--recalibrate", "reason": "Competency data changed"},
-    ],
-    "GRO.forecast": [],
-    "GRO.mentored": [
-        {"skill": "psy:crossref", "args": "--validate", "reason": "Mentoring may reveal psychological insights"},
-    ],
-    "GRO.profiled": [
-        {"skill": "cre:post-writer", "args": "--recalibrate", "reason": "Learning profile changed"},
-    ],
-    "COM.rules_updated": [
-        {"skill": "com:rules", "args": "--validate", "reason": "Verify rule consistency"},
-    ],
-    "ORC.skill_updated": [
-        {"skill": "orc:bootstrap", "args": "--quick", "reason": "Refresh session context"},
-    ],
-    "ORC.script_updated": [
-        {"skill": "orc:bootstrap", "args": "--quick", "reason": "Refresh session context"},
-    ],
-}
+from platform_lib.event_routing import (
+    downstream_for,
+    detect_events,  # canonical shared implementation (applies IGNORE_PATTERNS + dedup)
+)
 
 
 def get_changed_files(ref: str) -> list[str]:
@@ -67,31 +25,10 @@ def get_changed_files(ref: str) -> list[str]:
         return []
 
 
-def detect_events(files: list[str]) -> list[dict]:
-    events = []
-    seen = set()
-    for filepath in files:
-        for prefix, info in DOMAIN_RULES.items():
-            if filepath.startswith(prefix):
-                domain = info["domain"]
-                event = info["event"]
-                if domain == "PSY" and GRO_PATH_MARKER in filepath:
-                    event, domain = "GRO.profiled", "GRO"
-                key = event
-                if key not in seen:
-                    seen.add(key)
-                    events.append({"event": event, "domain": domain, "trigger_files": []})
-                for evt in events:
-                    if evt["event"] == event:
-                        evt["trigger_files"].append(filepath)
-                break
-    return events
-
-
 def route_events(events: list[dict]) -> list[dict]:
     recommendations = []
     for evt in events:
-        actions = EVENT_ROUTING.get(evt["event"], [])
+        actions = downstream_for(evt["event"])
         for action in actions:
             recommendations.append({
                 "skill": action["skill"],
@@ -103,7 +40,7 @@ def route_events(events: list[dict]) -> list[dict]:
 
 
 def route_explicit_event(event_name: str) -> list[dict]:
-    actions = EVENT_ROUTING.get(event_name, [])
+    actions = downstream_for(event_name)
     return [
         {"skill": a["skill"], "args": a["args"], "reason": a["reason"], "triggered_by": event_name}
         for a in actions

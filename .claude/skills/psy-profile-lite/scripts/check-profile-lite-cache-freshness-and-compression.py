@@ -47,7 +47,7 @@ def main():
     if stale:
         print(f"\n## Action Required")
         for r in stale:
-            print(f"- Run `lucas:profile-lite --character {r['character'].lower()}` to regenerate")
+            print(f"- Run `psy:profile-lite --character {r['character'].lower()}` to regenerate")
         eprint(f"[WARN] {len(stale)} stale cache(s): {', '.join(r['character'] for r in stale)}")
         if args.regen_needed:
             sys.exit(1)

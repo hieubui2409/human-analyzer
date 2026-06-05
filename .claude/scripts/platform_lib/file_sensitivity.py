@@ -1,4 +1,4 @@
-"""File sensitivity classification for CK-Marketing profile protection.
+"""File sensitivity classification for human-analyzer profile protection.
 
 Reads sensitivity-config.json and classifies files by sensitivity level
 (CRITICAL/HIGH/MEDIUM/LOW/NONE). Used by validation scripts and CLI.

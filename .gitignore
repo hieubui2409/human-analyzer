@@ -35,8 +35,20 @@ plans/visuals/knowledge-graph-*.html
 .claude/telemetry/context-gauge.jsonl
 .claude/telemetry/*.jsonl.bak
 
+# Consolidated cache root (.claude/cache/): committed/ is TRACKED (reproducible content-addressed
+# verdict caches — verdict labels/scores only, no PII); runtime/ is IGNORED (cheap-rebuild,
+# machine-local: profile-lite compression cache, etc.)
+.claude/cache/runtime/
+
 # Knowledge graph embedding artifacts (derived, regenerable via embed_corpus)
 .models/
 .cache/
 # Gemini CLI settings (contains user-specific config)
 .gemini/
+
+# e2e fixture runtime artifacts (regenerated each run)
+e2e/synthetic-project/.cache/
+e2e/synthetic-project/_bodies.json
+
+# Pack build output (reproducible — rebuilt via tools/pack/build_pack.py / release CI)
+dist/

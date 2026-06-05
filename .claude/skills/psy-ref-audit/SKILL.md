@@ -23,8 +23,6 @@ Audit clinical references in ALL directions. Scripts do deterministic gathering;
 | Profile → Ref (implicit) | Psychology-related PHRASES in profiles not using formal terms but describing clinical concepts | PURE HEURISTIC — LLM reads context |
 | Ref → Profile            | Theories in ref library that SHOULD appear in profiles but don't                               | Script maps + LLM assesses fit     |
 
-**Optional advisory input** (default-off): `from platform_lib import knowledge_graph_advisory as kgad; kgad.coverage_gap_candidates(character, min_backing=2)` surfaces profile files whose count of material-edges falls below a threshold — candidate under-evidenced sections. Every row carries `authoritative:false` and `owning_skill: "psy:ref-audit"`; the text-scan workflow below remains source-of-truth (graph `cites_theory` is English-slug-literal and undercounts Vietnamese-only citations).
-
 ## Flags
 
 | Flag                 | Purpose                                                          |
@@ -45,13 +43,62 @@ Run `scripts/build-reference-index.py` → JSON map of `{theory → file, catego
 
 ### Step 2: Scan Profiles (script + heuristic)
 
-1. Run `scripts/scan-clinical-terms.py --character <name>` → candidate term list with line + context
-2. With `--deep`: also run `scripts/scan-clinical-terms.py --character <name> --deep` → adds behavioral cluster hits (theories described as behavior without formal terms). Behavioral hits tagged `source: behavioral` vs clinical hits `source: clinical`.
+1. Run `scripts/scan-profile-files-for-clinical-terms.py --character <name>` → candidate term list with line + context
+2. With `--deep`: also run `scripts/scan-profile-files-for-clinical-terms.py --character <name> --deep` → adds behavioral cluster hits (theories described as behavior without formal terms). Behavioral hits tagged `source: behavioral` vs clinical hits `source: clinical`.
 3. **HEURISTIC PHASE:** LLM reviews each candidate:
    - Is this term used in CLINICAL context or everyday language?
    - Example: "attachment to his hometown" = casual. "anxious attachment pattern" = clinical
    - "phủ nhận" in Vietnamese could be casual denial or clinical Denial defense mechanism — read 2-3 surrounding sentences to judge
 4. For confirmed clinical terms, check against ref index
+
+### Step 2b: Behavioral Deep-Scan (LLM) — complements Step 2, does NOT replace it
+
+The deterministic scan (Step 2) catches explicit term mentions. The deep-scan surfaces **IMPLICIT** matches — behavior described in profile prose that maps to a theory without using the formal term.
+
+**Run the gathering script:**
+
+```bash
+# Default: all clinical profile files
+.claude/skills/.venv/bin/python3 .claude/skills/psy-ref-audit/scripts/build-behavioral-deep-scan-prompt.py \
+    --character <name>
+
+# Single file
+.claude/skills/.venv/bin/python3 .claude/skills/psy-ref-audit/scripts/build-behavioral-deep-scan-prompt.py \
+    --character <name> --file psychology/formulation.md
+
+# Limit to specific theory slugs
+.claude/skills/.venv/bin/python3 .claude/skills/psy-ref-audit/scripts/build-behavioral-deep-scan-prompt.py \
+    --character <name> --slugs savior-complex,hypervigilance,complex-ptsd
+
+# JSON output {character, files, prompt}
+.claude/skills/.venv/bin/python3 .claude/skills/psy-ref-audit/scripts/build-behavioral-deep-scan-prompt.py \
+    --character <name> --json
+```
+
+**Script is deterministic, read-only, exits 0.** It calls `extract_sections_for_llm_review` + `build_llm_prompt_for_deep_scan` from `platform_lib/behavioral_clusters.py`.
+
+**LLM judgment phase:** Take the printed prompt and process it. The prompt contains:
+- Behavioral Theory Catalog (plain-text descriptions in Vietnamese + English for each theory)
+- Profile sections chunked for review
+- Instructions to find IMPLICIT matches only
+
+**Expected output from LLM** (filter to medium+ confidence only):
+
+```json
+[
+  {
+    "file": "psychology/formulation.md",
+    "line_range": "12-17",
+    "theory_slug": "savior-complex",
+    "evidence_quote": "Nhân vật A luôn cố gắng lo cho mọi người trước khi lo cho bản thân",
+    "confidence": "high"
+  }
+]
+```
+
+**What counts as IMPLICIT:** behavior/pattern/dynamic is present in the text but the formal theory name is NOT used. If the term is already written explicitly, it's a Step 2 clinical hit, not a deep-scan hit.
+
+**Integration with Step 3:** Deep-scan hits feed into IMPLICIT classification — same downstream flow as explicit hits, but sourced from LLM behavioral matching rather than regex.
 
 ### Step 3: Classify (heuristic)
 
@@ -97,12 +144,12 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 
 ### Direction 1: Materials → Ref gaps
 
-1. Run `scripts/scan-clinical-terms-in-materials.py` → candidates
+1. Run `scripts/scan-materials-and-assets-for-clinical-terms.py` → candidates
 2. LLM judges: clinical or casual? New theory or variant of existing?
 
 ### Direction 2: Ref → Ref gaps (NEW)
 
-1. Run `scripts/scan-reference-cross-links.py` → find theories mentioned INSIDE ref files that don't have own ref file
+1. Run `scripts/scan-reference-cross-links-between-theories.py` → find theories mentioned INSIDE ref files that don't have own ref file
 2. Example: `savior-complex.md` discusses "co-dependency patterns" → check if `co-dependency.md` exists
 3. Example: `parentification.md` mentions "role reversal" → check if `role-reversal.md` exists
 4. LLM judges: does the mentioned concept warrant its own ref file, or is it adequately covered as subsection?
@@ -140,7 +187,7 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 
 ## Workflow: --cross-ref (Inter-Reference Audit)
 
-1. Run `scripts/scan-reference-cross-links.py` → linkage inventory
+1. Run `scripts/scan-reference-cross-links-between-theories.py` → linkage inventory
 2. For each ref file, check:
    - Which OTHER theories it mentions (by name or concept)
    - Are mentions markdown links or plain text?
@@ -153,9 +200,11 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 | Script                                        | Phase     | Purpose                                                   |
 | --------------------------------------------- | --------- | --------------------------------------------------------- |
 | `scripts/build-reference-index.py`            | Gathering | Parse INDEX.md → JSON theory map                          |
-| `scripts/scan-clinical-terms.py`              | Gathering | Grep profiles for clinical terms (+ behavioral w/ --deep) |
-| `scripts/scan-clinical-terms-in-materials.py` | Gathering | Grep materials/assets for terms                           |
-| `scripts/scan-reference-cross-links.py`       | Gathering | Check ref↔ref linkage                                     |
+| `scripts/scan-profile-files-for-clinical-terms.py`              | Gathering | Grep profiles for clinical terms (+ behavioral w/ --deep) |
+| `scripts/build-behavioral-deep-scan-prompt.py` | Gathering | Build LLM prompt for implicit behavioral matching (Step 2b) |
+| `scripts/scan-materials-and-assets-for-clinical-terms.py` | Gathering | Grep materials/assets for terms                           |
+| `scripts/scan-reference-cross-links-between-theories.py`       | Gathering | Check ref↔ref linkage                                     |
+| `scripts/detect-profile-keywords-without-ref-links.py`        | Gathering | Profile theory-terms that lack a ref link (coverage gaps) |
 
 **Scripts do GATHERING only. LLM does all JUDGMENT.** Scripts may over-flag (false positives expected) — that's by design. Better to over-gather than miss genuine clinical concepts.
 

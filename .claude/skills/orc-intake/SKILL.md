@@ -1,6 +1,6 @@
 ---
 name: orc:intake
-description: "Classify incoming work type and route to the optimal skill chain. Determines if task is content creation, profile update, arc development, research, or maintenance — then suggests the right sequence of mpc/ck skills. Use at start of any new task. Triggers: 'intake', 'new task', 'what should I do', 'route this', 'start task'. Complements orc:classify (risk) with workflow routing."
+description: "Classify incoming work type and route to the optimal skill chain. Determines if task is content creation, profile update, arc development, research, or maintenance — then suggests the right sequence of framework/ck skills. Use at start of any new task. Triggers: 'intake', 'new task', 'what should I do', 'route this', 'start task'. Complements orc:classify (risk) with workflow routing."
 argument-hint: "[task description] [--auto]"
 metadata:
   author: hieubt
@@ -229,7 +229,7 @@ After intake completes:
 - READ-ONLY — never modifies files
 - Only outputs classification and routing suggestion
 - User decides which skills to actually run
-- Scope: work classification for ck-marketing. Does NOT handle execution.
+- Scope: work classification for human-analyzer. Does NOT handle execution.
 
 ## Examples
 

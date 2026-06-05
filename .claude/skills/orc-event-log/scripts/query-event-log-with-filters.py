@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import EVENT_STREAMS
+from platform_lib.paths import EVENT_STREAMS, resolve_character
 
 
 def parse_date(date_str: str) -> datetime:
@@ -112,10 +112,19 @@ def main():
         print("Use `orc:event-log --append` to log events.")
         return
 
+    # Resolve character alias to canonical slug before filtering (e.g. "hieu" -> "character-a").
+    resolved_character = None
+    if args.character:
+        try:
+            resolved_character = resolve_character(args.character)
+        except ValueError:
+            # Unknown alias — pass through as-is so partial matches still work
+            resolved_character = args.character
+
     filtered = apply_filters(
         all_events,
         event_type=args.event_type,
-        character=args.character,
+        character=resolved_character,
         source=args.source,
         since=since,
         until=until,

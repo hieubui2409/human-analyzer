@@ -8,29 +8,35 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import TELEMETRY, EVENT_STREAMS, CASCADE_EVENTS
+from platform_lib.event_routing import routable_events
 
-VALID_EVENT_TYPES = [
-    "MAT.integrated",
+# Audit-only events not in the routing table (internal lifecycle / CRE / COM signals).
+# Every event a skill's SKILL.md "## Events" table declares it emits must be loggable
+# here, or the emit is rejected at runtime — orc:audit C1 enforces routable⊆loggable and
+# flags any declared-but-unregistered event.
+_AUDIT_EVENT_TYPES = [
     "MAT.archived",
-    "PSY.refresh",
+    "MAT.contradiction",  # emitted by mat:indexer on medium+ contradictions (rules-12 logging table)
     "PSY.crisis",
     "PSY.relation-angle-discovered",
-    "CRE.recalibrate",
     "CRE.evidence-checked",
     "CRE.angle-discovered",
     "CRE.published",
-    "GRO.assessed",
-    "GRO.forecast",
-    "GRO.mentored",
-    "GRO.profiled",
+    "CRE.privacy_cleared",  # emitted by cre:privacy-guard on a clean scan (rules-14 §CRE.privacy_cleared)
+    "CRE.humanized",  # emitted by cre:humanize after a scan/rewrite (log only)
     "ORC.bootstrap",
     "ORC.decision",
     "ORC.classify",
     "ORC.intake",
+    "ORC.audited",  # emitted by orc:audit after an audit run (log only)
+    "ORC.routed",   # emitted by orc:domain-router after routing events downstream
     "COM.privacy",
     "COM.governance",
     "COM.commit",
 ]
+
+# Union of routable events (from canonical table) and audit-only events above.
+VALID_EVENT_TYPES = sorted(set(_AUDIT_EVENT_TYPES) | set(routable_events()))
 
 
 def resolve_stream(event_type: str):

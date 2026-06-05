@@ -17,11 +17,13 @@ def count_for_character(slug: str) -> dict:
     file_counts = {}
     total = 0
 
-    # Count all .md files, not just standard profile files
-    all_mds = sorted(cdir.glob("*.md"))
+    # Count all .md files across the nested profile tree (identity/, psychology/, growth/, …),
+    # not just the 3 root-level files — otherwise full-vs-lite compression is computed on a
+    # small fraction of the data.
+    all_mds = sorted(cdir.rglob("*.md"))
     for md in all_mds:
         lc = count_lines(md)
-        file_counts[md.name] = lc
+        file_counts[md.relative_to(cdir).as_posix()] = lc
         total += lc
 
     # Lite cache comparison

@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib import paths  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
+from platform_lib.skill_ids import to_skill_ref  # noqa: E402
 
 # Module-level, monkeypatchable in tests.
 INVOCATIONS = paths.TELEMETRY / "invocations.jsonl"
@@ -55,7 +56,7 @@ def actual_chains(days: int) -> list[list[str]]:
                 rec = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            skill = rec.get("skill", "").replace("-", ":", 1)
+            skill = to_skill_ref(rec.get("skill", ""))
             sess = rec.get("session", "")
             ts = _parse_ts(rec.get("ts", ""))
             if not skill or not sess or (ts and ts < cutoff):

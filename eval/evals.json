@@ -1,0 +1,47 @@
+{
+  "_doc": "Golden-case evals for the DETERMINISTIC framework skills (script output is the verdict). Run against the synthetic fixture so values are stable. Time-dependent skills (datetime.now) are deliberately excluded — their output is not golden-able without a frozen clock. Regenerate expected values only on an intentional contract change.",
+  "fixture": "e2e/synthetic-project",
+  "cases": [
+    {
+      "id": "health-check-expected-file-count",
+      "skill": "psy:health-check",
+      "script": ".claude/skills/psy-health-check/scripts/score-profile-completeness.py",
+      "args": ["--character", "test-alpha", "--json"],
+      "extract": {"value": "file_count_assertion.expected"},
+      "expected": 50
+    },
+    {
+      "id": "health-check-actual-file-count",
+      "skill": "psy:health-check",
+      "script": ".claude/skills/psy-health-check/scripts/score-profile-completeness.py",
+      "args": ["--character", "test-alpha", "--json"],
+      "extract": {"value": "file_count_assertion.actual"},
+      "expected": 42
+    },
+    {
+      "id": "crossref-timeline-event-records",
+      "skill": "psy:crossref",
+      "script": ".claude/skills/psy-crossref/scripts/check-timeline-date-consistency.py",
+      "args": ["--json"],
+      "extract": {"len": "."},
+      "_note": "Was 12 under a DOB-parse bug that matched the first ISO date in core.md (the `last_updated` frontmatter) as the birth date → every event flagged BEFORE_DOB. Corrected to scope the DOB to the explicit birth-date row → 2 genuine BEFORE_DOB records on the fixture (C2-PSY-27).",
+      "expected": 2
+    },
+    {
+      "id": "mat-dedup-zero-false-pairs",
+      "skill": "mat:loader",
+      "script": ".claude/skills/mat-loader/scripts/detect-duplicate-materials-by-size-and-content-hash.py",
+      "args": ["--character", "test-alpha", "--json"],
+      "extract": {"len": "."},
+      "expected": 0
+    },
+    {
+      "id": "humanize-slop-fixture-finding-count",
+      "skill": "cre:humanize",
+      "script": ".claude/skills/cre-humanize/scripts/scan-content-for-ai-tells.py",
+      "args": ["--path", "eval/fixtures/ai-slop-sample-vi.md", "--json", "--strictness", "balanced"],
+      "extract": {"value": "finding_count"},
+      "expected": 15
+    }
+  ]
+}

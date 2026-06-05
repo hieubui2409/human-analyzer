@@ -1,23 +1,27 @@
 """Archive materials matching filter criteria by setting processing_status: archived."""
 import argparse
 import sys
-from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, resolve_character
-from platform_lib.markdown_parser import extract_frontmatter
+from platform_lib.materials_classifier import extract_frontmatter, tier_for_material
+from platform_lib.markdown_parser import parse_iso_date
 from platform_lib.errors import emit_error
+from datetime import date
 
 
 def parse_frontmatter_date(val) -> date | None:
+    """Parse a frontmatter date value to a date. Returns None on bad input."""
     if not val:
         return None
-    try:
-        return datetime.strptime(str(val), "%Y-%m-%d").date()
-    except ValueError:
-        return None
+    return parse_iso_date(str(val)) if _is_iso_date(str(val)) else None
+
+
+def _is_iso_date(s: str) -> bool:
+    import re
+    return bool(re.match(r"^\d{4}-\d{2}-\d{2}$", s.strip()))
 
 
 def scan_materials(slug: str) -> list[dict]:
@@ -25,19 +29,19 @@ def scan_materials(slug: str) -> list[dict]:
     if not mat_dir.exists():
         return []
     results = []
-    for f in sorted(mat_dir.glob("*.md")):
-        text = f.read_text(encoding="utf-8")
+    for f in sorted(mat_dir.rglob("*.md")):
         fm = extract_frontmatter(f) or {}
+        # C1-MAT-11b: derive tier from source_category via SOURCE_TO_TIER (MAT-05 canonical)
         results.append({
             "path": f,
             "name": f.name,
             "slug": slug,
-            "tier": fm.get("evidence_tier", ""),
+            "tier": str(tier_for_material(fm)) if fm else "",
             "status": fm.get("processing_status", ""),
-            "date_created": fm.get("date_created", ""),
+            "captured_date": fm.get("captured_date", ""),
             "has_frontmatter": bool(fm),
             "frontmatter": fm,
-            "raw_text": text,
+            # raw_text is read on-demand in apply mode only (avoid wasted I/O in dry-run)
         })
     return results
 
@@ -48,7 +52,7 @@ def matches_filters(item: dict, before_date: date | None, tier: str | None, stat
     if status and item["status"] != status:
         return False
     if before_date:
-        item_date = parse_frontmatter_date(item["date_created"])
+        item_date = parse_frontmatter_date(item["captured_date"])
         if item_date is None or item_date >= before_date:
             return False
     return True
@@ -81,8 +85,8 @@ def update_frontmatter_field(text: str, field: str, value: str) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Archive materials by filter criteria")
     parser.add_argument("--character", "-c", help="Character slug or alias")
-    parser.add_argument("--before-date", help="Archive files with date_created before YYYY-MM-DD")
-    parser.add_argument("--tier", help="Evidence tier to match (T1-T5)")
+    parser.add_argument("--before-date", help="Archive files with captured_date before YYYY-MM-DD")
+    parser.add_argument("--tier", help="Evidence tier to match (1-5, derived from source_category)")
     parser.add_argument("--status", help="processing_status to match")
     parser.add_argument("--dry-run", action="store_true", default=True,
                         help="Preview only, no writes (default: True)")
@@ -95,7 +99,7 @@ def main():
     before_date = None
     if args.before_date:
         try:
-            before_date = datetime.strptime(args.before_date, "%Y-%m-%d").date()
+            before_date = parse_iso_date(args.before_date)
         except ValueError:
             emit_error("validation", f"invalid --before-date: {args.before_date!r}")
             print(f"ERROR: invalid --before-date format: {args.before_date!r} (expected YYYY-MM-DD)")
@@ -132,17 +136,17 @@ def main():
         print("  No materials match the given filters.")
         return
 
-    print(f"  {'File':<42s} {'Char':<8s} {'Tier':<5s} {'Status':<12s} {'Date Created'}")
-    print(f"  {'-'*42} {'-'*8} {'-'*5} {'-'*12} {'-'*12}")
+    print(f"  {'File':<42s} {'Char':<8s} {'Tier':<5s} {'Status':<12s} {'Captured Date'}")
+    print(f"  {'-'*42} {'-'*8} {'-'*5} {'-'*12} {'-'*13}")
     for item in matched:
         display = CHAR_DISPLAY.get(item["slug"], item["slug"])
-        print(f"  {item['name'][:40]:<42s} {display:<8s} {item['tier'] or '-':<5s} {item['status'] or '-':<12s} {item['date_created'] or '-'}")
+        print(f"  {item['name'][:40]:<42s} {display:<8s} {item['tier'] or '-':<5s} {item['status'] or '-':<12s} {item['captured_date'] or '-'}")
 
     today = date.today().isoformat()
     archived_count = 0
     if not dry_run:
         for item in matched:
-            text = item["raw_text"]
+            text = item["path"].read_text(encoding="utf-8")
             text = update_frontmatter_field(text, "processing_status", "archived")
             text = update_frontmatter_field(text, "last_updated", today)
             item["path"].write_text(text, encoding="utf-8")

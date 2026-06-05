@@ -1,4 +1,5 @@
 """Project path constants and discovery utilities for PMC framework."""
+import itertools
 import os
 from pathlib import Path
 
@@ -29,12 +30,77 @@ ASSETS = ROOT / "assets"
 PLANS = ROOT / "plans"
 REPORTS = PLANS / "reports"
 SKILLS = ROOT / ".claude" / "skills"
+PLATFORM_LIB = ROOT / ".claude" / "scripts" / "platform_lib"  # shared utility package dir
 SESSION_STATE = ROOT / ".claude" / "session-state"  # mutable session STATE (json), not event sinks
 # Consolidated observability sink root (all JSONL streams). CK_TELEMETRY_DIR env
 # overrides it (tests point it at a tmp dir to isolate sink writes).
 TELEMETRY = Path(os.environ["CK_TELEMETRY_DIR"]) if os.environ.get("CK_TELEMETRY_DIR") else ROOT / ".claude" / "telemetry"
 DECISIONS = ROOT / ".claude" / "decisions"
-PROFILE_CACHE = ROOT / ".claude" / "profile-cache"
+
+# --- Consolidated cache root (one home for cache LOCATION; split by durability) ---
+# Debated decision (user-confirmed): a single cache root, two subtrees by durability class:
+#   committed/ — reproducible, content-addressed verdict/judgment caches. TRACKED + committed
+#                (key = content hash → stable for identical content; reuse + audit trail). Stores
+#                verdict labels/scores/refs ONLY — never raw profile text (confidentiality).
+#   runtime/   — telemetry-adjacent + cheap-to-rebuild caches (profile-lite). GITIGNORED
+#                (machine-local, high-churn; never committed).
+# CK_CACHE_DIR overrides the root (tests point it at a tmp dir to isolate cache writes).
+CACHE_ROOT = Path(os.environ["CK_CACHE_DIR"]) if os.environ.get("CK_CACHE_DIR") else ROOT / ".claude" / "cache"
+
+
+def cache_root() -> Path:
+    """The single cache root. Callers prefer committed_cache_dir / runtime_cache_dir."""
+    return CACHE_ROOT
+
+
+def committed_cache_dir(name: str) -> Path:
+    """A tracked, committed cache subtree (reproducible content-addressed caches, no PII).
+
+    Created on demand. Commit policy lives in .gitignore (committed/ is tracked)."""
+    d = CACHE_ROOT / "committed" / name
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def runtime_cache_dir(name: str) -> Path:
+    """A gitignored runtime cache subtree (cheap-rebuild / machine-local caches)."""
+    d = CACHE_ROOT / "runtime" / name
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def project_dir() -> Path:
+    """Claude Code's per-project runtime dir: ~/.claude/projects/{encoded-root}.
+
+    The slug is the absolute project root with '/' → '-' (Claude Code's project-id convention),
+    so it resolves dynamically per checkout — never a hardcoded machine path. One home for the
+    slug derivation; memory_dir / session-forensics derive off this."""
+    enc = str(ROOT).replace("/", "-")
+    return Path.home() / ".claude" / "projects" / enc
+
+
+def memory_dir() -> Path:
+    """Claude Code's per-project persistent memory dir: {project_dir}/memory.
+
+    CK_MEMORY_DIR overrides it (tests point it at a tmp dir to isolate memory writes)."""
+    env = os.environ.get("CK_MEMORY_DIR")
+    if env:
+        return Path(env)
+    return project_dir() / "memory"
+
+
+def sessions_dir() -> Path:
+    """Claude Code's per-project session-JSONL dir (== project_dir).
+
+    CK_SESSIONS_DIR overrides it (tests point it at a tmp dir)."""
+    env = os.environ.get("CK_SESSIONS_DIR")
+    if env:
+        return Path(env)
+    return project_dir()
+
+
+# profile-lite is a cheap-to-rebuild compression cache → runtime subtree.
+PROFILE_CACHE = CACHE_ROOT / "runtime" / "profile-lite"
 
 # Framework-partitioned event streams (B2 memory persistence lifecycle).
 # Files stay SEPARATE (partition preserved); the directory is consolidated under
@@ -77,6 +143,34 @@ CHARACTERS = {
 
 ALL_CHARS = ["character-a", "character-b", "character-c"]
 CHAR_DISPLAY = {"character-a": "Nhân vật A", "character-b": "Nhân vật B", "character-c": "Nhân vật C"}
+
+# Free-text search aliases per character (display, ASCII-folded, full name) — used to find
+# cross-character mentions in profile/timeline prose. Single source so the crossref scripts
+# stop re-declaring divergent copies.
+CHAR_SEARCH_ALIASES = {
+    # Canonical + display + ASCII-folded + typo variants per character.
+    # Typo variants (Nhân vật ẩn danh, Nhân vật ẩn danh) cover common Vietnamese IME slip-overs so
+    # classify-work-type and crossref scripts detect all real-world spellings.
+    "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật ẩn danh", "Nhân vật A"],
+    "character-b": ["Nhân vật B", "Nhân vật ẩn danh", "Nhân vật B"],
+    "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật ẩn danh", "Nhân vật C"],
+}
+
+# Dynamic character discovery for ALT projects (e2e fixtures, future multi-character corpora).
+# The real project keeps the curated alias map above (rich VN aliases can't be auto-derived). But when
+# PMC_PROJECT_ROOT points at a DIFFERENT project (an e2e fixture) whose profile slugs are not the curated
+# three, discover the roster from docs/profiles/ — honoring the "resolve characters dynamically" principle
+# and letting tooling run against any synthetic corpus without code edits.
+if os.environ.get("PMC_PROJECT_ROOT") and PROFILES.exists():
+    _discovered = sorted(d.name for d in PROFILES.iterdir() if d.is_dir() and (d / "INDEX.md").exists())
+    if _discovered and set(_discovered) != set(ALL_CHARS):
+        ALL_CHARS = _discovered
+        CHARACTERS = {slug: slug for slug in _discovered}          # identity aliases (no curated VN names)
+        CHAR_DISPLAY = {slug: slug for slug in _discovered}
+        CHAR_SEARCH_ALIASES = {slug: [slug] for slug in _discovered}
+
+# All unordered dyad pairs, derived (never hand-listed — hand-lists drifted to 2/3 pairs).
+CHARACTER_PAIRS = list(itertools.combinations(ALL_CHARS, 2))
 
 # Universal profile schema — nested structure (25 base files, same for all characters).
 # Per-character relationship files (e.g. relationships/character-a.md) are NOT listed

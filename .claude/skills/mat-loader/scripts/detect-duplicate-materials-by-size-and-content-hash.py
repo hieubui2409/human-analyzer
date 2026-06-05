@@ -8,7 +8,7 @@ import hashlib
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import MATERIALS
+from platform_lib.paths import MATERIALS, resolve_character
 from platform_lib.formatters import print_json, print_table
 
 
@@ -43,7 +43,10 @@ def find_duplicates(char_filter: str = None) -> list[dict]:
     else:
         search_root = MATERIALS
 
-    for f in sorted(search_root.rglob("*")):
+    # Materials are the frontmattered .md files — same scope every sibling mat
+    # script uses. Raw intermediate extractions (parsed-parts/*.txt) share export
+    # boilerplate headers and would flood near-duplicate detection with false pairs.
+    for f in sorted(search_root.rglob("*.md")):
         if f.is_file() and not f.name.startswith("."):
             fp = file_fingerprint(f)
             if fp:
@@ -105,7 +108,7 @@ def main():
     parser.add_argument("--exact-only", action="store_true", help="Only show exact duplicates (full hash match)")
     args = parser.parse_args()
 
-    pairs = find_duplicates(char_filter=args.character)
+    pairs = find_duplicates(char_filter=resolve_character(args.character) if args.character else None)
 
     if args.exact_only:
         pairs = [p for p in pairs if p["type"] == "EXACT_DUPLICATE"]

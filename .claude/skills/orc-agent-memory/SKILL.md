@@ -189,7 +189,7 @@ Update "Last updated" timestamp
 - Agent memory is additive — never auto-deletes entries
 - Reset requires explicit confirmation + archives first
 - Memory files are `.claude/`-scoped
-- Scope: agent memory management for ck-marketing. Does NOT handle content creation or profile editing.
+- Scope: agent memory management for human-analyzer. Does NOT handle content creation or profile editing.
 
 ## Examples
 

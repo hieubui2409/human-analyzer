@@ -114,7 +114,7 @@ Each event is one JSON line in `.claude/session-state/event-log.jsonl`:
 
 ### Query
 
-1. Run `scripts/query-event-log.py` with filters
+1. Run `scripts/query-event-log-with-filters.py` with filters
 2. Read JSONL, apply filters (AND logic)
 3. Sort by timestamp descending
 4. Render formatted table
@@ -139,7 +139,7 @@ Each event is one JSON line in `.claude/session-state/event-log.jsonl`:
 | Script                           | Purpose                              |
 | -------------------------------- | ------------------------------------ |
 | `scripts/append-event-to-log.py` | Append one event to JSONL log        |
-| `scripts/query-event-log.py`     | Filter and display events from JSONL |
+| `scripts/query-event-log-with-filters.py`     | Filter and display events from JSONL |
 
 ## Safety
 

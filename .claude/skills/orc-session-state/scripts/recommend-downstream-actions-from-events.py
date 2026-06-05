@@ -6,48 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-EVENT_ROUTING = {
-    "MAT.integrated": [
-        {"skill": "psy:ref-audit", "args": "--discover", "reason": "New material may reveal blind spots in references"},
-        {"skill": "psy:crossref", "args": "", "reason": "Cross-validate profiles against new material"},
-        {"skill": "mat:indexer", "args": "--contradictions", "reason": "Check for contradictions with existing profiles"},
-    ],
-    "PSY.refresh": [
-        {"skill": "psy:propagate", "args": "", "reason": "Detect cross-character cascade needs from profile change"},
-        {"skill": "cre:voice-audit", "args": "", "reason": "Profile change may affect content voice"},
-        {"skill": "cre:post-writer", "args": "--recalibrate", "reason": "Recalibrate content creation context"},
-        {"skill": "psy:crossref", "args": "--validate", "reason": "Verify cross-character consistency"},
-    ],
-    "PSY.updated": [
-        {"skill": "psy:propagate", "args": "", "reason": "Cascade profile changes to related characters"},
-        {"skill": "psy:crossref", "args": "--extended", "reason": "Re-validate all 10 dimensions after update"},
-        {"skill": "cre:voice-audit", "args": "", "reason": "Check if voice data needs recalibration"},
-        {"skill": "orc:event-log", "args": "--append --event-type PSY.updated", "reason": "Log profile update to audit trail"},
-    ],
-    "CRE.recalibrate": [
-        {"skill": "cre:privacy-guard", "args": "", "reason": "New content needs privacy scan"},
-        {"skill": "cre:voice-audit", "args": "", "reason": "Verify voice consistency in new content"},
-    ],
-    "COM.rules_updated": [
-        {"skill": "com:rules", "args": "--validate", "reason": "Verify rule consistency after update"},
-    ],
-    "ORC.skill_updated": [
-        {"skill": "orc:bootstrap", "args": "--quick", "reason": "Refresh session context with updated skills"},
-    ],
-    "ORC.script_updated": [
-        {"skill": "orc:bootstrap", "args": "--quick", "reason": "Refresh session context with updated scripts"},
-    ],
-    "GRO.assessed": [
-        {"skill": "cre:post-writer", "args": "--recalibrate", "reason": "Competency data changed — recalibrate content context"},
-    ],
-    "GRO.forecast": [],
-    "GRO.mentored": [
-        {"skill": "psy:crossref", "args": "--validate", "reason": "Mentoring may reveal cross-character psychological insights"},
-    ],
-    "GRO.profiled": [
-        {"skill": "cre:post-writer", "args": "--recalibrate", "reason": "Learning profile changed — recalibrate content context"},
-    ],
-}
+from platform_lib.event_routing import downstream_for
 
 
 def recommend_actions(events: list[dict]) -> list[dict]:
@@ -57,7 +16,7 @@ def recommend_actions(events: list[dict]) -> list[dict]:
 
     for event in events:
         event_type = event.get("event", "")
-        actions = EVENT_ROUTING.get(event_type, [])
+        actions = downstream_for(event_type)
         trigger_files = event.get("trigger_files", [])
 
         # Extract character slug from trigger files

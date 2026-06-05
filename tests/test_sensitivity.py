@@ -10,6 +10,7 @@ SCRIPTS_DIR = Path(__file__).resolve().parents[1] / ".claude" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 from platform_lib.file_sensitivity import classify_file, classify_all_profiles, load_config
+from venv_python import VENV_PYTHON
 
 
 class TestClassifyFile:
@@ -96,7 +97,7 @@ class TestClassifyAllProfiles:
 class TestCLI:
     @pytest.fixture(scope="class")
     def python_bin(self):
-        return str(Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3")
+        return str(VENV_PYTHON)
 
     @pytest.fixture(scope="class")
     def script_path(self):

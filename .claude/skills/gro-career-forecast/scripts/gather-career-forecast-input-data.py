@@ -8,13 +8,19 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILES, resolve_character
-from platform_lib.markdown_parser import extract_sections, extract_frontmatter
+from platform_lib.markdown_parser import extract_sections, parse_dreyfus_skills
+from platform_lib.growth_taxonomy import SUPER_STAGES, mentioned_terms
 
 
 def extract_career_state(slug: str) -> dict:
-    """Extract current career state from growth/career-path.md."""
+    """Extract current career state from growth/career-path.md.
+
+    C1-GRO-09b: result["stage"] (single-pick via earliest_term) removed and
+    replaced with result["stages_mentioned"] signal list. The LLM adjudicates
+    which stage is current — scripts only gather, never judge.
+    """
     cp_file = PROFILES / slug / "growth" / "career-path.md"
-    result = {"exists": False, "stage": "unknown", "sections": {}, "lines": 0}
+    result = {"exists": False, "stages_mentioned": [], "sections": {}, "lines": 0}
 
     if not cp_file.exists():
         return result
@@ -23,12 +29,7 @@ def extract_career_state(slug: str) -> dict:
     result["exists"] = True
     result["lines"] = len(text.splitlines())
     result["sections"] = extract_sections(cp_file)
-
-    text_lower = text.lower()
-    for stage in ["establishment", "exploration", "growth", "maintenance", "disengagement"]:
-        if stage in text_lower:
-            result["stage"] = stage
-            break
+    result["stages_mentioned"] = mentioned_terms(text, SUPER_STAGES)
 
     return result
 
@@ -44,14 +45,7 @@ def extract_skill_summary(slug: str) -> dict:
     text = comp_file.read_text(encoding="utf-8")
     result["exists"] = True
 
-    dreyfus_pattern = re.compile(r'^\|\s*\*{0,2}([^|*]+?)\*{0,2}\s*\|\s*(\d)[^|]*\|', re.MULTILINE)
-    skills = []
-    for match in dreyfus_pattern.finditer(text):
-        name = match.group(1).strip().strip("*")
-        level = int(match.group(2))
-        if 1 <= level <= 7 and len(name) > 1:
-            skills.append({"name": name, "level": level})
-
+    skills = parse_dreyfus_skills(text)
     result["skill_count"] = len(skills)
     result["top_skills"] = sorted(skills, key=lambda s: s["level"], reverse=True)[:5]
     return result
@@ -143,7 +137,9 @@ def main():
         print(f"  {display} ({slug}) — Forecast Input [FORECAST — NOT FACTUAL]")
         print(f"{'='*70}")
 
-        print(f"\n  Career stage: {career['stage']}")
+        stages_str = ", ".join(career["stages_mentioned"]) or "—"
+        print(f"\n  Career stages mentioned: {stages_str}")
+        print(f"  (LLM adjudicates current stage from the above signal)")
         top_str = ", ".join(s["name"] + f"(L{s['level']})" for s in skills["top_skills"][:3])
         print(f"  Top skills: {top_str}")
         print(f"  Learning style: {data['learning_style']['kolb_style']}")

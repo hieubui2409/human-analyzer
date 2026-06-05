@@ -82,7 +82,7 @@ Every material MUST be assessed on 5 dimensions:
 4. **Accuracy** — Can claims be cross-referenced? Internal consistency?
 5. **Purpose** — Clinical note vs. social media post vs. personal reflection
 
-**Scoring scale (canonical):** Each dimension is scored **1-5**. The `craap_score` frontmatter is a nested mapping holding all 5 dimensions plus `total`, where `total` = sum of the 5 dimensions (range 5-25). Evidence tier (T1-T5) is derived from the total.
+**Scoring scale (canonical):** Each dimension is scored **1-5**. The `craap_score` frontmatter is a nested mapping holding all 5 dimensions plus `total`, where `total` = sum of the 5 dimensions (range 5-25). CRAAP is a **quality gate** — it does NOT determine the evidence tier. Evidence tier (T1-T5) is derived from `source_category` (primary→T1, secondary→T2, tertiary→T3, contextual→T4, auxiliary→T5); CRAAP total is an orthogonal quality score used for integration gating (threshold ≥ 15/25).
 
 ```yaml
 craap_score:

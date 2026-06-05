@@ -11,13 +11,14 @@ import sys
 from pathlib import Path
 
 import pytest
+from venv_python import VENV_PYTHON
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = PROJECT_ROOT / ".claude" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 SANTA_SCRIPT = PROJECT_ROOT / ".claude" / "skills" / "orc-santa" / "scripts" / "run-santa-review.py"
-PYTHON = Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3"
+PYTHON = VENV_PYTHON
 
 
 def _load_santa():

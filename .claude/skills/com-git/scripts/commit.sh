@@ -33,13 +33,14 @@ if [ "$LUCAS_STAGE_ALL" = "true" ]; then
   echo "Staging ALL changes (--all mode)..."
   git add -A
 
-  # Unstage dangerous files
-  EXCLUDE_PATTERNS=(".env" "credentials" "secret" ".key" ".pem")
-  for pat in "${EXCLUDE_PATTERNS[@]}"; do
-    git diff --cached --name-only | grep -i "$pat" | while read -r f; do
-      git reset HEAD -- "$f" 2>/dev/null || true
-      echo "EXCLUDED: $f"
-    done
+  # Unstage dangerous files. Anchored to basename/extension so substrings like
+  # "monkey.md" (was matched by ".key") or "environment.md" (".env") are not excluded.
+  #   (^|/)\.env(\.|$)  → .env / .env.local …      \.(key|pem|p12|pfx)$ → key material
+  #   credential|secret → path contains the word (intentional substring)
+  EXCLUDE_RE='(^|/)\.env(\.[^/]*)?$|\.(key|pem|p12|pfx)$|credential|secret'
+  git diff --cached --name-only | grep -iE "$EXCLUDE_RE" | while read -r f; do
+    git reset HEAD -- "$f" 2>/dev/null || true
+    echo "EXCLUDED: $f"
   done
 elif [ -n "$LUCAS_FILES" ]; then
   echo "Staging selected files..."

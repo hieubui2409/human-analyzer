@@ -5,21 +5,14 @@ import sys
 import argparse
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'scripts'))
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, character_dir
+from platform_lib.paths import (
+    ALL_CHARS, CHAR_DISPLAY, character_dir, CHARACTER_PAIRS, CHAR_SEARCH_ALIASES,
+)
 from platform_lib.markdown_parser import extract_timeline_events, find_cross_references
 from platform_lib.formatters import markdown_table, print_table
 
-PAIRS = [
-    ("character-a", "character-b"),
-    ("character-a", "character-c"),
-    ("character-b", "character-c"),
-]
-
-CHAR_ALIASES = {
-    "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật A"],
-    "character-b": ["Nhân vật B", "Nhân vật ẩn danh", "Nhân vật B"],
-    "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật C"],
-}
+PAIRS = CHARACTER_PAIRS
+CHAR_ALIASES = CHAR_SEARCH_ALIASES
 
 
 def get_cross_events(char_slug: str, target_slug: str) -> list[dict]:
@@ -66,17 +59,16 @@ def compare_pair(char1: str, char2: str) -> list[list[str]]:
 
 
 def main():
+    # Derive the short --pair keys ("hieu-hoa") from the canonical roster so this scales to any
+    # character set instead of a hardcoded 3-character literal (which would reject the synthetic
+    # roster and any 4th character). Short key = the slug's last name token.
+    pair_map = {f"{c1.split('-')[-1]}-{c2.split('-')[-1]}": (c1, c2) for c1, c2 in PAIRS}
+
     parser = argparse.ArgumentParser(description="Extract cross-character timeline events")
-    parser.add_argument("--pair", choices=["hieu-hoa", "hieu-chien", "hoa-chien"],
-                        help="Filter to specific pair")
+    parser.add_argument("--pair", choices=sorted(pair_map), help="Filter to specific pair")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
-    pair_map = {
-        "hieu-hoa": ("character-a", "character-b"),
-        "hieu-chien": ("character-a", "character-c"),
-        "hoa-chien": ("character-b", "character-c"),
-    }
     pairs = [pair_map[args.pair]] if args.pair else PAIRS
 
     if args.json:

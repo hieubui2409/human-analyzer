@@ -3,7 +3,7 @@
 GOLDEN RULE #4: this script ONLY gathers deterministic facts from the dyad
 graph + relationship files + GRO mentoring milestones, scans Rule-09 consent
 tags, and attaches backing-material evidence tiers. It does NOT decide which
-facts make a compelling angle — that is the LLM synthesis layer (see SKILL.md).
+facts make a compelling angle -- that is the LLM synthesis layer (see SKILL.md).
 
 Read sources (READ-ONLY):
   - docs/graph/{dyad}.md            (matched by frontmatter `characters`, robust)
@@ -12,7 +12,7 @@ Read sources (READ-ONLY):
   - materials/{char}/*.md           (backing evidence tiers, over-gather)
 
 EXCLUSION (red-team R2): darkness/traumas.md content is NEVER read into a fact
-payload — only its existence is noted as metadata. Trauma detail must not leak
+payload -- only its existence is noted as metadata. Trauma detail must not leak
 into a content angle.
 
 Consent (red-team R2 / OQ#6 A): a fact whose source line carries a Rule-09 tag
@@ -24,6 +24,7 @@ import argparse
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
@@ -32,25 +33,33 @@ from platform_lib.paths import (
     GRAPH, MATERIALS, resolve_character, character_dir, CHAR_DISPLAY,
     list_relationship_files,
 )
-from platform_lib.materials_classifier import extract_frontmatter, SOURCE_TO_TIER
+from platform_lib.materials_classifier import SOURCE_TO_TIER
 from platform_lib.markdown_parser import (
+    extract_frontmatter,
     extract_sections, extract_tags, extract_timeline_events, extract_milestones,
 )
 from platform_lib.errors import emit_error
+
+def _fold_ascii(s: str) -> str:
+    """Strip diacritics and lowercase — so Vietnamese 'chết' matches ASCII pattern 'chet'."""
+    return "".join(
+        c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn"
+    ).lower()
+
 
 # Graph sections worth mining for publishable facts (exclude clinical-only sections).
 PUBLISHABLE_SECTIONS = {
     "Relationship Timeline", "Growth Interface", "Communication Patterns",
     "Power Dynamics", "Prognosis",
 }
-_STOP = {"này", "đó", "của", "với", "cho", "các", "một", "những", "được", "là", "và"}
+_STOP = {"nay", "do", "cua", "voi", "cho", "cac", "mot", "nhung", "duoc", "la", "va"}
 
 # Deterministic crisis/self-harm markers (VN + EN). A graph dyad legitimately
 # records crisis episodes; surfacing them in a content angle without explicit
 # consent is a Rule-09 / Rule-06 violation. Gathering matches is deterministic;
 # the BLOCKED verdict forces an LLM/human look (fail-closed, never silent OK).
 _CRISIS_RE = re.compile(
-    r"tự\s*tử|tự\s*sát|tự\s*hại|chết|cắt\s*tay|kết\s*liễu|trầm\s*cảm|"
+    r"tu\s*tu|tu\s*sat|tu\s*hai|chet|cat\s*tay|ket\s*lieu|tram\s*cam|"
     r"suicid|self[- ]?harm|kill\s*(my|him|her)self|overdose|crisis",
     re.IGNORECASE,
 )
@@ -75,8 +84,10 @@ def find_dyad_graph(slug_a: str, slug_b: str) -> Path | None:
 
 
 def _consent_for_line(line_text: str) -> str:
-    """BLOCKED if a Rule-09 tag OR a crisis/self-harm marker is present (fail-closed)."""
-    if extract_tags(line_text) or _CRISIS_RE.search(line_text):
+    """BLOCKED if a Rule-09 tag OR a crisis/self-harm marker is present (fail-closed).
+    Crisis regex runs on both raw and diacritic-folded text so Vietnamese accented words
+    (e.g. 'chết' → 'chet') are caught even when the corpus uses proper Unicode spelling."""
+    if extract_tags(line_text) or _CRISIS_RE.search(line_text) or _CRISIS_RE.search(_fold_ascii(line_text)):
         return "BLOCKED"
     return "OK"
 
@@ -93,15 +104,17 @@ def extract_graph_facts(graph_path: Path) -> list[dict]:
             "consent_status": _consent_for_line(ev["event"]),
             "source": graph_path.name,
         })
-    # Section-level dynamic statements (first non-empty lines of publishable sections)
-    sections = extract_sections(graph_path, level=3)
+    # Section-level dynamic statements (first non-empty lines of publishable level-2 sections).
+    # extract_sections at level=2 returns level-2 names ("Relationship Timeline", etc.) which
+    # match PUBLISHABLE_SECTIONS directly. Using level=3 returned sub-section names that never
+    # matched, making the gate a dead no-op (always passed everything through).
+    sections = extract_sections(graph_path, level=2)
     for name, content in sections.items():
         base = name.split("(")[0].strip()
-        if not any(p in name or p == base for p in PUBLISHABLE_SECTIONS) and \
-           not any(p in graph_path.read_text(encoding="utf-8") for p in []):
-            pass
+        if base not in PUBLISHABLE_SECTIONS:
+            continue
         for line in content.splitlines():
-            s = line.strip(" -•*|")
+            s = line.strip(" -*|")
             if len(s) > 25 and not s.startswith("#") and "|" not in line:
                 facts.append({
                     "kind": "dynamic", "section": name, "date": None, "text": s[:200],
@@ -121,7 +134,7 @@ def extract_relationship_facts(slug: str, other_slug: str) -> list[dict]:
             continue
         for name, content in extract_sections(relf, level=2).items():
             for line in content.splitlines():
-                s = line.strip(" -•*")
+                s = line.strip(" -*")
                 if len(s) > 25 and not s.startswith("#"):
                     facts.append({
                         "kind": "relationship", "section": name, "date": None,
@@ -188,7 +201,7 @@ def gather_backing_materials(facts: list[dict], slugs: list[str]) -> None:
 
 
 def traumas_present(slugs: list[str]) -> dict:
-    """Note ONLY existence of darkness/traumas.md (never read content) — R2."""
+    """Note ONLY existence of darkness/traumas.md (never read content) -- R2."""
     return {slug: (character_dir(slug) / "darkness" / "traumas.md").exists() for slug in slugs}
 
 
@@ -203,30 +216,7 @@ def primary_character_hint(facts: list[dict], slugs: list[str]) -> str:
     return max(counts, key=counts.get) if any(counts.values()) else slugs[0]
 
 
-def extract_graph_dyad_facts(slug_a: str, slug_b: str, top_n: int = 10) -> list[dict]:
-    """Optional embedding-graph signal — surfaces cross-character semantically similar
-    file pairs as additional dyad facts. Default-off; opted in via --graph-signal.
-    Tags `consent_status=REVIEW` because semantic similarity is content-blind to consent;
-    the downstream LLM + cre:privacy-guard remain authoritative gates."""
-    try:
-        from platform_lib import knowledge_graph_discovery as kgd
-    except Exception:                                       # noqa: BLE001 — missing module/dep → skip
-        return []
-    facts = []
-    for pair in kgd.dyad_angle_signals(slug_a, slug_b, top_n=top_n):
-        facts.append({
-            "kind": "graph_dyad_signal", "section": "embedding_similarity",
-            "date": None,
-            "text": (f"semantic dyad: {pair['file_a']} ↔ {pair['file_b']} "
-                     f"(score={pair['score']}, band={pair['confidence_band']})"),
-            "consent_status": "REVIEW",                     # content-blind; downstream gate decides
-            "source": "knowledge_graph_discovery.dyad_angle_signals",
-            "confidence_band": pair["confidence_band"],
-        })
-    return facts
-
-
-def build(slug_a: str, slug_b: str, graph_signal: bool = False) -> dict:
+def build(slug_a: str, slug_b: str) -> dict:
     graph = find_dyad_graph(slug_a, slug_b)
     facts = []
     if graph:
@@ -235,8 +225,6 @@ def build(slug_a: str, slug_b: str, graph_signal: bool = False) -> dict:
     facts += extract_relationship_facts(slug_b, slug_a)
     facts += extract_mentoring_facts(slug_a, slug_b)
     facts += extract_mentoring_facts(slug_b, slug_a)
-    if graph_signal:                                        # opt-in additive embedding signal
-        facts += extract_graph_dyad_facts(slug_a, slug_b)
 
     gather_backing_materials(facts, [slug_a, slug_b])
     for i, fact in enumerate(facts):
@@ -255,9 +243,6 @@ def main():
     ap = argparse.ArgumentParser(description="Extract dyad relationship facts (deterministic gather).")
     ap.add_argument("char_a", help="First character (alias or slug)")
     ap.add_argument("char_b", help="Second character (alias or slug)")
-    ap.add_argument("--graph-signal", action="store_true",
-                    help="Append KG dyad_angle_signal facts (default off; "
-                         "output identical for same inputs when omitted)")
     ap.add_argument("--json", action="store_true", help="JSON output (default)")
     args = ap.parse_args()
     try:
@@ -266,7 +251,7 @@ def main():
         emit_error("validation", str(e), {"char_a": args.char_a, "char_b": args.char_b})
         print(json.dumps({"error": str(e)}, ensure_ascii=False))
         sys.exit(1)
-    print(json.dumps(build(a, b, graph_signal=args.graph_signal), indent=2, ensure_ascii=False))
+    print(json.dumps(build(a, b), indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":

@@ -25,24 +25,38 @@ Scans all event declaration sources (SKILL.md tables, rules files, Python script
 
 ## Main
 
-1. Scan all `SKILL.md` files for `## Events` tables → extract declared events
-2. Read `12-orc-orchestration.md` → extract registered core events
-3. Read `append-event-to-log.py` → extract VALID_EVENT_TYPES
-4. Read `recommend-downstream-actions-from-events.py` → extract EVENT_ROUTING keys
-5. Read `detect-domain-state-changes-from-git-diff.py` → extract PATH_TO_EVENT_MAP values
-6. Cross-check: every event should appear in all relevant sources
-7. Report mismatches per domain
+Reads the canonical routing registry (`platform_lib/event_routing.py`) and the
+loggable registry (`append-event-to-log.py`) by **import** — never by scraping
+literal strings out of consumer scripts (consumers now import the registry, so
+string-scraping yields false mismatches). Markdown sources (rules-12, SKILL.md)
+are still regex-scanned because they are prose.
+
+Invariants:
+
+| #  | Invariant                | Meaning                                                   | Severity      |
+| -- | ------------------------ | --------------------------------------------------------- | ------------- |
+| C1 | routable ⊆ loggable      | every `EVENT_ROUTING` key is in `VALID_EVENT_TYPES`       | violation     |
+| C2 | emits ⊆ routable         | every cascade `emits` target is itself routable           | violation     |
+| C3 | path-map ⊆ routable      | every `DOMAIN_PATH_RULES` target event is routable        | violation     |
+| C4 | declared emits loggable  | every `## Events` table emit is in `VALID_EVENT_TYPES`    | violation     |
+| C5 | routable documented      | every routable event appears in rules-12                  | advisory      |
+| C6 | conceptual conventions   | rules-12 events not wired (expected per rules-12 header)  | informational |
+
+Exit code is non-zero only when a hard violation (C1-C4) is found.
 
 ## Output
 
 ```json
 {
   "sources_scanned": 5,
-  "events_found": {"MAT": [...], "PSY": [...], "CRE": [...], "GRO": [...]},
-  "mismatches": [
-    {"event": "GRO.forecast", "present_in": ["valid_types", "event_routing"], "missing_from": ["skill_md"]}
+  "registries": {"routable": [...], "valid_types": [...], "path_map_events": [...], "emit_targets": [...]},
+  "violations": [
+    {"check": "C4", "event": "ORC.routed", "detail": "declared in a SKILL.md ## Events table but not loggable — emit would be rejected"}
   ],
-  "summary": {"total_events": 13, "consistent": 11, "mismatched": 2}
+  "advisories": [
+    {"check": "C6", "event": "MAT.ingested", "detail": "rules-12 conceptual convention, not wired as loggable/routable (informational)"}
+  ],
+  "summary": {"routable_events": 13, "violations": 0, "advisories": 4, "consistent": true}
 }
 ```
 

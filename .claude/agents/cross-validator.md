@@ -34,7 +34,7 @@ Cross-domain validation specialist responsible for detecting inconsistencies acr
 ## Rules
 
 - `docs/rules/08-cross-validation.md` — 10-dimension consistency framework, severity ratings, report format
-- `docs/rules/12-mpc-orchestration.md` — Event system, domain boundaries, when to escalate findings
+- `docs/rules/12-orc-orchestration.md` — Event system, domain boundaries, when to escalate findings
 
 ## Safety
 
