@@ -69,17 +69,34 @@ def runtime_cache_dir(name: str) -> Path:
     return d
 
 
-def memory_dir() -> Path:
-    """Claude Code's per-project persistent memory dir: ~/.claude/projects/{encoded-root}/memory.
+def project_dir() -> Path:
+    """Claude Code's per-project runtime dir: ~/.claude/projects/{encoded-root}.
 
     The slug is the absolute project root with '/' → '-' (Claude Code's project-id convention),
-    so it resolves dynamically per checkout — never a hardcoded machine path. CK_MEMORY_DIR
-    overrides it (tests point it at a tmp dir to isolate memory writes)."""
+    so it resolves dynamically per checkout — never a hardcoded machine path. One home for the
+    slug derivation; memory_dir / session-forensics derive off this."""
+    enc = str(ROOT).replace("/", "-")
+    return Path.home() / ".claude" / "projects" / enc
+
+
+def memory_dir() -> Path:
+    """Claude Code's per-project persistent memory dir: {project_dir}/memory.
+
+    CK_MEMORY_DIR overrides it (tests point it at a tmp dir to isolate memory writes)."""
     env = os.environ.get("CK_MEMORY_DIR")
     if env:
         return Path(env)
-    enc = str(ROOT).replace("/", "-")
-    return Path.home() / ".claude" / "projects" / enc / "memory"
+    return project_dir() / "memory"
+
+
+def sessions_dir() -> Path:
+    """Claude Code's per-project session-JSONL dir (== project_dir).
+
+    CK_SESSIONS_DIR overrides it (tests point it at a tmp dir)."""
+    env = os.environ.get("CK_SESSIONS_DIR")
+    if env:
+        return Path(env)
+    return project_dir()
 
 
 # profile-lite is a cheap-to-rebuild compression cache → runtime subtree.

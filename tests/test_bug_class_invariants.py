@@ -90,6 +90,29 @@ def test_no_nonrecursive_glob_on_profile_or_material_dirs():
     assert not offenders, "non-recursive glob on profile/material dirs (use rglob): " + "; ".join(offenders)
 
 
+# --- memory-dir-redefinition: the project memory slug lives once in paths.memory_dir ---
+def test_no_skill_script_rerolls_memory_dir_slug():
+    # Computing the ~/.claude/projects/{slug}/memory path inline (slug = root.replace("/","-"))
+    # is the "centralized fact, reader scrapes its own copy" class — orc-dream once hardcoded a
+    # stale machine slug. Framework scripts must call paths.memory_dir() instead.
+    slug = re.compile(r'replace\(\s*["\']/["\']\s*,\s*["\']-["\']\s*\)')
+    offenders = []
+    for f in _framework_script_files():
+        text = f.read_text(encoding="utf-8")
+        if slug.search(text) and "projects" in text and "memory" in text:
+            offenders.append(str(f.relative_to(SKILLS)))
+    assert not offenders, "skill scripts re-roll the memory-dir slug (use paths.memory_dir()): " + "; ".join(offenders)
+
+
+# --- stale-project-name: live skill/agent docs must not carry the old project name ---
+def test_no_stale_project_name_in_live_docs():
+    stale = "ck-marketing"
+    docs = list(SKILLS.glob("[a-z][a-z][a-z]-*/**/*.md")) + list((ROOT / ".claude" / "agents").glob("*.md"))
+    offenders = [str(d.relative_to(ROOT)) for d in docs
+                 if "/.venv/" not in str(d) and stale in d.read_text(encoding="utf-8", errors="replace")]
+    assert not offenders, f"live docs reference the old project name '{stale}': " + "; ".join(offenders)
+
+
 # --- deterministic gates the manual cycles ran by hand ---
 def test_orc_audit_zero_hard_violations():
     r = subprocess.run([PY, str(SKILLS / "orc-audit/scripts/audit-cross-domain-event-consistency.py")],
