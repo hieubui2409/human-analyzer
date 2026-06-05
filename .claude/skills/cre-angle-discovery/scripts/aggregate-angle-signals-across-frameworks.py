@@ -39,7 +39,8 @@ FRAMEWORK_ANGLE = {
     "GRO": "professional",
     "CRE": "distribution",
     "ORC": "timing",
-    "COM": "governance",
+    # COM (governance/audit) is intentionally NOT a content-angle source — privacy scans, commit
+    # logs and rule-compliance are not publishable angles. It is excluded from _frameworks() too.
 }
 
 

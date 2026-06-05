@@ -51,6 +51,55 @@ Run `scripts/build-reference-index.py` → JSON map of `{theory → file, catego
    - "phủ nhận" in Vietnamese could be casual denial or clinical Denial defense mechanism — read 2-3 surrounding sentences to judge
 4. For confirmed clinical terms, check against ref index
 
+### Step 2b: Behavioral Deep-Scan (LLM) — complements Step 2, does NOT replace it
+
+The deterministic scan (Step 2) catches explicit term mentions. The deep-scan surfaces **IMPLICIT** matches — behavior described in profile prose that maps to a theory without using the formal term.
+
+**Run the gathering script:**
+
+```bash
+# Default: all clinical profile files
+.claude/skills/.venv/bin/python3 .claude/skills/psy-ref-audit/scripts/build-behavioral-deep-scan-prompt.py \
+    --character <name>
+
+# Single file
+.claude/skills/.venv/bin/python3 .claude/skills/psy-ref-audit/scripts/build-behavioral-deep-scan-prompt.py \
+    --character <name> --file psychology/formulation.md
+
+# Limit to specific theory slugs
+.claude/skills/.venv/bin/python3 .claude/skills/psy-ref-audit/scripts/build-behavioral-deep-scan-prompt.py \
+    --character <name> --slugs savior-complex,hypervigilance,complex-ptsd
+
+# JSON output {character, files, prompt}
+.claude/skills/.venv/bin/python3 .claude/skills/psy-ref-audit/scripts/build-behavioral-deep-scan-prompt.py \
+    --character <name> --json
+```
+
+**Script is deterministic, read-only, exits 0.** It calls `extract_sections_for_llm_review` + `build_llm_prompt_for_deep_scan` from `platform_lib/behavioral_clusters.py`.
+
+**LLM judgment phase:** Take the printed prompt and process it. The prompt contains:
+- Behavioral Theory Catalog (plain-text descriptions in Vietnamese + English for each theory)
+- Profile sections chunked for review
+- Instructions to find IMPLICIT matches only
+
+**Expected output from LLM** (filter to medium+ confidence only):
+
+```json
+[
+  {
+    "file": "psychology/formulation.md",
+    "line_range": "12-17",
+    "theory_slug": "savior-complex",
+    "evidence_quote": "Nhân vật A luôn cố gắng lo cho mọi người trước khi lo cho bản thân",
+    "confidence": "high"
+  }
+]
+```
+
+**What counts as IMPLICIT:** behavior/pattern/dynamic is present in the text but the formal theory name is NOT used. If the term is already written explicitly, it's a Step 2 clinical hit, not a deep-scan hit.
+
+**Integration with Step 3:** Deep-scan hits feed into IMPLICIT classification — same downstream flow as explicit hits, but sourced from LLM behavioral matching rather than regex.
+
 ### Step 3: Classify (heuristic)
 
 | Classification | Meaning                                                | Action                                |
@@ -152,6 +201,7 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 | --------------------------------------------- | --------- | --------------------------------------------------------- |
 | `scripts/build-reference-index.py`            | Gathering | Parse INDEX.md → JSON theory map                          |
 | `scripts/scan-profile-files-for-clinical-terms.py`              | Gathering | Grep profiles for clinical terms (+ behavioral w/ --deep) |
+| `scripts/build-behavioral-deep-scan-prompt.py` | Gathering | Build LLM prompt for implicit behavioral matching (Step 2b) |
 | `scripts/scan-materials-and-assets-for-clinical-terms.py` | Gathering | Grep materials/assets for terms                           |
 | `scripts/scan-reference-cross-links-between-theories.py`       | Gathering | Check ref↔ref linkage                                     |
 | `scripts/detect-profile-keywords-without-ref-links.py`        | Gathering | Profile theory-terms that lack a ref link (coverage gaps) |

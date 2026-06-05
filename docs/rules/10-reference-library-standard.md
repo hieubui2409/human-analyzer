@@ -100,11 +100,13 @@ Every reference file should be applied to at least one character:
 
 ## Vietnamese Cultural Adaptation
 
-Every reference MUST include a section on how the theory manifests in Vietnamese family/cultural context:
+Vietnamese cultural context is carried **within §4 Case Study** (the canonical 4-section schema above), not as a separate mandatory section — the case subjects are Vietnamese characters analysed inside Vietnamese family/social dynamics, so the cultural manifestation lives where the behaviour is grounded. A standalone "## 5. Cultural" section is therefore **optional** (use it only when the theory has a generalised Vietnamese-cultural mechanism worth stating beyond the case), and when present it must not merely duplicate §4.
+
+When the theory's Vietnamese manifestation is salient, weave these into the §4 analysis (or an optional §5):
 
 - "Nhịn" (endurance) as cultural coping
-- Filial piety dynamics
-- Face-saving behaviors
+- Filial piety dynamics (hiếu thảo / Nho giáo)
+- Face-saving behaviors (sĩ diện)
 - Collective vs. individual identity
 
 ## Accessible Language Mapping
