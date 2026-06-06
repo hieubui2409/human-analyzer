@@ -9,6 +9,12 @@ from venv_python import VENV_PYTHON
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PYTHON = str(VENV_PYTHON)
 MOCK_DATA = PROJECT_ROOT / "tests" / "mock-data"
+
+from platform_lib.paths import ALL_CHARS  # roster sourced dynamically — no hardcoded slug
+
+pytestmark = pytest.mark.skipif(not ALL_CHARS, reason="no character roster — toolkit-only pack")
+_CHAR = ALL_CHARS[0] if ALL_CHARS else "x"  # exercise the first real character; name-free
+
 ENV = {
     **os.environ,
     "PYTHONPATH": str(PROJECT_ROOT / ".claude" / "scripts"),
@@ -24,25 +30,25 @@ def run_script(skill, script, args=None):
 
 class TestWaveGates:
     def test_check_wave_gates_with_character(self):
-        r = run_script("psy-wave", "check-wave-gates.py", ["--character", "character-a", "--wave", "1"])
+        r = run_script("psy-wave", "check-wave-gates.py", ["--character", _CHAR, "--wave", "1"])
         assert (r.returncode == 0 or r.stdout.strip()) and "Traceback" not in r.stderr
 
     def test_track_wave_progress(self):
-        r = run_script("psy-wave", "track-wave-progress-from-index.py", ["--character", "character-a"])
+        r = run_script("psy-wave", "track-wave-progress-from-index.py", ["--character", _CHAR])
         assert (r.returncode == 0 or r.stdout.strip()) and "Traceback" not in r.stderr
 
 
 class TestCrisis:
     def test_scan_crisis_keywords(self):
-        r = run_script("psy-crisis-assess", "scan-crisis-keywords-in-profile.py", ["--character", "character-a"])
+        r = run_script("psy-crisis-assess", "scan-crisis-keywords-in-profile.py", ["--character", _CHAR])
         assert r.returncode == 0
 
     def test_extract_protective_factors(self):
-        r = run_script("psy-crisis-assess", "extract-protective-factors-from-light-md.py", ["--character", "character-a"])
+        r = run_script("psy-crisis-assess", "extract-protective-factors-from-light-md.py", ["--character", _CHAR])
         assert r.returncode == 0
 
     def test_dsm5_checklist_template(self):
-        r = run_script("psy-crisis-assess", "generate-dsm5-mdd-checklist-template.py", ["--character", "character-a"])
+        r = run_script("psy-crisis-assess", "generate-dsm5-mdd-checklist-template.py", ["--character", _CHAR])
         assert r.returncode == 0
         assert "DSM" in r.stdout or "MDD" in r.stdout or "checklist" in r.stdout.lower()
 
@@ -68,19 +74,19 @@ class TestCrossref:
 class TestPropagation:
     def test_detect_propagation_targets(self):
         r = run_script("psy-propagate", "detect-propagation-targets-from-profile-diff.py",
-                       ["--character", "character-a", "--section", "psychology/formulation.md"])
+                       ["--character", _CHAR, "--section", "psychology/formulation.md"])
         assert r.returncode == 0
 
 
 class TestHealthCheck:
     def test_score_profile_completeness(self):
-        r = run_script("psy-health-check", "score-profile-completeness.py", ["--character", "character-a"])
+        r = run_script("psy-health-check", "score-profile-completeness.py", ["--character", _CHAR])
         assert r.returncode == 0
 
 
 class TestArcTracker:
     def test_extract_growth_indicators(self):
-        r = run_script("psy-arc-tracker", "extract-growth-indicators-from-profile.py", ["--character", "character-a"])
+        r = run_script("psy-arc-tracker", "extract-growth-indicators-from-profile.py", ["--character", _CHAR])
         assert r.returncode == 0
 
 
@@ -90,7 +96,7 @@ class TestRefTools:
         assert r.returncode == 0
 
     def test_scan_profile_clinical_terms(self):
-        r = run_script("psy-ref-audit", "scan-profile-files-for-clinical-terms.py", ["--character", "character-a"])
+        r = run_script("psy-ref-audit", "scan-profile-files-for-clinical-terms.py", ["--character", _CHAR])
         assert r.returncode == 0
 
     def test_generate_reference_template(self):

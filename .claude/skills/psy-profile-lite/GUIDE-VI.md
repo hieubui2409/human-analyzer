@@ -14,7 +14,7 @@ Các hồ sơ đầy đủ rất phong phú (~7.400 dòng tổng cộng cho 3 nh
 
 ## 3. Đường dẫn học tập
 
-**Sử dụng đầu tiên:** `psy:profile-lite --character hieu` — xem một hồ sơ lite, hiểu định dạng.
+**Sử dụng đầu tiên:** `psy:profile-lite --character character-a` — xem một hồ sơ lite, hiểu định dạng.
 
 **Kiểm tra bộ đệm:** `psy:profile-lite --stats` — xem tất cả ba trạng thái + tiết kiệm kích thước.
 
@@ -37,7 +37,7 @@ Các hồ sơ đầy đủ rất phong phú (~7.400 dòng tổng cộng cho 3 nh
 ### Trường hợp sử dụng: Làm mới sau sửa chữa
 
 > Bạn: "Tôi vừa thủ công sửa đổi psychology/formulation.md cho Nhân vật A. Tôi có cần làm mới lite không?"
-> Kỹ năng: `psy:profile-lite --character hieu --refresh`
+> Kỹ năng: `psy:profile-lite --character character-a --refresh`
 > → Tái tạo Nhân vật A lite từ các tệp hiện tại. Cập nhật bộ đệm. Xong.
 
 ### Trường hợp sử dụng: Tích hợp quy trình làm việc Cre

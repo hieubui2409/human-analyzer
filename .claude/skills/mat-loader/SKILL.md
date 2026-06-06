@@ -215,7 +215,7 @@ Bottleneck: 5 files stuck at 'raw' — run mat:loader --ingest to process
 
 ```bash
 /mat:loader                                    # list all with status
-/mat:loader --character chien                  # Nhân vật C's materials
+/mat:loader --character character-c                  # Nhân vật C's materials
 /mat:loader --ingest ~/new-transcript.md       # full Stage 1-2
 /mat:loader --extract "gambling"               # search topic
 /mat:loader --status                           # pipeline status

@@ -29,7 +29,7 @@ Bạn đang xây dựng hồ sơ nhân vật và muốn hiểu **sự liên kế
 
 ### Trường hợp sử dụng: Hiểu giai đoạn sự nghiệp hiện tại của nhân vật
 
-> **Bạn:** "gro:career-path --character hieu"
+> **Bạn:** "gro:career-path --character character-a"
 >
 > **Kỹ năng:** Thu thập lịch sử vai trò của Nhân vật A (giáo dục → công việc đầu tiên → vai trò hiện tại), ngày, và bối cảnh. LLM đánh giá: tuổi 28, 5 năm ở vai trò, các chứng chỉ gần đây, không có những chuyển hướng lớn → Có khả năng ở giai đoạn **Establishment** (cam kết vai trò, xây dựng chuyên môn). Yếu tố rủi ro: phạm vi kỹ năng hẹp. Cơ hội phát triển: những bước ngoài lề trong các lĩnh vực liên quan.
 >
@@ -37,7 +37,7 @@ Bạn đang xây dựng hồ sơ nhân vật và muốn hiểu **sự liên kế
 
 ### Trường hợp sử dụng: Phân tích các mô hình ra quyết định
 
-> **Bạn:** "gro:career-path --character chien --decisions-only"
+> **Bạn:** "gro:career-path --character character-c --decisions-only"
 >
 > **Kỹ năng:** Chiết xuất 4–5 quyết định sự nghiệp lớn (ví dụ, "rời startup để gia nhập công ty", "theo đuổi chứng chỉ", "đàm phán thăng chức"). Với mỗi một, LLM chấm điểm chất lượng bằng chứng, kết quả (thành công/trung lập/setback), và nó tiết lộ điều gì về khả năng chịu rủi ro và sự tự tin.
 >

@@ -143,7 +143,7 @@ loaded every turn. The Skills Catalog below stays the navigational index (not de
 
 ## Skills Catalog (`.claude/skills/`)
 
-59 framework skills (ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 4). Invoke as `{framework}:{skill}`.
+60 framework skills (ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 5). Invoke as `{framework}:{skill}`.
 
 > Engineer-kit utility skills (`/ck:*`) installed alongside are **not** catalogued here — they are user-invoked dev tools, discoverable via the harness skill list.
 
@@ -235,6 +235,7 @@ loaded every turn. The Skills Catalog below stays the navigational index (not de
 | `com:health-check`    | Session health monitoring — stall/error/death detection               |
 | `com:rules`           | Modular rules management                                              |
 | `com:skill-analytics` | Skill/script observability — 11 read-only lenses + profile-drift gate |
+| `com:release`         | Cut a versioned release — Keep a Changelog lock + manifest bump + RELEASE-NOTES; owner-owned tag push |
 
 ---
 

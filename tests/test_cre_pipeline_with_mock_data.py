@@ -9,6 +9,12 @@ from venv_python import VENV_PYTHON
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PYTHON = str(VENV_PYTHON)
 MOCK_DATA = PROJECT_ROOT / "tests" / "mock-data"
+
+from platform_lib.paths import ALL_CHARS  # roster sourced dynamically — no hardcoded slug
+
+pytestmark = pytest.mark.skipif(not ALL_CHARS, reason="no character roster — toolkit-only pack")
+_CHAR = ALL_CHARS[0] if ALL_CHARS else "x"  # exercise the first real character; name-free
+
 ENV = {
     **os.environ,
     "PYTHONPATH": str(PROJECT_ROOT / ".claude" / "scripts"),
@@ -25,12 +31,12 @@ def run_script(skill, script, args=None):
 class TestVoiceAudit:
     def test_extract_voice_profile(self):
         r = run_script("cre-voice-audit", "extract-voice-profile-from-writing-voice-md.py",
-                       ["--character", "character-a"])
+                       ["--character", _CHAR])
         assert r.returncode == 0
 
     def test_voice_consistency_check(self):
         r = run_script("cre-voice-audit", "check-voice-consistency-against-defense-profile.py",
-                       ["--character", "character-a",
+                       ["--character", _CHAR,
                         str(MOCK_DATA / "assets" / "test-post")])
         assert r.returncode == 0
 
@@ -59,14 +65,14 @@ class TestPostWriter:
 
     def test_psy_to_cre_translation(self):
         r = run_script("cre-post-writer", "extract-psy-to-cre-translation-context.py",
-                       ["--character", "character-a"])
+                       ["--character", _CHAR])
         assert r.returncode == 0
 
 
 class TestPromptLeverage:
     def test_extract_factual_constraints(self):
         r = run_script("cre-prompt-leverage", "extract-factual-constraints-from-profile.py",
-                       ["--character", "character-a"])
+                       ["--character", _CHAR])
         assert r.returncode == 0
 
 

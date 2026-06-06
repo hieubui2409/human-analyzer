@@ -20,11 +20,11 @@ Starting work on a complex, multi-character project means carrying ~7,400 lines 
 
 **Deep dive:** `orc:bootstrap --full` — 15-30 minutes, load everything. Do this before high-risk changes.
 
-**Character focus:** `orc:bootstrap --character hiếu` — 5-10 minutes, all files for Nhân vật A only.
+**Character focus:** `orc:bootstrap --character character-a` — 5-10 minutes, all files for Character A only.
 
 **Speed run:** `orc:bootstrap --lite` — 3 minutes, compressed summaries of all 3 characters.
 
-**Task-aware:** `orc:bootstrap --intent "write LinkedIn post about Nhân vật B"` — loads only files relevant to that task.
+**Task-aware:** `orc:bootstrap --intent "write LinkedIn post about Character B"` — loads only files relevant to that task.
 
 ## 4. Use cases (each = a sample conversation)
 
@@ -36,9 +36,9 @@ Starting work on a complex, multi-character project means carrying ~7,400 lines 
 
 ### Use case: Deep load before high-risk profile edit
 
-> You: "I'm about to update Nhân vật B's formulation. Load everything for her."
+> You: "I'm about to update Character B's formulation. Load everything for her."
 >
-> Skill: Runs `--character character-b`, loads all files in her directory (psychology/, relationships/, timeline/, darkness/, light/), checks related theory files in references/, and shows Nhân vật B-specific git history. You're fully informed before editing.
+> Skill: Runs `--character character-b`, loads all files in her directory (psychology/, relationships/, timeline/, darkness/, light/), checks related theory files in references/, and shows Character B-specific git history. You're fully informed before editing.
 
 ### Use case: Lite profiles for token efficiency
 
@@ -48,7 +48,7 @@ Starting work on a complex, multi-character project means carrying ~7,400 lines 
 
 ### Use case: Task-aware load to skip irrelevant files
 
-> You: "I'm writing about Nhân vật A's writing style. Load only what's relevant."
+> You: "I'm writing about Character A's writing style. Load only what's relevant."
 >
 > Skill: Detects "writing" keyword, loads only `identity/writing-voice.md`, skips timeline/relationships/darkness, saves tokens. Prints what was loaded and what was skipped.
 

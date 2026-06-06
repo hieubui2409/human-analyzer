@@ -28,9 +28,9 @@ You want to explore **what-if scenarios** for a character's future. This skill t
 
 ### Use case: Explore a character's 3-year career arc for content planning
 
-> **You:** "gro:career-forecast --character hieu --horizon 3"
+> **You:** "gro:career-forecast --character character-a --horizon 3"
 > 
-> **Skill:** Gathers Nhân vật A's current career stage (e.g., Exploration), Dreyfus levels (e.g., Competent in domain X, Advanced Beginner in Y), Kolb learning style. LLM projects: if current trajectory holds, Nhân vật A will likely enter Establishment by year 2–3, with expertise deepening in core domain but slower growth in new domains. Confidence: low (depends on job market, personal choices, etc.). Marks all projections [FORECAST — NOT FACTUAL].
+> **Skill:** Gathers Character A's current career stage (e.g., Exploration), Dreyfus levels (e.g., Competent in domain X, Advanced Beginner in Y), Kolb learning style. LLM projects: if current trajectory holds, Character A will likely enter Establishment by year 2–3, with expertise deepening in core domain but slower growth in new domains. Confidence: low (depends on job market, personal choices, etc.). Marks all projections [FORECAST — NOT FACTUAL].
 >
 > **Use:** You now see a plausible 3-year arc (Exploration → Establishment transition). Useful for character development, content angle mining, or validating a narrative timeline.
 

@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-`psy:ref-audit --discover` flags: "Nhân vật A's profile describes 'always sacrificing for others, ignoring own needs' — this is a pattern, but we don't have a theory file for it." You could link to general "savior complex," but the nuance is exhaustion from benevolence. This skill scaffolds a new reference file (`benevolence-fatigue.md`), researches it in DSM-5/ICD-11/literature, writes the mandatory sections (definition, origin, mechanism, Vietnamese context, case study), and integrates it into the library.
+`psy:ref-audit --discover` flags: "Character A's profile describes 'always sacrificing for others, ignoring own needs' — this is a pattern, but we don't have a theory file for it." You could link to general "savior complex," but the nuance is exhaustion from benevolence. This skill scaffolds a new reference file (`benevolence-fatigue.md`), researches it in DSM-5/ICD-11/literature, writes the mandatory sections (definition, origin, mechanism, Vietnamese context, case study), and integrates it into the library.
 
 ## 2. Core concepts (the mental model)
 
@@ -17,7 +17,7 @@
 
 **Quick scaffold:** `psy:ref-create attachment-trauma --quick` — minimal file, fill in later.
 
-**Full creation:** `psy:ref-create benevolence-fatigue --character hieu` — comprehensive with case study.
+**Full creation:** `psy:ref-create benevolence-fatigue --character character-a` — comprehensive with case study.
 
 **Reverse engineering:** `psy:ref-create --from-behavior "Always helping others, never asking for help, eventual burnout"` — describe behavior, skill proposes theory.
 
@@ -25,21 +25,21 @@
 
 ### Use case: Fill discovered gap
 
-> You: "`psy:ref-audit --discover` found: 'Nhân vật A shows exhaustion from caretaking but no theory covers burnout from benevolence.' Create ref?"
-> Skill: `psy:ref-create benevolence-fatigue --character hieu --quick`
+> You: "`psy:ref-audit --discover` found: 'Character A shows exhaustion from caretaking but no theory covers burnout from benevolence.' Create ref?"
+> Skill: `psy:ref-create benevolence-fatigue --character character-a --quick`
 > → Scaffolds ref file with definition + mechanism. Marks sections 4–6 (Vietnamese context, case study, etc.) as TODO for later expansion.
 
 ### Use case: Reverse-engineer from behavior
 
-> You: "I see a pattern: Nhân vật C avoids commitment because he expects abandonment. What theory is this?"
-> Skill: `psy:ref-create --from-behavior "Nhân vật C avoids commitment, expects abandonment, preemptively withdraws"`
+> You: "I see a pattern: Character C avoids commitment because he expects abandonment. What theory is this?"
+> Skill: `psy:ref-create --from-behavior "Character C avoids commitment, expects abandonment, preemptively withdraws"`
 > → Searches literature, proposes "fearful-avoidant attachment" (already exists) or suggests new theory if no match. User confirms.
 
 ### Use case: Full reference with case study
 
 > You: "We need a full reference on 'sincere misbelief' (believing false narrative one has constructed). Create it."
-> Skill: `psy:ref-create sincere-misbelief --character chiến`
-> → Creates file with all 6 sections. Definition + Freud/Jung citations. Case study: Nhân vật C's stepmother narrative. Updates INDEX.md. Ready to use.
+> Skill: `psy:ref-create sincere-misbelief --character character-c`
+> → Creates file with all 6 sections. Definition + Freud/Jung citations. Case study: Character C's stepmother narrative. Updates INDEX.md. Ready to use.
 
 ## 5. Important caveats
 

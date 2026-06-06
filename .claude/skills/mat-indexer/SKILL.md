@@ -182,7 +182,7 @@ Events are **not emitted by scripts**. After Stage 3 script output, the LLM invo
 
 ```bash
 /mat:indexer                                  # full cross-reference all
-/mat:indexer --character hoa                  # Nhân vật B's materials vs profile
+/mat:indexer --character character-b                  # Nhân vật B's materials vs profile
 /mat:indexer --contradictions                 # show conflicts only
 /mat:indexer --coverage                       # evidence gaps
 /mat:indexer --stale                          # stuck materials

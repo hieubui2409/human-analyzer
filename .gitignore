@@ -50,5 +50,5 @@ plans/visuals/knowledge-graph-*.html
 e2e/synthetic-project/.cache/
 e2e/synthetic-project/_bodies.json
 
-# Pack build output (reproducible — rebuilt via tools/pack/build_pack.py / release CI)
+# Pack build output (reproducible — rebuilt via .claude/skills/_framework-shared/scripts/build_pack.py / release CI)
 dist/

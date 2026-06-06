@@ -28,7 +28,7 @@ Bạn muốn khám phá **các kịch bản nếu như** cho tương lai của n
 
 ### Trường hợp sử dụng: Khám phá cung cấp sự nghiệp 3 năm của nhân vật để lập kế hoạch nội dung
 
-> **Bạn:** "gro:career-forecast --character hieu --horizon 3"
+> **Bạn:** "gro:career-forecast --character character-a --horizon 3"
 > 
 > **Kỹ năng:** Thu thập giai đoạn sự nghiệp hiện tại của Nhân vật A (ví dụ, Exploration), mức Dreyfus (ví dụ, Competent trong lĩnh vực X, Advanced Beginner trong Y), phong cách học tập Kolb. LLM dự báo: nếu lộ trình hiện tại giữ nguyên, Nhân vật A có khả năng sẽ vào giai đoạn Establishment năm 2–3, với chuyên môn sâu hơn trong lĩnh vực cốt lõi nhưng tăng trưởng chậm hơn trong các lĩnh vực mới. Độ tin cậy: thấp (phụ thuộc vào thị trường việc làm, lựa chọn cá nhân, v.v.). Đánh dấu tất cả dự báo [FORECAST — NOT FACTUAL].
 >

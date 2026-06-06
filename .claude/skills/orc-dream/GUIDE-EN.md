@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-Over weeks, memory accumulates. You notice "Nhân vật B avoids under pressure" and separately "Nhân vật B deflects with humor"—both true, but scattered. Dream consolidates: merges related insights, removes stale ones (outdated info), strengthens high-confidence patterns, and promotes them into agent memory so domain agents use them. It's maintenance that keeps your learning system sharp.
+Over weeks, memory accumulates. You notice "Character B avoids under pressure" and separately "Character B deflects with humor"—both true, but scattered. Dream consolidates: merges related insights, removes stale ones (outdated info), strengthens high-confidence patterns, and promotes them into agent memory so domain agents use them. It's maintenance that keeps your learning system sharp.
 
 ## 2. Core concepts (the mental model)
 
@@ -12,7 +12,7 @@ Over weeks, memory accumulates. You notice "Nhân vật B avoids under pressure"
 
 **Memory has signal and noise.** Good instincts (reinforced 3+ times, conf ≥0.80) become agent memory. Weak instincts (1-2 evidence, conf <0.4, 30+ days) get archived. Dream automates this triage.
 
-**Clusters surface hidden patterns.** When instincts cluster (e.g., 4 instincts about Nhân vật B's avoidance), dream suggests a core pattern worth documenting explicitly.
+**Clusters surface hidden patterns.** When instincts cluster (e.g., 4 instincts about Character B's avoidance), dream suggests a core pattern worth documenting explicitly.
 
 ## 3. Learning path
 
@@ -36,7 +36,7 @@ Over weeks, memory accumulates. You notice "Nhân vật B avoids under pressure"
 
 > You: "Memories feel repetitive. Merge overlapping ones."
 >
-> Skill: Finds: "hoa-attachment-pattern" + "hoa-avoidance-triggers" both describe Nhân vật B's attachment. Proposes merge into "hoa-attachment-avoidance-dynamics". You confirm. Dream merges and updates MEMORY.md index.
+> Skill: Finds: "character-b-attachment-pattern" + "character-b-avoidance-triggers" both describe Character B's attachment. Proposes merge into "character-b-attachment-avoidance-dynamics". You confirm. Dream merges and updates MEMORY.md index.
 
 ### Use case: Full consolidation with instinct promotion
 

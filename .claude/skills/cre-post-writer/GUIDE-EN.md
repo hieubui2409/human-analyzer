@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You want to write a post about Nhân vật A's mentoring journey on LinkedIn. You could start with a blank screen, but that's slow and risky. This skill asks "Who? What? Platform? Tone?" → loads Nhân vật A's voice profile → strengthens your prompt with platform constraints, clinical guardrails, and profile facts → generates a draft → automatically checks it for evidence tier support, voice consistency, and privacy leaks → outputs a production-ready 5-file package. You review, maybe tweak, then manually post.
+You want to write a post about Character A's mentoring journey on LinkedIn. You could start with a blank screen, but that's slow and risky. This skill asks "Who? What? Platform? Tone?" → loads Character A's voice profile → strengthens your prompt with platform constraints, clinical guardrails, and profile facts → generates a draft → automatically checks it for evidence tier support, voice consistency, and privacy leaks → outputs a production-ready 5-file package. You review, maybe tweak, then manually post.
 
 ## 2. Core concepts (the mental model)
 
@@ -25,10 +25,10 @@ You want to write a post about Nhân vật A's mentoring journey on LinkedIn. Yo
 **First run (interactive):**
 ```bash
 /cre:post-writer
-# Q1: Character? → Nhân vật A
+# Q1: Character? → Character A
 # Q2: Platform? → LinkedIn
 # Q3: Type? → Reality
-# Q4: Topic? → Mentoring Nhân vật C through uncertainty
+# Q4: Topic? → Mentoring Character C through uncertainty
 # Q5: Specific angle? → How consistency builds trust
 ```
 Skill generates draft → runs gates → outputs to assets/linkedin/{date}-{slug}/ → you review post.txt, maybe tweak, then manually post.
@@ -57,7 +57,7 @@ Skill generates draft → runs gates → outputs to assets/linkedin/{date}-{slug
 
 ### Use case: Quick mode (skip profile load)
 
-> **You:** `/cre:post-writer Letter to Nhân vật C --character hieu --platform blog --type letter --quick`
+> **You:** `/cre:post-writer Letter to Character C --character character-a --platform blog --type letter --quick`
 >
 > **Skill:** Doesn't reload lite profile (uses session context), faster.
 >

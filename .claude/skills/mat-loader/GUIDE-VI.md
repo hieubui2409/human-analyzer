@@ -54,7 +54,7 @@ Bạn có một chồng các cuộc phỏng vấn mới, thư từ và bài báo
 ### Trường hợp sử dụng: Kho lưu trữ dành riêng cho nhân vật
 > **Bạn:** "Hiển thị tất cả tài liệu cho Hoà."
 > 
-> **Kỹ năng:** Chạy `--character hoa`:
+> **Kỹ năng:** Chạy `--character character-b`:
 > - Liệt kê tất cả tệp có slug ký tự của Hoà
 > - Nhóm theo loại (conversation_log, letter, news_article, v.v.)
 > - Hiển thị phân bố tầng, điểm CRAAP, trạng thái xử lý

@@ -4,14 +4,14 @@
 
 ## 1. What this skill does for you
 
-Over time, you create reference files. Some get used heavily (attachment-theory cited in Nhân vật A + Nhân vật B + Nhân vật C profiles). Others end up unused (you created dissociation.md once, but it doesn't appear in any character's psychology files). This skill scans the entire reference library, counts citations per theory, and tells you: "These 5 theories are orphaned (zero citations). Are they truly not applicable, or should we link them? These 3 theories are in INDEX.md but their files don't exist." It's a health check to keep the library in good shape.
+Over time, you create reference files. Some get used heavily (attachment-theory cited in Character A + Character B + Character C profiles). Others end up unused (you created dissociation.md once, but it doesn't appear in any character's psychology files). This skill scans the entire reference library, counts citations per theory, and tells you: "These 5 theories are orphaned (zero citations). Are they truly not applicable, or should we link them? These 3 theories are in INDEX.md but their files don't exist." It's a health check to keep the library in good shape.
 
 ## 2. Core concepts (the mental model)
 
 - **Citation counting**: For each ref file, the skill scans all profile files looking for the theory name. If found N times → cited. If found 0 times → orphan.
 - **Index consistency**: Is every theory in `docs/references/INDEX.md` actually present as a file? Reverse: do all ref files appear in INDEX.md?
 - **Schema compliance**: Each ref file should have mandatory sections (definition, origin, mechanism, Vietnamese context, case study, citations). Missing sections = schema breach.
-- **Coverage gaps**: Should all 3 characters reference at least one theory per category (defense, attachment, trauma)? If Nhân vật C lacks "trauma theory," flag it.
+- **Coverage gaps**: Should all 3 characters reference at least one theory per category (defense, attachment, trauma)? If Character C lacks "trauma theory," flag it.
 
 ## 3. Learning path
 
@@ -35,13 +35,13 @@ Over time, you create reference files. Some get used heavily (attachment-theory 
 
 > You: "Which theories did we create but never used?"
 > Skill: `psy:ref-maintain --orphans-only`
-> → cognitive-dissonance.md (0 citations), existential-void.md (0), learned-helplessness.md (0), role-confusion.md (0), shame-based-identity.md (0). Recommendations: Review each. Some may be niche (applicable to Nhân vật C only if profile is updated). Some should be archived.
+> → cognitive-dissonance.md (0 citations), existential-void.md (0), learned-helplessness.md (0), role-confusion.md (0), shame-based-identity.md (0). Recommendations: Review each. Some may be niche (applicable to Character C only if profile is updated). Some should be archived.
 
 ### Use case: Coverage gaps (before validation)
 
 > You: "Before running psy:crossref, do we have sufficient theory coverage?"
 > Skill: `psy:ref-maintain --gaps-only`
-> → Nhân vật A: Defense mechanisms ✓, Attachment ✓, Trauma ✓, Big Five ✗. Nhân vật B: All covered ✓. Nhân vật C: Defense mechanisms ✗, Trauma ✓, Attachment ✓. Recommendations: Add Big Five ref for Nhân vật A, defense mechanisms ref for Nhân vật C.
+> → Character A: Defense mechanisms ✓, Attachment ✓, Trauma ✓, Big Five ✗. Character B: All covered ✓. Character C: Defense mechanisms ✗, Trauma ✓, Attachment ✓. Recommendations: Add Big Five ref for Character A, defense mechanisms ref for Character C.
 
 ## 5. Important caveats
 

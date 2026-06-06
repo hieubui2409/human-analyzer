@@ -50,7 +50,7 @@ jobs:
           # Scope to the 6 frameworks only — ck/ckm skills are out of scope (and may use newer py syntax).
           fw = ("orc", "psy", "cre", "gro", "mat", "com")
           targets = [p for f in fw for p in root.glob(f'.claude/skills/{f}-*/scripts/*.py')]
-          targets += list(root.glob('.claude/scripts/platform_lib/*.py')) + list(root.glob('tools/pack/*.py'))
+          targets += list(root.glob('.claude/scripts/platform_lib/*.py')) + list(root.glob('.claude/skills/_framework-shared/scripts/*.py'))
           bad = []
           for f in targets:
               try:

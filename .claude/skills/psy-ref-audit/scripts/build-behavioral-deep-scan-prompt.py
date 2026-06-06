@@ -6,10 +6,10 @@ The returned prompt is consumed by the orchestrating Claude (main agent) to find
 IMPLICIT behavioral patterns (behavior present but theory term not used).
 
 Usage:
-    build-behavioral-deep-scan-prompt.py --character hieu
-    build-behavioral-deep-scan-prompt.py --character hoa --file psychology/formulation.md
-    build-behavioral-deep-scan-prompt.py --character chien --slugs savior-complex,hypervigilance
-    build-behavioral-deep-scan-prompt.py --character hieu --json
+    build-behavioral-deep-scan-prompt.py --character character-a
+    build-behavioral-deep-scan-prompt.py --character character-b --file psychology/formulation.md
+    build-behavioral-deep-scan-prompt.py --character character-c --slugs savior-complex,hypervigilance
+    build-behavioral-deep-scan-prompt.py --character character-a --json
 """
 import json
 import os

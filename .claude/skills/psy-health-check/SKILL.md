@@ -122,7 +122,7 @@ Priority gaps to fill:
 
 ```bash
 /psy:health-check                              # all characters
-/psy:health-check --character hieu             # Nhân vật A only
+/psy:health-check --character character-a             # Nhân vật A only
 /psy:health-check --all --gaps-only            # show only weak areas
 /psy:health-check --json                       # machine-readable
 ```

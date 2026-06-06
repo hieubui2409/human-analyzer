@@ -32,7 +32,7 @@ Bất kỳ biến thể nào không vượt qua bất kỳ cổng nào được 
 ```
 Xem các bài tóm tắt được lập kế hoạch: LinkedIn brief (văn bản-đầu tiên, 3000 ký tự, giọng điệu chuyên nghiệp). TikTok brief (kịch bản, 9:16, hội thoại). Facebook brief (tường thuật, 6000 ký tự, cảm xúc).
 
-**Khi bạn phát triển:** Hãy thử `--platforms all` (7 nền tảng) khi bạn muốn đạt được mức tối đa. Sử dụng `--character hieu` để khóa hồ sơ giọng điệu, cải thiện độ chính xác kiểm toán giọng điệu.
+**Khi bạn phát triển:** Hãy thử `--platforms all` (7 nền tảng) khi bạn muốn đạt được mức tối đa. Sử dụng `--character character-a` để khóa hồ sơ giọng điệu, cải thiện độ chính xác kiểm toán giọng điệu.
 
 **Luồng tiêu chuẩn:** Khám phá góc nhìn → `cre:multiplatform --source <angle> --platforms active` → LLM viết → cổng chạy → biến thể công bố.
 
@@ -40,7 +40,7 @@ Xem các bài tóm tắt được lập kế hoạch: LinkedIn brief (văn bản
 
 ### Trường hợp sử dụng: Batch multiplatform từ khám phá
 
-> **Bạn:** `cre:angle-discovery --character hieu --top 3 --json` trả lại 3 góc nhìn.
+> **Bạn:** `cre:angle-discovery --character character-a --top 3 --json` trả lại 3 góc nhìn.
 >
 > **Bạn:** Vòng lặp: mỗi góc nhìn, `cre:multiplatform --source <angle> --platforms linkedin,tiktok,facebook --slug {dated-slug}`.
 >
@@ -50,7 +50,7 @@ Xem các bài tóm tắt được lập kế hoạch: LinkedIn brief (văn bản
 
 ### Trường hợp sử dụng: Các nền tảng hoạt động duy nhất
 
-> **Bạn:** `cre:multiplatform --source context.md --slug 260526-pivot --platforms active --character hieu`
+> **Bạn:** `cre:multiplatform --source context.md --slug 260526-pivot --platforms active --character character-a`
 >
 > **Kỹ năng:** Mặc định `active` = các nền tảng có thư mục tài sản hiện tại (blog, facebook, linkedin). Chỉ viết cho những cái đó.
 >

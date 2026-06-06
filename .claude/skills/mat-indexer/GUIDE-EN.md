@@ -35,15 +35,15 @@ You've loaded a stack of materials — transcripts, letters, observations. Befor
 > - Returns contradiction table:
 >   ```
 >   # | Material | Claims | Profile Says | Severity | File
->   1 | letter-01 | "Nhân vật A anxious Jan 2024" | "anxiety emerged Jun 2024" | MEDIUM | ...
+>   1 | letter-01 | "Character A anxious Jan 2024" | "anxiety emerged Jun 2024" | MEDIUM | ...
 >   2 | news-02 | "crisis hospitalization" | "no psychiatric admission" | CRITICAL | ...
 >   ```
 > - You see: 1 CRITICAL (stop — needs immediate review), 2 MEDIUM (flag for human judgment)
 
 ### Use case: Coverage map for a character
-> **You:** "What evidence do we have for Nhân vật C's profile? Where are the gaps?"
+> **You:** "What evidence do we have for Character C's profile? Where are the gaps?"
 > 
-> **Skill:** Runs `--character chien --coverage`:
+> **Skill:** Runs `--character character-c --coverage`:
 > - Lists all 21 profile sections
 > - For each, counts how many materials reference it + what tiers
 >   ```
@@ -72,7 +72,7 @@ You've loaded a stack of materials — transcripts, letters, observations. Befor
 
 ## 5. Important caveats
 
-**Contradiction doesn't mean error.** If material says "Nhân vật A was anxious in January" and profile says "anxiety emerged in June," that's a genuine contradiction. But maybe the profile is incomplete (anxiety was latent), or the material is misremembered, or both are true (different types of anxiety). The contradiction is flagged; the LLM decides what it means.
+**Contradiction doesn't mean error.** If material says "Character A was anxious in January" and profile says "anxiety emerged in June," that's a genuine contradiction. But maybe the profile is incomplete (anxiety was latent), or the material is misremembered, or both are true (different types of anxiety). The contradiction is flagged; the LLM decides what it means.
 
 **Coverage gaps are information, not problems.** Some profile sections are inherently harder to evidence. Strengths (light/strengths-hope.md) may have fewer materials than traumas. That's okay — it doesn't invalidate your profile, just signals where you might want more input.
 

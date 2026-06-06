@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You just updated Nhân vật A's timeline/overview.md to add a new mentoring milestone with Nhân vật C. But Nhân vật C's profile also has a timeline, and he should have the same event. And Nhân vật A-Nhân vật C's relationship file should note this interaction. Instead of manually hunting through files, this skill reads the relational graph, identifies Nhân vật C as "connected to Nhân vật A," and tells you: "Update Nhân vật C's timeline/overview.md" (HIGH priority) and "Update relationships/hieu.md in Nhân vật C's profile" (HIGH priority).
+You just updated Character A's timeline/overview.md to add a new mentoring milestone with Character C. But Character C's profile also has a timeline, and he should have the same event. And Character A-Character C's relationship file should note this interaction. Instead of manually hunting through files, this skill reads the relational graph, identifies Character C as "connected to Character A," and tells you: "Update Character C's timeline/overview.md" (HIGH priority) and "Update relationships/hieu.md in Character C's profile" (HIGH priority).
 
 ## 2. Core concepts (the mental model)
 
@@ -14,31 +14,31 @@ You just updated Nhân vật A's timeline/overview.md to add a new mentoring mil
 
 ## 3. Learning path
 
-**First run:** `psy:propagate --character hieu` — see all propagation targets after Nhân vật A changes.
+**First run:** `psy:propagate --character character-a` — see all propagation targets after Character A changes.
 
-**Specific section:** `psy:propagate --character hoa --section relationships` — narrow to one section's propagation.
+**Specific section:** `psy:propagate --character character-b --section relationships` — narrow to one section's propagation.
 
-**Machine output:** `psy:propagate --character chien --json` — parse programmatically for automation.
+**Machine output:** `psy:propagate --character character-c --json` — parse programmatically for automation.
 
 ## 4. Use cases (each = a sample conversation)
 
 ### Use case: Full-character propagation
 
-> You: "I rewrote psychology/formulation.md for Nhân vật A (core wound explanation). What else needs updating?"
-> Skill: `psy:propagate --character hieu`
-> → Detected: Nhân vật B (HIGH: relationships/hieu.md may need updates reflecting new understanding), Nhân vật C (MEDIUM: timeline may be affected if Nhân vật A's wounds trigger events).
+> You: "I rewrote psychology/formulation.md for Character A (core wound explanation). What else needs updating?"
+> Skill: `psy:propagate --character character-a`
+> → Detected: Character B (HIGH: relationships/hieu.md may need updates reflecting new understanding), Character C (MEDIUM: timeline may be affected if Character A's wounds trigger events).
 
 ### Use case: Relationship-specific cascade
 
-> You: "Nhân vật B's family.md now says 'father was absent,' not 'dead.' What cascades?"
-> Skill: `psy:propagate --character hoa --section relationships`
-> → Nhân vật A's relationships/hoa.md should note: "Nhân vật B's father absent, not deceased" (affects how Nhân vật A supports Nhân vật B). Nhân vật C: no direct relationship, skip.
+> You: "Character B's family.md now says 'father was absent,' not 'dead.' What cascades?"
+> Skill: `psy:propagate --character character-b --section relationships`
+> → Character A's relationships/hoa.md should note: "Character B's father absent, not deceased" (affects how Character A supports Character B). Character C: no direct relationship, skip.
 
 ### Use case: Timeline propagation
 
-> You: "Added Oct 2025 kết nghĩa event to Nhân vật A's timeline."
-> Skill: `psy:propagate --character hieu --section timeline`
-> → Nhân vật B's timeline/overview.md must have matching entry (HIGH priority). Also check Nhân vật B's relationships/hieu.md for milestone mention.
+> You: "Added Oct 2025 kết nghĩa event to Character A's timeline."
+> Skill: `psy:propagate --character character-a --section timeline`
+> → Character B's timeline/overview.md must have matching entry (HIGH priority). Also check Character B's relationships/hieu.md for milestone mention.
 
 ## 5. Important caveats
 

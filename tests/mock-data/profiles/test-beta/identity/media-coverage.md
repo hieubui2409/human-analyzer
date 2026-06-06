@@ -15,5 +15,5 @@ confidence: low
 ## Press: School Newspaper Feature
 
 - Date: 12/2024
-- Outlet: Tỉnh X High School Newsletter
+- Outlet: Province X High School Newsletter
 - Topic: Outstanding student profile

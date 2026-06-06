@@ -99,7 +99,7 @@ LLM analyzes gathered data for:
 
 ```bash
 /gro:learning-profile                              # all characters
-/gro:learning-profile --character chien            # Nhân vật C only
+/gro:learning-profile --character character-c            # Nhân vật C only
 /gro:learning-profile --json                       # machine-readable
 ```
 

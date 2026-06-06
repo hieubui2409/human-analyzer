@@ -15,6 +15,16 @@ from platform_lib.paths import ASSETS, ROOT, PRIVACY_AUDIT
 from platform_lib.formatters import print_table, severity_badge, eprint
 from platform_lib.privacy_tags import load_confidential_names
 
+# Load project-specific forbidden tokens (display names + pii_extra like org/program names)
+# from the shared roster source. Returns [] when the roster is absent (toolkit-only pack),
+# so the scanner degrades gracefully to generic pattern detection only.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_framework-shared" / "scripts"))
+try:
+    from pii_tokens import tokens_only as _pii_tokens_only
+    _PROJECT_SPECIFIC_TOKENS: list[str] = _pii_tokens_only()
+except ImportError:
+    _PROJECT_SPECIFIC_TOKENS = []
+
 # Rule-09 privacy tags — leaking any of these into published content is a CRITICAL breach.
 # CONFIDENTIAL carries an optional ": {person}" payload (the real grammar in the corpus),
 # so the regex must match both the bare and the named form.
@@ -28,13 +38,24 @@ PRIVACY_TAG_PATTERNS = [
     (re.compile(r'\[DRAFT\]', re.IGNORECASE), "MEDIUM", "DRAFT tag"),
 ]
 
-LOCATION_PATTERNS = [
-    re.compile(r'\bQuảng\s+Bình\b', re.IGNORECASE),
+# Non-character org/location tokens that are corpus-constant (not roster-derived):
+# Bách Khoa, ĐHBK, One Mount are institution names out of scope for the PII roster
+# but still worth flagging in assets as identity-adjacent location/org signals.
+_STATIC_LOCATION_PATTERNS = [
     re.compile(r'\bBách\s+Khoa\b', re.IGNORECASE),
     re.compile(r'\bĐHBK\b'),
     re.compile(r'\bOne\s+Mount\b', re.IGNORECASE),
-    re.compile(r'\bVietSeeds\b', re.IGNORECASE),
 ]
+
+# Project-specific tokens from the roster (display names + pii_extra) as compiled patterns.
+# When the roster is absent, _PROJECT_SPECIFIC_TOKENS is [] and this list is empty.
+_ROSTER_LOCATION_PATTERNS = [
+    re.compile(rf'(?<!\w){re.escape(tok)}(?!\w)', re.IGNORECASE)
+    for tok in _PROJECT_SPECIFIC_TOKENS
+    if len(tok) >= 2
+]
+
+LOCATION_PATTERNS = _STATIC_LOCATION_PATTERNS + _ROSTER_LOCATION_PATTERNS
 
 # C1-CRE-08: Vietnamese phone (10-digit, starts 03/05/07/08/09) checked BEFORE CCCD.
 # CCCD is any 12-digit number. Checked in order longest-match: phone first (10-digit

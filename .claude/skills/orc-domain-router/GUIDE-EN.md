@@ -28,7 +28,7 @@ When you change a profile or ingest material, you're not just editing one file�
 
 ### Use case: See routing after profile changes
 
-> You: "I edited Nhân vật B's psychology files. What cascades from that?"
+> You: "I edited Character B's psychology files. What cascades from that?"
 >
 > Skill: Detects psychology/ change → PSY.refresh event → psy:crossref, psy:ref-audit run. Then those emit PSY.refresh downstream → CRE.recalibrate → cre:voice-audit runs. You see the full chain.
 

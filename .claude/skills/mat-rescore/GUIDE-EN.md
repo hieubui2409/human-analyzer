@@ -25,7 +25,7 @@ When you load materials into the MAT pipeline, each one gets a CRAAP score (Curr
 
 1. **Full audit:** `mat:rescore` — see all materials needing rescore across all characters.
 2. **See the summary:** Scan the "Materials Needing Rescore" table and "Summary by Character" breakdowns.
-3. **Narrow by character:** `mat:rescore --character hieu` — just Nhân vật A's issues.
+3. **Narrow by character:** `mat:rescore --character character-a` — just Character A's issues.
 4. **Focus on critical gaps:** `mat:rescore --missing-only` — only files with zero CRAAP at all (highest priority).
 5. **Focus on raw status:** `mat:rescore --raw-only` — only files stuck at "raw" (never processed).
 6. **Act:** For flagged files, run `mat:loader --ingest <file>` to re-score them.

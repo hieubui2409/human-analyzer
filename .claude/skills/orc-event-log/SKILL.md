@@ -36,7 +36,7 @@ Unknown prefixes fall back to `cascade-events.jsonl` with a WARNING. Query merge
 ### Append Mode
 
 ```bash
-/orc:event-log --append --event-type MAT.integrated --source mat:indexer --character hieu --reason "New transcript processed"
+/orc:event-log --append --event-type MAT.integrated --source mat:indexer --character character-a --reason "New transcript processed"
 ```
 
 ### Query Mode
@@ -153,8 +153,8 @@ Each event is one JSON line in `.claude/session-state/event-log.jsonl`:
 ```bash
 /orc:event-log                                                    # recent events
 /orc:event-log --query --event-type MAT.integrated                # all integrations
-/orc:event-log --query --character hieu --since 2026-05-01        # Nhân vật A events this month
-/orc:event-log --append --event-type PSY.refresh --source psy:wave --character hoa --reason "Wave 1 complete"
+/orc:event-log --query --character character-a --since 2026-05-01        # Nhân vật A events this month
+/orc:event-log --append --event-type PSY.refresh --source psy:wave --character character-b --reason "Wave 1 complete"
 ```
 
 ## See Also

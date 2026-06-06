@@ -4,7 +4,7 @@ import sys
 import tarfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools" / "pack"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / ".claude" / "skills" / "_framework-shared" / "scripts"))
 import safety_filter  # noqa: E402
 import build_pack  # noqa: E402
 
@@ -20,7 +20,7 @@ def test_two_builds_byte_identical():
 def test_safety_filter_drops_secrets_and_pii():
     drop = [
         ".env", "x/.env.local", "a/credentials.json", "k/server.key", "c/cert.pem",
-        "docs/profiles/character-a/INDEX.md", "docs/materials/x/raw.md", "docs/graph/relational-dynamics.md",
+        "docs/profiles/test-alpha/INDEX.md", "docs/materials/x/raw.md", "docs/graph/relational-dynamics.md",
         ".claude/telemetry/gateguard-audit.jsonl", ".claude/cache/runtime/x/cache.json",
         ".git/config", "a/__pycache__/x.pyc",
     ]

@@ -12,6 +12,15 @@ _VENV = ROOT / ".claude" / "skills" / ".venv" / "bin" / "python3"
 PY = str(_VENV) if _VENV.exists() else sys.executable
 ENV = {**__import__("os").environ, "PYTHONPATH": str(ROOT / ".claude" / "scripts")}
 
+sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
+from platform_lib.paths import ALL_CHARS, CHAR_SEARCH_ALIASES  # noqa: E402
+
+pytestmark = pytest.mark.skipif(not ALL_CHARS, reason="no character roster — toolkit-only pack")
+# First real character + one of its non-slug aliases (sourced dynamically) — exercises
+# alias→slug resolution without any hardcoded real name in the shipped test tree.
+_CHAR = ALL_CHARS[0] if ALL_CHARS else "x"
+_ALIAS = next((a.lower() for a in CHAR_SEARCH_ALIASES.get(_CHAR, []) if a.lower() != _CHAR), _CHAR)
+
 
 def _run(*args):
     return subprocess.run(
@@ -27,22 +36,22 @@ def test_help_exits_0():
     assert "character" in r.stdout.lower()
 
 
-def test_hieu_plain_exits_0():
+def test_char_plain_exits_0():
     """Running on a real character must exit 0 (deterministic, read-only)."""
-    r = _run("--character", "hieu")
+    r = _run("--character", _ALIAS)
     assert r.returncode == 0, r.stderr
 
 
-def test_hieu_output_contains_instructions_block():
+def test_char_output_contains_instructions_block():
     """stdout must include the '## Instructions' block from build_llm_prompt_for_deep_scan."""
-    r = _run("--character", "hieu")
+    r = _run("--character", _ALIAS)
     assert r.returncode == 0, r.stderr
     assert "## Instructions" in r.stdout, "Expected '## Instructions' block in prompt output"
 
 
-def test_hieu_output_contains_profile_section():
+def test_char_output_contains_profile_section():
     """stdout must contain at least one profile section marker (file:line-line format)."""
-    r = _run("--character", "hieu")
+    r = _run("--character", _ALIAS)
     assert r.returncode == 0, r.stderr
     # extract_sections_for_llm_review emits blocks like [formulation.md:1-5]
     import re
@@ -53,7 +62,7 @@ def test_hieu_output_contains_profile_section():
 
 def test_json_shape_has_required_keys():
     """--json output must be valid JSON with keys: character, files, prompt."""
-    r = _run("--character", "hieu", "--json")
+    r = _run("--character", _ALIAS, "--json")
     assert r.returncode == 0, r.stderr
     data = json.loads(r.stdout)
     assert {"character", "files", "prompt"} <= set(data.keys()), (
@@ -63,17 +72,17 @@ def test_json_shape_has_required_keys():
 
 def test_json_character_field_is_full_slug():
     """character field must be the canonical slug, not the alias."""
-    r = _run("--character", "hieu", "--json")
+    r = _run("--character", _ALIAS, "--json")
     assert r.returncode == 0, r.stderr
     data = json.loads(r.stdout)
-    assert data["character"] == "character-a", (
-        f"Expected 'character-a', got '{data['character']}'"
+    assert data["character"] == _CHAR, (
+        f"Expected {_CHAR!r}, got '{data['character']}'"
     )
 
 
 def test_json_prompt_contains_instructions():
     """The prompt string inside JSON must contain the Instructions block."""
-    r = _run("--character", "hieu", "--json")
+    r = _run("--character", _ALIAS, "--json")
     assert r.returncode == 0, r.stderr
     data = json.loads(r.stdout)
     assert "## Instructions" in data["prompt"]
@@ -81,8 +90,8 @@ def test_json_prompt_contains_instructions():
 
 def test_slug_filter_reduces_catalog():
     """--slugs limits the Behavioral Theory Catalog to only listed theories."""
-    r_full = _run("--character", "hieu")
-    r_filtered = _run("--character", "hieu", "--slugs", "savior-complex")
+    r_full = _run("--character", _ALIAS)
+    r_filtered = _run("--character", _ALIAS, "--slugs", "savior-complex")
     assert r_full.returncode == 0 and r_filtered.returncode == 0
     # Filtered output must be shorter (fewer catalog entries)
     assert len(r_filtered.stdout) < len(r_full.stdout), (
@@ -99,7 +108,7 @@ def test_slug_filter_reduces_catalog():
 
 def test_single_file_mode():
     """--file restricts scan to one profile file; output still has Instructions block."""
-    r = _run("--character", "hieu", "--file", "psychology/formulation.md")
+    r = _run("--character", _ALIAS, "--file", "psychology/formulation.md")
     assert r.returncode == 0, r.stderr
     assert "## Instructions" in r.stdout
 
@@ -112,5 +121,5 @@ def test_invalid_character_exits_nonzero():
 
 def test_invalid_file_exits_nonzero():
     """Unknown --file path must exit non-zero."""
-    r = _run("--character", "hieu", "--file", "psychology/does-not-exist.md")
+    r = _run("--character", _ALIAS, "--file", "psychology/does-not-exist.md")
     assert r.returncode != 0, "Expected non-zero exit for missing file"

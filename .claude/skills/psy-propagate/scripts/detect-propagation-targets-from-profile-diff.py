@@ -56,7 +56,8 @@ PROPAGATION_MAP = {
 def _load_connections() -> dict:
     """Derive the source→{target: strength} map from the dyad-strength table in the KG
     (`docs/graph/relational-dynamics.md`) — the single source of relational truth — instead of a
-    hand-maintained literal that drifts from it. Rows look like `| Nhân vật A ↔ Nhân vật B | … | done | high |`.
+    hand-maintained literal that drifts from it. Table rows contain display-name pairs separated
+    by a U+2194 (↔) character and a strength column (high/medium/low).
     Symmetric (a↔b). Falls back to an empty map (no cross-char propagation) if the graph is absent.
     """
     graph_file = GRAPH / "relational-dynamics.md"
@@ -74,6 +75,7 @@ def _load_connections() -> dict:
         parts = [p.strip() for p in cells[0].split("↔")]
         if len(parts) != 2:
             continue
+        # Display names in table cells resolve via the roster-derived map — corpus-agnostic.
         a, b = display_to_slug.get(parts[0]), display_to_slug.get(parts[1])
         if a and b:
             conn.setdefault(a, {})[b] = strength

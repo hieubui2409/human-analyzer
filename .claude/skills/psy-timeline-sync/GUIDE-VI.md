@@ -17,7 +17,7 @@ Bạn cập nhật dòng thời gian của Nhân vật A bằng "kết nghĩa Se
 
 **Tất cả các nhân vật:** `psy:timeline-sync --all` — kiểm tra đầy đủ qua các nhân vật.
 
-**Một nhân vật:** `psy:timeline-sync --character hieu` — chỉ dòng thời gian của Nhân vật A (không kiểm tra chéo).
+**Một nhân vật:** `psy:timeline-sync --character character-a` — chỉ dòng thời gian của Nhân vật A (không kiểm tra chéo).
 
 **Đầu ra JSON:** `psy:timeline-sync --json` — có cấu trúc cho tự động hóa.
 
@@ -46,5 +46,5 @@ Bạn cập nhật dòng thời gian của Nhân vật A bằng "kết nghĩa Se
 - **Khớp mờ trong ±1 tháng là chấp nhận được**: Ký ức văn hóa, mơ hồ cố ý (nhân vật nhớ "mùa hè" không phải ngày chính xác) → +/- 1 tháng OK. Vượt quá điều đó → cờ.
 - **Sự kiện bị mất được cờ nhưng không phải lỗi**: Nếu dòng thời gian của Nhân vật B không đề cập đến sự kiện Nhân vật A-Nhân vật B, nó là một khoảng trống, không nhất thiết sai (Nhân vật B có thể không xem xét nó có ý nghĩa). Xem xét thủ công cần thiết.
 - **Bằng chứng vật liệu hướng dẫn đề xuất**: Nếu cả hai có ngày khác nhau, bằng chứng vật liệu (nguồn P1) gợi ý tipping. Nếu cả hai mơ hồ → hỏi người dùng.
-- **Kiểm tra nhân vật duy nhất không tìm thấy không phù hợp**: `--character hieu` chỉ kiểm tra dòng thời gian của Nhân vật A. Không so sánh chéo. Sử dụng `--all` hoặc `--pair` để không phù hợp.
+- **Kiểm tra nhân vật duy nhất không tìm thấy không phù hợp**: `--character character-a` chỉ kiểm tra dòng thời gian của Nhân vật A. Không so sánh chéo. Sử dụng `--all` hoặc `--pair` để không phù hợp.
 - **Không phải là bộ kiểm tra tính nhất quán**: Điều này kiểm tra ngày chỉ. Tính nhất quán tâm lý, động lực quan hệ, sự liên kết kêu gọi → đó là psy:crossref.

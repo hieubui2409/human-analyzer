@@ -114,7 +114,7 @@ LLM reviews findings and suggests specific corrections for failures.
 
 ```bash
 /gro:validate                              # all characters
-/gro:validate --character hieu             # Nhân vật A only
+/gro:validate --character character-a             # Nhân vật A only
 /gro:validate --all --json                 # machine-readable
 /gro:validate --fix                        # include fix suggestions
 /gro:validate --stale-days 180             # warn on files >180 days old

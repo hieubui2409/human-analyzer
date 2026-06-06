@@ -4,13 +4,13 @@
 
 ## 1. What this skill does for you
 
-You've published 5 posts about Nhân vật A over the past month. Reading them back, one post feels off — more formal, more clinical, than his usual voice. This skill reads his `identity/writing-voice.md` (the structured voice profile), then audits each of your 5 posts against it. Result: flagged which posts drift, what type of drift (tone break, vocabulary mismatch, implicit clinical language), severity. No rewrites — just clarity on where consistency slipped.
+You've published 5 posts about Character A over the past month. Reading them back, one post feels off — more formal, more clinical, than his usual voice. This skill reads his `identity/writing-voice.md` (the structured voice profile), then audits each of your 5 posts against it. Result: flagged which posts drift, what type of drift (tone break, vocabulary mismatch, implicit clinical language), severity. No rewrites — just clarity on where consistency slipped.
 
 ## 2. Core concepts (the mental model)
 
 **Voice profile dimensions (from identity/writing-voice.md):**
 
-Nhân vật A's profile lists: sentence rhythm (medium, varied), compression (moderate), emotional register (analytical default, range narrow), imagery bank (psychology + growth), hard bans (never says X, Y), defense gates (intellectualization manifests as dense, detailed), growth modifiers (recent arcs shift voice).
+Character A's profile lists: sentence rhythm (medium, varied), compression (moderate), emotional register (analytical default, range narrow), imagery bank (psychology + growth), hard bans (never says X, Y), defense gates (intellectualization manifests as dense, detailed), growth modifiers (recent arcs shift voice).
 
 **Drift detection:**
 
@@ -27,9 +27,9 @@ Nhân vật A's profile lists: sentence rhythm (medium, varied), compression (mo
 **First run:**
 ```bash
 .claude/skills/.venv/bin/python3 .claude/skills/cre-voice-audit/scripts/audit-published-content-for-voice-drift.py \
-  --character hieu
+  --character character-a
 ```
-Output: audit report. 5 posts scanned. Post 3 (LinkedIn mentoring) flagged: "Tone too formal (vs. conversational default). Vocabulary: 'pedagogical framework' — Nhân vật A avoids formal edu terminology." Severity: MEDIUM.
+Output: audit report. 5 posts scanned. Post 3 (LinkedIn mentoring) flagged: "Tone too formal (vs. conversational default). Vocabulary: 'pedagogical framework' — Character A avoids formal edu terminology." Severity: MEDIUM.
 
 **As you grow:** Try `--report` to generate a full report saved to `plans/reports/`. Use `--fresh` when you've edited a post and want to re-audit.
 
@@ -39,9 +39,9 @@ Output: audit report. 5 posts scanned. Post 3 (LinkedIn mentoring) flagged: "Ton
 
 ### Use case: Batch consistency check
 
-> **You:** "I published 10 posts this month. Verify they all sound like Nhân vật A."
+> **You:** "I published 10 posts this month. Verify they all sound like Character A."
 >
-> **Skill:** `--character hieu` → scans all Nhân vật A posts in assets/ → "9 PASS (consistent), 1 MEDIUM (tone too formal on post_5)."
+> **Skill:** `--character character-a` → scans all Character A posts in assets/ → "9 PASS (consistent), 1 MEDIUM (tone too formal on post_5)."
 >
 > **You:** Review post_5, maybe rewrite opening to match voice.
 
@@ -75,7 +75,7 @@ Output: audit report. 5 posts scanned. Post 3 (LinkedIn mentoring) flagged: "Ton
 - **Drift is heuristic, not absolute:** Voice audit is LLM-based; borderline cases require human judgment.
 - **Severity is advisory:** HIGH drift doesn't auto-block; author decides action.
 - **Platform-aware:** TikTok conversational tone is expected (not drift); LinkedIn conversational tone might be drift (depends on character profile).
-- **Defense mechanisms matter:** Character's active defenses shape voice (e.g., Nhân vật A's intellectualization → dense, detailed language is NOT drift; it's authentic).
+- **Defense mechanisms matter:** Character's active defenses shape voice (e.g., Character A's intellectualization → dense, detailed language is NOT drift; it's authentic).
 
 ## See also
 

@@ -112,7 +112,7 @@ def main():
         print("Use `orc:event-log --append` to log events.")
         return
 
-    # Resolve character alias to canonical slug before filtering (e.g. "hieu" -> "character-a").
+    # Resolve character alias to canonical slug before filtering (e.g. an alias -> "character-a").
     resolved_character = None
     if args.character:
         try:

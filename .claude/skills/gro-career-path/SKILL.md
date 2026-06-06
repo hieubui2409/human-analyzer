@@ -96,7 +96,7 @@ LLM analyzes gathered data for:
 
 ```bash
 /gro:career-path                              # all characters
-/gro:career-path --character hieu             # Nhân vật A only
+/gro:career-path --character character-a             # Nhân vật A only
 /gro:career-path --all --decisions-only       # decision data only
 /gro:career-path --json                       # machine-readable
 ```

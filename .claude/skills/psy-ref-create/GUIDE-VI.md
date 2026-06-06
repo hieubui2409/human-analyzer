@@ -17,7 +17,7 @@
 
 **Xây dựng nhanh chóng:** `psy:ref-create attachment-trauma --quick` — tệp tối thiểu, điền sau.
 
-**Tạo đầy đủ:** `psy:ref-create benevolence-fatigue --character hieu` — toàn diện với trường hợp học.
+**Tạo đầy đủ:** `psy:ref-create benevolence-fatigue --character character-a` — toàn diện với trường hợp học.
 
 **Kỹ thuật ngược:** `psy:ref-create --from-behavior "Always helping others, never asking for help, eventual burnout"` — mô tả hành vi, kỹ năng đề xuất lý thuyết.
 
@@ -26,7 +26,7 @@
 ### Trường hợp sử dụng: Điền khoảng trống được phát hiện
 
 > Bạn: "`psy:ref-audit --discover` tìm thấy: 'Nhân vật A cho thấy sự kiệt sức từ chăm sóc nhưng không có lý thuyết nào bao gồm kiệt sức từ lòng tốt.' Tạo tài liệu tham khảo?"
-> Kỹ năng: `psy:ref-create benevolence-fatigue --character hieu --quick`
+> Kỹ năng: `psy:ref-create benevolence-fatigue --character character-a --quick`
 > → Xây dựng tệp tham chiếu với định nghĩa + cơ chế. Đánh dấu các phần 4–6 (bối cảnh Việt Nam, nghiên cứu trường hợp, v.v.) là TODO cho việc mở rộng sau này.
 
 ### Trường hợp sử dụng: Kỹ thuật ngược từ hành vi
@@ -38,7 +38,7 @@
 ### Trường hợp sử dụng: Tài liệu tham khảo đầy đủ với nghiên cứu trường hợp
 
 > Bạn: "Chúng ta cần một tài liệu tham khảo đầy đủ về 'sincere misbelief' (tin rằng hình ảnh sai lệch mà người ta đã xây dựng). Tạo nó."
-> Kỹ năng: `psy:ref-create sincere-misbelief --character chiến`
+> Kỹ năng: `psy:ref-create sincere-misbelief --character character-c`
 > → Tạo tệp với tất cả 6 phần. Định nghĩa + Freud/Jung trích dẫn. Nghiên cứu trường hợp: Kêu gọi câu chuyện mẹ kế của Nhân vật C. Cập nhật INDEX.md. Sẵn sàng sử dụng.
 
 ## 5. Cảnh báo quan trọng

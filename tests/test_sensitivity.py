@@ -1,4 +1,10 @@
-"""Tests for file_sensitivity.py — sensitivity classification module (Batch 2 B6)."""
+"""Tests for file_sensitivity.py — sensitivity classification module.
+
+Character-agnostic: profile paths are built from the live roster (paths.ALL_CHARS), never a
+hardcoded real slug, so the shipped test tree carries no real names. The whole module skips when
+the roster is empty (toolkit-only pack with no characters.yaml) — classify_file keys sensitivity
+off roster membership, so a synthetic slug would not classify.
+"""
 import json
 import subprocess
 import sys
@@ -10,38 +16,46 @@ SCRIPTS_DIR = Path(__file__).resolve().parents[1] / ".claude" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 from platform_lib.file_sensitivity import classify_file, classify_all_profiles, load_config
+from platform_lib.paths import ALL_CHARS
 from venv_python import VENV_PYTHON
+
+pytestmark = pytest.mark.skipif(not ALL_CHARS, reason="no character roster — toolkit-only pack")
+
+# Two distinct real slugs (sourced dynamically) for path-pattern assertions; fall back to one
+# when the roster has a single character.
+_CHAR = ALL_CHARS[0] if ALL_CHARS else "x"
+_CHAR2 = ALL_CHARS[1] if len(ALL_CHARS) > 1 else _CHAR
 
 
 class TestClassifyFile:
     def test_classify_critical_darkness(self):
-        r = classify_file("docs/profiles/character-a/darkness/traumas.md")
+        r = classify_file(f"docs/profiles/{_CHAR}/darkness/traumas.md")
         assert r["level"] == "CRITICAL"
         assert r["zone"] == "PSY-darkness"
         assert len(r["checks"]) > 0
 
     def test_classify_high_psychology_formulation(self):
-        r = classify_file("docs/profiles/character-a/psychology/formulation.md")
+        r = classify_file(f"docs/profiles/{_CHAR}/psychology/formulation.md")
         assert r["level"] == "HIGH"
         assert r["zone"] == "PSY-clinical"
 
     def test_classify_high_psychology_generic(self):
-        r = classify_file("docs/profiles/character-b/psychology/archetype.md")
+        r = classify_file(f"docs/profiles/{_CHAR2}/psychology/archetype.md")
         assert r["level"] == "HIGH"
         assert r["zone"] == "PSY-clinical"
 
     def test_classify_medium_relationships(self):
-        r = classify_file("docs/profiles/character-a/relationships/family.md")
+        r = classify_file(f"docs/profiles/{_CHAR}/relationships/family.md")
         assert r["level"] == "MEDIUM"
         assert r["zone"] == "PSY-relationship"
 
     def test_classify_medium_growth(self):
-        r = classify_file("docs/profiles/character-a/growth/career-path.md")
+        r = classify_file(f"docs/profiles/{_CHAR}/growth/career-path.md")
         assert r["level"] == "MEDIUM"
         assert r["zone"] == "GRO-growth"
 
     def test_classify_medium_materials(self):
-        r = classify_file("docs/materials/character-a/some-transcript.md")
+        r = classify_file(f"docs/materials/{_CHAR}/some-transcript.md")
         assert r["level"] == "MEDIUM"
         assert r["zone"] == "MAT-materials"
 
@@ -51,11 +65,11 @@ class TestClassifyFile:
         assert r["zone"] == "ORC-rules"
 
     def test_classify_low_identity(self):
-        r = classify_file("docs/profiles/character-a/identity/core.md")
+        r = classify_file(f"docs/profiles/{_CHAR}/identity/core.md")
         assert r["level"] == "LOW"
 
     def test_classify_low_timeline(self):
-        r = classify_file("docs/profiles/character-c/timeline/overview.md")
+        r = classify_file(f"docs/profiles/{_CHAR2}/timeline/overview.md")
         assert r["level"] == "LOW"
 
     def test_classify_none_random_file(self):
@@ -65,8 +79,8 @@ class TestClassifyFile:
         assert r["pattern_matched"] is None
 
     def test_first_match_priority(self):
-        specific = classify_file("docs/profiles/character-a/psychology/formulation.md")
-        generic = classify_file("docs/profiles/character-a/psychology/archetype.md")
+        specific = classify_file(f"docs/profiles/{_CHAR}/psychology/formulation.md")
+        generic = classify_file(f"docs/profiles/{_CHAR}/psychology/archetype.md")
         assert specific["zone"] == "PSY-clinical"
         assert generic["zone"] == "PSY-clinical"
         assert specific["pattern_matched"] == "psychology/formulation.md"
@@ -105,7 +119,7 @@ class TestCLI:
 
     def test_cli_path(self, python_bin, script_path):
         result = subprocess.run(
-            [python_bin, script_path, "--path", "docs/profiles/character-a/darkness/traumas.md"],
+            [python_bin, script_path, "--path", f"docs/profiles/{_CHAR}/darkness/traumas.md"],
             capture_output=True, text=True,
         )
         assert result.returncode == 0

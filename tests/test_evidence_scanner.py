@@ -68,7 +68,7 @@ class TestExtractClaims:
 
 class TestLeakDetection:
     def test_privacy_tag_is_leak(self, map_mod):
-        assert map_mod.detect_leaks("Chuyện này [CONFIDENTIAL: Nhân vật B] không nên kể.")
+        assert map_mod.detect_leaks("Chuyện này [CONFIDENTIAL: Alpha] không nên kể.")
 
     def test_private_tag_is_leak(self, map_mod):
         assert map_mod.detect_leaks("[PRIVATE] nội dung riêng tư")
@@ -110,7 +110,7 @@ class TestAdjudicate:
         return {"claim": text, "line": 1, "span": [0, len(text)]}
 
     def test_leak_claim_fails(self, map_mod):
-        r = map_mod.adjudicate_claim(self._claim("[CONFIDENTIAL: Nhân vật B] bí mật"), [], strict=False)
+        r = map_mod.adjudicate_claim(self._claim("[CONFIDENTIAL: Alpha] bí mật"), [], strict=False)
         assert r["verdict"] == "FAIL" and r["reason"] == "rule09_leak"
 
     def test_no_evidence_warns_never_pass(self, map_mod):

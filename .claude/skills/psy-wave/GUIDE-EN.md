@@ -14,13 +14,13 @@ You've just integrated 10 interview transcripts for a new character. The profile
 
 ## 3. Learning path
 
-**Full pipeline:** `psy:wave --character chiến --all` — create complete profile from scratch.
+**Full pipeline:** `psy:wave --character character-c --all` — create complete profile from scratch.
 
-**Individual waves:** `psy:wave --character hieu --wave 1` (extract facts), then `--wave 2` (psychology), then `--wave 3` (validation).
+**Individual waves:** `psy:wave --character character-a --wave 1` (extract facts), then `--wave 2` (psychology), then `--wave 3` (validation).
 
-**Check progress:** `psy:wave --character hoa --status` — see which waves are done.
+**Check progress:** `psy:wave --character character-b --status` — see which waves are done.
 
-**With plan context:** `psy:wave --character chien --plan ./plans/260605-chiến-profile-build/plan.md` — tracks progress in plan file.
+**With plan context:** `psy:wave --character character-c --plan ./plans/260605-chiến-profile-build/plan.md` — tracks progress in plan file.
 
 ## 4. Use cases (each = a sample conversation)
 
@@ -32,14 +32,14 @@ You've just integrated 10 interview transcripts for a new character. The profile
 
 ### Use case: Major update to existing character
 
-> You: "Nhân vật C's story evolved significantly. I have new materials (crisis event, revelation). Re-wave the profile."
-> Skill: `psy:wave --character chien --all`
-> → Wave 1: Updates identity/core.md, timeline/overview.md, milestones.md with new events. Gate: all events dated? ✓ → Wave 2: Re-analyzes psychology/formulation.md in light of new crisis. Runs psy:crisis-assess (detects HIGH risk). Gate: crisis protocol applied? ✓ → Wave 3: psy:crossref checks if Nhân vật A/Nhân vật B files need updates (Nhân vật C's arc shifted). psy:propagate suggests updates. Validates. Done.
+> You: "Character C's story evolved significantly. I have new materials (crisis event, revelation). Re-wave the profile."
+> Skill: `psy:wave --character character-c --all`
+> → Wave 1: Updates identity/core.md, timeline/overview.md, milestones.md with new events. Gate: all events dated? ✓ → Wave 2: Re-analyzes psychology/formulation.md in light of new crisis. Runs psy:crisis-assess (detects HIGH risk). Gate: crisis protocol applied? ✓ → Wave 3: psy:crossref checks if Character A/Character B files need updates (Character C's arc shifted). psy:propagate suggests updates. Validates. Done.
 
 ### Use case: Check wave progress
 
 > You: "I started Wave 1 yesterday. What's the status?"
-> Skill: `psy:wave --character hieu --status`
+> Skill: `psy:wave --character character-a --status`
 > → Wave 1: ✅ Complete (extracted 67 events, 15 relationships). Wave 2: 🔄 In Progress (psychology/formulation.md: 40% done). Wave 3: ⬜ Not Started. Blockers: "Finish psychology/formulation.md to proceed to Wave 3."
 
 ## 5. Important caveats

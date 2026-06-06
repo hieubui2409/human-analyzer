@@ -90,7 +90,7 @@ LLM analyzes gathered data for:
 
 ```bash
 /gro:mentoring-track                              # all characters
-/gro:mentoring-track --character hoa              # Nhân vật B only
+/gro:mentoring-track --character character-b              # Nhân vật B only
 /gro:mentoring-track --json                       # machine-readable
 ```
 

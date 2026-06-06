@@ -14,7 +14,7 @@ Bạn có ba hồ sơ nhân vật spanning 25 tệp mỗi cái. Một số tệp
 
 ## 3. Đường dẫn học tập
 
-**Lần chạy đầu tiên:** `psy:health-check --character hieu` — xem hồ sơ của một nhân vật trông như thế nào.
+**Lần chạy đầu tiên:** `psy:health-check --character character-a` — xem hồ sơ của một nhân vật trông như thế nào.
 
 **Quét đầy đủ:** `psy:health-check --all` — xem tất cả ba. Phát hiện các khoảng trống trên toàn bộ kho.
 
@@ -25,13 +25,13 @@ Bạn có ba hồ sơ nhân vật spanning 25 tệp mỗi cái. Một số tệp
 ### Trường hợp sử dụng: Kiểm tra trước crossref
 
 > Bạn: "Hồ sơ Nhân vật A và Nhân vật B trông xong. Sẵn sàng cho xác thực chéo chưa?"
-> Kỹ năng: `psy:health-check --character hieu --character hoa`
+> Kỹ năng: `psy:health-check --character character-a --character character-b`
 > → Nhân vật A: 87/100, Nhân vật B: 72/100. psychology/formulation.md mỏng (35 dòng). Đề xuất: mở rộng trước khi chạy psy:crossref.
 
 ### Trường hợp sử dụng: Xác định các tệp bị mất
 
 > Bạn: "Tôi sắp bắt đầu Wave 2 trên Nhân vật C. Tôi cần điền gì trước tiên?"
-> Kỹ năng: `psy:health-check --character chien --gaps-only`
+> Kỹ năng: `psy:health-check --character character-c --gaps-only`
 > → psychology/archetype.md bị mất (0/100). identity/media-coverage.md: 10 dòng (10/100). Bắt đầu ở đây.
 
 ### Trường hợp sử dụng: Kiểm tra cấp danh mục

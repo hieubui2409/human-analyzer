@@ -14,30 +14,30 @@ Một nhân vật đã trải qua chấn thương nặng. Bạn cần hiểu: Đ
 
 ## 3. Đường dẫn học tập
 
-**Lần chạy đầu tiên:** `psy:crisis-assess --character hieu --quick` — nhận được ảnh chụp rủi ro nhanh chóng.
+**Lần chạy đầu tiên:** `psy:crisis-assess --character character-a --quick` — nhận được ảnh chụp rủi ro nhanh chóng.
 
-**Chạy sâu:** `psy:crisis-assess --character hieu --full` — danh sách kiểm tra DSM-5 + ICD-11 đầy đủ để chi tiết.
+**Chạy sâu:** `psy:crisis-assess --character character-a --full` — danh sách kiểm tra DSM-5 + ICD-11 đầy đủ để chi tiết.
 
-**Cập nhật:** Sau khi thêm các vật liệu mới, `psy:crisis-assess --character hieu --update` — nối thêm các phát hiện mới vào tài liệu hiện có.
+**Cập nhật:** Sau khi thêm các vật liệu mới, `psy:crisis-assess --character character-a --update` — nối thêm các phát hiện mới vào tài liệu hiện có.
 
 ## 4. Trường hợp sử dụng (mỗi cái = một cuộc trò chuyện mẫu)
 
 ### Trường hợp sử dụng: Kiểm tra rủi ro nhanh chóng
 
 > Bạn: "Tôi đã tích hợp các bản ghi phỏng vấn đề cập đến việc Nhân vật C bị bỏ rơi ở tuổi 11. Đây có phải là lãnh địa rủi ro CAO không?"
-> Kỹ năng: `psy:crisis-assess --character chien --quick`
+> Kỹ năng: `psy:crisis-assess --character character-c --quick`
 > → Từ khóa: "bỏ rơi" hit. Hành vi: trẻ em mồ côi. Mức rủi ro: VỪA. Yếu tố bảo vệ: cố vấn, giáo dục. Đầu ra: thêm vào darkness/traumas.md.
 
 ### Trường hợp sử dụng: Đánh giá lâm sàn đầy đủ
 
 > Bạn: "Câu chuyện của Nhân vật B đã phát triển. Nghiện cờ bạc, bỏ rơi gia đình, uống rượu. Đánh giá đầy đủ?"
-> Kỹ năng: `psy:crisis-assess --character hoa --full`
+> Kỹ năng: `psy:crisis-assess --character character-b --full`
 > → DSM-5 MDD: 7/9 tiêu chí. ICD-11 C-PTSD: một phần. SI: thụ động. Đầu ra: cập nhật darkness/traumas.md, light/strengths-hope.md, INDEX.md status.
 
 ### Trường hợp sử dụng: Ranh giới nội dung khủng hoảng
 
 > Bạn: "Tôi viết một bài viết về vai trò cố gắng cứu mọi người của Nhân vật A, nhưng nó gợi ý rủi ro kiệt sức. Tôi có nên xuất bản không?"
-> Kỹ năng: `cre:privacy-guard` (gọi `psy:crisis-assess` nội bộ) hoặc bạn kiểm tra trước `psy:crisis-assess --character hieu --full` → nếu rủi ro CAO, `cre:privacy-guard` cờ nội dung.
+> Kỹ năng: `cre:privacy-guard` (gọi `psy:crisis-assess` nội bộ) hoặc bạn kiểm tra trước `psy:crisis-assess --character character-a --full` → nếu rủi ro CAO, `cre:privacy-guard` cờ nội dung.
 
 ## 5. Cảnh báo quan trọng
 

@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You want to write content about Nhân vật A and Nhân vật B's sworn-brother bond. Instead of staring at the blank screen, this skill mines their relationship graph: extracts facts from both profiles (meetings, events, quotes, GRO milestones), ranks them by evidence tier (P1 materials = highest, implicit psychology = lower), checks for confidentiality tags (PRIVATE, CONFIDENTIAL, ANONYMIZE), and proposes angles: "The kết nghĩa ceremony as a turning point" (HIGH evidence, coherence 0.9, consent OPEN) vs "Nhân vật B's vulnerability during gambling crisis" (MEDIUM evidence, concern about crisis boundaries, consent REVIEW). You get ranked angles ready for cre:post-writer, not raw facts.
+You want to write content about Character A and Character B's sworn-brother bond. Instead of staring at the blank screen, this skill mines their relationship graph: extracts facts from both profiles (meetings, events, quotes, GRO milestones), ranks them by evidence tier (P1 materials = highest, implicit psychology = lower), checks for confidentiality tags (PRIVATE, CONFIDENTIAL, ANONYMIZE), and proposes angles: "The kết nghĩa ceremony as a turning point" (HIGH evidence, coherence 0.9, consent OPEN) vs "Character B's vulnerability during gambling crisis" (MEDIUM evidence, concern about crisis boundaries, consent REVIEW). You get ranked angles ready for cre:post-writer, not raw facts.
 
 ## 2. Core concepts (the mental model)
 
@@ -19,7 +19,7 @@ You want to write content about Nhân vật A and Nhân vật B's sworn-brother 
 
 **All dyads:** `psy:relation-intelligence --all` — mine all pairs at once.
 
-**Override POV:** `psy:relation-intelligence --dyad hoa chien --character hoa` — Nhân vật B's perspective on Nhân vật C mentoring.
+**Override POV:** `psy:relation-intelligence --dyad hoa chien --character character-b` — Character B's perspective on Character C mentoring.
 
 **With graph signals:** `psy:relation-intelligence --dyad hieu chien --graph-signal` — enrich with KG if available.
 
@@ -27,19 +27,19 @@ You want to write content about Nhân vật A and Nhân vật B's sworn-brother 
 
 ### Use case: Dyadic angle mining
 
-> You: "What content angles exist between Nhân vật A and Nhân vật B?"
+> You: "What content angles exist between Character A and Character B?"
 > Skill: `psy:relation-intelligence --dyad hieu hoa`
 > → Output:
-> - ★★★ **"The Kết Nghĩa Turning Point"** | primary: Nhân vật A | consent: OPEN | coherence: 0.92 | evidence: P1 materials + both timelines
-> - ★★★ **"Supporting Through Crisis"** | primary: Nhân vật B | consent: REVIEW (mentions gambling, needs sensitivity gate) | coherence: 0.85
-> - ★★ **"Unequal Sacrifice"** | primary: Nhân vật A | consent: OPEN | coherence: 0.78 | note: Nhân vật A gives more than receives
+> - ★★★ **"The Kết Nghĩa Turning Point"** | primary: Character A | consent: OPEN | coherence: 0.92 | evidence: P1 materials + both timelines
+> - ★★★ **"Supporting Through Crisis"** | primary: Character B | consent: REVIEW (mentions gambling, needs sensitivity gate) | coherence: 0.85
+> - ★★ **"Unequal Sacrifice"** | primary: Character A | consent: OPEN | coherence: 0.78 | note: Character A gives more than receives
 > → cre:post-writer loads top OPEN angle first.
 
 ### Use case: Cross-character mentoring angle
 
-> You: "What's the content story around Nhân vật A mentoring Nhân vật C?"
+> You: "What's the content story around Character A mentoring Character C?"
 > Skill: `psy:relation-intelligence --dyad hieu chien`
-> → Top angles: "F15 Scholarship Journey" (Nhân vật C's POV, celebrates milestone), "Mentor's Burden" (Nhân vật A's POV, notes exhaustion risk). Both OPEN for publishing.
+> → Top angles: "F15 Scholarship Journey" (Character C's POV, celebrates milestone), "Mentor's Burden" (Character A's POV, notes exhaustion risk). Both OPEN for publishing.
 
 ### Use case: All dyads at once
 
@@ -49,7 +49,7 @@ You want to write content about Nhân vật A and Nhân vật B's sworn-brother 
 
 ## 5. Important caveats
 
-- **Primary character hint is overrideable**: The skill suggests Nhân vật A as "primary" (more edges), but you can set `--character hoa` to flip perspective. Changes which voice loads in cre:post-writer.
+- **Primary character hint is overrideable**: The skill suggests Character A as "primary" (more edges), but you can set `--character character-b` to flip perspective. Changes which voice loads in cre:post-writer.
 - **REVIEW angles need decision**: Angles marked REVIEW have borderline consent issues. Before publishing, confirm: is this publishable, or should we anonymize/reframe?
 - **Trauma boundary is strict**: darkness/traumas.md is never parsed for angle facts. If an angle seems to leak trauma detail, investigate — likely a bug or data in wrong file.
 - **Evidence tiers inform ranking, not gates**: P1 evidence ranks higher, but a P3 angle can be published if consent is OPEN. Tier is confidence signal, not approval gate.

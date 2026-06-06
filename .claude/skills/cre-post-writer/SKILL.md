@@ -213,10 +213,10 @@ Q5: Any specific angle or reference? → [free text or "no"]
 
 ```bash
 /cre:post-writer                                               # interactive
-/cre:post-writer Mentoring journey --character hieu --platform linkedin --type reality
-/cre:post-writer Nhân vật B's growth story --character hòa --platform facebook --type fiction
+/cre:post-writer Mentoring journey --character character-a --platform linkedin --type reality
+/cre:post-writer Nhân vật B's growth story --character character-b --platform facebook --type fiction
 /cre:post-writer --from-context                                # from exploration
-/cre:post-writer Letter to Nhân vật C --character chien --platform blog --type letter
+/cre:post-writer Letter to Nhân vật C --character character-c --platform blog --type letter
 ```
 
 ## See Also

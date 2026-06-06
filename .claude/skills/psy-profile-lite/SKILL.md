@@ -190,7 +190,7 @@ Force regeneration regardless of cache state. Useful after major profile overhau
 
 ```bash
 /psy:profile-lite                               # load all 3 lite
-/psy:profile-lite --character hòa               # Nhân vật B only
+/psy:profile-lite --character character-b               # Nhân vật B only
 /psy:profile-lite --refresh                     # force regeneration
 /psy:profile-lite --stats                       # cache status
 ```

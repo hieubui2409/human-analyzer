@@ -1,8 +1,8 @@
 # Reproducible-pack manifest for the 6-framework toolkit.
-# Same source + this manifest ⇒ byte-identical tar.gz (tools/pack/build_pack.py). The safety_filter is a
+# Same source + this manifest ⇒ byte-identical tar.gz (.claude/skills/_framework-shared/scripts/build_pack.py). The safety_filter is a
 # NON-REMOVABLE backstop applied AFTER these include globs (drops secrets, runtime, and real-character PII).
 name: human-analyzer-frameworks
-version: "0.1.0"
+version: "1.0.0-rc.1"
 
 # Repo-relative include globs — the TOOLKIT (skills + agents + hooks + shared lib + rules + schemas +
 # guides + nav docs + synthetic fixture), never the live character corpus (docs/profiles, docs/materials,
@@ -15,8 +15,26 @@ include:
   - .claude/skills/mat-*/**/*
   - .claude/skills/com-*/**/*
   - .claude/skills/_framework-shared/**/*
-  - .claude/agents/**/*
-  - .claude/hooks/**/*
+  # Framework-owned agents only — generic engineer-kit dev agents (planner, code-reviewer, …) are NOT
+  # part of the character toolkit and stay out of the pack.
+  - .claude/agents/psychologist.md
+  - .claude/agents/content-strategist.md
+  - .claude/agents/growth-analyst.md
+  - .claude/agents/cross-validator.md
+  - .claude/agents/profile-manager.md
+  - .claude/agents/material-analyst.md
+  # Framework-owned hooks + only the lib modules they require (walked from each hook's require graph).
+  # settings.json is filtered at build time to wire exactly these (build_pack strips statusLine + non-
+  # framework hook entries) so the shipped harness config has zero dangling references.
+  - .claude/hooks/gateguard-profile-protect.cjs
+  - .claude/hooks/detect-profile-drift-hook.cjs
+  - .claude/hooks/observe-framework-signal.cjs
+  - .claude/hooks/profile-edit-reminder.cjs
+  - .claude/hooks/rebuild-knowledge-graph.cjs
+  - .claude/hooks/write-framework-delta-compact-digest.cjs
+  - .claude/hooks/lib/hook-config-utils.cjs
+  - .claude/hooks/lib/sensitivity-checker.cjs
+  - .claude/hooks/lib/telemetry-paths.cjs
   - .claude/scripts/**/*
   - .claude/schemas/**/*
   - .claude/framework-config.json
@@ -25,9 +43,14 @@ include:
   - docs/knowledge-architecture.md
   - docs/MODULES.md
   - docs/distilled-principles.md
+  - docs/RELEASE-NOTES-v1.0.0.md
+  - CHANGELOG.md
   - tests/**/*
   - e2e/**/*
   - eval/**/*
+  # Pack build/scan + anonymizer + release tooling live under .claude/skills/_framework-shared/scripts/
+  # (already covered by the _framework-shared glob above). Name-free after roster externalization; the
+  # whole-pack PII scan is the backstop.
   - CLAUDE.md
   - README.md
   - pyproject.toml

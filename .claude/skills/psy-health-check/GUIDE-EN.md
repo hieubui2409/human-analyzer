@@ -14,7 +14,7 @@ You have three character profiles spanning 25 files each. Some files are thick a
 
 ## 3. Learning path
 
-**First run:** `psy:health-check --character hieu` — see what one character's profile looks like.
+**First run:** `psy:health-check --character character-a` — see what one character's profile looks like.
 
 **Full scan:** `psy:health-check --all` — see all three. Spot gaps across the corpus.
 
@@ -24,25 +24,25 @@ You have three character profiles spanning 25 files each. Some files are thick a
 
 ### Use case: Pre-crossref check
 
-> You: "Nhân vật A and Nhân vật B profiles look done. Ready for cross-validation?"
-> Skill: `psy:health-check --character hieu --character hoa`
-> → Nhân vật A: 87/100, Nhân vật B: 72/100. psychology/formulation.md thin (35 lines). Recommend: expand before running psy:crossref.
+> You: "Character A and Character B profiles look done. Ready for cross-validation?"
+> Skill: `psy:health-check --character character-a --character character-b`
+> → Character A: 87/100, Character B: 72/100. psychology/formulation.md thin (35 lines). Recommend: expand before running psy:crossref.
 
 ### Use case: Identify missing files
 
-> You: "I'm about to start Wave 2 on Nhân vật C. What do I need to fill first?"
-> Skill: `psy:health-check --character chien --gaps-only`
+> You: "I'm about to start Wave 2 on Character C. What do I need to fill first?"
+> Skill: `psy:health-check --character character-c --gaps-only`
 > → psychology/archetype.md missing (0/100). identity/media-coverage.md: 10 lines (10/100). Start here.
 
 ### Use case: Category-level audit
 
 > You: "Which character needs the most work on relationships?"
 > Skill: `psy:health-check --json | jq '.categories.relationships'`
-> → Nhân vật B's relationships category: 65/100 (relationships/family.md = 80, relationships/hieu.md = 50). Nhân vật B-Nhân vật C relationship file missing.
+> → Character B's relationships category: 65/100 (relationships/family.md = 80, relationships/hieu.md = 50). Character B-Character C relationship file missing.
 
 ## 5. Important caveats
 
 - **Completeness ≠ quality**: A file with 100 lines scores higher than a 40-line file, even if the short one is tightly written and good. Use your judgment.
-- **Cross-character files matter**: psy:health-check counts `relationships/{other-character}.md` files dynamically. If Nhân vật B-Nhân vật A file exists, it counts toward Nhân vật B's score.
+- **Cross-character files matter**: psy:health-check counts `relationships/{other-character}.md` files dynamically. If Character B-Character A file exists, it counts toward Character B's score.
 - **Thin is a flag, not a failure**: A 50-line file scores ~50/100. That's not bad; it's "review and expand if needed." Not every file needs 200 lines.
 - **Run before major validation**: Always run psy:health-check before psy:crossref. Thin profiles make crossref less useful (less data to compare).

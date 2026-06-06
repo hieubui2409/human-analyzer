@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You want to understand the trio: Why do Nhân vật A and Nhân vật B work as a dyad, but Nhân vật C feels like an outsider? You read all three attachment-style files separately, but side-by-side is clearer. This skill pulls attachment-style from all three, renders a table, and shows: Nhân vật A = secure (grounds Nhân vật B), Nhân vật B = anxious (needs grounding), Nhân vật C = fearful-avoidant (pushes and pulls). That pattern explains their dynamics.
+You want to understand the trio: Why do Character A and Character B work as a dyad, but Character C feels like an outsider? You read all three attachment-style files separately, but side-by-side is clearer. This skill pulls attachment-style from all three, renders a table, and shows: Character A = secure (grounds Character B), Character B = anxious (needs grounding), Character C = fearful-avoidant (pushes and pulls). That pattern explains their dynamics.
 
 ## 2. Core concepts (the mental model)
 
@@ -24,21 +24,21 @@ You want to understand the trio: Why do Nhân vật A and Nhân vật B work as 
 
 ### Use case: Dyadic pattern analysis
 
-> You: "Why do Nhân vật A and Nhân vật B's relationship work, but Nhân vật C feels left out?"
+> You: "Why do Character A and Character B's relationship work, but Character C feels left out?"
 > Skill: `psy:profile-compare --dimension attachment-style`
-> → Table shows: Nhân vật A (secure), Nhân vật B (anxious-preoccupied), Nhân vật C (fearful-avoidant). Insight: secure + anxious often stabilize; fearful-avoidant = unpredictable. Suggests: Nhân vật C's fear of abandonment triggers when he feels excluded.
+> → Table shows: Character A (secure), Character B (anxious-preoccupied), Character C (fearful-avoidant). Insight: secure + anxious often stabilize; fearful-avoidant = unpredictable. Suggests: Character C's fear of abandonment triggers when he feels excluded.
 
 ### Use case: Defense mechanism contrast
 
 > You: "How do they cope with stress differently?"
 > Skill: `psy:profile-compare --dimension defense-mechanisms --characters hieu,hoa,chien`
-> → Nhân vật A: sublimation, humor, caretaking. Nhân vật B: projection, rationalization. Nhân vật C: dissociation, self-blame. Output: table + insight on why conflicts escalate (misunderstanding each other's coping).
+> → Character A: sublimation, humor, caretaking. Character B: projection, rationalization. Character C: dissociation, self-blame. Output: table + insight on why conflicts escalate (misunderstanding each other's coping).
 
 ### Use case: Relationship file comparison
 
-> You: "How does each character perceive their relationship with Nhân vật A?"
+> You: "How does each character perceive their relationship with Character A?"
 > Skill: `psy:profile-compare --dimension relationships/hieu`
-> → Pulls `relationships/hieu.md` from Nhân vật B and Nhân vật C's profiles. Compares how each describes the relationship. Highlights concordances and discordances.
+> → Pulls `relationships/hieu.md` from Character B and Character C's profiles. Compares how each describes the relationship. Highlights concordances and discordances.
 
 ## 5. Important caveats
 

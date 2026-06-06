@@ -199,20 +199,20 @@ class TestArchive:
 
 class TestFindSimilar:
     def test_exact_match(self):
-        inst = instinct_store.create_instinct("Nhân vật B avoidance under stress", "psychology")
+        inst = instinct_store.create_instinct("Alpha avoidance under stress", "psychology")
         instinct_store.append_instinct(inst)
-        results = instinct_store.find_similar("Nhân vật B avoidance under stress")
+        results = instinct_store.find_similar("Alpha avoidance under stress")
         assert len(results) >= 1
         assert results[0][1] == pytest.approx(1.0, abs=0.01)
 
     def test_similar_text(self):
-        inst = instinct_store.create_instinct("Nhân vật B avoidance intensifies under academic pressure", "psychology")
+        inst = instinct_store.create_instinct("Alpha avoidance intensifies under academic pressure", "psychology")
         instinct_store.append_instinct(inst)
-        results = instinct_store.find_similar("Nhân vật B avoidance intensifies under academic pressure and stress", threshold=0.7)
+        results = instinct_store.find_similar("Alpha avoidance intensifies under academic pressure and stress", threshold=0.7)
         assert len(results) >= 1
 
     def test_dissimilar_text(self):
-        inst = instinct_store.create_instinct("Nhân vật B avoidance under stress", "psychology")
+        inst = instinct_store.create_instinct("Alpha avoidance under stress", "psychology")
         instinct_store.append_instinct(inst)
         results = instinct_store.find_similar("LinkedIn post structure works well")
         assert len(results) == 0

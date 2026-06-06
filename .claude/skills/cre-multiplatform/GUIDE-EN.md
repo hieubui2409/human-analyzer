@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You discover an angle: "Nhân vật A's mentoring consistency breakthrough." You want that on LinkedIn (professional), TikTok (hook-driven), and Facebook (emotional). But not as "same text, different format." LinkedIn should be text-first with a question close. TikTok should be a 9:16 script with a <1s hook. Facebook should be narrative-heavy. This skill writes 3 completely different natives from one concept, validates each per platform (evidence tier, voice, privacy threshold), and publishes only the ones that pass.
+You discover an angle: "Character A's mentoring consistency breakthrough." You want that on LinkedIn (professional), TikTok (hook-driven), and Facebook (emotional). But not as "same text, different format." LinkedIn should be text-first with a question close. TikTok should be a 9:16 script with a <1s hook. Facebook should be narrative-heavy. This skill writes 3 completely different natives from one concept, validates each per platform (evidence tier, voice, privacy threshold), and publishes only the ones that pass.
 
 ## 2. Core concepts (the mental model)
 
@@ -28,11 +28,11 @@ Any variant that fails is HELD (not written). Others still ship. Platform-specif
 **First run:** Feed one angle from `cre:angle-discovery`:
 ```bash
 .claude/skills/.venv/bin/python3 .claude/skills/cre-multiplatform/scripts/generate-native-variants-for-platforms.py \
-  --source "Nhân vật A's mentoring consistency" --slug 260526-mentorship --platforms linkedin,tiktok,facebook --dry-run
+  --source "Character A's mentoring consistency" --slug 260526-mentorship --platforms linkedin,tiktok,facebook --dry-run
 ```
 See the scaffolded briefs: LinkedIn brief (text-first, 3000 chars, professional tone). TikTok brief (script, 9:16, conversational). Facebook brief (narrative, 6000 chars, emotional).
 
-**As you grow:** Try `--platforms all` (7 platforms) when you want maximum reach. Use `--character hieu` to lock voice profile, improving voice-audit accuracy.
+**As you grow:** Try `--platforms all` (7 platforms) when you want maximum reach. Use `--character character-a` to lock voice profile, improving voice-audit accuracy.
 
 **Standard flow:** Discover angle → `cre:multiplatform --source <angle> --platforms active` → LLM writes → gates run → variants publish.
 
@@ -40,7 +40,7 @@ See the scaffolded briefs: LinkedIn brief (text-first, 3000 chars, professional 
 
 ### Use case: Batch multiplatform from discovery
 
-> **You:** `cre:angle-discovery --character hieu --top 3 --json` returns 3 angles.
+> **You:** `cre:angle-discovery --character character-a --top 3 --json` returns 3 angles.
 >
 > **You:** Loop: per angle, `cre:multiplatform --source <angle> --platforms linkedin,tiktok,facebook --slug {dated-slug}`.
 >
@@ -50,7 +50,7 @@ See the scaffolded briefs: LinkedIn brief (text-first, 3000 chars, professional 
 
 ### Use case: Active platforms only
 
-> **You:** `cre:multiplatform --source context.md --slug 260526-pivot --platforms active --character hieu`
+> **You:** `cre:multiplatform --source context.md --slug 260526-pivot --platforms active --character character-a`
 >
 > **Skill:** Default `active` = platforms with existing asset dirs (blog, facebook, linkedin). Writes only to those.
 >
@@ -58,7 +58,7 @@ See the scaffolded briefs: LinkedIn brief (text-first, 3000 chars, professional 
 
 ### Use case: All platforms, strict gatekeeping
 
-> **You:** `cre:multiplatform --source "https://linkedin.com/..." --slug 260526-repost --platforms all --character hieu`
+> **You:** `cre:multiplatform --source "https://linkedin.com/..." --slug 260526-repost --platforms all --character character-a`
 >
 > **Skill:** Scaffolds 7 natives. Evidence scanner, voice audit, privacy guard run. If any fails, that variant is HELD, reported with reason.
 >

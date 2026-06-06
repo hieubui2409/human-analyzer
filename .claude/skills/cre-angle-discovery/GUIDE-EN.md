@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-Imagine you wake up and ask: "What interesting thing about Nhân vật A should we share this week?" This skill wakes up automatically (or on demand), reads every framework — his recent growth signals, new materials, career milestones, what's been shared before, how people responded, his relationship changes — and surfaces the top 5 ranked, evidence-backed angles **without you typing a word**. You just pick the one you like and write.
+Imagine you wake up and ask: "What interesting thing about Character A should we share this week?" This skill wakes up automatically (or on demand), reads every framework — his recent growth signals, new materials, career milestones, what's been shared before, how people responded, his relationship changes — and surfaces the top 5 ranked, evidence-backed angles **without you typing a word**. You just pick the one you like and write.
 
 ## 2. Core concepts (the mental model)
 
@@ -23,7 +23,7 @@ Imagine you wake up and ask: "What interesting thing about Nhân vật A should 
 **First run:**
 ```bash
 .claude/skills/.venv/bin/python3 .claude/skills/cre-angle-discovery/scripts/aggregate-angle-signals-across-frameworks.py \
-  --character hieu --framework all --since-days 30 --json
+  --character character-a --framework all --since-days 30 --json
 ```
 Read the output — you'll see raw signals like "B5 conscientiousness +8% since Jan", "growth-edge: assertiveness unlock", "new material: mentor feedback". These become angle seeds.
 
@@ -35,9 +35,9 @@ Read the output — you'll see raw signals like "B5 conscientiousness +8% since 
 
 ### Use case: Periodic ideation (daily/weekly)
 
-> **You:** "What should we post about Nhân vật A this week?"
+> **You:** "What should we post about Character A this week?"
 >
-> **Skill:** Runs autonomously overnight; returns top 5 angles ranked by freshness. Discovers "Nhân vật A's mentoring consistency (GRO milestone)" scores 0.82, higher than "anxiety recurrence (PSY growth-edge)" at 0.61.
+> **Skill:** Runs autonomously overnight; returns top 5 angles ranked by freshness. Discovers "Character A's mentoring consistency (GRO milestone)" scores 0.82, higher than "anxiety recurrence (PSY growth-edge)" at 0.61.
 >
 > **You:** Pick the mentoring angle, run `cre:post-writer --from-context`.
 

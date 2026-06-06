@@ -133,3 +133,19 @@ def test_skill_count_matches_claude_md():
     m = re.search(r"(\d+)\s+framework skills", claude)
     assert m, "CLAUDE.md does not state '<N> framework skills'"
     assert total == int(m.group(1)), f"skill count {total} ({counts}) != CLAUDE.md {m.group(1)}"
+
+
+# --- roster-drift: characters.yaml roster ⇔ profile dirs must never diverge (bidirectional) ---
+# Closes the onboarding-gap class: a scaffolded profile dir with no roster entry (unresolvable character)
+# or a roster entry whose profile dir was deleted (dangling alias). Scoped to the REAL corpus — runs with
+# no PMC_PROJECT_ROOT, so paths.ALL_CHARS is the yaml roster and PROFILES is the live docs/profiles.
+def test_roster_matches_profile_dirs():
+    sys.path.insert(0, str(PLATFORM_LIB))
+    import paths
+    import roster_io
+
+    dirs_without_entry, entries_without_dir = roster_io.roster_profile_drift(paths.PROFILES, paths.ALL_CHARS)
+    assert not dirs_without_entry and not entries_without_dir, (
+        f"roster↔profile drift — dirs missing a characters.yaml entry: {sorted(dirs_without_entry)}; "
+        f"roster entries missing a profile dir: {sorted(entries_without_dir)}"
+    )

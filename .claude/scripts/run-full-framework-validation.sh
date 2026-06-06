@@ -9,6 +9,10 @@ SKILLS="$PROJECT_ROOT/.claude/skills"
 
 cd "$PROJECT_ROOT"
 
+# Discover a real character slug + a sample material dynamically — no hardcoded names ship here.
+FIRST_CHAR=$(find docs/profiles -maxdepth 1 -mindepth 1 -type d -exec basename {} \; 2>/dev/null | sort | head -1)
+SAMPLE_MATERIAL=$(find "docs/materials/${FIRST_CHAR:-_none_}" -name '*.md' -type f 2>/dev/null | head -1)
+
 PASSED=0
 FAILED=0
 TOTAL=0
@@ -48,9 +52,13 @@ run_check "MAT" "detect-contradictions" \
     "$PYTHON" "$SKILLS/mat-indexer/scripts/detect-contradictions-materials-vs-profiles.py" --json
 run_check "MAT" "coverage-gaps" \
     "$PYTHON" "$SKILLS/mat-indexer/scripts/analyze-evidence-coverage-gaps-per-profile-section.py" --json
-run_check "MAT" "craap-template" \
-    "$PYTHON" "$SKILLS/mat-loader/scripts/generate-craap-score-template-for-material.py" \
-    "docs/materials/character-a/gemini-analysis-job-change-vsf-052026.md" --json
+if [ -n "$SAMPLE_MATERIAL" ]; then
+    run_check "MAT" "craap-template" \
+        "$PYTHON" "$SKILLS/mat-loader/scripts/generate-craap-score-template-for-material.py" \
+        "$SAMPLE_MATERIAL" --json
+else
+    echo "  (skipping MAT craap-template — no material file found)"
+fi
 
 # PSY — Psychology Framework
 echo "  [PSY] Running profile validation..."
@@ -71,7 +79,7 @@ if [ -n "$ASSET_DIR" ]; then
         "$PYTHON" "$SKILLS/cre-evidence-scanner/scripts/map-claims-to-evidence-tiers.py" "$ASSET_DIR" --json
     run_check "CRE" "voice-consistency" \
         "$PYTHON" "$SKILLS/cre-voice-audit/scripts/check-voice-consistency-against-defense-profile.py" \
-        "$ASSET_DIR" --character character-a --json
+        "$ASSET_DIR" --character "$FIRST_CHAR" --json
 else
     echo "  (skipping CRE asset checks — no post.txt found)"
 fi

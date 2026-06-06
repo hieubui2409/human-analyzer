@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You have a rough brief: "Write a LinkedIn post about Nhân vật A's mentoring journey." That's vague. This skill transforms it into a detailed execution prompt: extract Nhân vật A's voice patterns ("analytical, dense imagery, intellectualization defense"), clinical theory to reference (attachment theory, growth mindset), LinkedIn constraints (3000 chars, hook first, no hashtag spam), specific profile facts (DOB, current status, key relationships), and sensitivity flags (no real family names, verify timeline). Result: a prompt so specific that `cre:post-writer` knows exactly what to do.
+You have a rough brief: "Write a LinkedIn post about Character A's mentoring journey." That's vague. This skill transforms it into a detailed execution prompt: extract Character A's voice patterns ("analytical, dense imagery, intellectualization defense"), clinical theory to reference (attachment theory, growth mindset), LinkedIn constraints (3000 chars, hook first, no hashtag spam), specific profile facts (DOB, current status, key relationships), and sensitivity flags (no real family names, verify timeline). Result: a prompt so specific that `cre:post-writer` knows exactly what to do.
 
 ## 2. Core concepts (the mental model)
 
@@ -26,7 +26,7 @@ You have a rough brief: "Write a LinkedIn post about Nhân vật A's mentoring j
 
 **First run (standalone):**
 ```bash
-/cre:prompt-leverage "Write a LinkedIn post about Nhân vật A's growth in assertiveness"
+/cre:prompt-leverage "Write a LinkedIn post about Character A's growth in assertiveness"
 ```
 Output: strengthened prompt with all 5 layers + "Pre-read: identity/core.md, psychology/growth-edges.md, identity/writing-voice.md" + "Verify: assertiveness_unlock is T1 evidence (session notes)?"
 
@@ -38,9 +38,9 @@ Output: strengthened prompt with all 5 layers + "Pre-read: identity/core.md, psy
 
 ### Use case: Standalone strengthening
 
-> **You:** `/cre:prompt-leverage Write a blog post about Nhân vật B's relationship with gambling`
+> **You:** `/cre:prompt-leverage Write a blog post about Character B's relationship with gambling`
 >
-> **Skill:** Applies 5 layers → outputs: "Original: Write a blog post... | Strengthened: [full prompt with Nhân vật B's voice, cultural formulation theory, blog constraints, family relationship facts, sensitivity on gambling trauma]"
+> **Skill:** Applies 5 layers → outputs: "Original: Write a blog post... | Strengthened: [full prompt with Character B's voice, cultural formulation theory, blog constraints, family relationship facts, sensitivity on gambling trauma]"
 >
 > **You:** Copy strengthened prompt → feed to `cre:post-writer`.
 

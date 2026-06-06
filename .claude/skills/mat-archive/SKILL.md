@@ -100,7 +100,7 @@ For each matched file:
 
 ```bash
 /mat:archive                                          # dry-run, show all archivable
-/mat:archive --character hieu --dry-run               # preview Nhân vật A's materials
+/mat:archive --character character-a --dry-run               # preview Nhân vật A's materials
 /mat:archive --before-date 2024-12-31 --status validated  # archive old validated
 /mat:archive --tier T5 --status raw                   # archive low-tier raw files
 ```

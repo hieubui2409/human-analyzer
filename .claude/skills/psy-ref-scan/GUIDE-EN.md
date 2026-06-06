@@ -4,13 +4,13 @@
 
 ## 1. What this skill does for you
 
-You created a new reference file on "repetition compulsion" (repeating trauma patterns unconsciously). Now you want to know: Do our character profiles already describe this pattern? If so, which ones should cite this theory? This skill reads the repetition-compulsion.md file, extracts concepts ("repeat past trauma," "unconscious reenactment"), then scans all profiles for those patterns. Output: "Nhân vật A ★★★ (directly mentioned), Nhân vật C ★★ (behavioral match), Nhân vật B ★ (potential fit)." You can then decide where to add explicit citations.
+You created a new reference file on "repetition compulsion" (repeating trauma patterns unconsciously). Now you want to know: Do our character profiles already describe this pattern? If so, which ones should cite this theory? This skill reads the repetition-compulsion.md file, extracts concepts ("repeat past trauma," "unconscious reenactment"), then scans all profiles for those patterns. Output: "Character A ★★★ (directly mentioned), Character C ★★ (behavioral match), Character B ★ (potential fit)." You can then decide where to add explicit citations.
 
 ## 2. Core concepts (the mental model)
 
 - **Reverse of psy:ref-audit**: Audit goes profile→ref ("Is this term referenced?"). Scan goes ref→profile ("Where does this theory apply?").
 - **Three-star rating**: ★★★ = theory explicitly mentioned in profile. ★★ = behavioral pattern matches theory indicators. ★ = potential fit, needs judgment.
-- **Enrichment opportunity**: If Nhân vật C shows ★★ match to repetition-compulsion but the profile doesn't cite it, that's an enrichment opportunity: add the citation + explain the pattern.
+- **Enrichment opportunity**: If Character C shows ★★ match to repetition-compulsion but the profile doesn't cite it, that's an enrichment opportunity: add the citation + explain the pattern.
 
 ## 3. Learning path
 
@@ -28,13 +28,13 @@ You created a new reference file on "repetition compulsion" (repeating trauma pa
 
 > You: "Just created parentification.md ref. Where does it apply?"
 > Skill: `psy:ref-scan --theory parentification`
-> → Nhân vật A ★★★ (directly: "took on parental role"), Nhân vật C ★★ (behavioral: caring for younger siblings, emotional burden), Nhân vật B ★ (potential: family responsibility mentioned). Enrichment suggestion: add parentification citation to Nhân vật C's psychology/formulation.md.
+> → Character A ★★★ (directly: "took on parental role"), Character C ★★ (behavioral: caring for younger siblings, emotional burden), Character B ★ (potential: family responsibility mentioned). Enrichment suggestion: add parentification citation to Character C's psychology/formulation.md.
 
 ### Use case: Full mapping
 
 > You: "I need to understand which theories back which characters."
 > Skill: `psy:ref-scan --map`
-> → Table: 60+ theories × 3 characters. Shows coverage. Example findings: "Attachment Theory: Nhân vật A ★★★, Nhân vật B ★★★, Nhân vật C ★★" (all 3 covered), vs "Existential-Void: Nhân vật C ★★★ only" (niche).
+> → Table: 60+ theories × 3 characters. Shows coverage. Example findings: "Attachment Theory: Character A ★★★, Character B ★★★, Character C ★★" (all 3 covered), vs "Existential-Void: Character C ★★★ only" (niche).
 
 ### Use case: Recently added theories
 
@@ -46,7 +46,7 @@ You created a new reference file on "repetition compulsion" (repeating trauma pa
 
 > You: "Are there theories in our library that don't apply to any character?"
 > Skill: `psy:ref-scan --gaps`
-> → Theories with zero connections: cognitive-dissonance.md, existential-void.md (only Nhân vật C at ★ level). Evaluation: archive or keep for future use?
+> → Theories with zero connections: cognitive-dissonance.md, existential-void.md (only Character C at ★ level). Evaluation: archive or keep for future use?
 
 ## 5. Important caveats
 

@@ -17,17 +17,45 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, MATERIALS, PROFILES, PROFILE_FILES, resolve_character
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, CHAR_SEARCH_ALIASES, MATERIALS, PROFILES, PROFILE_FILES, resolve_character
 
+# Load the shared roster token set (display names + full-name aliases + pii_extra) at
+# import time so claim extraction picks up any new character automatically. Falls back to
+# an empty list when the roster is absent (toolkit-only consumer pack).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_framework-shared" / "scripts"))
+try:
+    from pii_tokens import tokens_only as _pii_tokens_only
+    _pii_tokens: list[str] = _pii_tokens_only()
+except ImportError:
+    _pii_tokens = []
+
+# Flatten all search aliases from the roster for name detection.
+_roster_name_tokens: list[str] = []
+for _slug, _aliases in CHAR_SEARCH_ALIASES.items():
+    _roster_name_tokens.extend(_aliases)
+# Merge: roster aliases + pii_extra tokens (deduped, preserving order).
+_seen: set[str] = set()
+_all_name_tokens: list[str] = []
+for _t in _roster_name_tokens + _pii_tokens:
+    if _t not in _seen:
+        _seen.add(_t)
+        _all_name_tokens.append(_t)
+
+# Institution/org names that are corpus-stable but not roster-derived.
+_ORG_TOKENS = ["One Mount", "VinSmart", "ĐHBK", "Bách Khoa"]
 
 DATE_PATTERN = re.compile(
     r"(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2}|\d{2}/\d{4})"
 )
-NAME_PATTERN = re.compile(
-    r"(?:Nhân vật A|Nhân vật B|Nhân vật C|Nhân vật A|Nhân vật B|Nhân vật C"
-    r"|Scholarship X|One Mount|VinSmart|ĐHBK|Bách Khoa)",
-    re.IGNORECASE,
-)
+
+# Build the name detection pattern from the live roster + static org tokens.
+# When the roster is absent (empty toolkit pack), fall back to org tokens only.
+_name_alts = [re.escape(t) for t in _all_name_tokens + _ORG_TOKENS if t]
+if _name_alts:
+    NAME_PATTERN = re.compile(r"(?:" + "|".join(_name_alts) + r")", re.IGNORECASE)
+else:
+    # No tokens at all — match nothing (re that never fires).
+    NAME_PATTERN = re.compile(r"(?!)", re.IGNORECASE)
 EVENT_PATTERN = re.compile(
     r"(?:chuyển việc|nghỉ việc|nhận việc|tốt nghiệp|kết nghĩa|phỏng vấn"
     r"|scholarship|mentor|crisis|conflict|reconcil)",

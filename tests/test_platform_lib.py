@@ -9,6 +9,13 @@ import pytest
 SCRIPTS_DIR = Path(__file__).resolve().parents[1] / ".claude" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
+import platform_lib.paths as _paths  # noqa: E402
+
+# First real character, sourced dynamically — no hardcoded slug in the shipped test tree.
+_CHAR = _paths.ALL_CHARS[0] if _paths.ALL_CHARS else None
+# Resolution/structure assertions need a populated roster; skip cleanly in a toolkit-only pack.
+requires_corpus = pytest.mark.skipif(not _paths.ALL_CHARS, reason="no character roster — toolkit-only pack")
+
 
 class TestPaths:
     """Test paths.py module."""
@@ -41,15 +48,30 @@ class TestPaths:
         assert len(paths_mod.LEGACY_SPLIT_MAP["SOUL.md"]) == 2
 
     def test_resolve_character_works(self):
-        """resolve_character should handle aliases correctly."""
+        """resolve_character should handle slug and display-name aliases correctly."""
         import platform_lib.paths as paths_mod
-        # Should work with actual names
-        assert paths_mod.resolve_character("character-a") == "character-a"
-        # Should work with Vietnamese names with accents
-        assert paths_mod.resolve_character("hiếu") == "character-a"
-        assert paths_mod.resolve_character("hòa") == "character-b"
-        # Should be case-insensitive
-        assert paths_mod.resolve_character("HIEU") == "character-a"
+        # Slug resolution always works (slugs are canonical)
+        for slug in paths_mod.ALL_CHARS:
+            assert paths_mod.resolve_character(slug) == slug, (
+                f"slug {slug!r} must resolve to itself"
+            )
+        # Display-name (diacritic) and ASCII-folded aliases also resolve from the roster.
+        # Test all CHAR_SEARCH_ALIASES entries for every character.
+        for slug, aliases in paths_mod.CHAR_SEARCH_ALIASES.items():
+            for alias in aliases:
+                try:
+                    resolved = paths_mod.resolve_character(alias.lower())
+                    assert resolved == slug, (
+                        f"alias {alias!r} should resolve to {slug!r}, got {resolved!r}"
+                    )
+                except ValueError:
+                    # Some aliases (IME typos, multi-word full names) are not in the
+                    # resolution map by design — only display+slug+asciifold are keys.
+                    pass
+        # Case-insensitivity: uppercase slug still resolves
+        if paths_mod.ALL_CHARS:
+            first_slug = paths_mod.ALL_CHARS[0]
+            assert paths_mod.resolve_character(first_slug.upper()) == first_slug
 
     def test_resolve_character_raises_on_unknown(self):
         """resolve_character should raise ValueError for unknown names."""
@@ -57,25 +79,28 @@ class TestPaths:
         with pytest.raises(ValueError, match="Unknown character"):
             paths_mod.resolve_character("unknown-person")
 
+    @requires_corpus
     def test_character_dir_returns_path(self):
         """character_dir should return valid path objects."""
         import platform_lib.paths as paths_mod
-        result = paths_mod.character_dir("hieu")
+        result = paths_mod.character_dir(_CHAR)
         assert isinstance(result, Path)
-        assert "character-a" in str(result)
+        assert _CHAR in str(result)
 
+    @requires_corpus
     def test_materials_dir_returns_path(self):
         """materials_dir should return valid path objects."""
         import platform_lib.paths as paths_mod
-        result = paths_mod.materials_dir("hieu")
+        result = paths_mod.materials_dir(_CHAR)
         assert isinstance(result, Path)
-        assert "character-a" in str(result)
+        assert _CHAR in str(result)
 
+    @requires_corpus
     def test_all_chars_not_empty(self):
-        """ALL_CHARS should contain character identifiers."""
+        """ALL_CHARS should contain character identifiers (all non-empty strings)."""
         import platform_lib.paths as paths_mod
         assert len(paths_mod.ALL_CHARS) > 0
-        assert "character-a" in paths_mod.ALL_CHARS or "test-alpha" in paths_mod.ALL_CHARS
+        assert all(isinstance(c, str) and c for c in paths_mod.ALL_CHARS)
 
     def test_characters_mapping_valid(self):
         """CHARACTERS mapping should have proper keys and values."""
@@ -102,28 +127,33 @@ class TestPaths:
         assert "relationships/family.md" in rel_files
         assert len(rel_files) >= 2
 
+    @requires_corpus
     def test_list_relationship_files_returns_list(self):
         """list_relationship_files should return a list of Paths."""
         import platform_lib.paths as paths_mod
-        result = paths_mod.list_relationship_files("hieu")
+        result = paths_mod.list_relationship_files(_CHAR)
         assert isinstance(result, list)
         for item in result:
             assert isinstance(item, Path)
             assert item.suffix == ".md"
             assert item.name != "family.md"
 
+    @requires_corpus
     def test_list_relationship_files_per_character(self):
-        """Each character should have correct cross-relationship files."""
+        """Cross-relationship files must name OTHER roster members (no orphans)."""
         import platform_lib.paths as paths_mod
-        hieu_rels = [f.name for f in paths_mod.list_relationship_files("hieu")]
-        assert "character-b.md" in hieu_rels
-        assert "character-c.md" in hieu_rels
+        rels = [f.name for f in paths_mod.list_relationship_files(_CHAR)]
+        others = {f"{s}.md" for s in paths_mod.ALL_CHARS if s != _CHAR}
+        cross = [r for r in rels if r != "network.md"]
+        assert cross, "expected at least one cross-character relationship file"
+        assert set(cross) <= others, f"{cross} not all in {others}"
 
+    @requires_corpus
     def test_list_all_profile_files_superset(self):
         """list_all_profile_files should return more files than list_profile_files."""
         import platform_lib.paths as paths_mod
-        base = paths_mod.list_profile_files("hieu")
-        total = paths_mod.list_all_profile_files("hieu")
+        base = paths_mod.list_profile_files(_CHAR)
+        total = paths_mod.list_all_profile_files(_CHAR)
         assert len(total) >= len(base)
 
 

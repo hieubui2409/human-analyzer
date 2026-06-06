@@ -34,11 +34,11 @@ Orchestrate profile generation/major updates following `docs/rules/05-wave-pipel
 
 ## Character Name Resolution
 
-| Input                                 | Directory           |
-| ------------------------------------- | ------------------- |
-| `hieu`, `hiếu`, `character-a`      | `character-a`    |
-| `hoa`, `hòa`, `character-b`        | `character-b`    |
-| `chien`, `chiến`, `character-c` | `character-c` |
+| Input                                       | Directory     |
+| ------------------------------------------- | ------------- |
+| `character-a` · display name · slug · fold  | `character-a` |
+| `character-b` · display name · slug · fold  | `character-b` |
+| `character-c` · display name · slug · fold  | `character-c` |
 
 ## Wave Execution
 

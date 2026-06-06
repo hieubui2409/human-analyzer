@@ -25,23 +25,23 @@ You want to understand **how a character is supported in their growth.** Who are
 
 **Deepen:** Cross-reference with `gro:career-path` — does career trajectory match mentoring support? (e.g., someone in Establishment stage should have diverse mentors; someone in Exploration might rely on one coach).
 
-**As you grow:** Combine with `gro:compare --dimension mentoring` to see mentoring cross-connections (e.g., "Nhân vật A mentors Nhân vật B in technical skills; Nhân vật B mentors Nhân vật A in communication").
+**As you grow:** Combine with `gro:compare --dimension mentoring` to see mentoring cross-connections (e.g., "Character A mentors Character B in technical skills; Character B mentors Character A in communication").
 
 ## 4. Use cases (each = a sample conversation)
 
 ### Use case: Assess mentoring support for career advancement
 
-> **You:** "gro:mentoring-track --character hieu"
+> **You:** "gro:mentoring-track --character character-a"
 >
-> **Skill:** Extracts Nhân vật A's mentoring relationships. Finds: Primary mentor provides coaching (skill-building) and friendship (emotional support). Secondary mentor is in senior role (sponsorship potential). No role model or peer supporters (gap).
+> **Skill:** Extracts Character A's mentoring relationships. Finds: Primary mentor provides coaching (skill-building) and friendship (emotional support). Secondary mentor is in senior role (sponsorship potential). No role model or peer supporters (gap).
 >
-> **Use:** Nhân vật A has good coaching but lacks visible role models and peer network. Career progression might stall without exposure and advocacy. Useful for storytelling (mentoring-gap as obstacle) or growth angle (building peer support).
+> **Use:** Character A has good coaching but lacks visible role models and peer network. Career progression might stall without exposure and advocacy. Useful for storytelling (mentoring-gap as obstacle) or growth angle (building peer support).
 
 ### Use case: Spot mentoring interconnections for dyad content
 
 > **You:** "gro:mentoring-track --all"
 >
-> **Skill:** Finds that Nhân vật A mentors Nhân vật B (coaching), Nhân vật B mentors Nhân vật C (acceptance/friendship), Nhân vật C advises Nhân vật A (sponsorship). Forms a triangle.
+> **Skill:** Finds that Character A mentors Character B (coaching), Character B mentors Character C (acceptance/friendship), Character C advises Character A (sponsorship). Forms a triangle.
 >
 > **Use:** They form a mentoring ecosystem where each provides different functions to others. Useful for group dynamics, mutual-support narratives, or systemic resilience content.
 

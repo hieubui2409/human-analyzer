@@ -14,30 +14,30 @@ A character has experienced severe trauma. You need to understand: Is this crisi
 
 ## 3. Learning path
 
-**First run:** `psy:crisis-assess --character hieu --quick` — get a fast risk snapshot.
+**First run:** `psy:crisis-assess --character character-a --quick` — get a fast risk snapshot.
 
-**Deep run:** `psy:crisis-assess --character hieu --full` — full DSM-5 + ICD-11 checklist for detail.
+**Deep run:** `psy:crisis-assess --character character-a --full` — full DSM-5 + ICD-11 checklist for detail.
 
-**Update:** After adding new materials, `psy:crisis-assess --character hieu --update` — append new findings to existing documentation.
+**Update:** After adding new materials, `psy:crisis-assess --character character-a --update` — append new findings to existing documentation.
 
 ## 4. Use cases (each = a sample conversation)
 
 ### Use case: Quick risk check (you just added trauma materials)
 
-> You: "I integrated interview transcripts mentioning Nhân vật C's abandonment at age 11. Is this HIGH-risk territory?"
-> Skill: `psy:crisis-assess --character chien --quick`
+> You: "I integrated interview transcripts mentioning Character C's abandonment at age 11. Is this HIGH-risk territory?"
+> Skill: `psy:crisis-assess --character character-c --quick`
 > → Keywords: "bỏ rơi" (abandoned) hits. Behavioral: orphaning. Risk Level: MODERATE. Protective factors: mentor, education. Output: appends to darkness/traumas.md.
 
 ### Use case: Full clinical assessment (significant profile update)
 
-> You: "Nhân vật B's story has evolved. Gambling addiction, family abandonment, drinking. Full assessment?"
-> Skill: `psy:crisis-assess --character hoa --full`
+> You: "Character B's story has evolved. Gambling addiction, family abandonment, drinking. Full assessment?"
+> Skill: `psy:crisis-assess --character character-b --full`
 > → DSM-5 MDD: 7/9 criteria. ICD-11 C-PTSD: partial. SI: passive. Outputs: updates darkness/traumas.md, light/strengths-hope.md, INDEX.md status.
 
 ### Use case: Crisis content boundary (draft references crisis)
 
-> You: "I wrote a post about Nhân vật A's sacrificial role, but it hints at burnout risk. Should I publish?"
-> Skill: `cre:privacy-guard` (calls `psy:crisis-assess` internally) or you pre-check `psy:crisis-assess --character hieu --full` → if HIGH risk, `cre:privacy-guard` flags content.
+> You: "I wrote a post about Character A's sacrificial role, but it hints at burnout risk. Should I publish?"
+> Skill: `cre:privacy-guard` (calls `psy:crisis-assess` internally) or you pre-check `psy:crisis-assess --character character-a --full` → if HIGH risk, `cre:privacy-guard` flags content.
 
 ## 5. Important caveats
 

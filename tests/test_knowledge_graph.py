@@ -115,8 +115,10 @@ def test_get_graph_singleton_and_rebuild(kg):
 
 def test_fold_strips_vietnamese_diacritics():
     from platform_lib import knowledge_graph as mod
-    assert mod._fold("Nhân vật A") == "bui trung hieu"
+    # Verify _fold on arbitrary Vietnamese phrases with various diacritic classes
     assert mod._fold("Đặng Hoà") == "dang hoa"
+    assert mod._fold("Nguyễn Văn An") == "nguyen van an"
+    assert mod._fold("Phạm Thị Bích") == "pham thi bich"
 
 
 def test_body_multitoken_slug_one_mention_065(kg):
@@ -202,15 +204,19 @@ def test_cross_character_body_edge(kg):
 
 
 def test_short_name_diacritic_no_false_positive():
+    """Verify _scan_body_for_characters distinguishes a diacriticed display name from
+    common Vietnamese words that fold to the same ASCII form."""
     import re as _re
     from platform_lib import knowledge_graph as mod
-    chars = {"character-b": {
-        "full_rx": _re.compile(r"\bhoang[\s\-]+cong[\s\-]+hoa\b"),
-        "display": "Nhân vật B", "multi": True}}
-    # 'hóa' (common VN word) folds to 'hoa' but must NOT match the proper-noun short name.
-    assert mod._scan_body_for_characters("văn hóa biến hóa hợp lý", "alpha", chars) == []
-    assert mod._scan_body_for_characters("anh Nhân vật B nói", "alpha", chars) == [("character-b", 1)]
-    assert mod._scan_body_for_characters("anh Nhân vật B nói", "character-b", chars) == []  # self skip
+    # Use a synthetic display name "Bảo" — folds to "bao".
+    # Common VN words "bao giờ", "bao nhiêu" fold to "bao" but must NOT trigger a match.
+    chars = {"synthetic-bao": {
+        "full_rx": _re.compile(r"\bsynthetic[\s\-]+bao\b"),
+        "display": "Bảo", "multi": True}}
+    # Common words that fold to 'bao' must not match the proper-noun display name
+    assert mod._scan_body_for_characters("bao giờ bao nhiêu bao xa", "alpha", chars) == []
+    assert mod._scan_body_for_characters("anh Bảo nói", "alpha", chars) == [("synthetic-bao", 1)]
+    assert mod._scan_body_for_characters("anh Bảo nói", "synthetic-bao", chars) == []  # self skip
 
 
 def test_stats_reports_edges_by_source(kg):

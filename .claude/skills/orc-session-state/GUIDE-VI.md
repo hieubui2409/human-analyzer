@@ -30,7 +30,7 @@ Bạn tiếp tục một phiên từ giờ hoặc ngày hôm trước. Bạn đa
 
 > Bạn: "What's the current session state?"
 >
-> Kỹ năng: Hiển thị: Mode=normal, Phase=creating, Branch=claude/features/hoa-psychology, Profiles touched=[character-b], Content created=[assets/linkedin/260605-post/], Decisions=[Nhân vật B attachment decision], Harness delta=3 files. Bạn thấy: tập trung vào Nhân vật B, tạo nội dung, rủi ro bình thường, 3 thay đổi harness.
+> Kỹ năng: Hiển thị: Mode=normal, Phase=creating, Branch=claude/features/character-b-psychology, Profiles touched=[character-b], Content created=[assets/linkedin/260605-post/], Decisions=[Nhân vật B attachment decision], Harness delta=3 files. Bạn thấy: tập trung vào Nhân vật B, tạo nội dung, rủi ro bình thường, 3 thay đổi harness.
 
 ### Trường hợp sử dụng: Lưu trữ phiên trước khi dừng
 

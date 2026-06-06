@@ -19,13 +19,6 @@ from platform_lib.formatters import print_json, print_table
 
 TODAY = date.today()
 
-# DOB fallback — hardcoded since we parse identity/core.md dynamically
-DOB_FALLBACK = {
-    "character-a": date(1997, 9, 24),
-    "character-b": date(2008, 2, 18),
-    "character-c": date(2007, 5, 14),
-}
-
 
 def parse_dob_from_identity(char_dir: Path) -> date | None:
     identity = char_dir / "identity/core.md"
@@ -78,7 +71,9 @@ def check_character_timeline(slug: str) -> list[dict]:
         return [{"slug": slug, "character": display, "type": "MISSING_FILE",
                  "file": "timeline/overview.md", "line": 0, "detail": "timeline/overview.md not found"}]
 
-    dob = parse_dob_from_identity(cdir) or DOB_FALLBACK.get(slug)
+    # Birth date is read dynamically from the character's identity/core.md (the corpus is the
+    # single source); when absent (e.g. a fixture without a DOB row) the before-DOB check is skipped.
+    dob = parse_dob_from_identity(cdir)
     events = extract_timeline_events(timeline_file)
 
     parsed_dates = []

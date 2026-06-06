@@ -30,19 +30,19 @@ You're asking: **What can this character actually do, and how well?** This skill
 
 ### Use case: Assess readiness for a career move
 
-> **You:** "gro:competency-map --character hieu"
+> **You:** "gro:competency-map --character character-a"
 >
-> **Skill:** Extracts all of Nhân vật A's skills. Finds: Technical domain at Level 4–5 (Expert). Project management at Level 2 (Advanced Beginner). Communication at Level 3 (Competent).
+> **Skill:** Extracts all of Character A's skills. Finds: Technical domain at Level 4–5 (Expert). Project management at Level 2 (Advanced Beginner). Communication at Level 3 (Competent).
 >
-> **Use:** Nhân vật A is ready to lead a technical project but would struggle managing cross-functional teams. Useful for narrative tension (ambitious promotion, growth edge) or mentoring angle (needs communication coaching).
+> **Use:** Character A is ready to lead a technical project but would struggle managing cross-functional teams. Useful for narrative tension (ambitious promotion, growth edge) or mentoring angle (needs communication coaching).
 
 ### Use case: Identify growth opportunities for content
 
 > **You:** "gro:competency-map --all --gaps-only"
 >
-> **Skill:** Returns Level 1–2 skills across all 3 characters. All three are weak in Data Analysis. Nhân vật B and Nhân vật C lack Public Speaking.
+> **Skill:** Returns Level 1–2 skills across all 3 characters. All three are weak in Data Analysis. Character B and Character C lack Public Speaking.
 >
-> **Use:** Spot common growth themes (collective learning arc, peer mentoring opportunity) or individual gaps (Nhân vật B fears public speaking — psychological angle).
+> **Use:** Spot common growth themes (collective learning arc, peer mentoring opportunity) or individual gaps (Character B fears public speaking — psychological angle).
 
 ## 5. Important caveats
 
