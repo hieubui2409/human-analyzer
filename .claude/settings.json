@@ -4,6 +4,9 @@
     "commit": "",
     "pr": ""
   },
+  "disabledMcpjsonServers": [
+    "human-mcp"
+  ],
   "hooks": {
     "PostToolUse": [
       {
