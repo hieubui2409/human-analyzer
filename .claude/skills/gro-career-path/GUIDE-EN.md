@@ -29,15 +29,15 @@ You're building a character profile and want to understand their **career cohere
 
 ### Use case: Understand a character's current career stage
 
-> **You:** "gro:career-path --character hieu"
+> **You:** "gro:career-path --character character-a"
 >
-> **Skill:** Gathers Nhân vật A's role history (education → first job → current role), dates, and context. LLM assesses: age 28, 5 years in role, recent certifications, no major pivots → Likely in **Establishment stage** (committed to role, building expertise). Risk factors: narrow skill breadth. Growth opportunity: lateral moves in related domains.
+> **Skill:** Gathers Character A's role history (education → first job → current role), dates, and context. LLM assesses: age 28, 5 years in role, recent certifications, no major pivots → Likely in **Establishment stage** (committed to role, building expertise). Risk factors: narrow skill breadth. Growth opportunity: lateral moves in related domains.
 >
-> **Use:** You now know Nhân vật A's career maturity level. Useful for understanding mentoring needs, competency gaps, or story arcs (stable vs turbulent).
+> **Use:** You now know Character A's career maturity level. Useful for understanding mentoring needs, competency gaps, or story arcs (stable vs turbulent).
 
 ### Use case: Analyze decision-making patterns
 
-> **You:** "gro:career-path --character chien --decisions-only"
+> **You:** "gro:career-path --character character-c --decisions-only"
 >
 > **Skill:** Extracts 4–5 major career decisions (e.g., "left startup to join corporate", "pursued certification", "negotiated promotion"). For each, LLM scores evidence quality, outcome (success/neutral/setback), and what it reveals about risk tolerance and confidence.
 >

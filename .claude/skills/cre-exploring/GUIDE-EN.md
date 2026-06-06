@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You have a vague idea: "I want to write something about Nhân vật A's mentoring." This skill asks you 7 focused questions — one per turn — that lock down every decision you need *before* you start writing. By the end, you have a CONTEXT.md that tells `cre:post-writer` exactly who, what, where, how, and why. No surprises mid-draft.
+You have a vague idea: "I want to write something about Character A's mentoring." This skill asks you 7 focused questions — one per turn — that lock down every decision you need *before* you start writing. By the end, you have a CONTEXT.md that tells `cre:post-writer` exactly who, what, where, how, and why. No surprises mid-draft.
 
 ## 2. Core concepts (the mental model)
 
@@ -26,9 +26,9 @@ Each question builds on the last. You can't pick a "tone" before picking a "plat
 
 **First run:**
 ```bash
-/cre:exploring My mentorship journey with Nhân vật C
+/cre:exploring My mentorship journey with Character C
 ```
-Start with a topic. The skill asks Q1 (character) — answer Nhân vật A. Q2 (type) — answer "LinkedIn post". Q3 (angle) — pick from profile-derived suggestions. And so on. At the end, you have a CONTEXT.md.
+Start with a topic. The skill asks Q1 (character) — answer Character A. Q2 (type) — answer "LinkedIn post". Q3 (angle) — pick from profile-derived suggestions. And so on. At the end, you have a CONTEXT.md.
 
 **As you grow:** Try `--resume` to pick up from your last exploration (same file). If you want to re-answer Q3 but keep Q1-Q2, the skill keeps your prior answers and asks "Q3 again?"
 
@@ -40,13 +40,13 @@ Start with a topic. The skill asks Q1 (character) — answer Nhân vật A. Q2 (
 
 > **You:** `/cre:exploring`
 >
-> **Skill:** Q1: Which character? → You: Nhân vật B. Q2: Content type? → You: Facebook post. Q3: Angle? (suggests 3 from profile). → You: "Nhân vật B's resilience in hardship". Q4-Q7: platform → tone → clinical → constraints.
+> **Skill:** Q1: Which character? → You: Character B. Q2: Content type? → You: Facebook post. Q3: Angle? (suggests 3 from profile). → You: "Character B's resilience in hardship". Q4-Q7: platform → tone → clinical → constraints.
 >
 > **Skill:** Writes CONTEXT.md, confirms decisions, ready for `cre:post-writer --from-context`.
 
 ### Use case: Refine a discovered angle
 
-> **You:** `cre:angle-discovery --character hieu --top 1` returned one angle.
+> **You:** `cre:angle-discovery --character character-a --top 1` returned one angle.
 >
 > **Skill:** `cre:exploring --from-context` (hypothetically if angle was output as CONTEXT). Or copy the angle title → `/cre:exploring {angle title}`.
 >
@@ -60,7 +60,7 @@ Start with a topic. The skill asks Q1 (character) — answer Nhân vật A. Q2 (
 
 ### Use case: Cross-character relationship content
 
-> **You:** `/cre:exploring relationship dynamic between Nhân vật A and Nhân vật C`
+> **You:** `/cre:exploring relationship dynamic between Character A and Character C`
 >
 > **Skill:** Q1: Select "Cross-character" → Q2: Select "Relationship arc development" → Q3: Suggests angles from `docs/graph/{dyad}.md` → Q4-Q7.
 

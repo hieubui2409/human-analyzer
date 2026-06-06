@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-As domains fire events (PSY.refresh, CRE.recalibrate), they get logged. Event-log is the audit trail: "who triggered what, when?" You can query: "all PSY events in the last 3 days," "all events from psy:crossref," "all events for Nhân vật B." It's a searchable history of domain activity.
+As domains fire events (PSY.refresh, CRE.recalibrate), they get logged. Event-log is the audit trail: "who triggered what, when?" You can query: "all PSY events in the last 3 days," "all events from psy:crossref," "all events for Character B." It's a searchable history of domain activity.
 
 ## 2. Core concepts (the mental model)
 
@@ -20,11 +20,11 @@ As domains fire events (PSY.refresh, CRE.recalibrate), they get logged. Event-lo
 
 **Filter by event:** `orc:event-log --query --event-type PSY.refresh` — only PSY refreshes.
 
-**Filter by character:** `orc:event-log --query --character character-b` — all events for Nhân vật B.
+**Filter by character:** `orc:event-log --query --character character-b` — all events for Character B.
 
 **Filter by date:** `orc:event-log --query --since 2026-06-01` — events from June onward.
 
-**Append an event:** Skills call `--append --event-type MAT.integrated --source mat:indexer --character hieu --reason "New material processed"`.
+**Append an event:** Skills call `--append --event-type MAT.integrated --source mat:indexer --character character-a --reason "New material processed"`.
 
 ## 4. Use cases (each = a sample conversation)
 
@@ -32,11 +32,11 @@ As domains fire events (PSY.refresh, CRE.recalibrate), they get logged. Event-lo
 
 > You: "What PSY work happened this week?"
 >
-> Skill: Queries character-events.jsonl for `event-type=PSY.refresh`, `--since=7 days ago`. Shows: PSY.refresh on 2026-06-04 (psy:crossref, Nhân vật B), PSY.refresh on 2026-06-02 (psy:wave, Nhân vật A). You see PSY activity.
+> Skill: Queries character-events.jsonl for `event-type=PSY.refresh`, `--since=7 days ago`. Shows: PSY.refresh on 2026-06-04 (psy:crossref, Character B), PSY.refresh on 2026-06-02 (psy:wave, Character A). You see PSY activity.
 
 ### Use case: Trace all events for one character
 
-> You: "Show all events for Nhân vật C."
+> You: "Show all events for Character C."
 >
 > Skill: Queries across all 6 streams for `character=character-c`. Returns: MAT.integrated, PSY.refresh, GRO.assessed events in order. You see full activity chain for that character.
 

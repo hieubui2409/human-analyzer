@@ -31,19 +31,19 @@ You want to **track a character's career progress against their own goals.** Did
 
 ### Use case: Assess career progression coherence
 
-> **You:** "gro:milestone-tracker --character hoa"
+> **You:** "gro:milestone-tracker --character character-b"
 >
-> **Skill:** Extracts Nhân vật B's milestones. Finds: Education milestones achieved on-time. Early career promotion ahead of schedule. Recent mentoring goal still pending. Overall: 70% completion, ahead in career milestones, behind in personal-development ones.
+> **Skill:** Extracts Character B's milestones. Finds: Education milestones achieved on-time. Early career promotion ahead of schedule. Recent mentoring goal still pending. Overall: 70% completion, ahead in career milestones, behind in personal-development ones.
 >
-> **Use:** Nhân vật B prioritizes career over personal growth. Useful for character motivation angle (ambitious but unbalanced) or story setup (pressure to pivot toward mentoring/giving-back).
+> **Use:** Character B prioritizes career over personal growth. Useful for character motivation angle (ambitious but unbalanced) or story setup (pressure to pivot toward mentoring/giving-back).
 
 ### Use case: Spot milestone clusters for narrative tension
 
 > **You:** "gro:milestone-tracker --all"
 >
-> **Skill:** Nhân vật A has tight timeline (milestones 6–12 months apart). Nhân vật B has loose timeline (1–2 years apart). Nhân vật C has stalled progression (2+ years between last two milestones).
+> **Skill:** Character A has tight timeline (milestones 6–12 months apart). Character B has loose timeline (1–2 years apart). Character C has stalled progression (2+ years between last two milestones).
 >
-> **Use:** Nhân vật A has high-pressure momentum (risk of burnout). Nhân vật B is methodical (lower stress, slower growth). Nhân vật C may be blocked (motivation check needed). Useful for group dynamics or individual character arcs.
+> **Use:** Character A has high-pressure momentum (risk of burnout). Character B is methodical (lower stress, slower growth). Character C may be blocked (motivation check needed). Useful for group dynamics or individual character arcs.
 
 ## 5. Important caveats
 

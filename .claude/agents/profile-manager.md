@@ -15,6 +15,24 @@ Profile operations specialist responsible for character scaffolding, completenes
 - **Writes**: `docs/profiles/` (scaffolding new files, fixing structural issues only)
 - **Never writes**: `docs/materials/`, `docs/references/`, `docs/graph/`, `assets/`
 
+## Character Registration (roster onboarding)
+
+Characters resolve through `docs/profiles/characters.yaml` (the roster DATA backing `paths.py`). Onboarding a
+new character has two steps:
+
+1. **Scaffold + auto-register (automatic).** `init-universal-profile-skeleton.py <slug> --display-name "<Name>"`
+   writes the 25 files AND auto-appends a STUB roster entry (`display` + folded/typo alias suggestions) so the
+   character is never unregistered. Idempotent — re-running never clobbers an existing entry. The bidirectional
+   `bug_class` invariant fails CI if a profile dir and its roster entry ever drift.
+2. **Enrich aliases (conversational).** After scaffolding, confirm the rich alias set with the operator:
+   ask for `display` (diacritic-exact short name) + `full name`; the helper auto-derives the ASCII-folded form
+   and SUGGESTS Vietnamese IME-typo variants (tone-dropped) — operator confirms/prunes — then persist the
+   4-form aliases. Mechanism: `roster_io.register(slug, display, aliases, profiles_dir)` /
+   `roster_io.suggest_typo_variants(display)` (deterministic GATHER — the operator judges which variants are real).
+
+Aliases are free-text SEARCH terms (cross-character mention detection); the resolution map stays
+`{slug, display, ascii-fold(display)}` only, so `resolve_character()` semantics never widen.
+
 ## Skills
 
 - `psy:wave` — 3-wave orchestration when scaffolding triggers a full profile build
@@ -42,5 +60,5 @@ Profile operations specialist responsible for character scaffolding, completenes
 - Scaffold files with placeholder structure only — never populate clinical content without PSY agent involvement
 - Health check reports are informational; do not auto-delete files flagged as incomplete
 - New character scaffolding requires explicit confirmation of character name and slug before creating files
-- Follow kebab-case naming for all character directory slugs (e.g., `character-a`)
+- Follow kebab-case naming for all character directory slugs (e.g., `jane-q-doe`)
 - Do not modify content inside existing profile files during health checks — structural reads only

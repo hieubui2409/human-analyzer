@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-Framework skills notice things: "Nhân vật B uses intellectualization when conflicted," "LinkedIn posts with vulnerability hooks get 2x engagement," "Nhân vật A's competency gap in delegation." These observations are worth remembering. Observe lets skills emit signals that get recorded in an observation stream. Later, `orc:compounding` mines those signals into learnings.
+Framework skills notice things: "Character B uses intellectualization when conflicted," "LinkedIn posts with vulnerability hooks get 2x engagement," "Character A's competency gap in delegation." These observations are worth remembering. Observe lets skills emit signals that get recorded in an observation stream. Later, `orc:compounding` mines those signals into learnings.
 
 ## 2. Core concepts (the mental model)
 
@@ -26,7 +26,7 @@ Framework skills notice things: "Nhân vật B uses intellectualization when con
 
 ### Use case: Framework skill emits a defense-pattern signal
 
-> Skill (psy:crossref) finishes work and notices: "Nhân vật B intellectualizes under conflict." Calls: `orc:observe --framework psy --signal defense-pattern --payload '{"character":"hoa","mechanism":"intellectualization","trigger":"conflict"}' --source psy:crossref`. Signal recorded.
+> Skill (psy:crossref) finishes work and notices: "Character B intellectualizes under conflict." Calls: `orc:observe --framework psy --signal defense-pattern --payload '{"character":"hoa","mechanism":"intellectualization","trigger":"conflict"}' --source psy:crossref`. Signal recorded.
 
 ### Use case: Content skill observes voice drift
 
@@ -34,11 +34,11 @@ Framework skills notice things: "Nhân vật B uses intellectualization when con
 
 ### Use case: Compounding mines observations into learnings
 
-> Later, `orc:compounding --session` reads observation stream, finds 5 defense-pattern signals, 2 voice-drift signals. Proposes extracting: "Nhân vật B intellectualizes under conflict (reinforced 5x)" as a learning worth remembering.
+> Later, `orc:compounding --session` reads observation stream, finds 5 defense-pattern signals, 2 voice-drift signals. Proposes extracting: "Character B intellectualizes under conflict (reinforced 5x)" as a learning worth remembering.
 
 ## 5. Important caveats
 
 - **Observations are optional.** Skills can work without emitting signals; automatic hooks ensure baseline tracking.
 - **Signals are pointers, not dumps.** Keep payload ≤2 KB; signals point to patterns, not exhaustive data.
 - **Semantic signals require judgment.** Only emit when genuinely notable (not every observation).
-- **Observation ≠ Action.** Recording "Nhân vật B avoids conflict" doesn't change behavior; it's a note for future reference.
+- **Observation ≠ Action.** Recording "Character B avoids conflict" doesn't change behavior; it's a note for future reference.

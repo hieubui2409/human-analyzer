@@ -30,7 +30,7 @@ You resume a session from hours or days ago. What were you working on? Which pro
 
 > You: "What's the current session state?"
 >
-> Skill: Shows: Mode=normal, Phase=creating, Branch=claude/features/hoa-psychology, Profiles touched=[character-b], Content created=[assets/linkedin/260605-post/], Decisions=[Nhân vật B attachment decision], Harness delta=3 files. You see: focused on Nhân vật B, creating content, normal risk, 3 harness changes.
+> Skill: Shows: Mode=normal, Phase=creating, Branch=claude/features/character-b-psychology, Profiles touched=[character-b], Content created=[assets/linkedin/260605-post/], Decisions=[Character B attachment decision], Harness delta=3 files. You see: focused on Character B, creating content, normal risk, 3 harness changes.
 
 ### Use case: Archive session before stopping
 

@@ -33,11 +33,11 @@ Systematically load human-analyzer context into session. Prevents context drift 
 
 Resolve `<name>` argument to directory:
 
-| Input                                 | Directory           |
-| ------------------------------------- | ------------------- |
-| `hieu`, `hiếu`, `character-a`      | `character-a`    |
-| `hoa`, `hòa`, `character-b`        | `character-b`    |
-| `chien`, `chiến`, `character-c` | `character-c` |
+| Input                                       | Directory     |
+| ------------------------------------------- | ------------- |
+| `character-a` · display name · slug · fold  | `character-a` |
+| `character-b` · display name · slug · fold  | `character-b` |
+| `character-c` · display name · slug · fold  | `character-c` |
 
 ## Workflow
 
@@ -176,8 +176,8 @@ When loading profiles, read in this order (most important first):
 ```bash
 /orc:bootstrap                          # quick: INDEX × 3 + recent
 /orc:bootstrap --full                   # deep: all profiles + refs
-/orc:bootstrap --character hòa          # deep-load Nhân vật B only
-/orc:bootstrap --character chien        # deep-load Nhân vật C only
+/orc:bootstrap --character character-b          # deep-load Nhân vật B only
+/orc:bootstrap --character character-c        # deep-load Nhân vật C only
 /orc:bootstrap --recent                 # last 7 days activity
 /orc:bootstrap --lite                   # lite profiles × 3 (~400 lines)
 /orc:bootstrap --intent "write LinkedIn post about Nhân vật B"  # task-aware

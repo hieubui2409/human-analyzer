@@ -14,7 +14,7 @@ Vài tháng vào lập hồ sơ, các vật liệu mới nổi lên: mẹ kế c
 
 ## 3. Đường dẫn học tập
 
-**Xoay chiều đầu tiên:** `psy:narrative-twist --character chien --fact "Mẹ kế bỏ rơi Nhân vật C" --truth "Mẹ kế nuôi dạy Nhân vật C từ bé" --source "P1, 2026-06-05"` — áp dụng một xoay chiều, xem xét việc xếp tầng.
+**Xoay chiều đầu tiên:** `psy:narrative-twist --character character-c --fact "Mẹ kế bỏ rơi Nhân vật C" --truth "Mẹ kế nuôi dạy Nhân vật C từ bé" --source "P1, 2026-06-05"` — áp dụng một xoay chiều, xem xét việc xếp tầng.
 
 **Quét xoay chiều:** `psy:narrative-twist --scan` — tìm các mâu thuẫn trong dữ liệu hiện có.
 
@@ -25,13 +25,13 @@ Vài tháng vào lập hồ sơ, các vật liệu mới nổi lên: mẹ kế c
 ### Trường hợp sử dụng: Xoay chiều nhân vật duy nhất
 
 > Bạn: "Phỏng vấn cho thấy Nhân vật B không thực sự bị bỏ rơi ở tuổi 8; bố anh ấy đã thăm bí mật. Cập nhật hồ sơ."
-> Kỹ năng: `psy:narrative-twist --character hoa --fact "Father abandoned family when Nhân vật B was 8" --truth "Father visited secretly, maintained contact" --source "P1, new interview"`
+> Kỹ năng: `psy:narrative-twist --character character-b --fact "Father abandoned family when Nhân vật B was 8" --truth "Father visited secretly, maintained contact" --source "P1, new interview"`
 > → Tìm 3 lần xuất hiện trong timeline/overview.md, psychology/core-wounds.md, darkness/traumas.md. Áp dụng gạch bỏ + TWIST. Cập nhật psychology/formulation.md (lõi tính toán lại). Đầu ra báo cáo.
 
 ### Trường hợp sử dụng: Xoay chiều mối quan hệ (xếp tầng)
 
 > Bạn: "Ngày kết nghĩa của Nhân vật A và Nhân vật B KHÔNG phải là tháng 9 năm 2025; nó thực sự là tháng 10 năm 2025. Cũng ảnh hưởng đến dòng thời gian của Nhân vật B."
-> Kỹ năng: `psy:narrative-twist --character hieu --fact "Kết nghĩa with Nhân vật B: September 2025" --truth "Kết nghĩa with Nhân vật B: October 2025" --source "P1, corrected materials"`
+> Kỹ năng: `psy:narrative-twist --character character-a --fact "Kết nghĩa with Nhân vật B: September 2025" --truth "Kết nghĩa with Nhân vật B: October 2025" --source "P1, corrected materials"`
 > → Cập nhật dòng thời gian của Nhân vật A. Tự động tìm + cập nhật dòng thời gian của Nhân vật B, relationships/hieu.md. Xác thực tính đối xứng. Đề xuất: chạy psy:crossref --pair hieu hoa để xác nhận.
 
 ### Trường hợp sử dụng: Quét xoay chiều tiềm ẩn

@@ -9,7 +9,7 @@ Imagine you have three specialized domain agents (psychologist, content-strategi
 ## 2. Core concepts (the mental model)
 
 **Three agents, one memory per agent.** Each agent has a memory file (`.claude/agent-memory/{agent-name}.md`) containing:
-- **Character Insights:** Domain-specific calibrations learned about each character (e.g., "Nhân vật B's avoidance intensifies under academic pressure" for the psychologist).
+- **Character Insights:** Domain-specific calibrations learned about each character (e.g., "Character B's avoidance intensifies under academic pressure" for the psychologist).
 - **Patterns Learned:** Cross-session accumulated patterns (e.g., "LinkedIn vulnerability-hook + resolution structure works").
 - **Anti-Patterns:** What didn't work, so agents avoid repeating it.
 - **Instinct-Promoted Patterns:** High-confidence learnings promoted from the instinct store by `orc:dream`.
@@ -28,11 +28,11 @@ Imagine you have three specialized domain agents (psychologist, content-strategi
 
 ## 4. Use cases (each = a sample conversation)
 
-### Use case: View what the psychologist has learned about Nhân vật B
+### Use case: View what the psychologist has learned about Character B
 
-> You: "Show me what the psychologist agent knows about Nhân vật B"
+> You: "Show me what the psychologist agent knows about Character B"
 >
-> Skill: Reads `.claude/agent-memory/psychologist.md`, extracts insights about Nhân vật B (e.g., attachment patterns, defense triggers), and displays them with instinct stats. You see calibration that shapes how future PSY work handles her.
+> Skill: Reads `.claude/agent-memory/psychologist.md`, extracts insights about Character B (e.g., attachment patterns, defense triggers), and displays them with instinct stats. You see calibration that shapes how future PSY work handles her.
 
 ### Use case: Seed memory after major profile updates
 

@@ -204,7 +204,7 @@ Each event is one JSON line:
 /orc:event-log --query --event-type PSY.refresh --since 2026-05-01
 
 # Filter by character
-/orc:event-log --query --character hieu
+/orc:event-log --query --character character-a
 ```
 
 ### Scripts

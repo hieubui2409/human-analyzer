@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You get a new task: "Write a post about Nhân vật A's mentoring journey." But what skills should run? In what order? Intake analyzes the task, determines it's "content creation," and outputs the optimal skill chain: bootstrap → cre:exploring → orc:classify → cre:prompt-leverage → cre:post-writer → cre:privacy-guard → cre:voice-audit → orc:compounding. You don't have to remember the sequence.
+You get a new task: "Write a post about Character A's mentoring journey." But what skills should run? In what order? Intake analyzes the task, determines it's "content creation," and outputs the optimal skill chain: bootstrap → cre:exploring → orc:classify → cre:prompt-leverage → cre:post-writer → cre:privacy-guard → cre:voice-audit → orc:compounding. You don't have to remember the sequence.
 
 ## 2. Core concepts (the mental model)
 
@@ -16,7 +16,7 @@ You get a new task: "Write a post about Nhân vật A's mentoring journey." But 
 
 ## 3. Learning path
 
-**First run:** `orc:intake "write a LinkedIn post about Nhân vật A's mentoring"` → sees "write post" → Content Creation → outputs chain.
+**First run:** `orc:intake "write a LinkedIn post about Character A's mentoring"` → sees "write post" → Content Creation → outputs chain.
 
 **Auto-detect:** `orc:intake --auto` → looks at git changes, infers work type.
 
@@ -26,7 +26,7 @@ You get a new task: "Write a post about Nhân vật A's mentoring journey." But 
 
 ### Use case: Classify content creation task
 
-> You: "I'm writing a LinkedIn post about Nhân vật A. What's my workflow?"
+> You: "I'm writing a LinkedIn post about Character A. What's my workflow?"
 >
 > Skill: Detects "write post" + "LinkedIn" → Content Creation. Outputs: bootstrap → cre:exploring → orc:classify → ... → orc:compounding. You now know the sequence.
 

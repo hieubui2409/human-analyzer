@@ -10,7 +10,7 @@ Over time, your materials directory fills up. Some files are old, confidential, 
 
 **Archived is not deleted.** When you archive a material, its `processing_status` becomes "archived"—it's marked as inactive, but the file stays in `docs/materials/` forever. This maintains an audit trail: you can see what existed when and why it was archived.
 
-**Filters are AND logic.** If you say `--character hieu --before-date 2024-12-31 --tier T5`, the script finds files where ALL three conditions are true: Nhân vật A's materials, from before 2024-12-31, AND tier T5. It doesn't match Nhân vật A's T1 files from 2025, or pre-2024 T3 files from other characters.
+**Filters are AND logic.** If you say `--character character-a --before-date 2024-12-31 --tier T5`, the script finds files where ALL three conditions are true: Character A's materials, from before 2024-12-31, AND tier T5. It doesn't match Character A's T1 files from 2025, or pre-2024 T3 files from other characters.
 
 **Dry-run is default.** Every archive command defaults to `--dry-run`, showing you what would be archived without actually changing anything. To make changes real, you must explicitly remove `--dry-run` from your command (or it's implied if you explicitly write without that flag after reviewing the preview).
 
@@ -19,9 +19,9 @@ Over time, your materials directory fills up. Some files are old, confidential, 
 ## 3. Learning path
 
 1. **First run:** `mat:archive` with no filters — see all materials that could theoretically be archived (dry-run mode only).
-2. **Filter by character:** `mat:archive --character hieu --dry-run` — what would happen if you archived only Nhân vật A's materials?
+2. **Filter by character:** `mat:archive --character character-a --dry-run` — what would happen if you archived only Character A's materials?
 3. **Filter by age:** `mat:archive --before-date 2024-06-01 --dry-run` — archive pre-June 2024 materials (old stuff).
-4. **Combine filters:** `mat:archive --character hoa --tier T5 --dry-run` — Hoà's low-tier materials only.
+4. **Combine filters:** `mat:archive --character character-b --tier T5 --dry-run` — Hoà's low-tier materials only.
 5. **Execute:** Once you trust the preview, drop `--dry-run` to actually archive.
 
 ## 4. Use cases
@@ -53,7 +53,7 @@ Over time, your materials directory fills up. Some files are old, confidential, 
 ### Use case: Character-specific archival
 > **You:** "Hoà's profile is complete. I don't need to add more evidence for her. Archive all her validated materials to clean the workspace."
 > 
-> **Skill:** `mat:archive --character hoa --status validated --dry-run`:
+> **Skill:** `mat:archive --character character-b --status validated --dry-run`:
 > - Shows all of Hoà's materials that are "validated" (completed Stage 4)
 > - You see: 18 files
 > - Once archived, they still exist but won't clutter `mat:loader --list` output

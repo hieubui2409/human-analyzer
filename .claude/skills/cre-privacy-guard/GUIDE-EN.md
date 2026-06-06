@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You've written a post about Nhân vật A's mentoring journey, but before you publish, you want to make sure you didn't accidentally leak someone's real name, a clinical diagnosis, or a confidential family detail. This skill scans your post for privacy tags (`[CONFIDENTIAL: Nhân vật B]`, `[PRIVATE]`), restricted names, raw clinical terms (DSM codes, ICD codes), and PII (phone numbers, emails). It outputs a clean violation report: what leaked, where, how severe. You fix, re-run, done.
+You've written a post about Character A's mentoring journey, but before you publish, you want to make sure you didn't accidentally leak someone's real name, a clinical diagnosis, or a confidential family detail. This skill scans your post for privacy tags (`[CONFIDENTIAL: Character B]`, `[PRIVATE]`), restricted names, raw clinical terms (DSM codes, ICD codes), and PII (phone numbers, emails). It outputs a clean violation report: what leaked, where, how severe. You fix, re-run, done.
 
 ## 2. Core concepts (the mental model)
 

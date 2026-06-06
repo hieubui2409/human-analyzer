@@ -14,7 +14,7 @@ confidence: high
 
 ## Timeline of Key Events
 
-- 2005-06-20: Born in Tỉnh X
+- 2005-06-20: Born in Province X
 - 09/2020: High school entry
 - 2023: Provincial math competition
 - 2024-03: Mentorship with Alpha begins

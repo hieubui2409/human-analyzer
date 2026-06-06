@@ -218,7 +218,7 @@ Scan ALL directions for missing theories. This is MOSTLY HEURISTIC.
 
 ```bash
 /psy:ref-audit                    # default: all chars, all directions
-/psy:ref-audit --character hòa    # one character
+/psy:ref-audit --character character-b    # one character
 /psy:ref-audit --discover         # bidirectional blind spot scan
 /psy:ref-audit --cross-ref        # ref↔ref linkage only
 /psy:ref-audit --term "repetition compulsion"  # specific term

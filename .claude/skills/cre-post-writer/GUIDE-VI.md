@@ -57,7 +57,7 @@ Kỹ năng tạo bản nháp → chạy cổng → xuất ra assets/linkedin/{da
 
 ### Trường hợp sử dụng: Chế độ nhanh (bỏ qua tải hồ sơ)
 
-> **Bạn:** `/cre:post-writer Thư gửi Nhân vật C --character hieu --platform blog --type letter --quick`
+> **Bạn:** `/cre:post-writer Thư gửi Nhân vật C --character character-a --platform blog --type letter --quick`
 >
 > **Kỹ năng:** Không tải lại hồ sơ nhẹ (sử dụng bối cảnh phiên), nhanh hơn.
 >

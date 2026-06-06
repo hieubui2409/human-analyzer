@@ -63,7 +63,7 @@ Every material MUST pass this 5-dimension reliability test before profile integr
 Save to `docs/materials/{character}/raw/` with descriptive filename:
 
 - Format: `{type}-{topic}-{source}.md`
-- Examples: `transcript-duong-conflict.md`, `letter-gioi-thieu-f15.md`, `news-vietseeds-interview.md`
+- Examples: `transcript-mentor-conflict.md`, `letter-intro-cohort.md`, `news-scholarship-interview.md`
 - Populate YAML frontmatter from `material-schema.yaml`
 - Preserve original text — do NOT sanitize or edit raw materials
 

@@ -14,7 +14,7 @@ Bạn đã viết: "Nhân vật A cho thấy các mẫu parentification" và "Nh
 
 ## 3. Đường dẫn học tập
 
-**Lần chạy đầu tiên:** `psy:ref-audit --character hieu` — xem Nhân vật A hồ sơ sử dụng những thuật ngữ nào.
+**Lần chạy đầu tiên:** `psy:ref-audit --character character-a` — xem Nhân vật A hồ sơ sử dụng những thuật ngữ nào.
 
 **Kiểm tra đầy đủ:** `psy:ref-audit --all` — tất cả các nhân vật, tất cả các hướng.
 
@@ -27,7 +27,7 @@ Bạn đã viết: "Nhân vật A cho thấy các mẫu parentification" và "Nh
 ### Trường hợp sử dụng: Kiểm tra sau cập nhật hồ sơ
 
 > Bạn: "Tôi vừa cập nhật psychology/formulation.md cho Nhân vật C. Các thuật ngữ lâm sàn có được hỗ trợ đúng không?"
-> Kỹ năng: `psy:ref-audit --character chien`
+> Kỹ năng: `psy:ref-audit --character character-c`
 > → Tìm: "complex-PTSD" (CHÍNH XÁC, tài liệu tham khảo tồn tại), "repetition compulsion" (NGẦM — hồ sơ mô tả nó nhưng không đặt tên, tài liệu tham khảo tồn tại), "learned helplessness" (KHÔNG ĐƯỢC THAM CHIẾU — thuật ngữ sử dụng, không có tệp tài liệu tham khảo). Khuyến nghị: liên kết lặp lại-bức xúc một cách rõ ràng, tạo tài liệu tham khảo từ nhân văn học hay rephrase.
 
 ### Trường hợp sử dụng: Sức khỏe thư viện định kỳ

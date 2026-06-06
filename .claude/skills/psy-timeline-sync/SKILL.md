@@ -112,7 +112,7 @@ For each shared event:
 
 ```bash
 /psy:timeline-sync                              # check all characters
-/psy:timeline-sync --character hieu             # Nhân vật A's timeline only
+/psy:timeline-sync --character character-a             # Nhân vật A's timeline only
 /psy:timeline-sync --all                        # explicit all mode
 /psy:timeline-sync --json                       # machine-readable
 ```

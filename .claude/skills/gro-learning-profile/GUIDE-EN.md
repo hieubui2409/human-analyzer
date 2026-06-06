@@ -31,19 +31,19 @@ You want to understand **how a character learns best.** Do they brainstorm (Dive
 
 ### Use case: Personalize content for a character's learning style
 
-> **You:** "gro:learning-profile --character hoa"
+> **You:** "gro:learning-profile --character character-b"
 >
-> **Skill:** Finds Nhân vật B is Diverging (imaginative, reflective). Loves brainstorming, dislikes rigid procedures. Cycle gap: weak in Active Experimentation (doesn't jump to action easily).
+> **Skill:** Finds Character B is Diverging (imaginative, reflective). Loves brainstorming, dislikes rigid procedures. Cycle gap: weak in Active Experimentation (doesn't jump to action easily).
 >
-> **Use:** Frame content for Nhân vật B as open-ended exploration (not prescriptive steps). Use emotional hooks, diverse perspectives. Avoid "just do it" language. Useful for CRE personalization or mentoring approach.
+> **Use:** Frame content for Character B as open-ended exploration (not prescriptive steps). Use emotional hooks, diverse perspectives. Avoid "just do it" language. Useful for CRE personalization or mentoring approach.
 
 ### Use case: Spot learning-style mismatch for conflict
 
 > **You:** "gro:learning-profile --all"
 >
-> **Skill:** Nhân vật A = Converging (practical, problem-solving). Nhân vật B = Diverging (imaginative, reflective). Nhân vật C = Assimilating (analytical).
+> **Skill:** Character A = Converging (practical, problem-solving). Character B = Diverging (imaginative, reflective). Character C = Assimilating (analytical).
 >
-> **Use:** If they collaborate on learning (e.g., onboarding), expect friction: Nhân vật A wants to solve fast, Nhân vật B wants to explore options, Nhân vật C wants to understand the system. Useful for conflict storytelling or team-dynamics content.
+> **Use:** If they collaborate on learning (e.g., onboarding), expect friction: Character A wants to solve fast, Character B wants to explore options, Character C wants to understand the system. Useful for conflict storytelling or team-dynamics content.
 
 ## 5. Important caveats
 

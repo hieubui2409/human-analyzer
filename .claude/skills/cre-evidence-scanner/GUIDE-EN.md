@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You've written a post: "My mentorship with Nhân vật C transformed his approach to risk." Before publishing, you want to know: Is this claim backed by evidence? Did I accidentally leak something private? This skill extracts that claim, finds evidence materials (T1-T5), judges "mentorship transformation" as PASS (supported by T1 session notes) or WARN (tertiary interpretation), and flags any `[CONFIDENTIAL]` tags. One clean verdict per claim.
+You've written a post: "My mentorship with Character C transformed his approach to risk." Before publishing, you want to know: Is this claim backed by evidence? Did I accidentally leak something private? This skill extracts that claim, finds evidence materials (T1-T5), judges "mentorship transformation" as PASS (supported by T1 session notes) or WARN (tertiary interpretation), and flags any `[CONFIDENTIAL]` tags. One clean verdict per claim.
 
 ## 2. Core concepts (the mental model)
 
@@ -40,7 +40,7 @@ You'll see a table: Claim | Evidence tier | Verdict. Read a WARN claim — it me
 
 ### Use case: Pre-publish validation
 
-> **You:** "I wrote a LinkedIn post about Nhân vật A's career pivot. Before I hit publish, check it."
+> **You:** "I wrote a LinkedIn post about Character A's career pivot. Before I hit publish, check it."
 >
 > **Skill:** `--asset assets/linkedin/260526-pivot` → extracts 8 claims, maps to materials, returns verdicts. 6 PASS, 2 WARN (tertiary interpretation of growth signals).
 >

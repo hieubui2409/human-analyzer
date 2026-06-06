@@ -1,6 +1,7 @@
 """Project path constants and discovery utilities for PMC framework."""
 import itertools
 import os
+import unicodedata
 from pathlib import Path
 
 
@@ -129,51 +130,84 @@ EVENT_STREAMS = {
     "COM": GOVERNANCE_AUDIT,
 }
 
-CHARACTERS = {
-    "hieu": "character-a",
-    "hiếu": "character-a",
-    "character-a": "character-a",
-    "hoa": "character-b",
-    "hòa": "character-b",
-    "character-b": "character-b",
-    "chien": "character-c",
-    "chiến": "character-c",
-    "character-c": "character-c",
-}
+# --- Character roster: DATA, not code. Loaded from docs/profiles/characters.yaml ---------------
+# The roster names are real-character PII, so they live in characters.yaml (under docs/profiles/,
+# which the pack's safety_filter excludes from every release). The shipped paths.py carries ZERO
+# names; the running repo resolves characters from the yaml. Public API is byte-identical to the
+# pre-externalization literals (CHARACTERS / ALL_CHARS / CHAR_DISPLAY / CHAR_SEARCH_ALIASES).
 
-ALL_CHARS = ["character-a", "character-b", "character-c"]
-CHAR_DISPLAY = {"character-a": "Nhân vật A", "character-b": "Nhân vật B", "character-c": "Nhân vật C"}
 
-# Free-text search aliases per character (display, ASCII-folded, full name) — used to find
-# cross-character mentions in profile/timeline prose. Single source so the crossref scripts
-# stop re-declaring divergent copies.
-CHAR_SEARCH_ALIASES = {
-    # Canonical + display + ASCII-folded + typo variants per character.
-    # Typo variants (Nhân vật ẩn danh, Nhân vật ẩn danh) cover common Vietnamese IME slip-overs so
-    # classify-work-type and crossref scripts detect all real-world spellings.
-    "character-a": ["Nhân vật A", "Nhân vật ẩn danh", "Nhân vật ẩn danh", "Nhân vật A"],
-    "character-b": ["Nhân vật B", "Nhân vật ẩn danh", "Nhân vật B"],
-    "character-c": ["Nhân vật C", "Nhân vật ẩn danh", "Nhân vật ẩn danh", "Nhân vật C"],
-}
+def _asciifold(s: str) -> str:
+    """Strip Vietnamese/Latin diacritics to ASCII (e.g. ế→e, ò→o, đ→d). stdlib-only."""
+    s = s.replace("đ", "d").replace("Đ", "D")
+    return "".join(c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn")
 
-# Dynamic character discovery for ALT projects (e2e fixtures, future multi-character corpora).
-# The real project keeps the curated alias map above (rich VN aliases can't be auto-derived). But when
-# PMC_PROJECT_ROOT points at a DIFFERENT project (an e2e fixture) whose profile slugs are not the curated
-# three, discover the roster from docs/profiles/ — honoring the "resolve characters dynamically" principle
-# and letting tooling run against any synthetic corpus without code edits.
-if os.environ.get("PMC_PROJECT_ROOT") and PROFILES.exists():
-    _discovered = sorted(d.name for d in PROFILES.iterdir() if d.is_dir() and (d / "INDEX.md").exists())
-    if _discovered and set(_discovered) != set(ALL_CHARS):
-        ALL_CHARS = _discovered
-        CHARACTERS = {slug: slug for slug in _discovered}          # identity aliases (no curated VN names)
-        CHAR_DISPLAY = {slug: slug for slug in _discovered}
-        CHAR_SEARCH_ALIASES = {slug: [slug] for slug in _discovered}
+
+def _load_roster(profiles_dir: Path):
+    """Resolve the roster structures from ``profiles_dir``. Pure, side-effect-free, NEVER raises.
+
+    Returns ``(CHARACTERS, ALL_CHARS, CHAR_DISPLAY, CHAR_SEARCH_ALIASES)``.
+
+    Resolution chain:
+      1. ``profiles_dir/characters.yaml`` — the curated roster (real repo + ALT projects that ship one).
+      2. discovery from ``profiles_dir/*/INDEX.md`` dirs (slug=display, identity aliases) when the yaml
+         is missing / empty / corrupt — keeps any synthetic corpus (e2e fixtures) working code-free.
+      3. empty dicts — toolkit-only consumer pack with no live corpus.
+
+    The resolution map (CHARACTERS) is derived from ``{slug, display.lower(), asciifold(display).lower()}``
+    ONLY — never from ``aliases``. Alias forms (IME-typo / full name) are free-text SEARCH terms in
+    CHAR_SEARCH_ALIASES; adding them as resolution keys would make resolve_character() accept inputs that
+    today raise, silently widening the frozen API. The ``import yaml`` is guarded: paths.py is imported by
+    100+ scripts with no base pyyaml dependency, so a missing yaml must fall through, not crash.
+    """
+    try:
+        import yaml  # guarded — base import path has no pyyaml dependency
+    except ImportError:
+        yaml = None
+
+    yaml_path = profiles_dir / "characters.yaml"
+    if yaml is not None and yaml_path.exists():
+        try:
+            data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+            chars = data.get("characters") or {}
+            if chars:
+                characters, char_display, char_aliases = {}, {}, {}
+                for slug, info in chars.items():
+                    info = info or {}
+                    display = info.get("display", slug)
+                    aliases = list(info.get("aliases", [display]))
+                    char_display[slug] = display
+                    char_aliases[slug] = aliases
+                    # R1: resolution keys = canonical forms ONLY, never the alias list.
+                    characters[slug] = slug
+                    characters[display.lower()] = slug
+                    characters[_asciifold(display).lower()] = slug
+                return characters, list(chars.keys()), char_display, char_aliases
+        except Exception:
+            pass  # corrupt / malformed yaml → fall through to discovery
+
+    # Fallback #2 — discover slugs from INDEX.md-bearing profile dirs (no curated VN aliases available).
+    if profiles_dir.exists():
+        discovered = sorted(d.name for d in profiles_dir.iterdir() if d.is_dir() and (d / "INDEX.md").exists())
+        if discovered:
+            return (
+                {slug: slug for slug in discovered},
+                discovered,
+                {slug: slug for slug in discovered},
+                {slug: [slug] for slug in discovered},
+            )
+
+    # Fallback #3 — no roster at all (toolkit-only pack).
+    return {}, [], {}, {}
+
+
+CHARACTERS, ALL_CHARS, CHAR_DISPLAY, CHAR_SEARCH_ALIASES = _load_roster(PROFILES)
 
 # All unordered dyad pairs, derived (never hand-listed — hand-lists drifted to 2/3 pairs).
 CHARACTER_PAIRS = list(itertools.combinations(ALL_CHARS, 2))
 
 # Universal profile schema — nested structure (25 base files, same for all characters).
-# Per-character relationship files (e.g. relationships/character-a.md) are NOT listed
+# Per-character relationship files (e.g. relationships/<slug>.md) are NOT listed
 # here — use list_relationship_files() or list_all_profile_files() for those.
 PROFILE_FILES = [
     "INDEX.md",
@@ -275,13 +309,13 @@ LEGACY_SPLIT_MAP = {
     "SOUL.md": ["psychology/formulation.md", "psychology/core-wounds.md"],
     "CHARACTERISTIC.md": ["psychology/defense-mechanisms.md", "psychology/attachment-style.md"],
     "TIMELINE.md": ["timeline/overview.md", "timeline/state-timeline.md"],
-    "RELATIONSHIPS.md": [
-        "relationships/family.md",
-        "relationships/character-a.md",
-        "relationships/character-b.md",
-        "relationships/character-c.md",
-        "relationships/network.md",
-    ],
+    # Per-character relationship files are derived from the roster (never hand-listed) so paths.py
+    # source carries no character slugs; family.md + network.md bracket the per-character split.
+    "RELATIONSHIPS.md": (
+        ["relationships/family.md"]
+        + [f"relationships/{slug}.md" for slug in ALL_CHARS]
+        + ["relationships/network.md"]
+    ),
 }
 
 

@@ -100,7 +100,7 @@ A material needs rescoring if ANY of the following is true:
 
 ```bash
 /mat:rescore                             # audit all characters
-/mat:rescore --character hieu            # Nhân vật A only
+/mat:rescore --character character-a            # Nhân vật A only
 /mat:rescore --missing-only              # only files with no CRAAP at all
 /mat:rescore --raw-only                  # only raw-status files
 /mat:rescore --json                      # machine-readable output

@@ -15,7 +15,7 @@ confidence: medium
 ## Achievement: Top Student Award
 
 - Year: 2023
-- Institution: Tỉnh X High School
+- Institution: Province X High School
 
 ## Award: Provincial Math Competition Runner-up
 

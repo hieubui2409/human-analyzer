@@ -18,7 +18,7 @@ Quick reference index for test-beta mock profile.
 
 - **Name**: Trần Thị Beta
 - **Born**: 2005-06-20
-- **Location**: Tỉnh X
+- **Location**: Province X
 
 ## Profile
 

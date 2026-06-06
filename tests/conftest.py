@@ -113,3 +113,25 @@ def skills_dir() -> Path:
 def scripts_root() -> Path:
     """Root of .claude/scripts/ (platform_lib lives here)."""
     return Path(__file__).resolve().parents[1] / ".claude" / "scripts"
+
+
+def require_corpus() -> None:
+    """Skip the calling test when no character roster is loaded.
+
+    Guards tests that need at least one real character to exercise assertions.
+    Skips ONLY when ALL_CHARS is empty (toolkit-only consumer pack with no
+    characters.yaml). Never skips on the populated real repository.
+    """
+    from platform_lib.paths import ALL_CHARS
+    if not ALL_CHARS:
+        pytest.skip("No character roster loaded — toolkit-only pack, skipping corpus-dependent test")
+
+
+def other_slugs(slug: str) -> list:
+    """Return all roster slugs except the given one.
+
+    Useful for relationship-file assertions that need the 'other' characters.
+    Returns an empty list when the roster is empty (toolkit-only pack).
+    """
+    from platform_lib.paths import ALL_CHARS
+    return [s for s in ALL_CHARS if s != slug]

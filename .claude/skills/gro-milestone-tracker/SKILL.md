@@ -86,7 +86,7 @@ LLM analyzes gathered data for:
 
 ```bash
 /gro:milestone-tracker                              # all characters
-/gro:milestone-tracker --character chien            # Nhân vật C only
+/gro:milestone-tracker --character character-c            # Nhân vật C only
 /gro:milestone-tracker --all --pending-only         # upcoming milestones
 /gro:milestone-tracker --json                       # machine-readable
 ```

@@ -15,11 +15,11 @@ Ba tháng trước, bạn chạy `psy:hypothesis` trên Nhân vật C: "Nếu Nh
 
 ## 3. Đường dẫn học tập
 
-**Quỹ đạo tăng trưởng:** `psy:arc-tracker --character chiến --trajectory` — đánh giá giai đoạn tăng trưởng hiện tại.
+**Quỹ đạo tăng trưởng:** `psy:arc-tracker --character character-c --trajectory` — đánh giá giai đoạn tăng trưởng hiện tại.
 
-**Xem xét cột mốc:** `psy:arc-tracker --character hieu --milestones` — kiểm tra tiến trình trên các cột mốc có kế hoạch.
+**Xem xét cột mốc:** `psy:arc-tracker --character character-a --milestones` — kiểm tra tiến trình trên các cột mốc có kế hoạch.
 
-**Xác thực giả thuyết:** `psy:arc-tracker --character hòa --compare 2026-03-15` — dự đoán tháng 3 có giữ được không?
+**Xác thực giả thuyết:** `psy:arc-tracker --character character-b --compare 2026-03-15` — dự đoán tháng 3 có giữ được không?
 
 **Báo cáo đầy đủ:** `psy:arc-tracker --character hều --trajectory --milestones --report` — toàn diện.
 
@@ -28,19 +28,19 @@ Ba tháng trước, bạn chạy `psy:hypothesis` trên Nhân vật C: "Nếu Nh
 ### Trường hợp sử dụng: Kiểm tra quỹ đạo tăng trưởng
 
 > Bạn: "Nhân vật A ở đâu trong cung điểm của anh ấy ngay bây giờ?"
-> Kỹ năng: `psy:arc-tracker --character hieu --trajectory`
+> Kỹ năng: `psy:arc-tracker --character character-a --trajectory`
 > → Chỉ báo: cơ chế ứng phó thích ứng hơn (thăng hoa, hài hước luôn lành mạnh). Mẫu khủng hoảng: khủng hoảng cờ bạc được giải quyết, không có tập phút cấp tính mới. Yếu tố bảo vệ: mối quan hệ hướng dẫn tăng cường. Quỹ đạo: GROWTH (độ tự tin: CAO). Giai đoạn tăng trưởng: "Phục hồi + tái tham gia vào hướng dẫn."
 
 ### Trường hợp sử dụng: Xem xét cột mốc
 
 > Bạn: "Nhân vật C có đạt được các cột mốc chúng tôi đặt ra không?"
-> Kỹ năng: `psy:arc-tracker --character chien --milestones`
+> Kỹ năng: `psy:arc-tracker --character character-c --milestones`
 > → Cột mốc: "Vượt qua phỏng vấn Scholarship X" (Mar 2025) → ACHIEVED ✓ (bằng chứng: dòng thời gian). "Nhận quyết định học bổng" (Jun 2025) → IN_PROGRESS (dự kiến 2 tuần). "Bắt đầu học" (Sep 2025) → NOT_STARTED (giữ chỗ). Dự báo: 2/3 đúng lịch.
 
 ### Trường hợp sử dụng: Xác thực giả thuyết
 
 > Bạn: "Ba tháng trước tôi dự đoán Nhân vật B sẽ xoắn nếu bố anh ấy gọi. Điều đó có xảy ra không?"
-> Kỹ năng: `psy:arc-tracker --character hoa --compare 2026-03-01`
+> Kỹ năng: `psy:arc-tracker --character character-b --compare 2026-03-01`
 > → Dự đoán: liên lạc cha → bất ổn tâm lý → leo thang uống rượu. Thực tế: cha liên lạc (mục nhập dòng thời gian), Nhân vật B ứng phó thông qua hướng dẫn (hỗ trợ Nhân vật A). Độ chính xác dự đoán: 40% (mong đợi xoắn, có thích ứng). Insight: bảo vệ từ Nhân vật A đã thay đổi kết quả.
 
 ## 5. Cảnh báo quan trọng

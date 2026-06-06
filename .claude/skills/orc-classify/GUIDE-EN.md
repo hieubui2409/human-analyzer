@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-Not all work is equally risky. Editing Nhân vật A's timeline is straightforward. Updating Nhân vật B's formulation with new psychology is riskier—it affects clinical consistency. Changing cross-character relationship framing is riskiest. Classify tells you upfront: "this is high_risk, so plan accordingly." It saves you from discovering problems late.
+Not all work is equally risky. Editing Character A's timeline is straightforward. Updating Character B's formulation with new psychology is riskier—it affects clinical consistency. Changing cross-character relationship framing is riskiest. Classify tells you upfront: "this is high_risk, so plan accordingly." It saves you from discovering problems late.
 
 ## 2. Core concepts (the mental model)
 
@@ -18,11 +18,11 @@ Not all work is equally risky. Editing Nhân vật A's timeline is straightforwa
 
 ## 3. Learning path
 
-**First run:** `orc:classify "write a LinkedIn post about Nhân vật A"` — tiny mode. Quick, no ceremony needed.
+**First run:** `orc:classify "write a LinkedIn post about Character A"` — tiny mode. Quick, no ceremony needed.
 
-**Normal task:** `orc:classify "update Nhân vật B's psychology/attachment-style.md"` — normal mode. Requires outline + cross-reference check.
+**Normal task:** `orc:classify "update Character B's psychology/attachment-style.md"` — normal mode. Requires outline + cross-reference check.
 
-**High-risk task:** `orc:classify "add new relationship between Nhân vật A and Nhân vật C"` — high_risk mode. Full ceremony.
+**High-risk task:** `orc:classify "add new relationship between Character A and Character C"` — high_risk mode. Full ceremony.
 
 **Auto-mode:** `orc:classify --auto` — let it infer from git diff.
 
@@ -32,13 +32,13 @@ Not all work is equally risky. Editing Nhân vật A's timeline is straightforwa
 
 ### Use case: Quick classification for simple task
 
-> You: "Classify: write a quick post about Nhân vật A's mentoring philosophy"
+> You: "Classify: write a quick post about Character A's mentoring philosophy"
 >
 > Skill: Detects "write post" → Content Creation work type. Counts flags: writing-voice consistency (flag 11). Total: 1 flag = tiny mode. Output: "Tiny mode. Quick self-review for tone/accuracy. Ready to implement."
 
 ### Use case: Normal-mode task with ceremony
 
-> You: "Classify: update Nhân vật B's timeline with a new milestone"
+> You: "Classify: update Character B's timeline with a new milestone"
 >
 > Skill: Detects "update timeline" → Profile Update. Counts flags: timeline continuity (hard gate — triggers high_risk). Output: "High_risk mode. Required ceremony: bootstrap full, plan, cross-reference timeline across characters, clinical check."
 

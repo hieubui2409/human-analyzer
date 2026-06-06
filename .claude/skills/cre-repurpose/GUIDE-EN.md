@@ -4,7 +4,7 @@
 
 ## 1. What this skill does for you
 
-You published a LinkedIn post about Nhân vật A's mentoring journey. It did well. Now you want to reach Twitter (thread format) and Instagram audiences. Instead of rewriting from scratch 3 times, you feed this skill the LinkedIn post → it extracts the core message → adapts to Twitter (280-char segments, quotable), then separately adapts to Instagram (caption format, hashtags, emoji). Each adaptation respects the source's evidence and voice. Difference from `cre:multiplatform`: this works post-publish (1→1), multiplatform is generation-time (1→N native from a concept).
+You published a LinkedIn post about Character A's mentoring journey. It did well. Now you want to reach Twitter (thread format) and Instagram audiences. Instead of rewriting from scratch 3 times, you feed this skill the LinkedIn post → it extracts the core message → adapts to Twitter (280-char segments, quotable), then separately adapts to Instagram (caption format, hashtags, emoji). Each adaptation respects the source's evidence and voice. Difference from `cre:multiplatform`: this works post-publish (1→1), multiplatform is generation-time (1→N native from a concept).
 
 ## 2. Core concepts (the mental model)
 
@@ -27,7 +27,7 @@ You published a LinkedIn post about Nhân vật A's mentoring journey. It did we
 
 **First run:** Find a published post, adapt it:
 ```bash
-/cre:repurpose --from assets/linkedin/260526-mentorship --to twitter --character hieu
+/cre:repurpose --from assets/linkedin/260526-mentorship --to twitter --character character-a
 ```
 Reads LinkedIn post → extracts core message ("mentoring builds trust through consistency") → adapts to Twitter thread format (280-char segments, quotable) → runs gates → outputs to assets/twitter/{slug}/.
 
@@ -41,7 +41,7 @@ Reads LinkedIn post → extracts core message ("mentoring builds trust through c
 
 > **You:** "I published a LinkedIn post. Now adapt it for TikTok."
 >
-> **Skill:** `--from assets/linkedin/260526-mentorship --to tiktok --character hieu` → reads LinkedIn → extracts story → adapts to TikTok script (9:16, <60s, hook within 3s, conversational).
+> **Skill:** `--from assets/linkedin/260526-mentorship --to tiktok --character character-a` → reads LinkedIn → extracts story → adapts to TikTok script (9:16, <60s, hook within 3s, conversational).
 >
 > **Skill:** Runs privacy-guard + voice-audit → outputs assets/tiktok/{slug}/.
 >

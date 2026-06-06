@@ -10,7 +10,7 @@ from platform_lib.markdown_parser import extract_sections, extract_tags, extract
 from platform_lib.formatters import print_json
 
 # Section headings in this corpus are English. "Career" is intentionally NOT required —
-# student characters (e.g. Nhân vật C) have no career section yet, so requiring it would falsely
+# student-stage characters have no career section yet, so requiring it would falsely
 # block their Wave 1 gate.
 WAVE1_REQUIRED_SECTIONS = {
     "identity/core.md": ["Basic Information", "Education"],

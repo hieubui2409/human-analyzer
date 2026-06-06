@@ -19,6 +19,8 @@ from venv_python import VENV_PYTHON
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PYTHON = str(VENV_PYTHON)
+# Overridable so a server-side model retirement is a config change, not a code edit.
+GEMINI_E2E_MODEL = os.environ.get("GEMINI_E2E_MODEL", "gemini-3-flash-preview")
 MOCK_DATA = PROJECT_ROOT / "tests" / "mock-data"
 SCENARIOS_FILE = PROJECT_ROOT / "tests" / "scenarios" / "llm-reasoning-scenarios.yaml"
 ROUTE_SCRIPT = (
@@ -238,7 +240,7 @@ def test_e2e_scenario(scenario, gemini, results_collector):
 
     try:
         response = gemini.models.generate_content(
-            model="gemini-2.0-flash",
+            model=GEMINI_E2E_MODEL,
             contents=prompt,
         )
         result = parse_llm_response(response.text)

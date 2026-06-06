@@ -43,7 +43,7 @@ Bạn đã tải một chồng tài liệu — bản ghi lại, thư, quan sát.
 ### Trường hợp sử dụng: Bản đồ phạm vi cho một nhân vật
 > **Bạn:** "Chúng ta có bằng chứng gì cho hồ sơ của Nhân vật C? Những khoảng trống ở đâu?"
 > 
-> **Kỹ năng:** Chạy `--character chien --coverage`:
+> **Kỹ năng:** Chạy `--character character-c --coverage`:
 > - Liệt kê tất cả 21 phần hồ sơ
 > - Đối với mỗi, đếm bao nhiêu tài liệu tham khảo nó + những gì tầng
 >   ```

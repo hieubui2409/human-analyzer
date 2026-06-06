@@ -31,7 +31,7 @@ You're building or maintaining GRO profile files and want to **catch data qualit
 
 ### Use case: Quality-check before publishing a profile
 
-> **You:** "gro:validate --character hieu --fix"
+> **You:** "gro:validate --character character-a --fix"
 >
 > **Skill:** Runs checks. Finds: Frontmatter OK. Cross-file: 2 skills in career-path missing from competencies. Evidence: 3 entries lack [Source:] markers. GRO↔PSY: No boundary violations.
 >

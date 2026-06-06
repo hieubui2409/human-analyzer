@@ -1,4 +1,4 @@
-"""Validate project structure after profile standardization (Phases 1-7).
+"""Validate project structure after profile standardization.
 
 Tests cover:
 - Profile directory structure (25 base + cross-relationship files)
@@ -6,7 +6,12 @@ Tests cover:
 - paths.py constants and functions accuracy
 - No orphan relationship files
 - family.md split integrity (content preserved, not duplicated)
+
+Character-agnostic: the roster and each character's expected cross-relationship files are derived
+from paths.ALL_CHARS and the live filesystem, never hardcoded real slugs. The whole module is
+skipped when the roster is empty (toolkit-only pack with no characters.yaml).
 """
+import itertools
 import sys
 from pathlib import Path
 
@@ -17,19 +22,23 @@ PROFILES = PROJECT_ROOT / "docs" / "profiles"
 SCRIPTS_DIR = PROJECT_ROOT / ".claude" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-ALL_CHARS = ["character-a", "character-b", "character-c"]
+from platform_lib.paths import ALL_CHARS  # noqa: E402
 
-EXPECTED_CROSS_RELS = {
-    "character-a": ["character-b.md", "character-c.md", "network.md"],
-    "character-b": ["character-a.md", "character-c.md"],
-    "character-c": ["character-a.md", "character-b.md"],
-}
+pytestmark = pytest.mark.skipif(not ALL_CHARS, reason="no character roster — toolkit-only pack")
 
-MIRROR_PAIRS = [
-    ("character-a", "character-b"),
-    ("character-a", "character-c"),
-    ("character-b", "character-c"),
-]
+# All unordered character pairs — the candidate mirror dyads.
+MIRROR_PAIRS = list(itertools.combinations(ALL_CHARS, 2))
+
+
+def _fs_cross_rels(char: str) -> list:
+    """Cross-relationship .md files for a character, read from the filesystem (excludes family.md).
+
+    This is the ground truth the paths.py API is validated against — derived, never hardcoded.
+    """
+    rel_dir = PROFILES / char / "relationships"
+    if not rel_dir.exists():
+        return []
+    return sorted(f.name for f in rel_dir.glob("*.md") if f.name != "family.md")
 
 
 class TestProfileDirectoryStructure:
@@ -56,16 +65,16 @@ class TestCrossRelationshipFiles:
     """Cross-relationship files created during family.md split."""
 
     @pytest.mark.parametrize("char", ALL_CHARS)
-    def test_expected_cross_rel_files_exist(self, char):
-        expected = EXPECTED_CROSS_RELS[char]
-        rel_dir = PROFILES / char / "relationships"
-        for fname in expected:
-            assert (rel_dir / fname).exists(), f"{char}/relationships/{fname} missing"
+    def test_cross_rel_files_name_roster_members(self, char):
+        """Every cross-relationship file names another roster member or is network.md (no orphans)."""
+        allowed = {"network.md"} | {f"{c}.md" for c in ALL_CHARS if c != char}
+        for fname in _fs_cross_rels(char):
+            assert fname in allowed, f"{char}/relationships/{fname} is not a roster member or network.md"
 
     @pytest.mark.parametrize("char", ALL_CHARS)
     def test_cross_rel_files_have_frontmatter(self, char):
         """Every cross-relationship file must have YAML frontmatter with 'relationship:' key."""
-        for fname in EXPECTED_CROSS_RELS[char]:
+        for fname in _fs_cross_rels(char):
             fpath = PROFILES / char / "relationships" / fname
             content = fpath.read_text(encoding="utf-8")
             assert content.startswith("---"), f"{char}/{fname} missing frontmatter"
@@ -75,10 +84,10 @@ class TestCrossRelationshipFiles:
     @pytest.mark.parametrize("char", ALL_CHARS)
     def test_cross_rel_files_have_character_key(self, char):
         """Frontmatter must include character(s): key matching the profile owner."""
-        for fname in EXPECTED_CROSS_RELS[char]:
+        for fname in _fs_cross_rels(char):
             fpath = PROFILES / char / "relationships" / fname
             head = fpath.read_text(encoding="utf-8")[:500]
-            has_char = f"character: {char}" in head or f"characters:" in head
+            has_char = f"character: {char}" in head or "characters:" in head
             assert has_char, f"{char}/{fname} wrong character key"
 
     @pytest.mark.parametrize("char1,char2", MIRROR_PAIRS)
@@ -121,17 +130,16 @@ class TestPathsPyAccuracy:
         from platform_lib.paths import list_relationship_files
         for char in ALL_CHARS:
             detected = {f.name for f in list_relationship_files(char)}
-            expected = set(EXPECTED_CROSS_RELS[char])
+            expected = set(_fs_cross_rels(char))
             assert detected == expected, f"{char}: detected={detected}, expected={expected}"
 
     def test_list_all_profile_files_count(self):
         from platform_lib.paths import list_all_profile_files
         for char in ALL_CHARS:
             total = list_all_profile_files(char)
-            base_expected = 25
-            cross_expected = len(EXPECTED_CROSS_RELS[char])
-            assert len(total) == base_expected + cross_expected, (
-                f"{char}: expected {base_expected + cross_expected}, got {len(total)}"
+            expected = 25 + len(_fs_cross_rels(char))
+            assert len(total) == expected, (
+                f"{char}: expected {expected}, got {len(total)}"
             )
 
     def test_legacy_split_map_relationships_entry(self):
@@ -155,7 +163,7 @@ class TestFamilySplitIntegrity:
     @pytest.mark.parametrize("char", ALL_CHARS)
     def test_cross_rel_files_have_substantial_content(self, char):
         """Main cross-relationship files (not indirect) should have real content."""
-        for fname in EXPECTED_CROSS_RELS[char]:
+        for fname in _fs_cross_rels(char):
             fpath = PROFILES / char / "relationships" / fname
             content = fpath.read_text(encoding="utf-8")
             head = content[:500]
@@ -195,7 +203,7 @@ class TestNoLegacyRefsInProfiles:
                     rel = fpath.relative_to(cdir)
                     for line_no, line in enumerate(content.splitlines(), 1):
                         if old_name in line:
-                            # Skip frontmatter, source comments, or plan refs
+                            # Skip frontmatter, source comments, or pointer notes
                             if line.strip().startswith("#") or "Source:" in line:
                                 continue
                             if "LEGACY" in line or "→" in line or "->" in line:

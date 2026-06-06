@@ -27,7 +27,7 @@ Hồ sơ của Nhân vật A liệt kê: nhịp điệu câu (trung bình, bao q
 **Lần chạy đầu tiên:**
 ```bash
 .claude/skills/.venv/bin/python3 .claude/skills/cre-voice-audit/scripts/audit-published-content-for-voice-drift.py \
-  --character hieu
+  --character character-a
 ```
 Đầu ra: báo cáo kiểm toán. 5 bài được quét. Bài 3 (LinkedIn hướng dẫn) được gắn cờ: "Giọng điệu quá chính thức (vs. mặc định hội thoại). Từ vựng: 'khung công tác giáo dục' — Nhân vật A tránh thuật ngữ giáo dục chính thức." Mức độ: TRUNG BÌNH.
 
@@ -41,7 +41,7 @@ Hồ sơ của Nhân vật A liệt kê: nhịp điệu câu (trung bình, bao q
 
 > **Bạn:** "Tôi đã công bố 10 bài trong tháng này. Xác minh tất cả chúng nghe giống như Nhân vật A."
 >
-> **Kỹ năng:** `--character hieu` → quét tất cả các bài Nhân vật A trong assets/ → "9 PASS (nhất quán), 1 TRUNG BÌNH (giọng điệu quá chính thức trên post_5)."
+> **Kỹ năng:** `--character character-a` → quét tất cả các bài Nhân vật A trong assets/ → "9 PASS (nhất quán), 1 TRUNG BÌNH (giọng điệu quá chính thức trên post_5)."
 >
 > **Bạn:** Xem xét post_5, có thể viết lại mở đầu để phù hợp với giọng điệu.
 

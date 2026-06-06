@@ -39,7 +39,7 @@ SK=.claude/skills/cre-multiplatform/scripts
 # 1. scaffold native briefs (deterministic) — default = active platforms
 $PY $SK/generate-native-variants-for-platforms.py \
     --source "<angle title or path or angle.json>" --slug 260526-my-slug \
-    --platforms active --character hieu --json
+    --platforms active --character character-a --json
 #   → assets/{linkedin,facebook,blog}/260526-my-slug/{brief.json, post.md placeholder, images/}
 
 # 2. LLM writes a NATIVE post.md per platform FROM each brief.json

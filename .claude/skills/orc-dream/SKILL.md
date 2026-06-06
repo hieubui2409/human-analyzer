@@ -61,15 +61,15 @@ Consolidate scattered insights into coherent, up-to-date knowledge. Run periodic
    ```
    Found {N} merge candidates:
 
-   1. MERGE: "hoa-attachment-pattern" + "hoa-avoidance-triggers"
-      → Combined: "hoa-attachment-avoidance-dynamics"
+   1. MERGE: "character-b-attachment-pattern" + "character-b-avoidance-triggers"
+      → Combined: "character-b-attachment-avoidance-dynamics"
       Reason: Both describe Nhân vật B's attachment behavior from different angles
 
-   2. CONFLICT: "hieu-writing-voice-linkedin" vs "hieu-writing-voice-general"
+   2. CONFLICT: "character-a-writing-voice-linkedin" vs "character-a-writing-voice-general"
       → LinkedIn memory says "professional vulnerability" but general says "raw confessional"
       Action needed: clarify which applies where
 
-   3. UPDATE: "chien-current-status" — mentions "F15 interview" but he's now enrolled
+   3. UPDATE: "character-c-current-status" — mentions "F15 interview" but he's now enrolled
       → Suggest updating to current status
    ```
 
@@ -94,7 +94,7 @@ Consolidate scattered insights into coherent, up-to-date knowledge. Run periodic
    Prune candidates:
 
    1. STALE: "project-merge-freeze" (2026-03-05) — 2+ months old, likely resolved
-   2. OUTDATED: "hoa-grade-11" — profiles now show Grade 12
+   2. OUTDATED: "character-b-grade-11" — profiles now show Grade 12
    3. ORPHAN: "content-tiktok-strategy" — references plan that no longer exists
    ```
 

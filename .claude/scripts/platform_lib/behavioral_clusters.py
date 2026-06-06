@@ -366,10 +366,10 @@ if __name__ == "__main__":
 
     if args.test:
         test_lines = [
-            "Nhân vật A luôn cứu mọi người xung quanh dù họ không nhờ",
+            "Người ấy luôn cứu mọi người xung quanh dù họ không nhờ",
             "Anh gửi hệ số thưởng 1.68x trước khi nói lương",
-            "Bích sợ mất ứng viên nên chiến đấu nội bộ",
-            "Nhân vật A muốn biến mất khỏi cuộc sống",
+            "Cô ấy sợ mất ứng viên nên chiến đấu nội bộ",
+            "Người ấy muốn biến mất khỏi cuộc sống",
             "Anh phân tích cảm xúc bằng bảng tính thay cho cảm nhận thật",
             "Tôi thấy trống rỗng bên trong, vô nghĩa",
             "Normal text without any behavioral patterns here.",

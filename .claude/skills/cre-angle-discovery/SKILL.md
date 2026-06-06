@@ -37,7 +37,7 @@ PY=$HOME/.claude/skills/.venv/bin/python3
 SK=.claude/skills/cre-angle-discovery/scripts
 
 # 1. gather raw signals (deterministic) — feed to the LLM
-$PY $SK/aggregate-angle-signals-across-frameworks.py --character hieu --framework all --since-days 30 --json
+$PY $SK/aggregate-angle-signals-across-frameworks.py --character character-a --framework all --since-days 30 --json
 
 # 2. LLM synthesizes candidate angles from the signals → angles.json
 #    (each: title, hook, source_framework, primary_character, evidence_tier,

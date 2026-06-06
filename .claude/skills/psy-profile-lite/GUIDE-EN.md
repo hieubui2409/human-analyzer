@@ -14,7 +14,7 @@ Full profiles are rich (~7,400 lines total for 3 characters = ~25,000 tokens). B
 
 ## 3. Learning path
 
-**First use:** `psy:profile-lite --character hieu` — see one lite profile, understand the format.
+**First use:** `psy:profile-lite --character character-a` — see one lite profile, understand the format.
 
 **Check cache:** `psy:profile-lite --stats` — see all three status + size savings.
 
@@ -32,13 +32,13 @@ Full profiles are rich (~7,400 lines total for 3 characters = ~25,000 tokens). B
 
 > You: "Are my lite profiles fresh, or do I need to regenerate?"
 > Skill: `psy:profile-lite --stats`
-> → Nhân vật A: valid (2d old), Nhân vật B: stale (7d, source changed), Nhân vật C: valid (1d). Recommendation: refresh Nhân vật B.
+> → Character A: valid (2d old), Character B: stale (7d, source changed), Character C: valid (1d). Recommendation: refresh Character B.
 
 ### Use case: Post-edit refresh
 
-> You: "I just manually edited psychology/formulation.md for Nhân vật A. Do I need to refresh lite?"
-> Skill: `psy:profile-lite --character hieu --refresh`
-> → Regenerates Nhân vật A lite from current files. Updates cache. Done.
+> You: "I just manually edited psychology/formulation.md for Character A. Do I need to refresh lite?"
+> Skill: `psy:profile-lite --character character-a --refresh`
+> → Regenerates Character A lite from current files. Updates cache. Done.
 
 ### Use case: Cre workflow integration
 

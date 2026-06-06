@@ -14,13 +14,13 @@ Bạn vừa tích hợp 10 bản phỏng vấn cho một nhân vật mới. Hồ
 
 ## 3. Đường dẫn học tập
 
-**Đường ống đầy đủ:** `psy:wave --character chiến --all` — tạo hồ sơ hoàn chỉnh từ đầu.
+**Đường ống đầy đủ:** `psy:wave --character character-c --all` — tạo hồ sơ hoàn chỉnh từ đầu.
 
-**Sóng riêng lẻ:** `psy:wave --character hieu --wave 1` (trích xuất sự kiện), sau đó `--wave 2` (tâm lý), sau đó `--wave 3` (xác thực).
+**Sóng riêng lẻ:** `psy:wave --character character-a --wave 1` (trích xuất sự kiện), sau đó `--wave 2` (tâm lý), sau đó `--wave 3` (xác thực).
 
-**Kiểm tra tiến trình:** `psy:wave --character hoa --status` — xem những sóng nào được thực hiện.
+**Kiểm tra tiến trình:** `psy:wave --character character-b --status` — xem những sóng nào được thực hiện.
 
-**Với bối cảnh kế hoạch:** `psy:wave --character chien --plan ./plans/260605-chiến-profile-build/plan.md` — theo dõi tiến trình trong tệp kế hoạch.
+**Với bối cảnh kế hoạch:** `psy:wave --character character-c --plan ./plans/260605-chiến-profile-build/plan.md` — theo dõi tiến trình trong tệp kế hoạch.
 
 ## 4. Trường hợp sử dụng (mỗi cái = một cuộc trò chuyện mẫu)
 
@@ -33,13 +33,13 @@ Bạn vừa tích hợp 10 bản phỏng vấn cho một nhân vật mới. Hồ
 ### Trường hợp sử dụng: Cập nhật lớn cho nhân vật hiện có
 
 > Bạn: "Câu chuyện của Nhân vật C phát triển đáng kể. Tôi có vật liệu mới (sự kiện khủng hoảng, tiết lộ). Làm sóng lại hồ sơ."
-> Kỹ năng: `psy:wave --character chien --all`
+> Kỹ năng: `psy:wave --character character-c --all`
 > → Sóng 1: Cập nhật identity/core.md, timeline/overview.md, milestones.md với sự kiện mới. Cổng: tất cả sự kiện có ngày? ✓ → Sóng 2: Phân tích lại psychology/formulation.md dưới ánh sáng của khủng hoảng mới. Chạy psy:crisis-assess (phát hiện rủi ro CAO). Cổng: giao thức khủng hoảng áp dụng? ✓ → Sóng 3: psy:crossref kiểm tra xem tệp Nhân vật A/Nhân vật B cần cập nhật không (cung điểm Nhân vật C thay đổi). psy:propagate gợi ý cập nhật. Xác thực. Xong.
 
 ### Trường hợp sử dụng: Kiểm tra tiến trình sóng
 
 > Bạn: "Tôi bắt đầu Sóng 1 hôm qua. Trạng thái là gì?"
-> Kỹ năng: `psy:wave --character hieu --status`
+> Kỹ năng: `psy:wave --character character-a --status`
 > → Sóng 1: ✅ Hoàn thành (trích xuất 67 sự kiện, 15 mối quan hệ). Sóng 2: 🔄 Đang tiến hành (psychology/formulation.md: 40% xong). Sóng 3: ⬜ Chưa bắt đầu. Trở ngại: "Hoàn thành psychology/formulation.md để tiếp tục Sóng 3."
 
 ## 5. Cảnh báo quan trọng

@@ -27,7 +27,7 @@ Bạn đã công bố một bài đăng LinkedIn về hành trình hướng dẫ
 
 **Lần chạy đầu tiên:** Tìm một bài đăng đã công bố, thích ứng nó:
 ```bash
-/cre:repurpose --from assets/linkedin/260526-mentorship --to twitter --character hieu
+/cre:repurpose --from assets/linkedin/260526-mentorship --to twitter --character character-a
 ```
 Đọc bài LinkedIn → trích xuất thông điệp cốt lõi ("hướng dẫn xây dựng lòng tin qua tính nhất quán") → thích ứng với định dạng thread Twitter (các đoạn 280 ký tự, có thể trích dẫn) → chạy cổng → xuất ra assets/twitter/{slug}/.
 
@@ -41,7 +41,7 @@ Bạn đã công bố một bài đăng LinkedIn về hành trình hướng dẫ
 
 > **Bạn:** "Tôi đã công bố một bài đăng LinkedIn. Bây giờ thích ứng nó cho TikTok."
 >
-> **Kỹ năng:** `--from assets/linkedin/260526-mentorship --to tiktok --character hieu` → đọc LinkedIn → trích xuất câu chuyện → thích ứng với kịch bản TikTok (9:16, <60 giây, móc trong 3 giây, hội thoại).
+> **Kỹ năng:** `--from assets/linkedin/260526-mentorship --to tiktok --character character-a` → đọc LinkedIn → trích xuất câu chuyện → thích ứng với kịch bản TikTok (9:16, <60 giây, móc trong 3 giây, hội thoại).
 >
 > **Kỹ năng:** Chạy privacy-guard + voice-audit → xuất ra assets/tiktok/{slug}/.
 >

@@ -16,11 +16,11 @@ confidence: high
 
 - **Full name**: Trần Thị Beta
 - **Date of birth**: 2005-06-20
-- **Location**: Tỉnh X
+- **Location**: Province X
 
 ## Education
 
-- Current: Grade 12, Tỉnh X High School
+- Current: Grade 12, Province X High School
 
 ## Career
 

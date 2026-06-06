@@ -43,7 +43,7 @@ Bạn cập nhật hồ sơ của Nhân vật A bằng một sự kiện mới, 
 ### Trường hợp sử dụng: Hỗ trợ bằng bằng chứng
 
 > Bạn: "Tôi đã sử dụng thuật ngữ 'complex-PTSD' trong hồ sơ của Nhân vật C. Điều đó có được hỗ trợ bởi các vật liệu không?"
-> Kỹ năng: `psy:crossref --dimension 5 --character chien`
+> Kỹ năng: `psy:crossref --dimension 5 --character character-c`
 > → Chiều 5 (Hỗ trợ bằng bằng chứng) kiểm tra: hồ sơ của Nhân vật C có tuyên bố bằng chứng vật liệu ≥T3 không? Cờ nếu không.
 
 ## 5. Cảnh báo quan trọng

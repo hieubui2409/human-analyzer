@@ -96,7 +96,7 @@ LLM generates projections based on:
 
 ```bash
 /gro:career-forecast                              # all characters, 3-year horizon
-/gro:career-forecast --character hieu --horizon 5 # Nhân vật A, 5-year projection
+/gro:career-forecast --character character-a --horizon 5 # Nhân vật A, 5-year projection
 /gro:career-forecast --json                       # machine-readable
 ```
 

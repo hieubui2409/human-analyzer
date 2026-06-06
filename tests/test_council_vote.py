@@ -38,7 +38,7 @@ def _valid_payload():
     return {
         "question": "Should the council verdict live in formulation or decisions",
         "category": "psy",
-        "character": "character-a",
+        "character": "test-alpha",  # synthetic slug — format_verdict only round-trips this field
         "advocate": "Yes, decisions dir keeps clinical files clean.",
         "skeptic": "But formulation is where clinicians look first.",
         "pragmatist": "decisions dir is searchable and append-only — ship it.",
@@ -109,7 +109,7 @@ class TestVerdictFormat:
         date_str = datetime.now().strftime("%Y-%m-%d")
         assert f"date: {date_str}" in md
         assert "category: council" in md
-        assert "character: character-a" in md
+        assert "character: test-alpha" in md
         assert "status: active" in md
         assert "title:" in md
 

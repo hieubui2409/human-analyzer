@@ -23,7 +23,7 @@ Hãy tưởng tượng bạn thức dậy và hỏi: "Điều gì thú vị về
 **Lần chạy đầu tiên:**
 ```bash
 .claude/skills/.venv/bin/python3 .claude/skills/cre-angle-discovery/scripts/aggregate-angle-signals-across-frameworks.py \
-  --character hieu --framework all --since-days 30 --json
+  --character character-a --framework all --since-days 30 --json
 ```
 Đọc kết quả — bạn sẽ thấy các tín hiệu thô như "B5 tính cẩn trọng +8% kể từ tháng Giêng", "cạnh tăng trưởng: mở khóa khẳng định", "tài liệu mới: phản hồi của người hướng dẫn". Những cái này trở thành hạt giống góc nhìn.
 

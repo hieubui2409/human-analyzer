@@ -199,8 +199,8 @@ def create_skeleton(base_dir: Path, slug: str, display_name: str) -> int:
 
 def main():
     parser = argparse.ArgumentParser(description="Init: generate universal profile skeleton")
-    parser.add_argument("slug", help="Character slug (e.g., character-a)")
-    parser.add_argument("--display-name", default=None, help="Display name (e.g., 'Nhân vật A')")
+    parser.add_argument("slug", help="Character slug (e.g., jane-q-doe)")
+    parser.add_argument("--display-name", default=None, help="Display name (e.g., 'Jane Doe')")
     parser.add_argument("--project-root", default=None, help="Project root (auto-detected if omitted)")
     args = parser.parse_args()
 
@@ -222,6 +222,22 @@ def main():
 
     created = create_skeleton(char_dir, args.slug, display_name)
     print(f"\nDone. Created {created} files.")
+
+    # Auto-register into the roster so a scaffolded character is NEVER unregistered (drift invariant).
+    # Stub-only-if-absent: never clobbers an already-enriched characters.yaml entry. Best-effort —
+    # a missing pyyaml must not fail the scaffold (the file writes above already succeeded).
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent / "platform_lib"))
+        import roster_io
+
+        if roster_io.ensure_registered(args.slug, display_name, profiles_dir):
+            print(f"Registered roster stub: {args.slug} -> characters.yaml")
+            print("  Enrich aliases (display + full name + IME-typo variants) via profile-manager.")
+        else:
+            print(f"Roster entry already present for {args.slug} (left unchanged).")
+    except Exception as e:  # pyyaml missing / write issue — surface, don't fail the scaffold
+        print(f"WARN: roster auto-register skipped ({e}). Add {args.slug} to characters.yaml manually.",
+              file=sys.stderr)
 
 
 if __name__ == "__main__":

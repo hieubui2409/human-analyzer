@@ -102,7 +102,7 @@ LLM analyzes gathered data for:
 
 ```bash
 /gro:competency-map                              # all characters
-/gro:competency-map --character hoa              # Nhân vật B only
+/gro:competency-map --character character-b              # Nhân vật B only
 /gro:competency-map --all --gaps-only            # weak skills only
 /gro:competency-map --json                       # machine-readable
 ```

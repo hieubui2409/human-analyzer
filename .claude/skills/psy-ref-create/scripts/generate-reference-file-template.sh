@@ -20,6 +20,37 @@ fi
 THEORY_TITLE=$(echo "$THEORY_SLUG" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); print}')
 TODAY=$(date +%Y-%m-%d)
 
+# Build the "Relevant Character Profiles" rows from the roster.
+# Reads docs/profiles/characters.yaml via the venv python if available;
+# falls back to a single generic placeholder row when the roster is absent.
+_PROJECT_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+_VENV_PY="$_PROJECT_ROOT/.claude/skills/.venv/bin/python3"
+_ROSTER="$_PROJECT_ROOT/docs/profiles/characters.yaml"
+
+if [ -f "$_VENV_PY" ] && [ -f "$_ROSTER" ]; then
+    PROFILE_ROWS=$("$_VENV_PY" - "$_ROSTER" <<'PYEOF'
+import sys
+from pathlib import Path
+
+roster_path = Path(sys.argv[1])
+try:
+    import yaml
+    data = yaml.safe_load(roster_path.read_text(encoding="utf-8")) or {}
+    chars = data.get("characters") or {}
+    if chars:
+        for slug, info in chars.items():
+            display = (info or {}).get("display") or slug
+            print(f"- **{display} ({slug}):** [How this theory applies, or \"N/A\"]")
+    else:
+        print("- **Character A:** [How this theory applies, or \"N/A\"]")
+except Exception:
+    print("- **Character A:** [How this theory applies, or \"N/A\"]")
+PYEOF
+    ) 2>/dev/null || PROFILE_ROWS="- **Character A:** [How this theory applies, or \"N/A\"]"
+else
+    PROFILE_ROWS="- **Character A:** [How this theory applies, or \"N/A\"]"
+fi
+
 cat <<EOF
 ---
 title: "${THEORY_TITLE}"
@@ -69,9 +100,7 @@ Signs this pattern is present in a character:
 
 ### Relevant Character Profiles
 
-- **Nhân vật A (character-a):** [How this theory applies, or "N/A"]
-- **Nhân vật B (character-b):** [How this theory applies, or "N/A"]
-- **Nhân vật C (character-c):** [How this theory applies, or "N/A"]
+${PROFILE_ROWS}
 
 ## Interaction With Other Theories
 

@@ -30,7 +30,7 @@ Bạn đang hỏi: **Nhân vật này thực sự có thể làm gì, và tốt 
 
 ### Trường hợp sử dụng: Đánh giá sự sẵn sàng cho một bước chuyển sự nghiệp
 
-> **Bạn:** "gro:competency-map --character hieu"
+> **Bạn:** "gro:competency-map --character character-a"
 >
 > **Kỹ năng:** Chiết xuất tất cả các kỹ năng của Nhân vật A. Tìm: Lĩnh vực kỹ thuật ở Level 4–5 (Expert). Quản lý dự án ở Level 2 (Advanced Beginner). Giao tiếp ở Level 3 (Competent).
 >

@@ -11,19 +11,6 @@ from platform_lib.clinical_terms import build_reference_index
 from platform_lib.formatters import print_table, print_json
 from platform_lib.errors import emit_error
 
-# Suggested characters per theory category based on project knowledge
-CATEGORY_CHAR_HINTS = {
-    "Rối Loạn & Sang Chấn": ["character-a", "character-b"],
-    "Cơ Chế Bảo Vệ": ["character-a", "character-c"],
-    "Gắn Bó & Quan Hệ": ["character-b", "character-a"],
-    "Bản Sắc & Phát Triển": ["character-c", "character-b"],
-    "Nhận Thức & Hành Vi": ["character-a", "character-c"],
-    "Hệ Thống Gia Đình": ["character-b", "character-c"],
-    "Hiện Sinh & Ý Nghĩa": ["character-a"],
-    "Phục Hồi & Tăng Trưởng": ["character-a", "character-c"],
-}
-
-
 def is_cited_anywhere(theory_name: str, key_terms: list[str]) -> bool:
     """Return True if theory or any key term appears in ANY clinical profile file."""
     needle_theory = theory_name.lower()
@@ -48,9 +35,13 @@ def is_cited_anywhere(theory_name: str, key_terms: list[str]) -> bool:
 
 
 def suggest_characters(category: str) -> str:
-    """Return suggested character names for a theory category."""
-    hints = CATEGORY_CHAR_HINTS.get(category, ALL_CHARS)
-    return ", ".join(CHAR_DISPLAY.get(c, c) for c in hints)
+    """Return candidate characters for an UNUSED theory.
+
+    The theory has zero citations, so there is no corpus signal to narrow it to specific
+    characters — every roster member is a candidate. Names come from the live roster (no
+    hardcoded character list), so the suggestion is the full cast by display name.
+    """
+    return ", ".join(CHAR_DISPLAY.get(c, c) for c in ALL_CHARS)
 
 
 def main():

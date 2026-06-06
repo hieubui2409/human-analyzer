@@ -7,46 +7,30 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
-from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, PROFILES, resolve_character
+from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, GRAPH, PROFILES, resolve_character
 
-# Known shared events: (event_label, [character_slugs], keyword_patterns)
-#
-# PRECISION RULES for keyword_patterns:
-#   1. Patterns must identify the SPECIFIC EVENT, not a bare topic keyword.
-#      Include cohort markers (e.g. "F15"), role qualifiers, or named participants
-#      so that distinct events sharing a broad topic word are NOT conflated.
-#   2. For the Scholarship X F15 interview, require "F15" in pattern — this
-#      excludes Nhân vật A's unrelated F5 scholarship hits from 2015.
-#   3. For the Nhân vật A→Nhân vật C mentoring, require both names to appear near each
-#      other — this excludes generic mentoring entries that involve other people.
-SHARED_EVENTS = [
-    ("Kết nghĩa (sworn brothers)", ["character-a", "character-b"],
-     [r"kết\s*nghĩa", r"sworn\s*brother", r"sworn brother"]),
-    ("First meeting Nhân vật A-Nhân vật B", ["character-a", "character-b"],
-     [r"gặp.*[Hh]òa", r"gặp.*[Hh]oa", r"first met.*[Hh]oa", r"[Hh]òa.*gặp"]),
-    ("Gambling crisis", ["character-a", "character-b"],
-     [r"cờ\s*bạc", r"gambl", r"casino", r"khủng\s*hoảng"]),
-    # Require "F15" AND a phỏng-vấn / interview / selection marker so we match only
-    # the interview event, not cohort-label references ("Scholar F15", "mentee F15")
-    # that appear later in a 2026 mentoring context.
-    # In Nhân vật A's files this event is not explicitly dated (he was the interviewer
-    # but records it as a footnote), so MISSING is the honest result for him.
-    ("Scholarship X F15 interview", ["character-a", "character-c"],
-     [r"Scholarship X\s*F15",
-      r"F15.*phỏng\s*vấn", r"phỏng\s*vấn.*F15",
-      r"F15.*interview", r"interview.*F15",
-      r"Nhân vật A\s+là\s+interviewer", r"interviewer.*F15"]),
-    # Require both the mentor/mentee role AND the other character's name in proximity
-    # so generic "mentor" entries (Nhân vật A mentoring other people in 2021+) are excluded.
-    # Patterns cover both perspectives:
-    #   - Nhân vật A's files: "mentoring Nhân vật C", "mentor.*Nhân vật C", "Nhân vật C.*mentor"
-    #   - Nhân vật C's files: "mentee của Nhân vật A", "Nhân vật A làm mentor", "Nhân vật A.*mentor"
-    ("Mentoring sessions (Nhân vật A→Nhân vật C)", ["character-a", "character-c"],
-     [r"mentor.*[Cc]hiến", r"[Cc]hiến.*mentor",
-      r"mentoring\s+Nguyễn\s+Bách\s+Nhân vật C",
-      r"mentee.*[Hh]iếu", r"[Hh]iếu.*mentor",
-      r"cố\s*vấn.*[Cc]hiến", r"[Cc]hiến.*cố\s*vấn"]),
-]
+
+def _load_shared_events():
+    """Load cross-character shared events from the pack-excluded corpus.
+
+    Source: docs/graph/shared-events.yaml — (label, [character_slugs], keyword_patterns) per
+    entry. The corpus carries the real-name event data; shipped code stays name-free. Returns []
+    when the file (or pyyaml) is absent (toolkit-only pack), so the report degrades to empty.
+    """
+    try:
+        import yaml
+    except ImportError:
+        return []
+    path = GRAPH / "shared-events.yaml"
+    if not path.exists():
+        return []
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return [(e["label"], e.get("characters", []), e.get("patterns", []))
+            for e in (data.get("events") or [])]
+
+
+# Known shared events, loaded from the corpus: [(event_label, [character_slugs], keyword_patterns)].
+SHARED_EVENTS = _load_shared_events()
 
 # Ordered most-precise → least-precise. The original second tuple element (format
 # templates) was dead code — extraction appended the raw match, so "2026-03" and

@@ -20,7 +20,7 @@ Every session teaches you something. Which character defense mechanisms trigger 
 
 **Auto mode:** `orc:compounding --auto` — extract all candidates, write automatically. Use when you're confident in the extraction.
 
-**Character focus:** `orc:compounding --character hiếu` — extract learnings about one character only.
+**Character focus:** `orc:compounding --character character-a` — extract learnings about one character only.
 
 **Content patterns:** `orc:compounding --content` — focus on writing/engagement patterns from recent posts.
 
@@ -28,15 +28,15 @@ Every session teaches you something. Which character defense mechanisms trigger 
 
 ### Use case: Extract psychology insights after profile update
 
-> You: "I just updated Nhân vật B's formulation. Extract learnings about her."
+> You: "I just updated Character B's formulation. Extract learnings about her."
 >
-> Skill: Reads formulation.md, defense-mechanisms.md, relationships/family.md. Finds: "Nhân vật B's avoidance intensifies under academic pressure" (psychology). Offers to save to memory. You confirm. Memory updated for next session.
+> Skill: Reads formulation.md, defense-mechanisms.md, relationships/family.md. Finds: "Character B's avoidance intensifies under academic pressure" (psychology). Offers to save to memory. You confirm. Memory updated for next session.
 
 ### Use case: Capture writing patterns after content creation
 
 > You: "I wrote three LinkedIn posts this session. What patterns worked?"
 >
-> Skill: Reads posts, compares against writing-voice.md. Extracts: "Vulnerability hook + resolution structure gets engagement" (writing pattern). Also notes: "Nhân vật A voice best when personal + actionable" (audience pattern). You review and save.
+> Skill: Reads posts, compares against writing-voice.md. Extracts: "Vulnerability hook + resolution structure gets engagement" (writing pattern). Also notes: "Character A voice best when personal + actionable" (audience pattern). You review and save.
 
 ### Use case: Auto-extract at session end
 

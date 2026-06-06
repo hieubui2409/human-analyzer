@@ -20,6 +20,11 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 SANTA_SCRIPT = PROJECT_ROOT / ".claude" / "skills" / "orc-santa" / "scripts" / "run-santa-review.py"
 PYTHON = VENV_PYTHON
 
+from platform_lib.paths import ALL_CHARS  # noqa: E402
+
+# First real character, sourced dynamically — no hardcoded slug in the shipped test tree.
+_CHAR = ALL_CHARS[0] if ALL_CHARS else None
+
 
 def _load_santa():
     spec = importlib.util.spec_from_file_location("santa_mod", SANTA_SCRIPT)
@@ -117,7 +122,9 @@ class TestBuildReport:
 
 class TestCLI:
     def test_cli_output_json(self, tmp_path):
-        target = PROJECT_ROOT / "docs" / "profiles" / "character-a" / "identity"
+        if not _CHAR:
+            pytest.skip("no character roster — toolkit-only pack")
+        target = PROJECT_ROOT / "docs" / "profiles" / _CHAR / "identity"
         result = subprocess.run(
             [str(PYTHON), str(SANTA_SCRIPT), "--target", str(target),
              "--framework", "psy", "--scope", "full"],

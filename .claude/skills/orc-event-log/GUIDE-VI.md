@@ -24,7 +24,7 @@ Khi các miền kích hoạt các sự kiện (PSY.refresh, CRE.recalibrate), ch
 
 **Lọc theo ngày:** `orc:event-log --query --since 2026-06-01` — sự kiện từ tháng 6 trở đi.
 
-**Ghi thêm một sự kiện:** Các kỹ năng gọi `--append --event-type MAT.integrated --source mat:indexer --character hieu --reason "New material processed"`.
+**Ghi thêm một sự kiện:** Các kỹ năng gọi `--append --event-type MAT.integrated --source mat:indexer --character character-a --reason "New material processed"`.
 
 ## 4. Các trường hợp sử dụng (mỗi = một cuộc hội thoại mẫu)
 

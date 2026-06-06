@@ -214,7 +214,7 @@ When `--character` is used, filter instinct categories to `psychology` + `growth
 ```bash
 /orc:compounding                          # extract from current session
 /orc:compounding --auto                   # auto-extract, no confirm
-/orc:compounding --character hòa          # Nhân vật B-specific insights
+/orc:compounding --character character-b          # Nhân vật B-specific insights
 /orc:compounding --content                # content pattern extraction
 ```
 

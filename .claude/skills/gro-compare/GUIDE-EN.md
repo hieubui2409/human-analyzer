@@ -33,17 +33,17 @@ You have 3 character profiles and want to understand **how they differ and relat
 
 > **You:** "gro:compare --dimension competency --json | jq '.characters | map(.top_skills)'"
 >
-> **Skill:** Extracts top skills per character. Nhân vật A has technical depth, Nhân vật B has communication strength, Nhân vật C has management experience.
+> **Skill:** Extracts top skills per character. Character A has technical depth, Character B has communication strength, Character C has management experience.
 >
-> **Use:** You see complementary strengths. In a dyad, they could mentor each other (Nhân vật A teaches Nhân vật B technical, Nhân vật B teaches Nhân vật A communication). Useful for mentoring-content angles.
+> **Use:** You see complementary strengths. In a dyad, they could mentor each other (Character A teaches Character B technical, Character B teaches Character A communication). Useful for mentoring-content angles.
 
 ### Use case: Spot learning-style mismatches for collaboration
 
 > **You:** "gro:compare --dimension learning"
 >
-> **Skill:** Nhân vật A = Converging (practical, problem-solving). Nhân vật B = Diverging (imaginative, emotional). Nhân vật C = Assimilating (logical, theory).
+> **Skill:** Character A = Converging (practical, problem-solving). Character B = Diverging (imaginative, emotional). Character C = Assimilating (logical, theory).
 >
-> **Use:** If they work together, expect friction: Nhân vật A wants to solve now, Nhân vật B wants to brainstorm options, Nhân vật C wants to understand the pattern. Useful for conflict angles or team-dynamics storytelling.
+> **Use:** If they work together, expect friction: Character A wants to solve now, Character B wants to brainstorm options, Character C wants to understand the pattern. Useful for conflict angles or team-dynamics storytelling.
 
 ## 5. Important caveats
 

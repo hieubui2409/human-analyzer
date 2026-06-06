@@ -104,9 +104,9 @@ When a section changes in the source character, these sections in connected char
 ## Examples
 
 ```bash
-/psy:propagate --character hieu                          # what needs updating after Nhân vật A change
-/psy:propagate --character hoa --section relationships   # Nhân vật B relationship changes
-/psy:propagate --character chien --json                  # machine-readable output
+/psy:propagate --character character-a                          # what needs updating after Nhân vật A change
+/psy:propagate --character character-b --section relationships   # Nhân vật B relationship changes
+/psy:propagate --character character-c --json                  # machine-readable output
 ```
 
 ## Verdict-cache inheritance

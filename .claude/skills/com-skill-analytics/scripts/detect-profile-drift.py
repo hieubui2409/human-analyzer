@@ -90,7 +90,7 @@ def _profile_md_files(character: str | None):
     if not root.exists():
         return []
     if character:
-        # Resolve aliases (e.g. "hieu" → "character-a"); fall back to direct slug
+        # Resolve aliases (e.g. an alias → "character-a"); fall back to direct slug
         # lookup so tests that inject a fixture PROFILES dir work with arbitrary names.
         try:
             resolved = resolve_character(character)

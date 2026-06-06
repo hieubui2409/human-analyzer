@@ -20,7 +20,7 @@ Bắt đầu công việc trên một dự án phức tạp, đa nhân vật có
 
 **Phân tích sâu:** `orc:bootstrap --full` — 15-30 phút, tải tất cả. Làm điều này trước các thay đổi rủi ro cao.
 
-**Tiêu điểm nhân vật:** `orc:bootstrap --character hiếu` — 5-10 phút, tất cả tệp cho Nhân vật A chỉ.
+**Tiêu điểm nhân vật:** `orc:bootstrap --character character-a` — 5-10 phút, tất cả tệp cho Nhân vật A chỉ.
 
 **Chạy tốc độ:** `orc:bootstrap --lite` — 3 phút, các tóm tắt nén của cả 3 nhân vật.
 

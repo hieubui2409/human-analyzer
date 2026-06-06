@@ -26,7 +26,7 @@ High-risk changes (profile updates, sensitive content) need scrutiny. Two indepe
 
 ### Use case: Review profile edit after high_risk classification
 
-> You: "High_risk classification for Nhân vật B's psychology update. Run Santa."
+> You: "High_risk classification for Character B's psychology update. Run Santa."
 >
 > Skill: Reviewer A (Clinical Accuracy): "DSM-5 codes valid? 5P formulation consistent? Attachment patterns match theory?" Reviewer B (Cross-Character Consistency): "Dates match across characters? Relationship dynamics bidirectional? No contradictions?" Both output PASS or list issues. You fix if needed.
 

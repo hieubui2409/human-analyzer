@@ -26,7 +26,7 @@ craap_score:
 
 Interview conducted 2025-02-20.
 
-Beta describes her background: "I grew up in Tỉnh X, resources were limited but my parents always pushed me."
+Beta describes her background: "I grew up in Province X, resources were limited but my parents always pushed me."
 
 On mentorship: "Anh Alpha has been guiding me since March 2024. It changed everything."
 

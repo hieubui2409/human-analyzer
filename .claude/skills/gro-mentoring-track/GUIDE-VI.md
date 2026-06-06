@@ -31,7 +31,7 @@ Bạn muốn hiểu **nhân vật được hỗ trợ như thế nào trong sự
 
 ### Trường hợp sử dụng: Đánh giá hỗ trợ cố vấn để thăng chức sự nghiệp
 
-> **Bạn:** "gro:mentoring-track --character hieu"
+> **Bạn:** "gro:mentoring-track --character character-a"
 >
 > **Kỹ năng:** Chiết xuất các mối quan hệ cố vấn của Nhân vật A. Tìm thấy: Cố vấn chính cung cấp huấn luyện (xây dựng kỹ năng) và tình bạn (hỗ trợ cảm xúc). Cố vấn thứ cấp ở vị trí cao cấp (tiềm năng tài trợ). Không có mô hình vai trò hoặc những người hỗ trợ ngang hàng (lỗ hổng).
 >

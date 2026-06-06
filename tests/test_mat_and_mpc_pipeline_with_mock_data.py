@@ -13,6 +13,12 @@ MOCK_DATA = PROJECT_ROOT / "tests" / "mock-data"
 # Isolate event-log subprocess writes (append-event-to-log) to a throwaway sink,
 # never the real tracked .claude/telemetry/ (CK_TELEMETRY_DIR honored by paths.py).
 _TELEMETRY_TMP = tempfile.mkdtemp(prefix="ck-mat-telemetry-")
+
+from platform_lib.paths import ALL_CHARS  # roster sourced dynamically — no hardcoded slug
+
+pytestmark = pytest.mark.skipif(not ALL_CHARS, reason="no character roster — toolkit-only pack")
+_CHAR = ALL_CHARS[0] if ALL_CHARS else "x"  # exercise the first real character; name-free
+
 ENV = {
     **os.environ,
     "PYTHONPATH": str(PROJECT_ROOT / ".claude" / "scripts"),
@@ -55,12 +61,12 @@ class TestMatLoader:
 class TestMatIndexer:
     def test_evidence_coverage_gaps(self):
         r = run_script("mat-indexer", "analyze-evidence-coverage-gaps-per-profile-section.py",
-                       ["--character", "character-a"])
+                       ["--character", _CHAR])
         assert r.returncode == 0
 
     def test_contradiction_detection(self):
         r = run_script("mat-indexer", "detect-contradictions-materials-vs-profiles.py",
-                       ["--character", "character-a"])
+                       ["--character", _CHAR])
         assert r.returncode == 0
 
     def test_stale_materials(self):
@@ -70,7 +76,7 @@ class TestMatIndexer:
 
 class TestMatArchive:
     def test_archive_dry_run(self):
-        r = run_script("mat-archive", "archive-materials-by-filter.py", ["--dry-run", "--character", "character-a"])
+        r = run_script("mat-archive", "archive-materials-by-filter.py", ["--dry-run", "--character", _CHAR])
         assert r.returncode == 0
 
 
@@ -90,7 +96,7 @@ class TestOrcIntake:
 
     def test_route_task(self):
         r = run_script("orc-intake", "route-task-to-framework-domain.py",
-                       ["Ingest new transcript for Nhân vật A"])
+                       ["Ingest new transcript for test-alpha"])
         assert r.returncode == 0
 
 
@@ -120,7 +126,7 @@ class TestOrcEventLog:
 class TestOrcClassify:
     def test_detect_risk_flags(self):
         r = run_script("orc-classify", "detect-risk-flags-from-git-diff.py",
-                       ["--diff-files", "docs/profiles/character-a/psychology/formulation.md"])
+                       ["--diff-files", f"docs/profiles/{_CHAR}/psychology/formulation.md"])
         assert r.returncode == 0
 
 

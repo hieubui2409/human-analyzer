@@ -26,7 +26,7 @@ You have a stack of new interview transcripts, letters, and news clippings about
 ## 4. Use cases
 
 ### Use case: Initial material intake
-> **You:** "I have a conversation log with Nhân vật C that I transcribed. Please load it."
+> **You:** "I have a conversation log with Character C that I transcribed. Please load it."
 > 
 > **Skill:** Runs `--ingest` on the transcript:
 > - Detects type: conversation_log
@@ -54,7 +54,7 @@ You have a stack of new interview transcripts, letters, and news clippings about
 ### Use case: Character-specific inventory
 > **You:** "Show me all materials for Hoà."
 > 
-> **Skill:** Runs `--character hoa`:
+> **Skill:** Runs `--character character-b`:
 > - Lists all files with Hoà's character slug
 > - Groups by type (conversation_log, letter, news_article, etc.)
 > - Shows tier distribution, CRAAP scores, processing status
