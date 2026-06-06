@@ -1,8 +1,8 @@
 """Tests for the release tooling — deterministic RELEASE-NOTES catalog + Keep a Changelog lifecycle.
 
-`generate_changelog.py` asserts the generated release notes enumerate the full live catalog (every
+`release_notes.py` asserts the generated release notes enumerate the full live catalog (every
 framework + skill + domain agent + framework hook), are byte-deterministic across runs, and contain
-zero real-name tokens. `release_changelog.py` manages the hand-maintained root CHANGELOG.md
+zero real-name tokens. `release.py` manages the hand-maintained root CHANGELOG.md
 (extract / lock / bump), and the committed CHANGELOG.md is gated PII-clean.
 """
 import sys
@@ -10,12 +10,12 @@ from pathlib import Path
 
 import pytest
 
-_TOOLS_RELEASE = Path(__file__).resolve().parents[1] / "tools" / "release"
-if str(_TOOLS_RELEASE) not in sys.path:
-    sys.path.insert(0, str(_TOOLS_RELEASE))
+_SHARED_SCRIPTS = Path(__file__).resolve().parents[1] / ".claude" / "skills" / "_framework-shared" / "scripts"
+if str(_SHARED_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SHARED_SCRIPTS))
 
-import generate_changelog as gen  # noqa: E402
-import release_changelog as rc  # noqa: E402
+import release_notes as gen  # noqa: E402
+import release as rc  # noqa: E402
 
 _VER, _DATE = "1.0.0", "2026-06-06"
 

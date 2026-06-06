@@ -31,7 +31,7 @@ Never run a release-cut blind. Before any `--apply`, use `AskUserQuestion` to co
 
 ## What a release-cut does
 
-`tools/release/release_changelog.py` (deterministic, no git-at-build-time):
+`.claude/skills/_framework-shared/scripts/release.py` (deterministic, no git-at-build-time):
 
 1. Lock `## [Unreleased]` → `## [X.Y.Z] — <date>`; open a fresh empty `[Unreleased]`.
 2. Bump `.claude/pack.manifest.yaml` `version:`.
@@ -58,16 +58,16 @@ assertion → determinism gate → whole-pack PII/secret gate → build → SHA2
 
 ```bash
 # Preview a cut (dry-run — writes nothing):
-.claude/skills/.venv/bin/python3 tools/release/release_changelog.py --bump minor
+.claude/skills/.venv/bin/python3 .claude/skills/_framework-shared/scripts/release.py --bump minor
 
 # Apply locally, then hand the printed tag commands to the owner:
-.claude/skills/.venv/bin/python3 tools/release/release_changelog.py --release 1.1.0 --apply
+.claude/skills/.venv/bin/python3 .claude/skills/_framework-shared/scripts/release.py --release 1.1.0 --apply
 
 # Owner go: apply + tag + push (fires CI):
-.claude/skills/.venv/bin/python3 tools/release/release_changelog.py --release 1.1.0 --apply --push
+.claude/skills/.venv/bin/python3 .claude/skills/_framework-shared/scripts/release.py --release 1.1.0 --apply --push
 
 # Inspect what CI will publish as the release body:
-.claude/skills/.venv/bin/python3 tools/release/release_changelog.py --extract 1.1.0
+.claude/skills/.venv/bin/python3 .claude/skills/_framework-shared/scripts/release.py --extract 1.1.0
 ```
 
 ## What it does NOT do
@@ -82,5 +82,5 @@ assertion → determinism gate → whole-pack PII/secret gate → build → SHA2
 ## See also
 
 - Guide: [`GUIDE-EN.md`](./GUIDE-EN.md) / [`GUIDE-VI.md`](./GUIDE-VI.md) · Overview: [`README.md`](./README.md)
-- Lifecycle source: `tools/release/release_changelog.py`; catalog: `tools/release/generate_changelog.py`
+- Lifecycle source: `.claude/skills/_framework-shared/scripts/release.py`; catalog: `.claude/skills/_framework-shared/scripts/release_notes.py`
 - Release CI: `.github/workflows/frameworks-pack-release.yml`; convention: [keepachangelog.com](https://keepachangelog.com/)

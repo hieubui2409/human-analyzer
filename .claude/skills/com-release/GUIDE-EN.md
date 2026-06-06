@@ -27,7 +27,7 @@ check → determinism gate → PII gate → build → SHA256 → GitHub Release)
 
 ## 3. Learning path
 
-**Preview first:** `release_changelog.py --bump minor` (dry-run) — see the version, the lock, and the git
+**Preview first:** `release.py --bump minor` (dry-run) — see the version, the lock, and the git
 commands, writing nothing.
 
 **Apply locally:** add `--apply` — it writes CHANGELOG/manifest/notes and prints the tag commands for you
@@ -45,7 +45,7 @@ body.
 
 > You: "what would a minor release look like?"
 > Skill: Interviews to confirm minor (e.g. 1.0.0 → 1.1.0), reads back the `[Unreleased]` content, runs
-> `release_changelog.py --bump minor` (dry-run), shows the lock + the git commands. Writes nothing.
+> `release.py --bump minor` (dry-run), shows the lock + the git commands. Writes nothing.
 
 ### Use case: Cut an explicit release locally
 

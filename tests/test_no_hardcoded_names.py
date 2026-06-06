@@ -23,9 +23,9 @@ def _load_forbidden_tokens() -> list[str]:
 
     Returns [] when the roster is absent (toolkit-only pack) so the test skips cleanly.
     """
-    anonymize_dir = _PROJECT_ROOT / "tools" / "anonymize"
-    if str(anonymize_dir) not in sys.path:
-        sys.path.insert(0, str(anonymize_dir))
+    shared_scripts = _PROJECT_ROOT / ".claude" / "skills" / "_framework-shared" / "scripts"
+    if str(shared_scripts) not in sys.path:
+        sys.path.insert(0, str(shared_scripts))
     try:
         from pii_tokens import tokens_only
         return tokens_only()

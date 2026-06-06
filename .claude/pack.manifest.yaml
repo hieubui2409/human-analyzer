@@ -1,5 +1,5 @@
 # Reproducible-pack manifest for the 6-framework toolkit.
-# Same source + this manifest ⇒ byte-identical tar.gz (tools/pack/build_pack.py). The safety_filter is a
+# Same source + this manifest ⇒ byte-identical tar.gz (.claude/skills/_framework-shared/scripts/build_pack.py). The safety_filter is a
 # NON-REMOVABLE backstop applied AFTER these include globs (drops secrets, runtime, and real-character PII).
 name: human-analyzer-frameworks
 version: "1.0.0"
@@ -48,11 +48,9 @@ include:
   - tests/**/*
   - e2e/**/*
   - eval/**/*
-  # Name-free toolkit utilities the shipped tests import (pack build/scan, anonymizer). After the
-  # roster externalization these carry zero real names; the PII scan over the whole pack is the backstop.
-  - tools/pack/**/*
-  - tools/anonymize/**/*
-  - tools/release/**/*
+  # Pack build/scan + anonymizer + release tooling live under .claude/skills/_framework-shared/scripts/
+  # (already covered by the _framework-shared glob above). Name-free after roster externalization; the
+  # whole-pack PII scan is the backstop.
   - CLAUDE.md
   - README.md
   - pyproject.toml

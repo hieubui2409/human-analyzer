@@ -1,4 +1,4 @@
-"""Tests for tools/pack/scan_pack_pii.py — the fail-closed PII/secret gate over the built pack.
+"""Tests for scan_pack_pii.py — the fail-closed PII/secret gate over the built pack.
 
 NAME-FREE: fixtures use SYNTHETIC tokens (character-z) and synthetic secret material — no real name
 is hardcoded here. The one integration test asserts the REAL built pack scans clean (zero hits),
@@ -9,11 +9,9 @@ from pathlib import Path
 
 import pytest
 
-_TOOLS_PACK = Path(__file__).resolve().parents[1] / "tools" / "pack"
-_TOOLS_ANON = Path(__file__).resolve().parents[1] / "tools" / "anonymize"
-for _p in (str(_TOOLS_PACK), str(_TOOLS_ANON)):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+_SHARED_SCRIPTS = Path(__file__).resolve().parents[1] / ".claude" / "skills" / "_framework-shared" / "scripts"
+if str(_SHARED_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SHARED_SCRIPTS))
 
 import scan_pack_pii  # noqa: E402
 import pii_tokens  # noqa: E402

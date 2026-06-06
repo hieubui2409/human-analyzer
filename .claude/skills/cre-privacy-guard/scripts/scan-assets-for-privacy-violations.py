@@ -18,7 +18,7 @@ from platform_lib.privacy_tags import load_confidential_names
 # Load project-specific forbidden tokens (display names + pii_extra like org/program names)
 # from the shared roster source. Returns [] when the roster is absent (toolkit-only pack),
 # so the scanner degrades gracefully to generic pattern detection only.
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "tools" / "anonymize"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_framework-shared" / "scripts"))
 try:
     from pii_tokens import tokens_only as _pii_tokens_only
     _PROJECT_SPECIFIC_TOKENS: list[str] = _pii_tokens_only()

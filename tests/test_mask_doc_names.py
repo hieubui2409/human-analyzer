@@ -1,6 +1,6 @@
 """Doc-masker mechanism — verified with a SYNTHETIC mapping (no real names ship in this test).
 
-The real token application is verified at runtime over actual docs + the Phase-5 whole-pack scan, not by
+The real token application is verified at runtime over actual docs + the whole-pack scan, not by
 a literal test here. These cases pin the MECHANISM: prose masked, code/frontmatter/contracts protected,
 word-boundary respected, idempotent.
 """
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "tools" / "anonymize"))
+sys.path.insert(0, str(ROOT / ".claude" / "skills" / "_framework-shared" / "scripts"))
 
 import mask_doc_names as m  # noqa: E402
 

@@ -6,7 +6,7 @@ agents, and framework hooks. Tags `frameworks-v*` version the bundle as a whole.
 Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: [semver](https://semver.org/).
 
 > **Release discipline.** During development, add entries under `## [Unreleased]`. On release, run
-> `tools/release/release_changelog.py --release X.Y.Z` (or `--bump {patch,minor,major}`): it locks
+> `.claude/skills/_framework-shared/scripts/release.py --release X.Y.Z` (or `--bump {patch,minor,major}`): it locks
 > `[Unreleased]` → `[X.Y.Z] — <date>`, opens a fresh empty `[Unreleased]`, bumps
 > `.claude/pack.manifest.yaml`, and regenerates the deterministic `docs/RELEASE-NOTES-v<ver>.md`
 > catalog. The locked section becomes the GitHub Release body. Nothing here is auto-derived from git
@@ -36,7 +36,7 @@ orchestration), shipping zero real-character data.
 - **Tag-triggered release CI** — pushing `frameworks-vX.Y.Z` runs the determinism gate, the PII gate,
   builds the pack, records SHA256SUMS, and publishes a GitHub Release whose body is this changelog's
   locked section.
-- **Keep a Changelog lifecycle** — this `CHANGELOG.md` plus `release_changelog.py`
+- **Keep a Changelog lifecycle** — this `CHANGELOG.md` plus `release.py`
   (`--release`/`--bump`/`--pre-release`/`--extract`) and the `com:release` skill manage versioning.
 
 ### Changed

@@ -22,7 +22,7 @@ from platform_lib.paths import ALL_CHARS, CHAR_DISPLAY, CHAR_SEARCH_ALIASES, MAT
 # Load the shared roster token set (display names + full-name aliases + pii_extra) at
 # import time so claim extraction picks up any new character automatically. Falls back to
 # an empty list when the roster is absent (toolkit-only consumer pack).
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "tools" / "anonymize"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_framework-shared" / "scripts"))
 try:
     from pii_tokens import tokens_only as _pii_tokens_only
     _pii_tokens: list[str] = _pii_tokens_only()

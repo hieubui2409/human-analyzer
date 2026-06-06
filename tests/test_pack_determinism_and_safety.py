@@ -4,7 +4,7 @@ import sys
 import tarfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools" / "pack"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / ".claude" / "skills" / "_framework-shared" / "scripts"))
 import safety_filter  # noqa: E402
 import build_pack  # noqa: E402
 

@@ -27,7 +27,7 @@ determinism gate → PII gate → build → SHA256 → GitHub Release). Việc p
 
 ## 3. Lộ trình học
 
-**Xem trước:** `release_changelog.py --bump minor` (dry-run) — thấy version, phép khoá, và các lệnh git,
+**Xem trước:** `release.py --bump minor` (dry-run) — thấy version, phép khoá, và các lệnh git,
 không ghi gì.
 
 **Áp dụng local:** thêm `--apply` — ghi CHANGELOG/manifest/notes và in các lệnh tag cho bạn chạy.
@@ -42,7 +42,7 @@ không ghi gì.
 
 > Bạn: "bản minor tiếp theo trông thế nào?"
 > Skill: Phỏng vấn xác nhận minor (vd 1.0.0 → 1.1.0), đọc lại nội dung `[Unreleased]`, chạy
-> `release_changelog.py --bump minor` (dry-run), hiện phép khoá + các lệnh git. Không ghi gì.
+> `release.py --bump minor` (dry-run), hiện phép khoá + các lệnh git. Không ghi gì.
 
 ### Tình huống: Cut một release version cụ thể (local)
 
