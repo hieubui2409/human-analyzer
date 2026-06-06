@@ -26,7 +26,8 @@ function main() {
       return;
     }
     const dir = projectDir();
-    const py = path.join(dir, '.claude/skills/.venv/bin/python3');
+    let py = path.join(dir, '.claude/skills/.venv/bin/python3');
+    if (!fs.existsSync(py)) py = 'python3'; // no project venv (e.g. CI): fall back to PATH python3
     const script = path.join(dir, '.claude/skills/com-skill-analytics/scripts/detect-profile-drift.py');
     let out = '';
     try {
