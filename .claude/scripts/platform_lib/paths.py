@@ -12,6 +12,9 @@ def find_project_root() -> Path:
         return Path(root)
     p = Path.cwd()
     for _ in range(10):
+        # Two markers required (CLAUDE.md AND docs/profiles), not one: a nested checkout or a
+        # tool dir may carry a stray CLAUDE.md, and matching on it alone would anchor the root at
+        # the wrong level. Demanding the profiles corpus alongside it disambiguates the real root.
         if (p / "CLAUDE.md").exists() and (p / "docs" / "profiles").exists():
             return p
         if p.parent == p:
@@ -319,11 +322,30 @@ LEGACY_SPLIT_MAP = {
 }
 
 
+# Synthetic positional placeholder prefix (character-a → 1st roster slug, character-b → 2nd, …).
+# Name-FREE by construction: shipped docs illustrate CLI usage with these neutral tokens instead of
+# real slugs, so a reader can copy-paste an example and have it resolve against whatever roster the
+# local repo declares (in roster order) without any real name appearing in the docs.
+_PLACEHOLDER_PREFIX = "character-"
+
+
 def resolve_character(name: str) -> str:
-    """Resolve alias to canonical directory name."""
+    """Resolve alias to canonical directory name.
+
+    Accepts real slugs / display names / ASCII folds (the CHARACTERS map) AND the synthetic
+    positional placeholders ``character-a``..``character-z`` (a→1st roster slug, …). The placeholder
+    branch only fires for inputs that the canonical map does not already claim, so it is purely
+    additive to the frozen API — every input that resolved before resolves identically.
+    """
     key = name.lower().strip()
     if key in CHARACTERS:
         return CHARACTERS[key]
+    if key.startswith(_PLACEHOLDER_PREFIX):
+        suffix = key[len(_PLACEHOLDER_PREFIX):]
+        if len(suffix) == 1 and "a" <= suffix <= "z":
+            idx = ord(suffix) - ord("a")
+            if idx < len(ALL_CHARS):
+                return ALL_CHARS[idx]
     raise ValueError(f"Unknown character: {name!r}. Known: {list(CHARACTERS.keys())}")
 
 
