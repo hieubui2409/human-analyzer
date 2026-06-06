@@ -17,6 +17,10 @@ import pytest
 import yaml
 from venv_python import VENV_PYTHON
 
+# Every test here hits the paid Gemini API — mark the whole module so `pytest -m "not gemini"`
+# (the CI deterministic-legs job) actually deselects them rather than relying on a missing-key skip.
+pytestmark = pytest.mark.gemini
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PYTHON = str(VENV_PYTHON)
 # Overridable so a server-side model retirement is a config change, not a code edit.

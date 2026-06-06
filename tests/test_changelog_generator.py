@@ -49,11 +49,16 @@ class TestCatalogCompleteness:
 
 
 class TestDeterminism:
-    def test_release_notes_byte_identical(self, data):
-        assert gen.render_release_notes(data, _VER, _DATE) == gen.render_release_notes(data, _VER, _DATE)
+    # Re-collect from the tree each time (NOT the shared `data` fixture) so nondeterminism inside
+    # collect() — git-log ordering, glob/dict/set iteration order — is actually exercised, not masked
+    # by rendering the same cached dict twice.
+    def test_release_notes_byte_identical(self):
+        assert (gen.render_release_notes(gen.collect(), _VER, _DATE)
+                == gen.render_release_notes(gen.collect(), _VER, _DATE))
 
-    def test_changelog_byte_identical(self, data):
-        assert gen.render_changelog(data, _VER, _DATE) == gen.render_changelog(data, _VER, _DATE)
+    def test_changelog_byte_identical(self):
+        assert (gen.render_changelog(gen.collect(), _VER, _DATE)
+                == gen.render_changelog(gen.collect(), _VER, _DATE))
 
 
 class TestPrivacy:

@@ -203,7 +203,7 @@ _FOLD_TABLE = _make_fold_table()
 
 
 def _fold(s: str) -> str:
-    """ASCII-fold + lowercase: 'Nhân vật A' -> 'bui trung hieu'. Folds Vietnamese
+    """ASCII-fold + lowercase: 'Tiếng Việt' -> 'tieng viet'. Folds Vietnamese
     diacritics so a name's accented and unaccented spellings both match one pattern."""
     return s.translate(_FOLD_TABLE).lower()
 
