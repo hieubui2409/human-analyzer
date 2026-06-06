@@ -5,6 +5,16 @@ name: frameworks CI
 # (e.g. a centralized registry that a reader still scrapes) is caught on the PR that introduces it.
 
 on:
+  push:
+    branches: [master]
+    paths:
+      - '.claude/skills/**'
+      - '.claude/scripts/**'
+      - 'docs/**'
+      - 'tests/**'
+      - 'eval/**'
+      - 'pyproject.toml'
+      - '.github/workflows/frameworks-ci.yml'
   pull_request:
     paths:
       - '.claude/skills/**'

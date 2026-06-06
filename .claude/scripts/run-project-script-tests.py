@@ -27,6 +27,8 @@ PLATFORM_LIB = ROOT / ".claude" / "scripts" / "platform_lib"
 PYTHON = Path.home() / ".claude" / "skills" / ".venv" / "bin" / "python3"
 if not PYTHON.exists():
     PYTHON = ROOT / ".claude" / "skills" / ".venv" / "bin" / "python3"
+if not PYTHON.exists():
+    PYTHON = Path(sys.executable)  # no project venv (e.g. CI): use the running interpreter
 FRAMEWORKS = ("mat", "psy", "cre", "gro", "orc", "com")
 
 

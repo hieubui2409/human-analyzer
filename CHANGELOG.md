@@ -18,6 +18,13 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 - **`roster_io` is now importable as a package submodule** — its `paths` import uses the dual
   package/top-level form, so the `platform_lib` import sweep (and any `platform_lib.roster_io` import)
   no longer fails with `No module named 'paths'`.
+- **Project-script matrix and the profile-drift hook run without the project venv** — both hard-coded
+  the venv interpreter and broke wherever it is absent (e.g. CI); they now fall back to the running
+  interpreter / `python3` on `PATH`.
+
+### CI
+- **`frameworks CI` now also runs on push to `master`** (not only on pull request / manual dispatch),
+  so a change that reaches `master` outside a PR is still gated.
 
 ## [1.0.0-rc.1] — 2026-06-07
 
