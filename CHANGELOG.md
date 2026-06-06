@@ -14,6 +14,11 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+### Fixed
+- **`roster_io` is now importable as a package submodule** — its `paths` import uses the dual
+  package/top-level form, so the `platform_lib` import sweep (and any `platform_lib.roster_io` import)
+  no longer fails with `No module named 'paths'`.
+
 ## [1.0.0-rc.1] — 2026-06-07
 
 First public **release candidate** of the clinical-grade character-profile intelligence toolkit: a

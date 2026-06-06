@@ -13,7 +13,15 @@ from __future__ import annotations
 import unicodedata
 from pathlib import Path
 
-from paths import _asciifold  # DRY: one diacritic fold for the whole roster subsystem
+# DRY: one diacritic fold for the whole roster subsystem. Dual import so this resolves both as a package
+# submodule (`platform_lib.roster_io`, e.g. the CI import sweep) and as a top-level module (runtime
+# consumers put platform_lib/ on sys.path and `import roster_io`).
+if __package__ in (None, ""):
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from platform_lib.paths import _asciifold
+else:
+    from .paths import _asciifold
 
 # Header re-emitted on every write so characters.yaml stays self-documenting after registration.
 _HEADER = """\
