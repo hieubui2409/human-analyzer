@@ -23,7 +23,8 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
   interpreter / `python3` on `PATH`.
 
 ### CI
-- **`frameworks CI` now also runs on push to `master`** (not only on pull request / manual dispatch),
+- **The framework gates now also run on push to `master`** — both `frameworks CI` and the
+  `cross-framework bug_class gate` trigger on `master` pushes (not only pull request / manual dispatch),
   so a change that reaches `master` outside a PR is still gated.
 
 ## [1.0.0-rc.1] — 2026-06-07

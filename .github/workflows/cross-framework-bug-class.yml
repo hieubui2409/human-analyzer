@@ -4,6 +4,14 @@ name: cross-framework bug_class gate
 # glob-scope) + the deterministic audit/schema/skill-count gates. A class reopening fails here.
 
 on:
+  push:
+    branches: [master]
+    paths:
+      - '.claude/skills/**'
+      - '.claude/scripts/**'
+      - 'tests/**'
+      - 'CLAUDE.md'
+      - '.github/workflows/cross-framework-bug-class.yml'
   pull_request:
     paths:
       - '.claude/skills/**'
