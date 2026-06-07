@@ -48,7 +48,10 @@ class TestCatalogCompleteness:
         notes = gen.render_release_notes(data, _VER, _DATE)
         for h in data["hooks"]:
             assert h["name"] in notes
-        assert len(data["hooks"]) == 6
+        # Derive expected count from the scanner allow-list (top-level hooks, excluding lib/ helpers) so
+        # adding a framework hook — which MUST be allow-listed to ship — updates this with zero drift.
+        top_level_hooks = {f for f in gen.scan_pack_pii._FRAMEWORK_HOOK_FILES if "/" not in f}
+        assert len(data["hooks"]) == len(top_level_hooks)
 
 
 class TestDeterminism:

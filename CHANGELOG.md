@@ -14,6 +14,23 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-06-07
+
+### Added
+- **Born-time PII write-guard** — a `PreToolUse Edit|Write|MultiEdit` hook (`pii-guard-on-write.cjs`)
+  blocks a real-name token the moment it would be written into a shipped-class file, instead of only
+  catching it at ship time. The judgment lives in `pii_guard_check.py`: a path is shipped-class iff it
+  matches a manifest include glob and is not `safety_filter`-dropped (the pack-excluded corpus is
+  dropped, so profile/material writes pass), and the written text is matched against the same
+  collision-free scanner token set the ship scan uses (word-boundary, case-sensitive). Roster absent
+  (consumer pack) ⇒ no-op; fail-open on any error. Framework-owned: ships and protects toolkit clones.
+
+### Changed
+- **`scan_pack_pii` is now a fail-closed backstop, not the only PII defense** — the born-time guard
+  stops leaks at write; the whole-pack ship scan remains the no-carve-out final ratchet. Defense-in-depth.
+- **Release-notes catalog counts are derived** — the "domain agents + framework hooks" line is computed
+  from the live catalog instead of a hardcoded number, so adding a framework hook never drifts the prose.
+
 ## [1.0.1] — 2026-06-07
 
 ### Fixed

@@ -2,7 +2,7 @@
 # Same source + this manifest ⇒ byte-identical tar.gz (.claude/skills/_framework-shared/scripts/build_pack.py). The safety_filter is a
 # NON-REMOVABLE backstop applied AFTER these include globs (drops secrets, runtime, and real-character PII).
 name: human-analyzer-frameworks
-version: "1.0.1"
+version: "1.1.0"
 
 # Repo-relative include globs — the TOOLKIT (skills + agents + hooks + shared lib + rules + schemas +
 # guides + nav docs + synthetic fixture), never the live character corpus (docs/profiles, docs/materials,
@@ -27,6 +27,7 @@ include:
   # settings.json is filtered at build time to wire exactly these (build_pack strips statusLine + non-
   # framework hook entries) so the shipped harness config has zero dangling references.
   - .claude/hooks/gateguard-profile-protect.cjs
+  - .claude/hooks/pii-guard-on-write.cjs
   - .claude/hooks/detect-profile-drift-hook.cjs
   - .claude/hooks/observe-framework-signal.cjs
   - .claude/hooks/profile-edit-reminder.cjs
