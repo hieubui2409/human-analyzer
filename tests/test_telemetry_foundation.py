@@ -63,6 +63,8 @@ def test_rotation_when_oversized(monkeypatch, tmp_path):
 # ── I1: track-skill-invocation.cjs (node subprocess) ─────────────────────────
 
 def _run_i1(payload: str, env_extra: dict, tmp_path: Path):
+    if not I1_HOOK.exists():
+        pytest.skip("track-skill-invocation.cjs not shipped — toolkit-only pack")
     env = {"CLAUDE_PROJECT_DIR": str(tmp_path), "PATH": "/usr/bin:/bin"}
     env.update(env_extra)
     return subprocess.run([NODE, str(I1_HOOK)], input=payload, capture_output=True,

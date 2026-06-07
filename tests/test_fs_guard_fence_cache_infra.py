@@ -42,6 +42,8 @@ def test_fsguard_defeats_traversal_and_prefix_lookalike():
 
 def test_fsguard_defeats_symlink_escape(tmp_path, monkeypatch):
     # A symlink inside the fence pointing outside must not let a write escape.
+    if not paths.PROFILES.exists():
+        pytest.skip("docs/profiles absent — toolkit-only pack")
     target_outside = tmp_path / "outside"
     target_outside.mkdir()
     link = paths.PROFILES / "_tmp_escape_link_test"

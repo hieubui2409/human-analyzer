@@ -19,6 +19,8 @@ pytestmark = pytest.mark.skipif(NODE is None, reason="node not available")
 
 
 def _run_hook(name: str, stdin_obj: dict, env_extra: dict) -> subprocess.CompletedProcess:
+    if not (HOOKS / name).exists():
+        pytest.skip(f"{name} not shipped — toolkit-only pack")
     env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), **env_extra}
     return subprocess.run(
         [NODE, str(HOOKS / name)],
