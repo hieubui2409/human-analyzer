@@ -14,6 +14,13 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+## [1.2.1] — 2026-06-08
+### Changed
+- **Relicensed MIT → AGPL-3.0.** Network/SaaS use of a modified version must release its full source
+  under AGPL-3.0, deterring closed-source commercialization while keeping the toolkit open-source.
+- **`LICENSE` + `CONTRIBUTING.md` now ship in the pack** (added to `pack.manifest.yaml`) and are shared
+  single-source files synced from the canonical repo to the public mirror; the README links both.
+
 ## [1.2.0] — 2026-06-08
 ### Added
 - **Toolkit-only deployment support** — `paths.find_project_root` now accepts
