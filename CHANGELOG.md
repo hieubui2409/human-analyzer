@@ -14,6 +14,18 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-06-08
+### Added
+- **Toolkit-only deployment support** — `paths.find_project_root` now accepts
+  `.claude/skills/_framework-shared` as a root marker alongside `docs/profiles`, so `platform_lib`
+  resolves in a corpus-absent deployment (the public repo / a consumer pack). The test suite degrades
+  cleanly there: corpus-coupled assertions and node-hook tests skip when their artifact is absent
+  instead of failing.
+
+### Changed
+- **PII token registry** — registered collision-free third-party identifiers; documented why
+  collision-prone bare given names are handled by context analysis rather than a literal token gate.
+
 ## [1.1.0] — 2026-06-07
 
 ### Added
