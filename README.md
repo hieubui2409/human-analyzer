@@ -451,6 +451,8 @@ fixture under `e2e/` contains **no real PII**.
 | Shared operating guides + GATEs | [`.claude/skills/_framework-shared/references/`](./.claude/skills/_framework-shared/references/) |
 | Knowledge architecture / module map | [`docs/knowledge-architecture.md`](./docs/knowledge-architecture.md) · [`docs/MODULES.md`](./docs/MODULES.md) |
 | Distilled cross-domain principles | [`docs/distilled-principles.md`](./docs/distilled-principles.md) |
+| License (AGPL-3.0) | [`LICENSE`](./LICENSE) |
+| How to contribute | [`CONTRIBUTING.md`](./CONTRIBUTING.md) |
 
 ---
 ---

@@ -54,6 +54,8 @@ include:
   # whole-pack PII scan is the backstop.
   - CLAUDE.md
   - README.md
+  - LICENSE
+  - CONTRIBUTING.md
   - pyproject.toml
   - .github/workflows/frameworks-ci.yml
   - .github/workflows/cross-framework-bug-class.yml
