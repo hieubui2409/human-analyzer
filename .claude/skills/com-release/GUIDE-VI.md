@@ -6,8 +6,7 @@
 
 Bạn đã ghi một loạt thay đổi dưới `## [Unreleased]` trong `CHANGELOG.md` và pack sẵn sàng phát hành.
 com:release biến nó thành một release có version: khoá `[Unreleased]` thành `[X.Y.Z] — <ngày>`, mở
-`[Unreleased]` rỗng mới, bump manifest, sinh lại catalog RELEASE-NOTES deterministic, và đưa cho bạn
-đúng các lệnh push tag để kích hoạt release CI.
+`[Unreleased]` rỗng mới, bump manifest, và đưa cho bạn đúng các lệnh push tag để kích hoạt release CI.
 
 ## 2. Khái niệm cốt lõi (mô hình tư duy)
 
@@ -18,9 +17,9 @@ chạy lại tooling về sau không bao giờ làm thay đổi nó.
 **Khoá = dời, không phải sinh.** Một release-cut đổi tiêu đề `[Unreleased]` thành `[X.Y.Z] — <ngày>` và
 chèn `[Unreleased]` rỗng mới lên trên. Nội dung bạn đã viết trở thành body của version đó.
 
-**Hai artifact, hai vai.** `CHANGELOG.md` = "có gì đổi" cho người (curate). `RELEASE-NOTES-v<ver>.md` =
-catalog "ship cái gì" deterministic (mọi skill/agent/hook, tự liệt kê). Mục changelog vừa khoá cũng trở
-thành body của GitHub Release.
+**Một artifact, một vai.** `CHANGELOG.md` = "có gì đổi" cho người (curate); mục vừa khoá trở thành body
+của GitHub Release. `README.md` (ship trong pack) là bản kiểm kê toolkit ("trong bundle có gì") — không
+còn file catalog riêng theo từng version phải giữ đồng bộ.
 
 **Tag là trigger.** Đẩy `frameworks-v<ver>` kích hoạt `frameworks-pack-release.yml` (kiểm tag↔manifest →
 determinism gate → PII gate → build → SHA256 → GitHub Release). Việc push là **của owner**.
@@ -69,8 +68,8 @@ master và re-tag một version đã có thì không bao giờ làm tự động
 
 **Một version chỉ cut một lần.** Cut lại `[X.Y.Z]` đã tồn tại bị từ chối; công cụ không sửa mục cũ.
 
-**PII gate.** Mục vừa khoá và notes sinh lại đều bị quét token tên thật; rò rỉ thì cut dừng. `CHANGELOG.md`
-đã commit cũng được test gate PII-clean.
+**PII gate.** Mục vừa khoá bị quét token tên thật; rò rỉ thì cut dừng. `CHANGELOG.md` đã commit cũng được
+test gate PII-clean.
 
-**Determinism.** RELEASE-NOTES nhận ngày tường minh và sort mọi danh sách — cùng cây + version + ngày ⇒
+**Determinism.** Release-cut nhận ngày tường minh và chỉ dời text đã curate — cùng cây + version + ngày ⇒
 output byte-identical, nên determinism gate của CI luôn xanh.

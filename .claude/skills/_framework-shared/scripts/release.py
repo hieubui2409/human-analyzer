@@ -11,8 +11,9 @@ ever changed by an explicit, recorded release action.
   --bump {patch,minor,major}   cut a release at the next version computed from the manifest
   --pre-release LABEL          append a pre-release label to the cut version (rc.1 → X.Y.Z-rc.1)
 
-A release-cut locks ``[Unreleased]`` → ``[X.Y.Z] — <date>``, opens a fresh empty ``[Unreleased]``, bumps
-``.claude/pack.manifest.yaml``, and regenerates the deterministic ``docs/RELEASE-NOTES-v<ver>.md`` catalog.
+A release-cut locks ``[Unreleased]`` → ``[X.Y.Z] — <date>``, opens a fresh empty ``[Unreleased]``, and
+bumps ``.claude/pack.manifest.yaml``. The locked section becomes the GitHub Release body; the shipped
+README is the toolkit inventory, so no separate per-version catalog file is generated.
 Dry-run by default — pass ``--apply`` to write. ``--push`` (owner opt-in, requires ``--apply``) also creates
 and pushes the ``frameworks-v<ver>`` tag, firing the release CI; without it the exact git commands are
 printed for the owner to run.
@@ -29,10 +30,20 @@ CHANGELOG = REPO / "CHANGELOG.md"
 MANIFEST = REPO / ".claude" / "pack.manifest.yaml"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import release_notes as gen  # noqa: E402  (sibling renderer — reuse its catalog render + PII gate)
+import pii_tokens  # noqa: E402  (sibling in _framework-shared/scripts)
+import scan_pack_pii  # noqa: E402  (sibling in _framework-shared/scripts)
 
 # Section heading: "## [Unreleased]" or "## [1.2.3] — 2026-06-07" (dash or em-dash separator).
 _HEADING = re.compile(r"^## \[([^\]]+)\]", re.M)
+
+
+def _assert_pii_clean(*texts: str) -> None:
+    """Fail the release if a section body would leak a real-name token (collision-free token set)."""
+    tokens = pii_tokens.scan_tokens()
+    for text in texts:
+        hits = scan_pack_pii.scan_text("changelog", text, tokens)
+        if hits:
+            raise SystemExit(f"❌ changelog would leak PII: {hits[:5]}")
 
 
 def _today() -> str:
@@ -105,7 +116,7 @@ def _git(cmd: list, run: bool):
 
 def _do_extract(args) -> int:
     section = extract_section(CHANGELOG.read_text(encoding="utf-8"), args.extract)
-    gen._assert_pii_clean(section)  # never publish a release body that leaks a real name
+    _assert_pii_clean(section)  # never publish a release body that leaks a real name
     print(section, end="")
     return 0
 
@@ -121,27 +132,22 @@ def _do_release(args) -> int:
     date = args.date or _today()
     text = CHANGELOG.read_text(encoding="utf-8")
     new_changelog = lock_unreleased(text, version, date)
-    gen._assert_pii_clean(extract_section(new_changelog, version))
+    _assert_pii_clean(extract_section(new_changelog, version))
 
     new_manifest = set_manifest_version(MANIFEST.read_text(encoding="utf-8"), version)
-    notes = gen.render_release_notes(gen.collect(), version, date)
-    gen._assert_pii_clean(notes)
-    notes_path = REPO / "docs" / f"RELEASE-NOTES-v{version}.md"
     tag = f"frameworks-v{version}"
 
     verb = "WRITE" if args.apply else "DRY-RUN — would write"
     print(f"{verb}:")
     print(f"  CHANGELOG.md          lock [Unreleased] → [{version}] — {date}")
     print(f"  pack.manifest.yaml    version → {version}")
-    print(f"  {notes_path.relative_to(REPO)}    regenerate catalog")
     if args.apply:
         CHANGELOG.write_text(new_changelog, encoding="utf-8")
         MANIFEST.write_text(new_manifest, encoding="utf-8")
-        notes_path.write_text(notes, encoding="utf-8")
 
     print(f"\n{'Running' if (args.apply and args.push) else 'Owner runs'} to fire release CI:")
     do_run = args.apply and args.push
-    _git(["add", "CHANGELOG.md", ".claude/pack.manifest.yaml", str(notes_path.relative_to(REPO))], do_run)
+    _git(["add", "CHANGELOG.md", ".claude/pack.manifest.yaml"], do_run)
     _git(["commit", "-m", f"release: frameworks v{version}"], do_run)
     _git(["tag", tag], do_run)
     _git(["push", "origin", "HEAD"], do_run)

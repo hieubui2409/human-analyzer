@@ -7,12 +7,25 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 > **Release discipline.** During development, add entries under `## [Unreleased]`. On release, run
 > `.claude/skills/_framework-shared/scripts/release.py --release X.Y.Z` (or `--bump {patch,minor,major}`): it locks
-> `[Unreleased]` → `[X.Y.Z] — <date>`, opens a fresh empty `[Unreleased]`, bumps
-> `.claude/pack.manifest.yaml`, and regenerates the deterministic `docs/RELEASE-NOTES-v<ver>.md`
-> catalog. The locked section becomes the GitHub Release body. Nothing here is auto-derived from git
-> at build time — this file is the human-curated truth of record.
+> `[Unreleased]` → `[X.Y.Z] — <date>`, opens a fresh empty `[Unreleased]`, and bumps
+> `.claude/pack.manifest.yaml`. The locked section becomes the GitHub Release body. Nothing here is
+> auto-derived from git at build time — this file is the human-curated truth of record.
 
 ## [Unreleased]
+
+## [1.2.2] — 2026-06-08
+### Removed
+- **Per-version `RELEASE-NOTES-v<ver>.md` catalog + its generator.** The shipped `README.md` is the
+  toolkit inventory and `CHANGELOG.md` is the release narrative (and the GitHub Release body), so the
+  third artifact was pure duplication. Removing it also fixes two latent defects it carried: every
+  release tarball shipped the single manifest-pinned `v1.0.0` notes regardless of its own version, and
+  the catalog's "Highlights" block was hardcoded to the v1.0.0 feature set on every version.
+- **Seven stale internal docs.** Removed `framework-overview.md`, `getting-started.md`,
+  `quick-reference.md`, and `user-manual-{cre,mat,mpc,psy}.md` — superseded by the detailed bilingual
+  `README.md`, the per-skill `GUIDE-EN/VI` docs, and the framework operating-guides. Several embedded
+  real-character names as worked examples (kept them pack-excluded) and used the retired "MPC" framework
+  name. The current navigation docs (`knowledge-architecture.md`, `MODULES.md`, `distilled-principles.md`)
+  remain.
 
 ## [1.2.1] — 2026-06-08
 ### Changed

@@ -235,7 +235,7 @@ loaded every turn. The Skills Catalog below stays the navigational index (not de
 | `com:health-check`    | Session health monitoring — stall/error/death detection               |
 | `com:rules`           | Modular rules management                                              |
 | `com:skill-analytics` | Skill/script observability — 11 read-only lenses + profile-drift gate |
-| `com:release`         | Cut a versioned release — Keep a Changelog lock + manifest bump + RELEASE-NOTES; owner-owned tag push |
+| `com:release`         | Cut a versioned release — Keep a Changelog lock + manifest bump; owner-owned tag push |
 
 ---
 

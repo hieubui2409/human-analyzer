@@ -5,9 +5,9 @@
 ## What it does
 
 Manages the release lifecycle of the root `CHANGELOG.md`: locks the hand-curated `[Unreleased]` section
-into a versioned `[X.Y.Z] — <date>` entry, opens a fresh `[Unreleased]`, bumps the pack manifest, and
-regenerates the deterministic `RELEASE-NOTES` catalog. Pushing the resulting `frameworks-v<ver>` tag fires
-the release CI, which publishes a GitHub Release whose body is the locked changelog section.
+into a versioned `[X.Y.Z] — <date>` entry, opens a fresh `[Unreleased]`, and bumps the pack manifest.
+Pushing the resulting `frameworks-v<ver>` tag fires the release CI, which publishes a GitHub Release
+whose body is the locked changelog section.
 
 ## When to use
 
@@ -40,9 +40,8 @@ the release CI, which publishes a GitHub Release whose body is the locked change
 ## Tiếng Việt
 
 Quản lý vòng đời release của `CHANGELOG.md` ở root: khoá mục `[Unreleased]` (viết tay/LLM) thành mục có
-version `[X.Y.Z] — <ngày>`, mở `[Unreleased]` rỗng mới, bump version trong pack manifest, và sinh lại
-catalog `RELEASE-NOTES` deterministic. Đẩy tag `frameworks-v<ver>` sẽ kích hoạt release CI, tạo GitHub
-Release với body chính là mục changelog vừa khoá.
+version `[X.Y.Z] — <ngày>`, mở `[Unreleased]` rỗng mới, và bump version trong pack manifest. Đẩy tag
+`frameworks-v<ver>` sẽ kích hoạt release CI, tạo GitHub Release với body chính là mục changelog vừa khoá.
 
 **Khi dùng:** người dùng nói "cut a release", "release vX.Y.Z", "bump version", "ship pack" — thường sau khi
 gom đủ thay đổi dưới `[Unreleased]`.

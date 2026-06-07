@@ -24,6 +24,5 @@ load real names at runtime from the pack-excluded corpus.
 | `safety_filter.py` | Non-removable include backstop (drops secrets/runtime/real-character PII) |
 | `pii_tokens.py` | Shared PII token source (loads the pack-excluded roster; zero hardcoded names) |
 | `mask_doc_names.py` | Doc-prose name masker (de-naming migration, run per-need) |
-| `release_notes.py` | Deterministic RELEASE-NOTES catalog generator |
 | `release.py` | Keep a Changelog lifecycle (`--extract`/`--release`/`--bump`/`--pre-release`) |
 | `install.sh` | Consumer pack installer |

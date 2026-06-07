@@ -6,8 +6,8 @@
 
 You've recorded a batch of changes under `## [Unreleased]` in `CHANGELOG.md` and the pack is ready to
 ship. com:release turns that into a versioned release: it locks `[Unreleased]` into `[X.Y.Z] — <date>`,
-opens a fresh `[Unreleased]`, bumps the manifest, regenerates the deterministic RELEASE-NOTES catalog,
-and hands you the exact tag-push commands that fire release CI.
+opens a fresh `[Unreleased]`, bumps the manifest, and hands you the exact tag-push commands that fire
+release CI.
 
 ## 2. Core concepts (the mental model)
 
@@ -18,9 +18,9 @@ reproducible — running the tooling later never mutates it.
 **Lock = move, not generate.** A release-cut renames the `[Unreleased]` heading to `[X.Y.Z] — <date>`
 and inserts a fresh empty `[Unreleased]` above it. The content you wrote becomes the version's body.
 
-**Two artifacts, two roles.** `CHANGELOG.md` = the human "what changed" (curated). `RELEASE-NOTES-v<ver>.md`
-= the deterministic "what shipped" catalog (every skill/agent/hook, auto-enumerated). The locked
-changelog section also becomes the GitHub Release body.
+**One artifact, one role.** `CHANGELOG.md` = the human "what changed" (curated); its locked section
+becomes the GitHub Release body. The shipped `README.md` is the toolkit inventory ("what's in the
+bundle") — there is no separate per-version catalog file to keep in sync.
 
 **The tag is the trigger.** Pushing `frameworks-v<ver>` fires `frameworks-pack-release.yml` (tag↔manifest
 check → determinism gate → PII gate → build → SHA256 → GitHub Release). The push is **owner-owned**.
@@ -72,8 +72,8 @@ Release-to-master and re-tagging an existing version are never done automaticall
 
 **A version is cut once.** Re-cutting an existing `[X.Y.Z]` is refused; the tool never edits a past section.
 
-**PII gate.** The locked section and the regenerated notes are scanned for real-name tokens; a leak aborts
-the cut. The committed `CHANGELOG.md` is also gated PII-clean by the test suite.
+**PII gate.** The locked section is scanned for real-name tokens; a leak aborts the cut. The committed
+`CHANGELOG.md` is also gated PII-clean by the test suite.
 
-**Determinism.** RELEASE-NOTES takes an explicit date and sorts every list — same tree + version + date ⇒
-byte-identical output, so the CI determinism gate stays green.
+**Determinism.** The release-cut takes an explicit date and only moves curated text — same tree + version
++ date ⇒ byte-identical output, so the CI determinism gate stays green.

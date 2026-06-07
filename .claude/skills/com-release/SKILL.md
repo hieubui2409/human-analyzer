@@ -1,6 +1,6 @@
 ---
 name: com:release
-description: "Cut a versioned release of the frameworks pack via the Keep a Changelog lifecycle. Use when the user says 'cut a release', 'release vX.Y.Z', 'bump version', 'ship the pack'. Interviews the user, locks [Unreleased] → [X.Y.Z], bumps the manifest, regenerates RELEASE-NOTES; the tag push that fires release CI is owner-owned."
+description: "Cut a versioned release of the frameworks pack via the Keep a Changelog lifecycle. Use when the user says 'cut a release', 'release vX.Y.Z', 'bump version', 'ship the pack'. Interviews the user, locks [Unreleased] → [X.Y.Z], bumps the manifest; the tag push that fires release CI is owner-owned."
 argument-hint: "--release X.Y.Z | --bump patch|minor|major [--pre-release rc.N] [--apply] [--push]"
 metadata:
   author: hieubt
@@ -35,9 +35,8 @@ Never run a release-cut blind. Before any `--apply`, use `AskUserQuestion` to co
 
 1. Lock `## [Unreleased]` → `## [X.Y.Z] — <date>`; open a fresh empty `[Unreleased]`.
 2. Bump `.claude/pack.manifest.yaml` `version:`.
-3. Regenerate `docs/RELEASE-NOTES-v<ver>.md` (the deterministic catalog — every skill/agent/hook/lib/rule).
-4. Assert the locked section + notes are PII-clean (a real-name leak aborts).
-5. Print the exact `git commit && git tag frameworks-v<ver> && git push` commands (or run them with `--push`).
+3. Assert the locked section is PII-clean (a real-name leak aborts).
+4. Print the exact `git commit && git tag frameworks-v<ver> && git push` commands (or run them with `--push`).
 
 Pushing the `frameworks-v<ver>` tag fires `.github/workflows/frameworks-pack-release.yml`: tag↔manifest
 assertion → determinism gate → whole-pack PII/secret gate → build → SHA256SUMS → GitHub Release whose
@@ -82,5 +81,5 @@ assertion → determinism gate → whole-pack PII/secret gate → build → SHA2
 ## See also
 
 - Guide: [`GUIDE-EN.md`](./GUIDE-EN.md) / [`GUIDE-VI.md`](./GUIDE-VI.md) · Overview: [`README.md`](./README.md)
-- Lifecycle source: `.claude/skills/_framework-shared/scripts/release.py`; catalog: `.claude/skills/_framework-shared/scripts/release_notes.py`
+- Lifecycle source: `.claude/skills/_framework-shared/scripts/release.py`
 - Release CI: `.github/workflows/frameworks-pack-release.yml`; convention: [keepachangelog.com](https://keepachangelog.com/)
