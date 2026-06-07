@@ -14,6 +14,8 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-06-07
+
 ### Added
 - **Born-time PII write-guard** — a `PreToolUse Edit|Write|MultiEdit` hook (`pii-guard-on-write.cjs`)
   blocks a real-name token the moment it would be written into a shipped-class file, instead of only
