@@ -1,0 +1,41 @@
+name: public guard
+
+# Perimeter guard for the public projection: fail any PR/push that re-introduces the private corpus
+# (profiles/materials/graph/references, roster, token map) or proprietary ck/ckm tooling. Name-free
+# and self-contained — the real-name scrub is guaranteed at the one-time seed; this keeps the surface
+# clean over time. Pairs with frameworks-ci.yml (the deterministic build/test gates).
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  no-private-paths:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail on private corpus / ck paths
+        run: |
+          python3 - <<'PY'
+          import re, subprocess, sys
+          tracked = subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split("\n")
+          deny = re.compile(
+              r"^docs/(profiles|materials|graph|references)/"
+              r"|(^|/)characters\.yaml$"
+              r"|(^|/)pii-tokens\.yaml$"
+              r"|^\.claude/\.env$"
+              r"|^assets/|^plans/"
+              r"|^\.claude/skills/(cook|xia|scout|test|plan|ck-|ckm-|_shared/)"
+          )
+          hits = [p for p in tracked if p and deny.search(p)]
+          if hits:
+              print("FAIL — private/ck paths present in the public repo:")
+              print("\n".join("  " + h for h in hits[:50]))
+              sys.exit(1)
+          print(f"OK — {len(tracked)} tracked paths, none private/ck")
+          PY

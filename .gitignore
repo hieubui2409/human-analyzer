@@ -1,54 +1,29 @@
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
-release-manifest.json
+# --- Private corpus / PII — MUST never enter the public repo (CI fails closed on these) ---
+docs/profiles/
+docs/materials/
+docs/graph/
+docs/references/
+**/characters.yaml
+**/pii-tokens.yaml
+.claude/.env
+assets/
+plans/
 
-# Python bytecode
+# --- Non-framework / proprietary tooling ---
+.claude/skills/cook/
+.claude/skills/xia/
+.claude/skills/scout/
+.claude/skills/ck-*/
+.claude/skills/ckm-*/
+
+# --- Build + runtime artifacts ---
+dist/
 __pycache__/
 *.pyc
-
-# Project-local skills venv (regenerable via .claude/scripts/requirements.txt + install.sh)
-.claude/skills/.venv/
-
-# Hook crash/runtime logs (ck hook-logger output — churns every session)
-.claude/hooks/.logs/
-
-# Generated knowledge-graph visualizations (regenerable via visualize_focus())
-plans/visuals/knowledge-graph-*.html
-
-# Runtime artifacts (derived state, regenerated each session)
-.claude/session-state/compact-digest.json
-.claude/session-state/state.json
-.claude/session-state/latest.md
-.claude/session-state/event-log.jsonl.migrated
-
-# Telemetry sink (.claude/telemetry/) — SELECTIVE: ephemeral observability is
-# ignored; persistent streams (instincts, *-events, growth-signals, audits) are
-# COMMITTED so they survive across sessions/machines (cross-machine memory + audit).
-.claude/telemetry/invocations.jsonl
-.claude/telemetry/script-telemetry.jsonl
-.claude/telemetry/hook-telemetry.jsonl
-.claude/telemetry/errors.jsonl
-.claude/telemetry/sessions.jsonl
-.claude/telemetry/observations.jsonl
-.claude/telemetry/cascade-events.jsonl
-.claude/telemetry/context-gauge.jsonl
-.claude/telemetry/*.jsonl.bak
-
-# Consolidated cache root (.claude/cache/): committed/ is TRACKED (reproducible content-addressed
-# verdict caches — verdict labels/scores only, no PII); runtime/ is IGNORED (cheap-rebuild,
-# machine-local: profile-lite compression cache, etc.)
-.claude/cache/runtime/
-
-# Knowledge graph embedding artifacts (derived, regenerable via embed_corpus)
-.models/
-.cache/
-# Gemini CLI settings (contains user-specific config)
-.gemini/
-
-# e2e fixture runtime artifacts (regenerated each run)
-e2e/synthetic-project/.cache/
-e2e/synthetic-project/_bodies.json
-
-# Pack build output (reproducible — rebuilt via .claude/skills/_framework-shared/scripts/build_pack.py / release CI)
-dist/
+.pytest_cache/
+.venv/
+.claude/cache/
+.claude/telemetry/
+.claude/session-state/
+.claude/logs/
+node_modules/
