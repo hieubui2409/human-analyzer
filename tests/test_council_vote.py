@@ -63,7 +63,7 @@ class TestPrepare:
             council.prepare("x " * 300, "cre")  # >500 chars
 
     def test_prepare_output_path_format(self, council):
-        result = council.prepare("Pick the career path for Nhân vật ẩn danh", "gro")
+        result = council.prepare("Pick the career path for Alex", "gro")
         date_str = datetime.now().strftime("%Y%m%d")
         fname = Path(result["output_path"]).name
         assert re.fullmatch(rf"{date_str}-council-[\w-]+\.md", fname)

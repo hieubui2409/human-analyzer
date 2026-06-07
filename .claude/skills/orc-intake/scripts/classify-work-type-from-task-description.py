@@ -59,7 +59,7 @@ MULTI_STEP_MARKERS = ["then", "after that", "and also", "rồi", "sau đó", "đ
                        "step 1", "step 2", "first", "second", "next"]
 
 # Alias→slug lookup built from paths.CHAR_SEARCH_ALIASES (single canonical source).
-# Preserves all typo variants (Nhân vật ẩn danh, Nhân vật ẩn danh) which are defined there.
+# Preserves all IME-typo alias variants which are defined there.
 CHARACTER_ALIASES = {
     alias.lower(): slug
     for slug, aliases in CHAR_SEARCH_ALIASES.items()

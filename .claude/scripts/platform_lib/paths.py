@@ -12,15 +12,20 @@ def find_project_root() -> Path:
         return Path(root)
     p = Path.cwd()
     for _ in range(10):
-        # Two markers required (CLAUDE.md AND docs/profiles), not one: a nested checkout or a
-        # tool dir may carry a stray CLAUDE.md, and matching on it alone would anchor the root at
-        # the wrong level. Demanding the profiles corpus alongside it disambiguates the real root.
-        if (p / "CLAUDE.md").exists() and (p / "docs" / "profiles").exists():
+        # CLAUDE.md alone is ambiguous (a nested checkout or tool dir may carry a stray one), so it
+        # must be paired with a second structural marker. Either marker disambiguates the real root:
+        #   - docs/profiles  → a populated source repo (the character corpus), OR
+        #   - .claude/skills/_framework-shared → a toolkit-only deployment (public repo / consumer
+        #     pack) where the corpus is intentionally absent.
+        if (p / "CLAUDE.md").exists() and (
+            (p / "docs" / "profiles").exists()
+            or (p / ".claude" / "skills" / "_framework-shared").exists()
+        ):
             return p
         if p.parent == p:
             break
         p = p.parent
-    raise FileNotFoundError("Cannot find project root (no CLAUDE.md + docs/profiles found)")
+    raise FileNotFoundError("Cannot find project root (no CLAUDE.md + corpus/toolkit marker found)")
 
 
 ROOT = find_project_root()

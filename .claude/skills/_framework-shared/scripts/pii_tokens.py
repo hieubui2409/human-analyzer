@@ -10,10 +10,10 @@ Two consumers, two needs:
     "Nhân vật {A,B,…}" / "Character {A,B,…}", the kebab slug → synthetic "character-{a,b,…}", plus
     org/program/location extras. The masker replaces these in doc PROSE (word-boundary, case-sensitive).
   * scan_tokens()  — the SCANNER set: only the COLLISION-FREE tokens (kebab slugs + multi-word full
-    names + extras, incl. lower-cased extras). It deliberately OMITS bare display names (Nhân vật B, Nhân vật C,
-    Nhân vật A) because those are everyday Vietnamese words — a whole-pack grep on them would storm with
-    false positives (peace, strategy, filial piety). The scanner therefore hard-gates only on forms
-    that cannot collide with ordinary text; bare display names are masked best-effort, not gated.
+    names + extras, incl. lower-cased extras). It deliberately OMITS bare display names because those
+    are everyday Vietnamese words — a whole-pack grep on them would storm with false positives. The
+    scanner therefore hard-gates only on forms that cannot collide with ordinary text; bare display
+    names are masked best-effort, not gated.
 """
 import unicodedata
 from pathlib import Path
