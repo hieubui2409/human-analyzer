@@ -53,6 +53,10 @@
           {
             "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/gateguard-profile-protect.cjs",
             "type": "command"
+          },
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pii-guard-on-write.cjs",
+            "type": "command"
           }
         ],
         "matcher": "Edit|Write"

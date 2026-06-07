@@ -46,7 +46,8 @@ _FRAMEWORK_AGENTS = {
     "cross-validator.md", "profile-manager.md", "material-analyst.md",
 }
 _FRAMEWORK_HOOK_FILES = {
-    "gateguard-profile-protect.cjs", "detect-profile-drift-hook.cjs", "observe-framework-signal.cjs",
+    "gateguard-profile-protect.cjs", "pii-guard-on-write.cjs",
+    "detect-profile-drift-hook.cjs", "observe-framework-signal.cjs",
     "profile-edit-reminder.cjs", "rebuild-knowledge-graph.cjs", "write-framework-delta-compact-digest.cjs",
     "lib/hook-config-utils.cjs", "lib/sensitivity-checker.cjs", "lib/telemetry-paths.cjs",
 }

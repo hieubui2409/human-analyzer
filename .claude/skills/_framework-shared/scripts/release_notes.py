@@ -154,8 +154,9 @@ def render_release_notes(data: dict, version: str, date: str) -> str:
         "invariant fails on any roster↔profile mismatch.",
         "- **PII-safe pack:** real names (display, full, romanised slug) + org/location extras live only in "
         "the excluded corpus; docs/tests/tools are name-free; a deterministic build + whole-pack scan gate it.",
-        "- **Framework-owned pack:** manifest ships only the 6 domain agents + 6 framework hooks (settings.json "
-        "is filtered to wire exactly those); an independent scanner ratchet rejects any non-framework agent/hook.",
+        f"- **Framework-owned pack:** manifest ships only the {c['agents']} domain agents + {c['hooks']} "
+        "framework hooks (settings.json is filtered to wire exactly those); an independent scanner ratchet "
+        "rejects any non-framework agent/hook.",
         "",
         "## Framework & Skill Catalog",
     ]
