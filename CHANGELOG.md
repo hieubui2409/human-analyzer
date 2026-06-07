@@ -14,10 +14,16 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+## [1.0.1] — 2026-06-07
+
 ### Fixed
 - **Release CI marks stable tags as full releases** — the prerelease flag is now derived from the
   semver suffix (after the `frameworks-v` prefix), not from the whole tag, which always contained the
   prefix `-`. Stable `frameworks-vX.Y.Z` publishes as a full release; only `…-rc.N` is a prerelease.
+- **Reproducibility claim scoped to the build toolchain** — the changelog and release-notes no longer
+  call the `.tar.gz` "byte-reproducible" across environments; the packed content (inner tar) is
+  byte-identical everywhere, the archive is byte-identical within one toolchain (CI determinism-gated),
+  and `SHA256SUMS` is the canonical reference.
 
 ## [1.0.0] — 2026-06-07
 
