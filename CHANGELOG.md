@@ -14,6 +14,11 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+### Fixed
+- **Release CI marks stable tags as full releases** — the prerelease flag is now derived from the
+  semver suffix (after the `frameworks-v` prefix), not from the whole tag, which always contained the
+  prefix `-`. Stable `frameworks-vX.Y.Z` publishes as a full release; only `…-rc.N` is a prerelease.
+
 ## [1.0.0] — 2026-06-07
 
 First public release of the clinical-grade character-profile intelligence toolkit: a privacy-safe,
