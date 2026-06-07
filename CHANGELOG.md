@@ -14,23 +14,10 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
-### Fixed
-- **`roster_io` is now importable as a package submodule** — its `paths` import uses the dual
-  package/top-level form, so the `platform_lib` import sweep (and any `platform_lib.roster_io` import)
-  no longer fails with `No module named 'paths'`.
-- **Project-script matrix and the profile-drift hook run without the project venv** — both hard-coded
-  the venv interpreter and broke wherever it is absent (e.g. CI); they now fall back to the running
-  interpreter / `python3` on `PATH`.
+## [1.0.0] — 2026-06-07
 
-### CI
-- **The framework gates now also run on push to `master`** — both `frameworks CI` and the
-  `cross-framework bug_class gate` trigger on `master` pushes (not only pull request / manual dispatch),
-  so a change that reaches `master` outside a PR is still gated.
-
-## [1.0.0-rc.1] — 2026-06-07
-
-First public **release candidate** of the clinical-grade character-profile intelligence toolkit: a
-privacy-safe, byte-reproducible pack of a coordinated 6-framework system that turns source materials into
+First public release of the clinical-grade character-profile intelligence toolkit: a privacy-safe,
+byte-reproducible pack of a coordinated 6-framework system that turns source materials into
 evidence-backed psychological profiles and platform-native content — shipping **zero real-character data**.
 
 ### The system we ship
@@ -102,7 +89,24 @@ from the live tree into `docs/RELEASE-NOTES-v<ver>.md` at release-cut time.
 - **Dead code** — orphan `platform_lib` functions, legacy flat profile files, and a retired
   hook-dispatcher / standalone profile-validator removed in favour of single sources of truth.
 
+### Fixed
+- **`roster_io` is now importable as a package submodule** — its `paths` import uses the dual
+  package/top-level form, so the `platform_lib` import sweep (and any `platform_lib.roster_io` import)
+  no longer fails with `No module named 'paths'`.
+- **Project-script matrix and the profile-drift hook run without the project venv** — both hard-coded
+  the venv interpreter and broke wherever it is absent (e.g. CI); they now fall back to the running
+  interpreter / `python3` on `PATH`.
+
 ### Security
 - **No real-character PII ships** — names, profiles, materials, graph, and references are all
   pack-excluded; enforced by a non-removable safety filter at build time and verified by the
   no-carve-out scan over the built tarball.
+
+### CI
+- **The framework gates now also run on push to `master`** — both `frameworks CI` and the
+  `cross-framework bug_class gate` trigger on `master` pushes (not only pull request / manual dispatch),
+  so a change that reaches `master` outside a PR is still gated.
+
+## [1.0.0-rc.1] — 2026-06-07
+
+_First public release candidate; superseded by [1.0.0] (same content plus the post-RC fixes listed there)._
