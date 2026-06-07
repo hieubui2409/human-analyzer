@@ -142,8 +142,10 @@ def render_release_notes(data: dict, version: str, date: str) -> str:
         f"{c['hooks']} framework hooks · {c['lib']} platform-lib modules · {c['rules']} rules._",
         "",
         "> Privacy: this toolkit ships ZERO character profiles, materials, graph, or references — "
-        "the entire real-character corpus is pack-excluded. The released tarball is byte-reproducible "
-        "and passes a fail-closed whole-pack PII/secret scan with no carve-out.",
+        "the entire real-character corpus is pack-excluded. The released tarball is reproducible within "
+        "the build toolchain (CI determinism-gated; the packed content is byte-identical across "
+        "environments and `SHA256SUMS` is the reference) and passes a fail-closed whole-pack PII/secret "
+        "scan with no carve-out.",
         "",
         "## Highlights",
         "- **Character roster externalised (code → data):** the roster moved out of `paths.py` into a "

@@ -22,15 +22,15 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 ## [1.0.0] — 2026-06-07
 
 First public release of the clinical-grade character-profile intelligence toolkit: a privacy-safe,
-byte-reproducible pack of a coordinated 6-framework system that turns source materials into
+reproducible pack of a coordinated 6-framework system that turns source materials into
 evidence-backed psychological profiles and platform-native content — shipping **zero real-character data**.
 
 ### The system we ship
 
 A whole ecosystem, not a loose script bag — six domain frameworks wired by an event bus
 (`MAT → PSY → CRE`, with `GRO` and `ORC` cross-cutting), backed by a shared Python toolkit and a
-deterministic, PII-safe packaging pipeline. The release tarball is byte-reproducible and passes a
-fail-closed, no-carve-out whole-pack PII/secret scan.
+deterministic, PII-safe packaging pipeline. The release tarball is reproducible within the build
+toolchain (CI determinism-gated) and passes a fail-closed, no-carve-out whole-pack PII/secret scan.
 
 - **6 domain frameworks · 60 skills** — ORC orchestration (17), PSY psychology (16), CRE content (10),
   GRO growth (8), MAT materials (4), COM common (5). Each is invoked as `{framework}:{skill}`; the
@@ -44,7 +44,7 @@ fail-closed, no-carve-out whole-pack PII/secret scan.
 - **33 `platform_lib` modules · 16 rules · 9 schemas** — the shared utility library (paths/character
   resolution, clinical-term scanning, markdown parsing, telemetry, instinct store, …), the modular
   rulebook, and the validation schemas that keep the 25-file profile structure character-agnostic.
-- **Deterministic PII-safe release machinery** — `build_pack` (byte-identical tarball + per-file SHA256
+- **Deterministic PII-safe release machinery** — `build_pack` (reproducible tarball + per-file SHA256
   `MANIFEST.json`), `scan_pack_pii` (fail-closed whole-pack gate), `safety_filter` (non-removable
   secret/PII drop), the doc/token anonymizer, and the Keep a Changelog release lifecycle.
 
@@ -58,9 +58,10 @@ from the live tree into `docs/RELEASE-NOTES-v<ver>.md` at release-cut time.
 - **New-character registration flow + drift invariant** — scaffolding auto-registers a character;
   an invariant fails the suite on any roster↔profile mismatch, so the roster can never silently
   diverge from the on-disk profiles.
-- **Deterministic, byte-reproducible release pack** — `build_pack.py` produces a byte-identical
-  `.tar.gz` from the same source + manifest (sorted walk, fixed mtime/uid/gid), with a per-file
-  SHA256 `MANIFEST.json` embedded in the archive.
+- **Deterministic release pack** — from the same source + manifest, `build_pack.py` produces a
+  byte-identical tarball within one toolchain (sorted walk, fixed mtime/uid/gid; the packed content is
+  byte-identical across environments, only the gzip framing varies by zlib), with a per-file SHA256
+  `MANIFEST.json` embedded in the archive and a CI determinism gate over the build.
 - **Fail-closed whole-pack PII/secret scan** — `scan_pack_pii.py` scans the built tarball with no
   carve-out and fails the release on any real-name token or secret; it fails closed if the roster is
   present but yields no tokens.
