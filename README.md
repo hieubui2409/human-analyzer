@@ -9,7 +9,8 @@ character-agnostic and resolves subjects dynamically via `paths.py`.
 > `docs/graph/`, `docs/references/`, and `assets/` are intentionally absent here. Bring your own
 > subjects: create `docs/profiles/characters.yaml` and the tooling resolves them dynamically. With no
 > corpus present the suite degrades cleanly (corpus-dependent tests skip; the toolkit still imports,
-> compiles, and builds). MIT-licensed — see [`LICENSE`](./LICENSE) and [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+> compiles, and builds). Licensed **AGPL-3.0** — see [`LICENSE`](./LICENSE) and [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+> Network/SaaS use of a modified version must release its full source under AGPL-3.0.
 
 > **For Claude Code / LLM agents:** read [`CLAUDE.md`](./CLAUDE.md) (architecture + rules + workflow) and
 > the rule files under [`docs/rules/`](./docs/rules/). Every skill ships a 4-doc spine —

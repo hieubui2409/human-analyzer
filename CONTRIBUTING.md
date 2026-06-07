@@ -1,11 +1,12 @@
 # Contributing
 
-Thanks for your interest! This repo is the **public framework toolkit**. Contributions to the skills,
-scripts, rules, tests, and docs are welcome.
+Thanks for your interest! This is the framework toolkit. Public contributions are made against the
+public mirror (`hieubui2409/human-analyzer`); the maintainer cherry-picks them into the canonical repo.
+Contributions to the skills, scripts, rules, tests, and docs are welcome.
 
 ## The one hard rule — no PII, no private corpus
 
-This repo must **never** contain:
+The **public** repo must **never** contain:
 
 - Real-person character profiles, materials, graph, or references (`docs/profiles/`, `docs/materials/`,
   `docs/graph/`, `docs/references/`).
