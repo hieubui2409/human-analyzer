@@ -24,6 +24,12 @@ _DROP_SUFFIX = (".key", ".pem", ".p12", ".pfx", ".pyc")
 _SECRET_NAME = re.compile(r"(^|/)(\.env(\.[^/]*)?|credentials[^/]*|[^/]*secret[^/]*)$", re.I)
 # .env.example is documentation, not a secret — explicitly kept.
 _KEEP = re.compile(r"(^|/)\.env\.example$", re.I)
+# Corpus-coupled test that embeds real-character name fixtures (ascii alias forms) to exercise
+# roster-derived detection regexes. It cannot be made name-free without defeating what it tests, and
+# is meaningless without the private roster — drop it from the pack (it stays in the source repo for
+# local dev). The bare-name forms it carries are exactly the class the scanner's collision-free token
+# set does not gate, so path-dropping is the reliable guard.
+_DROP_NAME = re.compile(r"(^|/)tests/test_psy_timeline_sync_precision\.py$")
 
 
 def is_dropped(arcname: str) -> tuple[bool, str]:
@@ -38,4 +44,6 @@ def is_dropped(arcname: str) -> tuple[bool, str]:
         return True, "secret/binary suffix"
     if _SECRET_NAME.search(arcname):
         return True, "secret name"
+    if _DROP_NAME.search(arcname):
+        return True, "corpus-coupled name-bearing test"
     return False, ""
