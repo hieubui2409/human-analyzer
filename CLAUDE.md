@@ -36,7 +36,7 @@ Pull a reference only when its topic is active. **Exception:** load `gates-and-a
 | Need | Load |
 |------|------|
 | **Gates / anti-rationalization** (every turn) | `.claude/skills/_framework-shared/references/gates-and-anti-rationalization.md` |
-| Skills (60 — ORC 17·PSY 16·CRE 10·GRO 8·MAT 4·COM 5) | harness skill list (auto-injected) + `docs/MODULES.md` (grouping + deps) |
+| 60 framework skills — ORC 17·PSY 16·CRE 10·GRO 8·MAT 4·COM 5 | harness skill list (auto-injected) + `docs/MODULES.md` (grouping + deps) |
 | Per-framework skill→trigger→GUIDE routing | `.claude/skills/_framework-shared/references/{orc,psy,cre,gro,mat,com}-operating-guide.md` |
 | Directory structure + profile 25-file schema | `docs/rules/01-profile-structure.md` |
 | The 16 rules | `docs/rules/{01..16}-*.md` |

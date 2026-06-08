@@ -1,10 +1,10 @@
 # MODULES — Skill Grouping & Cross-Framework Dependency Map
 
-Navigation map for the **59 project-owned skills** across 6 frameworks. Semi-derived from each
+Navigation map for the **60 project-owned skills** across 6 frameworks. Semi-derived from each
 `SKILL.md` `metadata.dependencies` frontmatter + the CLAUDE.md catalog — **regenerate after skill
 changes** (`orc:skill-stocktake --quick` catches count drift; `--conformance` checks structure).
 
-Count reconciles with CLAUDE.md: **ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 4 = 59**.
+Count reconciles with CLAUDE.md: **ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 5 = 60**.
 ck-origin skills (`cook`, `plan`, `scout`, `skill-creator`, `/ck:*`, `/ckm:*`) are **excluded** — they
 are dev tools used read-only, not part of the framework catalog.
 
@@ -88,7 +88,7 @@ are dev tools used read-only, not part of the framework catalog.
 | `orc:council`         | 4-voice decision framework                                                                                                               | `orc:decisions`                                                                                                      |
 | `orc:skill-stocktake` | Skill catalog + CE-02 conformance audit                                                                                                  | —                                                                                                                    |
 
-## COM — Common (4)
+## COM — Common (5)
 
 | Skill                 | Purpose                                                               | Depends on     |
 | --------------------- | --------------------------------------------------------------------- | -------------- |
@@ -96,6 +96,7 @@ are dev tools used read-only, not part of the framework catalog.
 | `com:health-check`    | Session health monitoring                                             | —              |
 | `com:rules`           | Modular rules management                                              | `orc:classify` |
 | `com:skill-analytics` | Skill/script observability — 11 read-only lenses + profile-drift gate | —              |
+| `com:release`         | Cut a versioned pack release — Keep a Changelog lock + manifest bump  | —              |
 
 ## Cross-framework dependency edges
 
