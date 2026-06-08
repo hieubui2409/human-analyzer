@@ -13,6 +13,19 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+## [1.2.3] — 2026-06-08
+### Changed
+- **`CLAUDE.md` minimalized (280 → 66 lines).** Restructured to a lean entry + a load-on-demand pointer
+  index, mirroring the skill-folder pattern (entry `SKILL.md` + on-demand refs). Keeps only the
+  every-turn essentials — purpose, architecture + event pipeline, operational notices. The 60-skill
+  catalog (already auto-injected by the harness and grouped in `docs/MODULES.md`), the directory/profile
+  schema (`docs/rules/01`), workflow tracks (`docs/rules/13`), and scripts infrastructure now load on
+  demand. Nothing dropped — every moved section has a verified home.
+
+### Added
+- **`docs/scripts-infrastructure.md`** — extracted the `platform_lib/` module table + venv run commands
+  from `CLAUDE.md` (the one moved section with no pre-existing home).
+
 ## [1.2.2] — 2026-06-08
 ### Removed
 - **Per-version `RELEASE-NOTES-v<ver>.md` catalog + its generator.** The shipped `README.md` is the

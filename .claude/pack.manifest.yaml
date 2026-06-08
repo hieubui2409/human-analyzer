@@ -2,7 +2,7 @@
 # Same source + this manifest ⇒ byte-identical tar.gz (.claude/skills/_framework-shared/scripts/build_pack.py). The safety_filter is a
 # NON-REMOVABLE backstop applied AFTER these include globs (drops secrets, runtime, and real-character PII).
 name: human-analyzer-frameworks
-version: "1.2.2"
+version: "1.2.3"
 
 # Repo-relative include globs — the TOOLKIT (skills + agents + hooks + shared lib + rules + schemas +
 # guides + nav docs + synthetic fixture), never the live character corpus (docs/profiles, docs/materials,
