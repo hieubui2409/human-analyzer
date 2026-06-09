@@ -22,7 +22,7 @@
             "type": "command"
           }
         ],
-        "matcher": "Edit|Write"
+        "matcher": "Edit|Write|MultiEdit"
       },
       {
         "hooks": [
@@ -33,6 +33,16 @@
           }
         ],
         "matcher": "Edit|Write|MultiEdit"
+      },
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/track-script-execution.cjs",
+            "timeout": 5,
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
       }
     ],
     "PreCompact": [
@@ -59,7 +69,26 @@
             "type": "command"
           }
         ],
-        "matcher": "Edit|Write"
+        "matcher": "Edit|Write|MultiEdit"
+      },
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/gateguard-profile-protect.cjs",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      },
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/track-skill-invocation.cjs",
+            "timeout": 5,
+            "type": "command"
+          }
+        ],
+        "matcher": "Skill"
       }
     ],
     "SessionStart": [
@@ -72,6 +101,28 @@
           }
         ],
         "matcher": "startup|resume"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/emit-session-summary.cjs",
+            "timeout": 5,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/context-budget-gauge.cjs",
+            "timeout": 5,
+            "type": "command"
+          }
+        ]
       }
     ]
   },

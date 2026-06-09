@@ -12,8 +12,16 @@
 const { spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
+const { isHookEnabled } = require("./lib/hook-config-utils.cjs");
+
+let logHookCrash = () => {};
+try { ({ logHookCrash } = require("./lib/hook-logger.cjs")); } catch {}
 
 try {
+  if (!isHookEnabled("rebuildKnowledgeGraph")) {
+    process.stdout.write(JSON.stringify({ continue: true }));
+    process.exit(0);
+  }
   const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
   const py = path.join(projectDir, ".claude", "skills", ".venv", "bin", "python3");
   const scripts = path.join(projectDir, ".claude", "scripts");
@@ -25,8 +33,9 @@ try {
     );
     child.unref(); // let it outlive this hook process
   }
-} catch (_) {
+} catch (e) {
   /* warm-up is best-effort — a missing venv or spawn error must not break session start */
+  try { logHookCrash("rebuild-knowledge-graph", e, { event: "SessionStart" }); } catch {}
 }
 
 process.stdout.write(JSON.stringify({ continue: true }));

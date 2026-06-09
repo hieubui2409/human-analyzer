@@ -24,6 +24,27 @@ const path = require("path");
 const { classifyFile, LEVELS } = require("./lib/sensitivity-checker.cjs");
 const { isHookEnabled } = require("./lib/hook-config-utils.cjs");
 const { sinkPath } = require("./lib/telemetry-paths.cjs");
+const {
+  extractWriteTargets,
+  hasResidualWrite,
+} = require("./lib/bash-write-targets.cjs");
+
+// Safe-require: a missing hook-logger (e.g. not yet projected to the public pack) must
+// degrade to no-op logging at module load, NEVER a fail-closed `Cannot find module` throw.
+let logHookCrash = () => {};
+try {
+  ({ logHookCrash } = require("./lib/hook-logger.cjs"));
+} catch {
+  /* logger absent → silent no-op; the guard must still load + run */
+}
+
+function logCrash(error, site) {
+  try {
+    logHookCrash("gateguard-profile-protect", error, { event: "PreToolUse", site });
+  } catch {
+    /* logging must never throw out of a fail-open path */
+  }
+}
 
 const PROJECT_DIR =
   process.env.CLAUDE_PROJECT_DIR ||
@@ -46,7 +67,8 @@ const FRAMEWORK_CONFIG_PATH = path.join(
 function loadFrameworkConfig() {
   try {
     return JSON.parse(fs.readFileSync(FRAMEWORK_CONFIG_PATH, "utf-8"));
-  } catch {
+  } catch (e) {
+    logCrash(e, "loadFrameworkConfig"); // trace a corrupt config (was the dominant silent failure)
     return {};
   }
 }
@@ -60,7 +82,9 @@ function getRequireUserApproval() {
 function readApprovals() {
   try {
     return JSON.parse(fs.readFileSync(APPROVAL_PATH, "utf-8"));
-  } catch {
+  } catch (e) {
+    // ENOENT (no approvals yet) is normal — only trace genuine read/parse corruption.
+    if (e && e.code !== "ENOENT") logCrash(e, "readApprovals");
     return {};
   }
 }
@@ -122,6 +146,74 @@ function formatWarning(rel, classification) {
 }
 
 /**
+ * Approval check + verdict for a path already classified CRITICAL/HIGH. Shared by the
+ * path-based (Edit/Write/MultiEdit) and the Bash-redirect branches so both honor the
+ * same single approval/audit flow.
+ */
+function resolveSensitive(rel, classification, toolName) {
+  const approvals = readApprovals();
+  if (approvals[rel]) {
+    delete approvals[rel];
+    writeApprovals(approvals);
+    auditLog({
+      file: rel,
+      level: classification.level,
+      zone: classification.zone,
+      action: "approved",
+      tool: toolName,
+    });
+    return { stderr: `\x1b[32m✓\x1b[0m GateGuard: approved edit to ${rel}` };
+  }
+  const requireApproval = getRequireUserApproval();
+  auditLog({
+    file: rel,
+    level: classification.level,
+    zone: classification.zone,
+    action: "blocked",
+    tool: toolName,
+  });
+  return {
+    block: true,
+    stderr: formatBlockMessage(rel, classification, requireApproval),
+  };
+}
+
+/**
+ * Bash branch — best-effort speed-bump for LITERAL write-redirects into a sensitive
+ * profile path (echo>, tee, sed -i, dd of=, cp/mv). NOT a security boundary: any write
+ * behind a variable / subshell / heredoc / inline interpreter is unguarded by design and
+ * only logged (residual-allow), never blocked. Blocks the FIRST CRITICAL/HIGH literal
+ * target found; fail-open otherwise.
+ */
+function runBash(toolInput) {
+  const command = toolInput && toolInput.command;
+  if (!command) return {};
+
+  for (const target of extractWriteTargets(command)) {
+    const rel = normalizePath(target);
+    const classification = classifyFile(rel);
+    if (
+      classification.level === LEVELS.CRITICAL ||
+      classification.level === LEVELS.HIGH
+    ) {
+      return resolveSensitive(rel, classification, "Bash");
+    }
+  }
+
+  // No literal sensitive target. If an unresolved write construct slipped past the literal
+  // scan, leave a residual trace (the speed-bump is bypassed by design — never silent).
+  if (hasResidualWrite(command)) {
+    auditLog({
+      file: null,
+      action: "residual-allow",
+      tool: "Bash",
+      note: "non-literal write construct (var/subshell/interpreter) — not a security boundary",
+    });
+  }
+  return {};
+}
+
+/**
  * Decide gateguard outcome for a parsed PreToolUse payload.
  * Pure of stdin/process.exit (but keeps audit-log + approval-state side effects,
  * which are the hook's single source of truth); the CLI shim below maps its
@@ -134,7 +226,12 @@ function run(hookData) {
 
   const { tool_name: toolName, tool_input: toolInput } = hookData || {};
 
-  if (toolName !== "Edit" && toolName !== "Write") return {};
+  // Bash is path-blind: scan the command for literal write-redirects (best-effort).
+  if (toolName === "Bash") return runBash(toolInput);
+
+  // gateguard classifies by path — MultiEdit exposes file_path at the same key as
+  // Edit/Write, so the same path-based block applies (pii-guard handles its content).
+  if (toolName !== "Edit" && toolName !== "Write" && toolName !== "MultiEdit") return {};
 
   const filePath = toolInput && toolInput.file_path;
   if (!filePath) return {};
@@ -160,34 +257,8 @@ function run(hookData) {
     return { stderr: formatWarning(rel, classification) };
   }
 
-  // CRITICAL or HIGH — check approval
-  const approvals = readApprovals();
-  if (approvals[rel]) {
-    delete approvals[rel];
-    writeApprovals(approvals);
-    auditLog({
-      file: rel,
-      level: classification.level,
-      zone: classification.zone,
-      action: "approved",
-      tool: toolName,
-    });
-    return { stderr: `\x1b[32m✓\x1b[0m GateGuard: approved edit to ${rel}` };
-  }
-
-  // Not approved — block
-  const requireApproval = getRequireUserApproval();
-  auditLog({
-    file: rel,
-    level: classification.level,
-    zone: classification.zone,
-    action: "blocked",
-    tool: toolName,
-  });
-  return {
-    block: true,
-    stderr: formatBlockMessage(rel, classification, requireApproval),
-  };
+  // CRITICAL or HIGH — shared approval/block flow.
+  return resolveSensitive(rel, classification, toolName);
 }
 
 /**
@@ -209,13 +280,14 @@ function main() {
   try {
     data = JSON.parse(input);
   } catch {
-    process.exit(0); // fail-open on unparseable input
+    process.exit(0); // fail-open on unparseable input (not a guard crash — empty/garbled stdin)
   }
 
   let out;
   try {
     out = run(data) || {};
-  } catch {
+  } catch (e) {
+    logCrash(e, "main"); // a runtime error here = guard silently off → leave a trace, still exit 0
     process.exit(0); // fail-open: a runtime error never blocks the tool
   }
 

@@ -16,11 +16,12 @@
 const fs = require("fs");
 const path = require("path");
 const { sinkPath } = require("./lib/telemetry-paths.cjs");
+const { isHookEnabled } = require("./lib/hook-config-utils.cjs");
 
-const PROJECT_DIR =
-  process.env.CLAUDE_PROJECT_DIR || process.env.PMC_PROJECT_ROOT || process.cwd();
+let logHookCrash = () => {};
+try { ({ logHookCrash } = require("./lib/hook-logger.cjs")); } catch {}
+
 const OBSERVATIONS = sinkPath("observations.jsonl");
-const CONFIG = path.join(PROJECT_DIR, ".claude", "framework-config.json");
 
 // Ordered: first match wins (growth is more specific than the profile root).
 const FRAMEWORK_ROUTES = [
@@ -31,14 +32,10 @@ const FRAMEWORK_ROUTES = [
   [/docs\/graph\//, "psy", "profile-touched"],
 ];
 
+// Single toggle resolver shared by every project hook (reads framework-config.json,
+// camelCase key, fail-open default-true). No bespoke inline reader.
 function isEnabled() {
-  try {
-    const cfg = JSON.parse(fs.readFileSync(CONFIG, "utf8"));
-    // default on; only an explicit false disables.
-    return cfg?.hooks?.observeFrameworkSignal?.enabled !== false;
-  } catch {
-    return true; // fail-open: missing/broken config never disables
-  }
+  return isHookEnabled("observeFrameworkSignal");
 }
 
 function resolveFilePath(hookData) {
@@ -79,7 +76,8 @@ function main() {
       }
     }
     console.log(JSON.stringify({ continue: true }));
-  } catch {
+  } catch (e) {
+    try { logHookCrash("observe-framework-signal", e, { event: "PostToolUse" }); } catch {}
     console.log(JSON.stringify({ continue: true }));
   }
 }

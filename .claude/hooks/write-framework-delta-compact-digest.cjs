@@ -14,10 +14,13 @@
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
+const { isHookEnabled } = require("./lib/hook-config-utils.cjs");
+
+let logHookCrash = () => {};
+try { ({ logHookCrash } = require("./lib/hook-logger.cjs")); } catch {}
 
 const PROJECT_DIR =
   process.env.CLAUDE_PROJECT_DIR || process.env.PMC_PROJECT_ROOT || process.cwd();
-const CONFIG = path.join(PROJECT_DIR, ".claude", "framework-config.json");
 const SCRIPT = path.join(
   PROJECT_DIR,
   ".claude",
@@ -33,13 +36,9 @@ function venvPython() {
   return path.join(process.env.HOME || "", ".claude", "skills", ".venv", "bin", "python3");
 }
 
+// Single shared toggle resolver (camelCase key, fail-open default-true).
 function isEnabled() {
-  try {
-    const cfg = JSON.parse(fs.readFileSync(CONFIG, "utf8"));
-    return cfg?.hooks?.compactDigest?.enabled !== false; // default on
-  } catch {
-    return true; // fail-open
-  }
+  return isHookEnabled("compactDigest");
 }
 
 function main() {
@@ -55,8 +54,9 @@ function main() {
         // digest failure must never block compaction — fail-open
       }
     }
-  } catch {
-    // swallow everything
+  } catch (e) {
+    // a digest error must never block compaction — fail-open, but leave a trace
+    try { logHookCrash("write-framework-delta-compact-digest", e, { event: "PreCompact" }); } catch {}
   }
   console.log(JSON.stringify({ continue: true }));
 }

@@ -12,6 +12,10 @@
  */
 
 const fs = require("fs");
+const { isHookEnabled } = require("./lib/hook-config-utils.cjs");
+
+let logHookCrash = () => {};
+try { ({ logHookCrash } = require("./lib/hook-logger.cjs")); } catch {}
 
 const PROFILE_PATH_RE = /docs\/profiles\//;
 const MARKDOWN_RE = /\.md$/;
@@ -49,6 +53,10 @@ function buildReminder(filePath) {
 
 function main() {
   try {
+    if (!isHookEnabled("profileEditReminder")) {
+      console.log(JSON.stringify({ continue: true }));
+      return;
+    }
     const stdin = fs.readFileSync(0, "utf8");
     const hookData = JSON.parse(stdin || "{}");
     const reminder = buildReminder(resolveFilePath(hookData));
@@ -58,6 +66,7 @@ function main() {
       result.additionalContext = `\n\n[Profile Reminder]\n${reminder}`;
     console.log(JSON.stringify(result));
   } catch (e) {
+    try { logHookCrash("profile-edit-reminder", e, { event: "PostToolUse" }); } catch {}
     console.log(JSON.stringify({ continue: true }));
   }
 }

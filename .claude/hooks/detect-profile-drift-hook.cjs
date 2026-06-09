@@ -11,6 +11,10 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { projectDir } = require('./lib/telemetry-paths.cjs');
+const { isHookEnabled } = require('./lib/hook-config-utils.cjs');
+
+let logHookCrash = () => {};
+try { ({ logHookCrash } = require('./lib/hook-logger.cjs')); } catch {}
 
 function filePath(data) {
   const ti = data.tool_input || {};
@@ -19,6 +23,10 @@ function filePath(data) {
 
 function main() {
   try {
+    if (!isHookEnabled('detectProfileDrift')) {
+      console.log(JSON.stringify({ continue: true }));
+      return;
+    }
     const data = JSON.parse(fs.readFileSync(0, 'utf8') || '{}');
     const fp = filePath(data).replace(/\\/g, '/');
     if (!fp || !/docs\/profiles\//.test(fp) || !fp.endsWith('.md')) {
@@ -49,7 +57,8 @@ function main() {
       /* unparseable → stay quiet */
     }
     console.log(JSON.stringify(result));
-  } catch (_) {
+  } catch (e) {
+    try { logHookCrash('detect-profile-drift-hook', e, { event: 'PostToolUse' }); } catch {}
     console.log(JSON.stringify({ continue: true }));
   }
 }

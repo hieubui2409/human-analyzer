@@ -25,6 +25,22 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const { isHookEnabled, projectDir } = require('./lib/hook-config-utils.cjs');
 
+// Safe-require: a missing hook-logger must degrade to no-op, never a load-time fail-closed throw.
+let logHookCrash = () => {};
+try {
+  ({ logHookCrash } = require('./lib/hook-logger.cjs'));
+} catch {
+  /* logger absent → no-op */
+}
+
+function logCrash(error, site) {
+  try {
+    logHookCrash('pii-guard-on-write', error, { event: 'PreToolUse', site });
+  } catch {
+    /* logging must never throw out of a fail-open path */
+  }
+}
+
 /** All text this tool call would write: Write.content, Edit.new_string, MultiEdit.edits[].new_string. */
 function writtenText(toolInput) {
   if (!toolInput) return '';
@@ -86,14 +102,16 @@ function run(hookData) {
   let out = '';
   try {
     out = execFileSync(py, argv, { input: text, timeout: 8000, encoding: 'utf8' });
-  } catch (_) {
+  } catch (e) {
+    logCrash(e, 'execFileSync'); // flaky python helper was the dominant silent failure → trace it
     return {}; // helper failure → fail-open, never block on our own error
   }
 
   let verdict;
   try {
     verdict = JSON.parse(out);
-  } catch (_) {
+  } catch (e) {
+    logCrash(e, 'parseVerdict');
     return {}; // unparseable → fail-open
   }
   if (verdict && verdict.block) {
@@ -124,7 +142,8 @@ function main() {
   let outcome;
   try {
     outcome = run(data) || {};
-  } catch {
+  } catch (e) {
+    logCrash(e, 'main'); // runtime error = guard silently off → trace, still exit 0
     process.exit(0); // fail-open: a runtime error never blocks the tool
   }
 

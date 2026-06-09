@@ -33,9 +33,15 @@ include:
   - .claude/hooks/profile-edit-reminder.cjs
   - .claude/hooks/rebuild-knowledge-graph.cjs
   - .claude/hooks/write-framework-delta-compact-digest.cjs
+  - .claude/hooks/context-budget-gauge.cjs
+  - .claude/hooks/emit-session-summary.cjs
+  - .claude/hooks/track-script-execution.cjs
+  - .claude/hooks/track-skill-invocation.cjs
   - .claude/hooks/lib/hook-config-utils.cjs
   - .claude/hooks/lib/sensitivity-checker.cjs
   - .claude/hooks/lib/telemetry-paths.cjs
+  - .claude/hooks/lib/hook-logger.cjs
+  - .claude/hooks/lib/bash-write-targets.cjs
   - .claude/scripts/**/*
   - .claude/schemas/**/*
   - .claude/framework-config.json

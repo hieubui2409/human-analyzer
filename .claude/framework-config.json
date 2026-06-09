@@ -10,6 +10,33 @@
     },
     "scoutBlock": {
       "enabled": true
+    },
+    "contextBudgetGauge": {
+      "enabled": true
+    },
+    "observeFrameworkSignal": {
+      "enabled": true
+    },
+    "compactDigest": {
+      "enabled": true
+    },
+    "detectProfileDrift": {
+      "enabled": true
+    },
+    "profileEditReminder": {
+      "enabled": true
+    },
+    "emitSessionSummary": {
+      "enabled": true
+    },
+    "rebuildKnowledgeGraph": {
+      "enabled": true
+    },
+    "trackScriptExecution": {
+      "enabled": true
+    },
+    "trackSkillInvocation": {
+      "enabled": true
     }
   }
 }
