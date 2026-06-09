@@ -13,6 +13,42 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-06-09
+### Added
+- **Bash write-guard speed-bump (gateguard).** A new `tool_name === "Bash"` branch catches naive
+  LITERAL write-redirects into a sensitive profile path (`echo >`, `tee`, `sed -i`, `dd of=`, `cp`/`mv`,
+  quoted targets) via the new `lib/bash-write-targets.cjs`. Explicitly a best-effort speed-bump, NOT a
+  security boundary — non-literal writes (`$VAR`, `$(...)`, heredoc, inline interpreters) fail-open and
+  are logged as `residual-allow` rather than silently allowed. Registered as a project-owned PreToolUse
+  Bash group (no `_origin`); the CK Bash groups are untouched.
+- **MultiEdit coverage** for `gateguard-profile-protect` + `pii-guard-on-write` + the PostToolUse
+  telemetry matchers — MultiEdit to a CRITICAL/HIGH profile is now blocked/observed like Edit/Write.
+- **Four more project hooks + two libs now ship** in the pack (`context-budget-gauge`,
+  `emit-session-summary`, `track-script-execution`, `track-skill-invocation`, `lib/hook-logger.cjs`,
+  `lib/bash-write-targets.cjs`) — the FOSS-clean project-owned set was previously incomplete in public.
+- **`foss-pack-verify.cjs`** — a private drift gate that walks each shipped hook's require + non-require
+  config-load closure (incl. `sensitivity-config.json`), asserts no CK lib is reachable, and asserts
+  every telemetry/crash write-sink is gitignored in public. Kept private (not shipped).
+- **`docs/scripts-infrastructure.md` now ships** — `CLAUDE.md` (shipped) points to it, so it belongs in
+  the pack; it was created in 1.2.3 but never added to the manifest.
+
+### Changed
+- **Fail-open guards now leave a trace instead of going silently off.** `gateguard` + `pii-guard` (and
+  the project hooks) route their outer catch AND the inner swallow-sites (corrupt config, flaky python
+  helper, unparseable verdict) through a safe-required `hook-logger` — a missing logger degrades to a
+  no-op (never fail-closed), and a chronically-crashing guard now surfaces in `.claude/hooks/.logs/`.
+- **Every project hook is now disableable via `framework-config.json`** with a camelCase key, routed
+  through one shared `lib/hook-config-utils.cjs::isHookEnabled` resolver (3 bespoke inline togglers
+  unified; all 11 keys seeded). Public `.gitignore` now covers `.claude/hooks/.logs/`.
+- **`.claude/hooks/docs/README.md` rewritten** into a full 28-hook audit table + FOSS-projection
+  reference + guard-gap coverage matrix (with the non-negotiable Bash speed-bump caveat) + toggle-key
+  reference.
+
+### Fixed
+- **`scan_pack_pii` framework-hook allow-list** updated to register the six newly-shipped hook/lib
+  basenames — the independent ship-time backstop (intentionally not manifest-derived) was rejecting them
+  as "non-framework hook must not ship".
+
 ## [1.2.3] — 2026-06-08
 ### Changed
 - **`CLAUDE.md` minimalized (280 → 66 lines).** Restructured to a lean entry + a load-on-demand pointer

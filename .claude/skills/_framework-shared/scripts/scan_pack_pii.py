@@ -49,7 +49,10 @@ _FRAMEWORK_HOOK_FILES = {
     "gateguard-profile-protect.cjs", "pii-guard-on-write.cjs",
     "detect-profile-drift-hook.cjs", "observe-framework-signal.cjs",
     "profile-edit-reminder.cjs", "rebuild-knowledge-graph.cjs", "write-framework-delta-compact-digest.cjs",
+    "context-budget-gauge.cjs", "emit-session-summary.cjs",
+    "track-script-execution.cjs", "track-skill-invocation.cjs",
     "lib/hook-config-utils.cjs", "lib/sensitivity-checker.cjs", "lib/telemetry-paths.cjs",
+    "lib/hook-logger.cjs", "lib/bash-write-targets.cjs",
 }
 
 
