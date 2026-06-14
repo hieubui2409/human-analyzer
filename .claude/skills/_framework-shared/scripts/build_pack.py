@@ -36,10 +36,11 @@ MANIFEST_YAML = REPO / ".claude" / "pack.manifest.yaml"
 _DEFAULT_INCLUDE = [
     ".claude/skills/orc-*/**/*", ".claude/skills/psy-*/**/*", ".claude/skills/cre-*/**/*",
     ".claude/skills/gro-*/**/*", ".claude/skills/mat-*/**/*", ".claude/skills/com-*/**/*",
+    ".claude/skills/evl-*/**/*",
     ".claude/skills/_framework-shared/**/*",
     ".claude/scripts/**/*", ".claude/schemas/**/*",
     "docs/rules/**/*", "docs/references/**/*",
-    "tests/**/*", "e2e/**/*", "eval/**/*",
+    "tests/**/*", "e2e/**/*",
     "CLAUDE.md", "README.md", "STANDARDIZE.md", "pyproject.toml",
     ".github/workflows/frameworks-ci.yml", ".github/workflows/cross-framework-bug-class.yml",
 ]
