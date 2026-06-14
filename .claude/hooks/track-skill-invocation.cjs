@@ -8,6 +8,8 @@
  * {continue:true} so it can never block a skill.
  *
  * Hook stdin protocol: { tool_name, tool_input: {skill, args}, session_id }.
+ *
+ * @hook-class telemetry
  */
 'use strict';
 

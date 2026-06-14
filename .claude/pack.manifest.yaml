@@ -1,8 +1,8 @@
-# Reproducible-pack manifest for the 6-framework toolkit.
+# Reproducible-pack manifest for the 7-framework toolkit.
 # Same source + this manifest ⇒ byte-identical tar.gz (.claude/skills/_framework-shared/scripts/build_pack.py). The safety_filter is a
 # NON-REMOVABLE backstop applied AFTER these include globs (drops secrets, runtime, and real-character PII).
 name: human-analyzer-frameworks
-version: "1.3.0"
+version: "1.4.0"
 
 # Repo-relative include globs — the TOOLKIT (skills + agents + hooks + shared lib + rules + schemas +
 # guides + nav docs + synthetic fixture), never the live character corpus (docs/profiles, docs/materials,
@@ -14,6 +14,7 @@ include:
   - .claude/skills/gro-*/**/*
   - .claude/skills/mat-*/**/*
   - .claude/skills/com-*/**/*
+  - .claude/skills/evl-*/**/*
   - .claude/skills/_framework-shared/**/*
   # Framework-owned agents only — generic engineer-kit dev agents (planner, code-reviewer, …) are NOT
   # part of the character toolkit and stay out of the pack.
@@ -23,6 +24,7 @@ include:
   - .claude/agents/cross-validator.md
   - .claude/agents/profile-manager.md
   - .claude/agents/material-analyst.md
+  - .claude/agents/evl-rubric-importer.md
   # Framework-owned hooks + only the lib modules they require (walked from each hook's require graph).
   # settings.json is filtered at build time to wire exactly these (build_pack strips statusLine + non-
   # framework hook entries) so the shipped harness config has zero dangling references.
@@ -47,6 +49,7 @@ include:
   - .claude/framework-config.json
   - .claude/settings.json
   - docs/rules/**/*
+  - docs/rubrics/**/*
   - docs/knowledge-architecture.md
   - docs/MODULES.md
   - docs/distilled-principles.md

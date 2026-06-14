@@ -12,7 +12,7 @@ metadata:
 
 # com:skill-analytics — Skill & Script Observability
 
-Deterministic, read-only observability for the 6 framework domains' skills + scripts +
+Deterministic, read-only observability for the 7 framework domains' skills + scripts +
 `platform_lib`. Eleven lenses (infrastructure health, dependency graph, cascade topology,
 usage analytics, coverage/budget, content pipeline, unified dashboard, memory health,
 subagent reliability, session forensics, workflow chains) over static structure + the

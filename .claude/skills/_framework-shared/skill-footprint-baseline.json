@@ -1,0 +1,598 @@
+{
+  "agent-browser": {
+    "skill_md_lines": 97,
+    "total_lines": 306
+  },
+  "agentize": {
+    "skill_md_lines": 292,
+    "total_lines": 907
+  },
+  "ai-artist": {
+    "skill_md_lines": 134,
+    "total_lines": 10390
+  },
+  "ai-multimodal": {
+    "skill_md_lines": 132,
+    "total_lines": 3440
+  },
+  "ask": {
+    "skill_md_lines": 65,
+    "total_lines": 65
+  },
+  "backend-development": {
+    "skill_md_lines": 102,
+    "total_lines": 5205
+  },
+  "better-auth": {
+    "skill_md_lines": 220,
+    "total_lines": 2196
+  },
+  "bootstrap": {
+    "skill_md_lines": 109,
+    "total_lines": 390
+  },
+  "brainstorm": {
+    "skill_md_lines": 186,
+    "total_lines": 186
+  },
+  "chrome-profile": {
+    "skill_md_lines": 186,
+    "total_lines": 516
+  },
+  "ck-autoresearch": {
+    "skill_md_lines": 84,
+    "total_lines": 84
+  },
+  "ck-code-review": {
+    "skill_md_lines": 208,
+    "total_lines": 1425
+  },
+  "ck-debug": {
+    "skill_md_lines": 133,
+    "total_lines": 1296
+  },
+  "ck-graphify": {
+    "skill_md_lines": 160,
+    "total_lines": 160
+  },
+  "ck-loop": {
+    "skill_md_lines": 188,
+    "total_lines": 904
+  },
+  "ck-plan": {
+    "skill_md_lines": 359,
+    "total_lines": 1938
+  },
+  "ck-predict": {
+    "skill_md_lines": 150,
+    "total_lines": 300
+  },
+  "ck-scenario": {
+    "skill_md_lines": 230,
+    "total_lines": 382
+  },
+  "ck-security": {
+    "skill_md_lines": 196,
+    "total_lines": 512
+  },
+  "coding-level": {
+    "skill_md_lines": 63,
+    "total_lines": 63
+  },
+  "com-git": {
+    "skill_md_lines": 280,
+    "total_lines": 280
+  },
+  "com-health-check": {
+    "skill_md_lines": 71,
+    "total_lines": 71
+  },
+  "com-release": {
+    "skill_md_lines": 85,
+    "total_lines": 85
+  },
+  "com-rules": {
+    "skill_md_lines": 132,
+    "total_lines": 132
+  },
+  "com-skill-analytics": {
+    "skill_md_lines": 103,
+    "total_lines": 103
+  },
+  "context-engineering": {
+    "skill_md_lines": 114,
+    "total_lines": 1100
+  },
+  "cook": {
+    "skill_md_lines": 234,
+    "total_lines": 833
+  },
+  "copywriting": {
+    "skill_md_lines": 105,
+    "total_lines": 1772
+  },
+  "cre-angle-discovery": {
+    "skill_md_lines": 114,
+    "total_lines": 114
+  },
+  "cre-evidence-scanner": {
+    "skill_md_lines": 96,
+    "total_lines": 96
+  },
+  "cre-exploring": {
+    "skill_md_lines": 216,
+    "total_lines": 216
+  },
+  "cre-humanize": {
+    "skill_md_lines": 128,
+    "total_lines": 128
+  },
+  "cre-multiplatform": {
+    "skill_md_lines": 101,
+    "total_lines": 101
+  },
+  "cre-post-writer": {
+    "skill_md_lines": 229,
+    "total_lines": 229
+  },
+  "cre-privacy-guard": {
+    "skill_md_lines": 182,
+    "total_lines": 182
+  },
+  "cre-prompt-leverage": {
+    "skill_md_lines": 179,
+    "total_lines": 179
+  },
+  "cre-repurpose": {
+    "skill_md_lines": 94,
+    "total_lines": 94
+  },
+  "cre-voice-audit": {
+    "skill_md_lines": 129,
+    "total_lines": 129
+  },
+  "cti-expert": {
+    "skill_md_lines": 902,
+    "total_lines": 902
+  },
+  "databases": {
+    "skill_md_lines": 91,
+    "total_lines": 3916
+  },
+  "deploy": {
+    "skill_md_lines": 161,
+    "total_lines": 802
+  },
+  "design": {
+    "skill_md_lines": 306,
+    "total_lines": 2566
+  },
+  "devops": {
+    "skill_md_lines": 103,
+    "total_lines": 4109
+  },
+  "docs": {
+    "skill_md_lines": 66,
+    "total_lines": 265
+  },
+  "docs-seeker": {
+    "skill_md_lines": 104,
+    "total_lines": 319
+  },
+  "evl-compare": {
+    "skill_md_lines": 105,
+    "total_lines": 105
+  },
+  "evl-compatibility": {
+    "skill_md_lines": 133,
+    "total_lines": 133
+  },
+  "evl-fit": {
+    "skill_md_lines": 166,
+    "total_lines": 166
+  },
+  "evl-rubric-import": {
+    "skill_md_lines": 145,
+    "total_lines": 145
+  },
+  "evl-score": {
+    "skill_md_lines": 125,
+    "total_lines": 125
+  },
+  "evl-standardize": {
+    "skill_md_lines": 142,
+    "total_lines": 142
+  },
+  "evl-track": {
+    "skill_md_lines": 104,
+    "total_lines": 104
+  },
+  "evl-validate": {
+    "skill_md_lines": 130,
+    "total_lines": 130
+  },
+  "excalidraw": {
+    "skill_md_lines": 210,
+    "total_lines": 1183
+  },
+  "find-skills": {
+    "skill_md_lines": 141,
+    "total_lines": 141
+  },
+  "fix": {
+    "skill_md_lines": 278,
+    "total_lines": 1678
+  },
+  "frontend-design": {
+    "skill_md_lines": 136,
+    "total_lines": 3689
+  },
+  "frontend-development": {
+    "skill_md_lines": 407,
+    "total_lines": 407
+  },
+  "git": {
+    "skill_md_lines": 120,
+    "total_lines": 648
+  },
+  "gkg": {
+    "skill_md_lines": 98,
+    "total_lines": 462
+  },
+  "google-adk-python": {
+    "skill_md_lines": 139,
+    "total_lines": 1058
+  },
+  "gro-career-forecast": {
+    "skill_md_lines": 108,
+    "total_lines": 108
+  },
+  "gro-career-path": {
+    "skill_md_lines": 109,
+    "total_lines": 109
+  },
+  "gro-compare": {
+    "skill_md_lines": 95,
+    "total_lines": 95
+  },
+  "gro-competency-map": {
+    "skill_md_lines": 115,
+    "total_lines": 115
+  },
+  "gro-learning-profile": {
+    "skill_md_lines": 111,
+    "total_lines": 111
+  },
+  "gro-mentoring-track": {
+    "skill_md_lines": 102,
+    "total_lines": 102
+  },
+  "gro-milestone-tracker": {
+    "skill_md_lines": 99,
+    "total_lines": 99
+  },
+  "gro-validate": {
+    "skill_md_lines": 144,
+    "total_lines": 144
+  },
+  "journal": {
+    "skill_md_lines": 25,
+    "total_lines": 25
+  },
+  "llms": {
+    "skill_md_lines": 124,
+    "total_lines": 211
+  },
+  "markdown-novel-viewer": {
+    "skill_md_lines": 323,
+    "total_lines": 323
+  },
+  "mat-archive": {
+    "skill_md_lines": 112,
+    "total_lines": 112
+  },
+  "mat-indexer": {
+    "skill_md_lines": 197,
+    "total_lines": 197
+  },
+  "mat-loader": {
+    "skill_md_lines": 230,
+    "total_lines": 230
+  },
+  "mat-rescore": {
+    "skill_md_lines": 113,
+    "total_lines": 113
+  },
+  "mcp-builder": {
+    "skill_md_lines": 336,
+    "total_lines": 336
+  },
+  "media-processing": {
+    "skill_md_lines": 101,
+    "total_lines": 3282
+  },
+  "mermaidjs-v11": {
+    "skill_md_lines": 125,
+    "total_lines": 1554
+  },
+  "mintlify": {
+    "skill_md_lines": 127,
+    "total_lines": 4480
+  },
+  "mobile-development": {
+    "skill_md_lines": 219,
+    "total_lines": 3962
+  },
+  "orc-agent-memory": {
+    "skill_md_lines": 209,
+    "total_lines": 209
+  },
+  "orc-audit": {
+    "skill_md_lines": 97,
+    "total_lines": 97
+  },
+  "orc-bootstrap": {
+    "skill_md_lines": 190,
+    "total_lines": 190
+  },
+  "orc-cascade": {
+    "skill_md_lines": 85,
+    "total_lines": 85
+  },
+  "orc-classify": {
+    "skill_md_lines": 245,
+    "total_lines": 245
+  },
+  "orc-compounding": {
+    "skill_md_lines": 231,
+    "total_lines": 231
+  },
+  "orc-council": {
+    "skill_md_lines": 196,
+    "total_lines": 196
+  },
+  "orc-decisions": {
+    "skill_md_lines": 155,
+    "total_lines": 155
+  },
+  "orc-domain-router": {
+    "skill_md_lines": 79,
+    "total_lines": 79
+  },
+  "orc-dream": {
+    "skill_md_lines": 248,
+    "total_lines": 248
+  },
+  "orc-event-log": {
+    "skill_md_lines": 164,
+    "total_lines": 164
+  },
+  "orc-graph": {
+    "skill_md_lines": 77,
+    "total_lines": 77
+  },
+  "orc-intake": {
+    "skill_md_lines": 247,
+    "total_lines": 247
+  },
+  "orc-observe": {
+    "skill_md_lines": 77,
+    "total_lines": 77
+  },
+  "orc-santa": {
+    "skill_md_lines": 182,
+    "total_lines": 182
+  },
+  "orc-session-state": {
+    "skill_md_lines": 230,
+    "total_lines": 230
+  },
+  "orc-skill-stocktake": {
+    "skill_md_lines": 105,
+    "total_lines": 105
+  },
+  "payment-integration": {
+    "skill_md_lines": 109,
+    "total_lines": 8186
+  },
+  "plans-kanban": {
+    "skill_md_lines": 124,
+    "total_lines": 124
+  },
+  "preview": {
+    "skill_md_lines": 155,
+    "total_lines": 4722
+  },
+  "problem-solving": {
+    "skill_md_lines": 103,
+    "total_lines": 676
+  },
+  "project-management": {
+    "skill_md_lines": 140,
+    "total_lines": 590
+  },
+  "project-organization": {
+    "skill_md_lines": 232,
+    "total_lines": 859
+  },
+  "psy-arc-tracker": {
+    "skill_md_lines": 122,
+    "total_lines": 122
+  },
+  "psy-crisis-assess": {
+    "skill_md_lines": 180,
+    "total_lines": 180
+  },
+  "psy-crossref": {
+    "skill_md_lines": 300,
+    "total_lines": 300
+  },
+  "psy-health-check": {
+    "skill_md_lines": 149,
+    "total_lines": 149
+  },
+  "psy-hypothesis": {
+    "skill_md_lines": 155,
+    "total_lines": 155
+  },
+  "psy-narrative-twist": {
+    "skill_md_lines": 152,
+    "total_lines": 152
+  },
+  "psy-profile-compare": {
+    "skill_md_lines": 117,
+    "total_lines": 117
+  },
+  "psy-profile-lite": {
+    "skill_md_lines": 202,
+    "total_lines": 202
+  },
+  "psy-propagate": {
+    "skill_md_lines": 122,
+    "total_lines": 122
+  },
+  "psy-ref-audit": {
+    "skill_md_lines": 232,
+    "total_lines": 232
+  },
+  "psy-ref-create": {
+    "skill_md_lines": 122,
+    "total_lines": 122
+  },
+  "psy-ref-maintain": {
+    "skill_md_lines": 147,
+    "total_lines": 147
+  },
+  "psy-ref-scan": {
+    "skill_md_lines": 116,
+    "total_lines": 116
+  },
+  "psy-relation-intelligence": {
+    "skill_md_lines": 103,
+    "total_lines": 103
+  },
+  "psy-timeline-sync": {
+    "skill_md_lines": 124,
+    "total_lines": 124
+  },
+  "psy-wave": {
+    "skill_md_lines": 179,
+    "total_lines": 179
+  },
+  "react-best-practices": {
+    "skill_md_lines": 129,
+    "total_lines": 129
+  },
+  "remotion": {
+    "skill_md_lines": 51,
+    "total_lines": 51
+  },
+  "repomix": {
+    "skill_md_lines": 258,
+    "total_lines": 701
+  },
+  "research": {
+    "skill_md_lines": 180,
+    "total_lines": 180
+  },
+  "retro": {
+    "skill_md_lines": 142,
+    "total_lines": 385
+  },
+  "review-pr": {
+    "skill_md_lines": 296,
+    "total_lines": 632
+  },
+  "scout": {
+    "skill_md_lines": 103,
+    "total_lines": 489
+  },
+  "security-scan": {
+    "skill_md_lines": 145,
+    "total_lines": 327
+  },
+  "sequential-thinking": {
+    "skill_md_lines": 101,
+    "total_lines": 623
+  },
+  "shader": {
+    "skill_md_lines": 119,
+    "total_lines": 1663
+  },
+  "ship": {
+    "skill_md_lines": 129,
+    "total_lines": 563
+  },
+  "shopify": {
+    "skill_md_lines": 327,
+    "total_lines": 1788
+  },
+  "show-off": {
+    "skill_md_lines": 158,
+    "total_lines": 158
+  },
+  "skill-creator": {
+    "skill_md_lines": 154,
+    "total_lines": 2320
+  },
+  "stitch": {
+    "skill_md_lines": 193,
+    "total_lines": 616
+  },
+  "tanstack": {
+    "skill_md_lines": 148,
+    "total_lines": 470
+  },
+  "team": {
+    "skill_md_lines": 365,
+    "total_lines": 935
+  },
+  "tech-graph": {
+    "skill_md_lines": 442,
+    "total_lines": 2253
+  },
+  "test": {
+    "skill_md_lines": 124,
+    "total_lines": 552
+  },
+  "threejs": {
+    "skill_md_lines": 148,
+    "total_lines": 6252
+  },
+  "ui-styling": {
+    "skill_md_lines": 328,
+    "total_lines": 3236
+  },
+  "ui-ux-pro-max": {
+    "skill_md_lines": 666,
+    "total_lines": 666
+  },
+  "use-mcp": {
+    "skill_md_lines": 107,
+    "total_lines": 612
+  },
+  "watzup": {
+    "skill_md_lines": 77,
+    "total_lines": 77
+  },
+  "web-design-guidelines": {
+    "skill_md_lines": 43,
+    "total_lines": 43
+  },
+  "web-frameworks": {
+    "skill_md_lines": 332,
+    "total_lines": 4475
+  },
+  "web-testing": {
+    "skill_md_lines": 103,
+    "total_lines": 2484
+  },
+  "worktree": {
+    "skill_md_lines": 141,
+    "total_lines": 141
+  },
+  "xia": {
+    "skill_md_lines": 197,
+    "total_lines": 237
+  }
+}

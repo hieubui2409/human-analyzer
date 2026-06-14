@@ -6,6 +6,8 @@
  * it <5s on huge transcripts; skill/tool counts are an approximation over the
  * recent window, which is sufficient for dashboard trending (M1). Fail-open:
  * always emits { continue: true } so it never blocks session exit.
+ *
+ * @hook-class telemetry
  */
 'use strict';
 

@@ -1,0 +1,75 @@
+# Clinical risk & safety — DSM-5 dimensional severity + ICD-11 + C-SSRS suicide screen.
+# STRICTEST config in the system: high-stakes, two independent judges, tri-state verdict,
+# never cached (suicidality fluctuates — re-assess every run). Criteria + weights from the
+# clinical research (Ideation 0.35 > Behaviour 0.25 > Depressive 0.20 = Anxiety 0.20).
+#
+# Orientation is INVERTED vs. the other rubrics: here a HIGH score = MORE risk = worse.
+# So the verdict bands run PASS (low) → PASS_WITH_RISK → BLOCKED (high). Scale 0-5.
+id: clinical-risk-safety
+version: 1.0.0
+title: "Clinical Risk & Safety"
+kind: clinical
+subject: single
+high_stakes: true
+verdict: tri_state
+cache: never
+normalization: none
+min_judges: 2
+scale:
+  min: 0
+  max: 5
+aggregate: weighted_mean
+
+# Ideation + behaviour are hard-block flags: a high score on either forces BLOCKED review
+# regardless of the weighted overall (enforced by the scoring skill).
+red_flags:
+  - c-ssrs-ideation
+  - c-ssrs-behavior
+
+domains:
+  - id: risk-severity
+    weight: 1.0
+    criteria:
+      - id: c-ssrs-ideation
+        text: "C-SSRS suicidal ideation severity (0 none → 5 active intent with specific plan, means, and timeline)."
+        weight: 0.35
+        anchors:
+          "0": "No ideation; no wish to be dead."
+          "2.5": "Active thoughts with a method but no intent to act (cognitive/emotional barrier holds)."
+          "5": "Active intent WITH a specific plan, means access, and timeline; imminent."
+        evidence_hint: ["psychology/diagnostics.md", "psychology/core-wounds.md", "darkness/*.md"]
+        min_tier: T2
+      - id: c-ssrs-behavior
+        text: "C-SSRS suicidal behaviour (0 none → preparatory acts → actual attempt or non-suicidal self-harm)."
+        weight: 0.25
+        anchors:
+          "0": "No self-harm history or current behaviour."
+          "2.5": "Preparatory behaviour only (collecting means, writing notes); no act."
+          "5": "Actual suicide attempt or non-suicidal self-harm (any lethality)."
+        evidence_hint: ["psychology/diagnostics.md", "darkness/*.md", "timeline/*.md"]
+        min_tier: T2
+      - id: depressive-severity
+        text: "Depressive syndrome severity (DSM-5/ICD-11): sad mood, anhedonia, guilt, sleep/concentration disturbance, with functional impairment."
+        weight: 0.20
+        anchors:
+          "0": "No depressive symptoms; full functioning."
+          "2.5": "Moderate symptoms with some functional impairment in work/relationships/self-care."
+          "5": "Severe, pervasive depression; major functional collapse."
+        evidence_hint: ["psychology/diagnostics.md", "psychology/*.md", "darkness/*.md"]
+        min_tier: T2
+      - id: anxiety-severity
+        text: "Anxiety syndrome severity (DSM-5/ICD-11): worry, physical tension, avoidance, hypervigilance, with functional impairment."
+        weight: 0.20
+        anchors:
+          "0": "No clinically significant anxiety."
+          "2.5": "Moderate anxiety with avoidance and some functional impairment."
+          "5": "Severe anxiety; pervasive avoidance; major functional impairment."
+        evidence_hint: ["psychology/diagnostics.md", "psychology/*.md", "darkness/*.md"]
+        min_tier: T2
+
+# Inverted bands: low severity is safe (PASS), high severity blocks (mapped from the
+# source 0-100 cut-points 0-25 / 26-55 / 56-100 onto the 0-5 scale). Contiguous over 0-5.
+verdict_thresholds:
+  "PASS": {min: 0, max: 1.25}
+  "PASS_WITH_RISK": {min: 1.25, max: 2.75}
+  "BLOCKED": {min: 2.75, max: 5}

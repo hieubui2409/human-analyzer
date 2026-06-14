@@ -8,7 +8,7 @@ created: "2026-05-17"
 
 ## Overview
 
-ORC (Orchestrator) is the meta-framework that routes events between MAT, PSY, CRE, and GRO domains. It does not own content — it owns workflow state and inter-domain signal passing.
+ORC (Orchestrator) is the meta-framework that routes events between MAT, PSY, CRE, GRO, and EVL domains. It does not own content — it owns workflow state and inter-domain signal passing.
 
 ## Domain Boundaries
 
@@ -18,6 +18,7 @@ ORC (Orchestrator) is the meta-framework that routes events between MAT, PSY, CR
 | PSY    | `docs/profiles/{character}/`, `docs/references/`, `docs/graph/`    | `docs/materials/` (read-only after MAT)         |
 | CRE    | `assets/`                                                          | `docs/profiles/` (read-only), `docs/materials/` |
 | GRO    | `docs/profiles/{character}/growth/`                                | `docs/profiles/`, `docs/materials/` (read-only) |
+| EVL    | `docs/profiles/{character}/eval/`, `docs/rubrics/`                 | `docs/profiles/`, `docs/materials/` (read-only) |
 | ORC    | `.claude/` (skills, session-state, config, cache)                  | All domains (orchestration only, no edits)      |
 | COM    | `.claude/` (common toolkit: git, health-check, rules)             | All domains (utility, no domain-content edits)  |
 
@@ -48,6 +49,8 @@ Events are named `{DOMAIN}.{action}`. They are not code — they are conventions
 | `GRO.forecast`      | Career forecast generated                      | Log only (informational, no cascade)                            |
 | `GRO.mentored`      | Mentoring interaction documented               | → `PSY.refresh` (mentoring reveals psychological insights)      |
 | `GRO.profiled`      | Learning profile updated                       | → `CRE.recalibrate` (learning profile changes content style)    |
+| `EVL.rescore`       | Profile changed (`PSY.refresh` / `GRO.assessed`) | Re-score affected rubrics → `EVL.scored`                      |
+| `EVL.scored`        | Scorecard (re)written under `eval/`            | → `CRE.recalibrate` (eval verdict is a content-angle source)    |
 | `COM.rules_updated` | Files under `docs/rules/` changed              | → `com:rules --validate` (verify rule consistency)              |
 | `ORC.skill_updated` | Files under `.claude/skills/` changed          | → `orc:bootstrap --quick` (refresh session context)            |
 | `ORC.script_updated`| Files under `.claude/scripts/` changed         | → `orc:bootstrap --quick` (refresh session context)            |
@@ -190,6 +193,7 @@ Each event is one JSON line:
 | `PSY.updated`       | psy:wave                | Yes        |
 | `PSY.crisis`        | psy:crisis-assess       | Yes        |
 | `CRE.recalibrate`   | cre:post-writer         | Yes        |
+| `EVL.scored`        | evl:score               | Yes        |
 | `ORC.bootstrap`     | orc:bootstrap           | Yes        |
 | `ORC.decision`      | orc:decisions           | Yes        |
 | `MAT.archived`      | mat:archive             | Yes        |

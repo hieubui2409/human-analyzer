@@ -4,7 +4,7 @@ description: "Record and retrieve character arc decisions. Captures why X was ch
 argument-hint: "[--record|--search <query>|--list|--review]"
 metadata:
   author: hieubt
-  version: "1.0.0"
+  version: "1.1.0"
   category: "workflow"
   position: "during-work"
   dependencies: []
@@ -29,41 +29,20 @@ Record WHY choices were made for character arcs, profile interpretations, and co
 
 ## Decision Record Format
 
-Each decision stored as markdown in `.claude/decisions/`:
+Each decision stored as a separate markdown file in `.claude/decisions/`. New records written by `--record` get a monotonic `DEC-n` id allocated atomically (see Scripts). Legacy hand-authored records without a `DEC-n` id coexist and are listed as-is.
 
 ```markdown
-# {YYYY-MM-DD} — {Short title}
+---
+id: DEC-1
+status: active
+date: YYYY-MM-DD
+character: {slug}
+supersedes: DEC-n   # optional — id of the prior ruling this replaces
+---
 
-**Character(s):** {name(s)}
-**Category:** {arc|interpretation|content|relationship|clinical}
-**Status:** {active|superseded|revisit}
+## DEC-1 — {Short title}
 
-## Decision
-
-{What was decided}
-
-## Alternatives Considered
-
-1. {Option A} — {why rejected}
-2. {Option B} — {why rejected}
-
-## Rationale
-
-{Why this choice, with profile references}
-
-## Evidence
-
-- {Profile file}: {relevant quote or section}
-- {Reference file}: {theory supporting this}
-
-## Impact
-
-- {What this decision affects going forward}
-- {Files that should reflect this decision}
-
-## Revisit Conditions
-
-{When this decision should be reconsidered}
+{Rationale — WHY this choice, with profile references}
 ```
 
 ## Workflow
@@ -76,10 +55,13 @@ Each decision stored as markdown in `.claude/decisions/`:
    - Q3: Category? (arc/interpretation/content/relationship/clinical)
    - Q4: What alternatives were considered? (free text)
    - Q5: Why this choice? (free text)
-2. Auto-populate evidence by reading relevant profile files
-3. Write to `.claude/decisions/{YYYYMMDD}-{slug}.md`
-4. Update session state: append to `decisions` array
-5. Print confirmation with file path
+   - Q6: Does this supersede a prior decision? (DEC-n or blank)
+2. Call `record-decision-with-alloc.py --title "..." --rationale "..." [--supersedes DEC-n]`
+   - Script atomically allocates the next DEC-n id inside an exclusive file lock
+     (concurrent agents cannot grab the same id — critical for team-mode safety)
+   - If `--supersedes DEC-n` is set, the prior record's `status:` is flipped to
+     `superseded` in the same lock, so the register never has zero-active + phantom-retired
+3. Print confirmation with id and file path
 
 ### --search `<query>`
 
@@ -89,14 +71,10 @@ Each decision stored as markdown in `.claude/decisions/`:
 
 ### --list
 
-1. `ls -t .claude/decisions/*.md | head -20`
-2. For each file, extract title + character + category + status
-3. Print as table:
-   ```
-   | Date       | Character | Category       | Decision                        | Status |
-   | 2026-05-13 | Nhân vật B       | interpretation | Avoidance is attachment-based   | active |
-   | 2026-05-10 | Nhân vật A-Nhân vật B  | relationship   | Kết nghĩa framing over mentoring | active |
-   ```
+1. Run `index-decisions-with-search.py --list`
+2. Table columns: Date | ID | Title | Character | Status | Lineage
+   - Lineage column shows `supersedes DEC-n` or `superseded_by DEC-n` where relevant
+3. Legacy council-*.md records listed with id=legacy
 
 ### --review
 
@@ -132,11 +110,15 @@ Each decision stored as markdown in `.claude/decisions/`:
 | Script                                   | Purpose                                                              |
 | ---------------------------------------- | -------------------------------------------------------------------- |
 | `scripts/index-decisions-with-search.py` | Build searchable index of all decision records in .claude/decisions/ |
+| `scripts/record-decision-with-alloc.py`  | Atomic alloc-id + append backend (called by --record workflow)       |
 
 ## Safety
 
 - Decisions are append-only — never delete, only supersede
 - Old decisions kept for historical context
+- The `--record` backend uses an exclusive file lock so concurrent agents in team-mode
+  cannot allocate the same DEC-n id (closes the TOCTOU alloc-then-write race)
+- `.claude/decisions/` is excluded from the framework release pack (character-tagged data)
 - Scope: decision records for human-analyzer character work. Does NOT handle implementation.
 
 ## Examples

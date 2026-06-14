@@ -34,7 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from platform_lib.markdown_parser import extract_frontmatter  # noqa: E402
 
-FRAMEWORKS = ("orc", "psy", "cre", "gro", "mat", "com")
+FRAMEWORKS = ("orc", "psy", "cre", "gro", "mat", "com", "evl")
 EXTRA_PROJECT_DIRS = {"test-orchestrator"}
 
 # ── Tiered thresholds (PD-1/CM-1: 200 = WARN, 300 = FAIL) ─────────────────────
@@ -211,18 +211,97 @@ def collect(skills_dir: Path, scope: str) -> tuple[list[dict], list[str], list[s
     return records, excluded, orphans
 
 
+# ── SIZE gate (static authored-doc size; NOT the runtime context-budget-gauge.cjs) ──
+
+# Tolerance: a skill may grow up to SIZE_TOL_ABS lines OR SIZE_TOL_PCT percent
+# above its baseline before the gate fires.  Whichever is larger wins.
+SIZE_TOL_ABS = 40
+SIZE_TOL_PCT = 0.20
+
+
+def measure_all_skills(skills_dir: Path) -> dict[str, dict]:
+    """Return {skill_name: {skill_md_lines, total_lines}} for all project-owned skills."""
+    result: dict[str, dict] = {}
+    for d in sorted(skills_dir.iterdir()):
+        if not d.is_dir() or d.name.startswith((".", "_")):
+            continue
+        sk = d / "SKILL.md"
+        if not sk.exists():
+            continue
+        entry = _line_count(sk)
+        refs_dir = d / "references"
+        ref_total = sum(
+            _line_count(rf)
+            for rf in sorted(refs_dir.rglob("*.md"))
+            if refs_dir.is_dir()
+        ) if refs_dir.is_dir() else 0
+        result[d.name] = {"skill_md_lines": entry, "total_lines": entry + ref_total}
+    return result
+
+
+def size_gate(
+    current: dict[str, dict], baseline: dict[str, dict]
+) -> tuple[bool, list[str]]:
+    """SIZE gate: fail if any skill exceeds baseline beyond tolerance.
+
+    A skill absent from baseline is treated as unbounded growth (fail until
+    the reviewer intentionally re-baselines with --baseline).
+    """
+    regressions: list[str] = []
+    for name, cur in current.items():
+        base = baseline.get(name)
+        if base is None:
+            regressions.append(f"{name}: not in baseline (run --baseline to register)")
+            continue
+        for key, label in (("skill_md_lines", "SKILL.md"), ("total_lines", "total")):
+            b_val = base.get(key, 0)
+            c_val = cur.get(key, 0)
+            tol = max(SIZE_TOL_ABS, int(b_val * SIZE_TOL_PCT))
+            if c_val > b_val + tol:
+                regressions.append(
+                    f"{name}: {label} grew {b_val}→{c_val} lines (tolerance +{tol})"
+                )
+    return (not regressions, regressions)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="CE-02 progressive-disclosure conformance audit (READ-ONLY).")
     ap.add_argument("skills_dir", nargs="?", default=None)
     ap.add_argument("--scope", choices=["project-owned", "all"], default="project-owned")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--strict", action="store_true", help="exit 1 if any verdict == BLOCK")
+    ap.add_argument("--baseline", action="store_true",
+                    help="write per-skill line counts to skill-footprint-baseline.json")
+    ap.add_argument("--gate", action="store_true",
+                    help="compare current lines vs baseline; exit 1 on regression")
     args = ap.parse_args()
 
     skills_dir = Path(args.skills_dir) if args.skills_dir \
         else Path(__file__).resolve().parents[3] / "skills"
     if not skills_dir.is_dir():
         raise SystemExit(f"Error: {skills_dir} not found")
+
+    # ── SIZE baseline / gate (short-circuit before conformance report) ──
+    baseline_path = skills_dir / "_framework-shared" / "skill-footprint-baseline.json"
+    if args.baseline or args.gate:
+        measured = measure_all_skills(skills_dir)
+        if args.baseline:
+            baseline_path.write_text(
+                json.dumps(measured, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+            )
+            print(f"baseline written: {baseline_path} ({len(measured)} skills)")
+            return
+        # --gate: compare vs committed baseline
+        if not baseline_path.exists():
+            raise SystemExit(f"Baseline not found: {baseline_path}\nRun --baseline first.")
+        baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+        ok, regressions = size_gate(measured, baseline)
+        for r in regressions:
+            print(f"SIZE GATE FAIL: {r}", file=sys.stderr)
+        if not ok:
+            raise SystemExit(1)
+        print("SIZE gate: PASS")
+        return
 
     records, excluded, orphans = collect(skills_dir, args.scope)
 

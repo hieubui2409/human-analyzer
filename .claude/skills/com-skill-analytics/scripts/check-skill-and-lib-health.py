@@ -4,7 +4,7 @@ GOLDEN RULE #4: deterministic gather only. Verifies every PROJECT-OWNED framewor
 skill is structurally sound (SKILL.md parseable, scripts syntactically valid) and
 reports platform_lib module weight (importer count). It NEVER decides whether a
 skill is "good" — it flags BROKEN (syntax error) / WARN (missing pieces) for the
-LLM to adjudicate. READ-ONLY. Scope = 6 framework prefixes, not ck skills.
+LLM to adjudicate. READ-ONLY. Scope = 7 framework prefixes, not ck skills.
 
 Usage:
   check-skill-and-lib-health.py [--json] [--format md|json] [--perf]

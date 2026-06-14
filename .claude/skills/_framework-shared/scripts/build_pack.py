@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""build_pack — deterministic, reproducible tarball of the 6-framework toolkit.
+"""build_pack — deterministic, reproducible tarball of the 7-framework toolkit.
 
 Same source + manifest ⇒ byte-identical `.tar.gz` (PAX, sorted walk, mtime=0, uid/gid=0, uname/gname="",
 gzip mtime=0). Ships the toolkit (skills + platform_lib + rules + schemas + shared refs + docs guides + the
@@ -86,7 +86,7 @@ def _command_targets_shipped_hook(command: str, hook_basenames: set) -> bool:
     """True iff ``command`` runs a ``.claude/hooks/<file>.cjs`` whose basename is a shipped framework
     hook. Path-anchored, not a loose substring: a hook name that is merely a substring of another
     (``init.cjs`` inside ``session-init.cjs``) cannot falsely keep an entry, and a non-framework
-    command that runs no shipped hook file (e.g. ``rtk hook claude``) is correctly dropped."""
+    command that runs no shipped hook file (e.g. ``external-tool hook claude``) is correctly dropped."""
     return any(Path(ref).name in hook_basenames for ref in _HOOK_PATH_RE.findall(command))
 
 

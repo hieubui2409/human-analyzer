@@ -8,7 +8,7 @@ Khi các miền kích hoạt các sự kiện (PSY.refresh, CRE.recalibrate), ch
 
 ## 2. Khái niệm cơ bản (mô hình tinh thần)
 
-**6 luồng khung.** Mỗi miền (MAT, PSY, CRE, GRO, ORC, COM) có tệp JSONL riêng. Các sự kiện định tuyến theo tiền tố (PSY.* → character-events.jsonl, v.v.).
+**7 luồng khung.** Mỗi miền (MAT, PSY, CRE, GRO, EVL, ORC, COM) có tệp JSONL riêng. Các sự kiện định tuyến theo tiền tố (PSY.* → character-events.jsonl, v.v.).
 
 **Chỉ ghi thêm.** Một khi được ghi lại, các sự kiện không bao giờ thay đổi. Luôn có lịch sử có thể tìm kiếm.
 
@@ -38,7 +38,7 @@ Khi các miền kích hoạt các sự kiện (PSY.refresh, CRE.recalibrate), ch
 
 > Bạn: "Show all events for Nhân vật C."
 >
-> Kỹ năng: Truy vấn trên tất cả 6 luồng cho `character=character-c`. Trả lại: MAT.integrated, PSY.refresh, GRO.assessed events theo thứ tự. Bạn thấy chuỗi hoạt động đầy đủ cho nhân vật đó.
+> Kỹ năng: Truy vấn trên tất cả 7 luồng cho `character=character-c`. Trả lại: MAT.integrated, PSY.refresh, GRO.assessed events theo thứ tự. Bạn thấy chuỗi hoạt động đầy đủ cho nhân vật đó.
 
 ### Trường hợp sử dụng: Ghi lại một sự kiện miền
 

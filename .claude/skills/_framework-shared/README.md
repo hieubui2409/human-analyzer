@@ -1,7 +1,7 @@
 # _framework-shared — project-owned cross-skill shared resources
 
 Shared resources used by MORE THAN ONE framework skill (the cross-skill analogue of a single skill's
-`references/`). Mirrors the `_shared/` convention, but project-owned (the 6 frameworks), distinct from the
+`references/`). Mirrors the `_shared/` convention, but project-owned (the 7 frameworks), distinct from the
 ck-synced `_shared/`. The leading `_` keeps it out of skill enumeration (it is not a skill).
 
 | Reference | Loaded by |

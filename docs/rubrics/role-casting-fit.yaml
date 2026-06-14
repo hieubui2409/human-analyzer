@@ -1,0 +1,87 @@
+# Role / casting-fit decision rubric — scores a character against a TARGET ROLE profile.
+# Decision verdict: NO / CONDITIONAL / CAST. A RED safety flag is a hard veto regardless
+# of score (enforced by the scoring skill via red_flags, not by the threshold band).
+# Criteria + weights transcribed from the role-fit research (Trait 0.25 > Competency 0.20
+# = Motivation 0.20 = Safety 0.20 > Growth 0.15; sums to 1.0). Scale 0-5; higher = better fit.
+#
+# All criteria are oriented "higher = better": safety-clearance is scored so that 5 = no
+# flags and 0 = a blocking flag (the source's RISK_FLAGS severity is inverted here so the
+# aggregate stays monotonic).
+id: role-casting-fit
+version: 1.0.0
+title: "Role / Casting-Fit Decision"
+kind: decision
+subject: single
+high_stakes: true
+verdict: decision
+cache: allow
+normalization: min_max
+min_judges: 2
+scale:
+  min: 0
+  max: 5
+aggregate: weighted_mean
+
+# Reference to the target role profile this rubric scores fit against (e.g. a role spec
+# under docs/references/). Swap per casting decision; the example is a trauma-informed therapist.
+target_profile: "role-profiles/trauma-informed-therapist"
+
+# Criteria whose failure is a hard block regardless of overall score (safety veto).
+red_flags:
+  - safety-clearance
+
+domains:
+  - id: role-fit
+    weight: 1.0
+    criteria:
+      - id: trait-match
+        text: "Trait match: alignment of the character's Big Five / Dark Triad profile with the role's required trait ranges."
+        weight: 0.25
+        anchors:
+          "0": "Opposite traits to the role; fundamentally unfit."
+          "2.5": "Some traits fit, some misaligned; manageable with support."
+          "5": "All critical traits aligned; a natural fit for the role."
+        evidence_hint: ["psychology/*.md", "eval/psychometric-big-five.json", "identity/*.md"]
+        min_tier: T2
+      - id: competency-match
+        text: "Competency match (Dreyfus novice→expert): does the character have, or can credibly acquire, the role's required skills/knowledge?"
+        weight: 0.20
+        anchors:
+          "0": "No relevant skills; starting from zero."
+          "2.5": "Some relevant skills; substantial training needed (advanced beginner / competent)."
+          "5": "Expert-level; fluid, handles exceptions, can teach others."
+        evidence_hint: ["growth/*.md", "milestones.md", "identity/achievements.md"]
+        min_tier: T2
+      - id: motivational-fit
+        text: "Motivational fit: alignment of the character's intrinsic drives and values with the role's demands and rewards."
+        weight: 0.20
+        anchors:
+          "0": "Driven only by money/duty; no internal drive; would burn out."
+          "2.5": "Mixed intrinsic/extrinsic; sustainable short-term."
+          "5": "Intrinsically driven; values align; persists through low-reward periods."
+        evidence_hint: ["growth/*.md", "psychology/*.md", "identity/core.md"]
+        min_tier: T3
+      - id: safety-clearance
+        text: "Safety clearance: presence of deal-breaker risk flags (violence, untreated illness, active substance use, ethical violations, high psychopathy/Machiavellianism in trust roles)."
+        weight: 0.20
+        anchors:
+          "0": "RED — multiple flags or one severe flag; blocks casting."
+          "2.5": "YELLOW — one flag present; manageable with monitoring/support."
+          "5": "PASS — no identified red flags; clear for the role."
+        evidence_hint: ["psychology/diagnostics.md", "darkness/*.md", "timeline/*.md"]
+        min_tier: T2
+      - id: growth-trajectory
+        text: "Growth trajectory: can the character credibly develop into the role (arc-supportive gaps, response to feedback, learning speed)?"
+        weight: 0.15
+        anchors:
+          "0": "Unlikely to change; trait/skill gaps too deep."
+          "2.5": "Some development possible; requires sustained effort."
+          "5": "Natural growth arc; minimal gaps; driven to improve."
+        evidence_hint: ["growth/*.md", "light/*.md", "psychology/growth-edges.md"]
+        min_tier: T3
+
+# NO (<3.0) / CONDITIONAL (3.0-4.0) / CAST (>=4.0) — contiguous over the 0-5 scale.
+verdict_thresholds:
+  "NO": {min: 0, max: 3.0}
+  "CONDITIONAL": {min: 3.0, max: 4.0}
+  "CAST": {min: 4.0, max: 5}

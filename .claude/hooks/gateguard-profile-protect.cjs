@@ -16,6 +16,8 @@
  * 3. LLM asks user via AskUserQuestion (if requireUserApproval=true)
  * 4. LLM writes approval: echo '{"path":true}' > .claude/session-state/gateguard-approved.json
  * 5. LLM retries Edit → APPROVED (exit 0), entry removed
+ *
+ * @hook-class compliance
  */
 
 const fs = require("fs");

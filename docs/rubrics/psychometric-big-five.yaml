@@ -1,0 +1,134 @@
+# Psychometric battery — Big Five (OCEAN) + Dark Triad (SD3) + Attachment (ECR-R).
+# Instruments: BFI-2 / NEO PI-R (Big Five), SD3 (Dark Triad), ECR-R (attachment).
+# Anchors transcribed from the instruments' behavioural descriptors (BARS): 0 = very low,
+# 3/2.5 = moderate, 5 = very high. Scores are on a 0-5 scale.
+#
+# Weight note: the source battery's raw per-trait weights sum to 1.17 (they were stated
+# as standalone defaults, not a single normalized set). The schema requires domain weights
+# to sum to 1.0 and criterion weights to sum to 1.0 within a domain, so the weights below
+# are renormalized while preserving the source's relative emphasis (Big Five dominant,
+# attachment notable, dark triad smaller). No psychometric content is invented.
+id: psychometric-big-five
+version: 1.0.0
+title: "Psychometric Battery — Big Five + Dark Triad + Attachment"
+kind: psychometric
+subject: single
+high_stakes: false
+verdict: scalar
+cache: allow
+normalization: z_score
+min_judges: 1
+scale:
+  min: 0
+  max: 5
+aggregate: weighted_mean
+
+# Interpretive note: the per-DOMAIN scores (Big Five / Dark Triad / Attachment) are the
+# meaningful deliverable. The single scalar `overall` averages orthogonal constructs and is
+# NOT a psychometric quantity — use it only for coarse cohort ranking, read the domains for meaning.
+
+domains:
+  # --- Big Five (OCEAN) — dominant block ---------------------------------------
+  - id: big-five
+    weight: 0.70
+    criteria:
+      - id: openness
+        text: "Openness: curiosity, creativity, intellectual engagement, willingness to entertain abstract/unconventional ideas (BFI-2 Open-Mindedness)."
+        weight: 0.18
+        anchors:
+          "0": "Resistant to new ideas; literal; prefers established ways and routine thinking."
+          "3": "Balanced curiosity vs. tradition; tries new experiences when motivated."
+          "5": "Intellectually adventurous; abstract thinking dominant; questions norms, embraces ambiguity."
+        evidence_hint: ["psychology/*.md", "identity/writing-voice.md", "identity/*.md"]
+        min_tier: T3
+      - id: conscientiousness
+        text: "Conscientiousness: self-discipline, organization, reliability, goal-directed behaviour, impulse control (BFI-2 Conscientiousness)."
+        weight: 0.22
+        anchors:
+          "0": "Unreliable, disorganized, impulsive; abandons goals; ignores planning."
+          "3": "Dependable with adequate planning; completes tasks, some structure."
+          "5": "Highly organized, disciplined, achievement-focused; relentless follow-through."
+        evidence_hint: ["psychology/*.md", "milestones.md", "timeline/*.md"]
+        min_tier: T3
+      - id: extraversion
+        text: "Extraversion: social engagement, energy, assertiveness, warmth in interaction (BFI-2 Extraversion)."
+        weight: 0.18
+        anchors:
+          "0": "Reserved, introverted; minimal social engagement; deferential, withdrawn."
+          "3": "Balanced social drive; comfortable in groups; speaks up when comfortable."
+          "5": "Outgoing, dominant, high energy; takes charge; actively seeks connection."
+        evidence_hint: ["relationships/*.md", "identity/*.md"]
+        min_tier: T3
+      - id: agreeableness
+        text: "Agreeableness: compassion, empathy, altruism, cooperation, politeness (BFI-2 Agreeableness)."
+        weight: 0.20
+        anchors:
+          "0": "Callous, manipulative, self-serving; indifferent to others' suffering."
+          "3": "Cooperative but self-interested; selective empathy."
+          "5": "Altruistic, empathic, consistently cooperative and courteous; protective of others."
+        evidence_hint: ["relationships/*.md", "light/*.md"]
+        min_tier: T3
+      - id: neuroticism
+        text: "Neuroticism: proneness to negative affect, emotional instability, volatility and withdrawal under stress (BFI-2 Negative Emotionality)."
+        weight: 0.22
+        anchors:
+          "0": "Emotionally stable, composed; resilient to stress; slow to anger."
+          "3": "Some stress sensitivity; occasional irritability or worry; recovers."
+          "5": "Emotionally fragile, reactive; frequent anger/anxiety; withdrawn, prone to depressed mood."
+        evidence_hint: ["psychology/*.md", "darkness/*.md"]
+        min_tier: T3
+
+  # --- Dark Triad (SD3) — subclinical antagonistic traits ---------------------
+  - id: dark-triad
+    weight: 0.10
+    criteria:
+      - id: narcissism
+        text: "Narcissism (SD3): grandiosity, entitlement, dominance-seeking, need for admiration, low empathy."
+        weight: 0.35
+        anchors:
+          "0": "Humble; accepts criticism; acknowledges others' strengths; low self-focus."
+          "2.5": "Positive self-view with some entitlement; brags sometimes; defensive if challenged."
+          "5": "Grandiose, entitled; constant self-focus; dismisses criticism; manipulates for admiration."
+        evidence_hint: ["psychology/*.md", "darkness/*.md"]
+        min_tier: T3
+      - id: machiavellianism
+        text: "Machiavellianism (SD3): strategic manipulation, calculated deception, emotional detachment, self-interest."
+        weight: 0.35
+        anchors:
+          "0": "Honest, direct; keeps promises; acts on principle; does not manipulate."
+          "2.5": "Tactical deception; strategic flattery; exploits social situations when convenient."
+          "5": "Chronic manipulation; long-term schemes; views relationships as leverage."
+        evidence_hint: ["psychology/*.md", "darkness/*.md"]
+        min_tier: T3
+      - id: psychopathy
+        text: "Psychopathy (SD3): callousness, impulsivity, thrill-seeking, low remorse, shallow affect."
+        weight: 0.30
+        anchors:
+          "0": "Empathic, remorseful, impulse-controlled; protective of others."
+          "2.5": "Some callousness; occasional recklessness; limited guilt."
+          "5": "Callous, impulsive/reckless; no remorse; thrill-seeking; indifferent to others' pain."
+        evidence_hint: ["psychology/*.md", "darkness/*.md"]
+        min_tier: T3
+
+  # --- Attachment (ECR-R two-dimensional) -------------------------------------
+  - id: attachment
+    weight: 0.20
+    criteria:
+      - id: attachment-anxiety
+        text: "Attachment anxiety (ECR-R): fear of abandonment, rejection sensitivity, need for reassurance, relational hypervigilance."
+        weight: 0.50
+        anchors:
+          "0": "Secure in partner's presence; low need for reassurance; does not read rejection into neutral acts."
+          "2.5": "Some relationship worry; seeks validation when stressed; recovers quickly."
+          "5": "Constant fear of abandonment; demands reassurance; hypervigilant to rejection cues."
+        evidence_hint: ["psychology/attachment-style.md", "relationships/*.md"]
+        min_tier: T3
+      - id: attachment-avoidance
+        text: "Attachment avoidance (ECR-R): discomfort with closeness/dependence, emotional suppression, withdrawal from intimacy."
+        weight: 0.50
+        anchors:
+          "0": "Comfortable with closeness; trusts others; shares vulnerability; enjoys interdependence."
+          "2.5": "Somewhat self-reliant; needs some space; selective intimacy; some guardedness."
+          "5": "Uncomfortable with intimacy; maintains distance; suppresses needs; stonewalls, pushes partner away."
+        evidence_hint: ["psychology/attachment-style.md", "relationships/*.md"]
+        min_tier: T3

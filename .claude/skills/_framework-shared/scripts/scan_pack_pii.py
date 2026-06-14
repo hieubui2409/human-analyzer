@@ -44,6 +44,7 @@ _CK_HINTS = ("/.claude/skills/ck-", "/commands/ck", "ck:plan", "ck:cook")
 _FRAMEWORK_AGENTS = {
     "psychologist.md", "content-strategist.md", "growth-analyst.md",
     "cross-validator.md", "profile-manager.md", "material-analyst.md",
+    "evl-rubric-importer.md",
 }
 _FRAMEWORK_HOOK_FILES = {
     "gateguard-profile-protect.cjs", "pii-guard-on-write.cjs",

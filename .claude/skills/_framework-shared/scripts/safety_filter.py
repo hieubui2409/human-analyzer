@@ -19,6 +19,9 @@ _DROP_DIR_SEGMENTS = (
     # dropped here too: its clinical theory files carry §4 Case Studies naming the real characters
     # (DSM / trauma / SI analysis tied to named people) — same PII class as profiles/materials/graph.
     "/docs/profiles/", "/docs/materials/", "/docs/graph/", "/docs/references/",
+    # Character-tagged decision records (frontmatter: character:) — PII in the DATA, not the code.
+    # The decision_store primitives ship fine; the live .claude/decisions/ corpus must not.
+    "/.claude/decisions/",
 )
 _DROP_SUFFIX = (".key", ".pem", ".p12", ".pfx", ".pyc")
 _SECRET_NAME = re.compile(r"(^|/)(\.env(\.[^/]*)?|credentials[^/]*|[^/]*secret[^/]*)$", re.I)

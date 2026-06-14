@@ -9,6 +9,8 @@
  * Window defaults to 200000 (override CK_CONTEXT_WINDOW, e.g. 1000000 for 1M).
  * Next-work estimate defaults to 25000 (override CK_CONTEXT_NEXT_EST). Enable flag
  * read from project framework-config.json (default on).
+ *
+ * @hook-class nudge
  */
 'use strict';
 

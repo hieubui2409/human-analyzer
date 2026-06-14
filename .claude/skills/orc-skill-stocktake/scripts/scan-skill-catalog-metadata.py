@@ -26,7 +26,7 @@ from platform_lib import paths
 
 SKILLS_DIR = paths.ROOT / ".claude" / "skills"
 CLAUDE_MD = paths.ROOT / "CLAUDE.md"
-FRAMEWORKS = ["orc", "psy", "cre", "gro", "mat", "com"]
+FRAMEWORKS = ["orc", "psy", "cre", "gro", "mat", "com", "evl"]
 
 # CLAUDE.md catalog table rows look like:  | `orc:bootstrap` | ... |
 _CATALOG_ROW = re.compile(r"\|\s*`([a-z]{3}):([a-z0-9-]+)`")

@@ -4,6 +4,8 @@
  * .md edit, runs the deterministic M4 drift check on the edited file and surfaces
  * broken links / implausible dates as a NON-blocking reminder (additionalContext).
  * Early-returns at zero cost for any non-profile edit. Fail-open: never blocks.
+ *
+ * @hook-class nudge
  */
 'use strict';
 

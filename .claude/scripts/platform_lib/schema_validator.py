@@ -155,3 +155,15 @@ def validate_file(path: Path) -> dict:
 def validate_paths(paths: list[Path]) -> list[dict]:
     """Validate many files; .jsonl handled per-line. Returns per-file results."""
     return [validate_file(p) for p in paths]
+
+
+def validate_instance(instance: dict, schema_name: str, *, label: str = "<instance>") -> list[dict]:
+    """Validate an in-memory dict against a named schema in SCHEMAS_DIR.
+
+    Generalizes the frontmatter path (validate_file) to arbitrary structured data
+    (e.g. an EVL rubric loaded from YAML) so callers reuse this one Draft-7 engine
+    instead of standing up a second jsonschema wrapper. Returns the same structured
+    {file, field, rule, value, message} violation records; [] == valid.
+    """
+    validator = _load_validator(schema_name)
+    return _violations(validator, instance, label)

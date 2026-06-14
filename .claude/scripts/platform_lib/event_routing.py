@@ -75,8 +75,13 @@ EVENT_ROUTING: dict[str, dict] = {
                 "args": "--validate",
                 "reason": "Verify cross-character consistency",
             },
+            {
+                "skill": "evl:score",
+                "args": "--rescore",
+                "reason": "Profile changed — re-score against active rubrics",
+            },
         ],
-        "emits": ["CRE.recalibrate"],
+        "emits": ["CRE.recalibrate", "EVL.rescore"],
     },
     "PSY.crisis": {
         "domain": "PSY",
@@ -139,8 +144,13 @@ EVENT_ROUTING: dict[str, dict] = {
                 "args": "--recalibrate",
                 "reason": "Competency data changed — recalibrate content context",
             },
+            {
+                "skill": "evl:score",
+                "args": "--rescore",
+                "reason": "Growth assessment changed — re-score against active rubrics",
+            },
         ],
-        "emits": ["CRE.recalibrate"],
+        "emits": ["CRE.recalibrate", "EVL.rescore"],
     },
     "GRO.forecast": {
         "domain": "GRO",
@@ -168,6 +178,29 @@ EVENT_ROUTING: dict[str, dict] = {
             },
         ],
         "emits": ["CRE.recalibrate"],
+    },
+    "EVL.scored": {
+        "domain": "EVL",
+        "downstream": [
+            {
+                "skill": "cre:post-writer",
+                "args": "--recalibrate",
+                "reason": "A new evidence-cited scorecard is available as a content angle",
+            },
+        ],
+        # Forward-only sink: EVL feeds CRE, never back to PSY/GRO (acyclic by design).
+        "emits": ["CRE.recalibrate"],
+    },
+    "EVL.rescore": {
+        "domain": "EVL",
+        "downstream": [
+            {
+                "skill": "evl:score",
+                "args": "--rescore",
+                "reason": "Re-score the character against active rubrics after a profile change",
+            },
+        ],
+        "emits": ["EVL.scored"],
     },
     "COM.rules_updated": {
         "domain": "COM",
@@ -223,6 +256,10 @@ DOMAIN_PATH_RULES: dict[str, dict] = {
 # Files under docs/profiles/ containing this path segment are rerouted to GRO.profiled.
 GRO_PATH_MARKER: str = "/growth/"
 
+# Files under docs/profiles/ containing this segment are EVL scorecards, not profile
+# edits — they announce EVL.scored (forward to CRE), never a rescore (which would loop).
+EVAL_PATH_MARKER: str = "/eval/"
+
 # Paths to ignore in diff-based event detection (noise that never produces domain events).
 IGNORE_PATTERNS: list[str] = [
     "plans/", ".claude/session-state/", ".claude/cache/",
@@ -260,9 +297,11 @@ def detect_events(changed_files: list[str]) -> list[dict]:
 
         for prefix, info in DOMAIN_PATH_RULES.items():
             if filepath.startswith(prefix):
-                # Distinguish GRO growth/ from PSY rest-of-profiles/.
+                # Distinguish GRO growth/ + EVL eval/ from PSY rest-of-profiles/.
                 if info["domain"] == "PSY" and GRO_PATH_MARKER in filepath:
                     info = {"event": "GRO.profiled", "domain": "GRO"}
+                elif info["domain"] == "PSY" and EVAL_PATH_MARKER in filepath:
+                    info = {"event": "EVL.scored", "domain": "EVL"}
                 event_key = f"{info['event']}:{prefix}"
                 if event_key not in seen_events:
                     seen_events.add(event_key)

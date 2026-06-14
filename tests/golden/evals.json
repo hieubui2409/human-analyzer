@@ -39,7 +39,7 @@
       "id": "humanize-slop-fixture-finding-count",
       "skill": "cre:humanize",
       "script": ".claude/skills/cre-humanize/scripts/scan-content-for-ai-tells.py",
-      "args": ["--path", "eval/fixtures/ai-slop-sample-vi.md", "--json", "--strictness", "balanced"],
+      "args": ["--path", "tests/golden/fixtures/ai-slop-sample-vi.md", "--json", "--strictness", "balanced"],
       "extract": {"value": "finding_count"},
       "expected": 15
     }

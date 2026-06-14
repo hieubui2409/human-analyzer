@@ -12,7 +12,7 @@ metadata:
 
 # Release Operations for human-analyzer
 
-Cut a versioned release of the 6-framework pack. The human-curated `CHANGELOG.md` (Keep a Changelog,
+Cut a versioned release of the 7-framework pack. The human-curated `CHANGELOG.md` (Keep a Changelog,
 with an `[Unreleased]` section) is the truth of record; this skill performs the deterministic
 release-cut and hands the owner the tag push that fires release CI.
 

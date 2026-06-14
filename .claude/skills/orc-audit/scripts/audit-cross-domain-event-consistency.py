@@ -45,11 +45,11 @@ SKILLS_DIR = ROOT / ".claude" / "skills"
 RULES_DIR = ROOT / "docs" / "rules"
 CLAUDE_MD = ROOT / "CLAUDE.md"
 RULES_FILE = "12-orc-orchestration.md"
-FRAMEWORK_PREFIXES = ("com-", "cre-", "gro-", "mat-", "orc-", "psy-")
-DOMAINS = ("MAT", "PSY", "CRE", "GRO", "ORC", "COM")
+FRAMEWORK_PREFIXES = ("com-", "cre-", "evl-", "gro-", "mat-", "orc-", "psy-")
+DOMAINS = ("MAT", "PSY", "CRE", "GRO", "ORC", "COM", "EVL")
 
 # Domain-anchored so it cannot match stray tokens like ``NOTES.md`` — only the
-# six framework prefixes followed by a lowercase event suffix qualify.
+# framework prefixes followed by a lowercase event suffix qualify.
 EVENT_PATTERN = re.compile(r"\b(?:" + "|".join(DOMAINS) + r")\.[a-z][a-z_\-]*\b")
 
 # Events derived from a path diff but not keyed directly in DOMAIN_PATH_RULES

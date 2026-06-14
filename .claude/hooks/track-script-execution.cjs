@@ -7,6 +7,8 @@
  * (git, ls, grep…) — only logs commands that run a `.claude/skills/.../scripts/*.py|sh`.
  * Coarse exit inference from tool_response (no reliable exit code in hook input).
  * Fail-open + fast: always emits { continue: true }, never blocks the Bash call.
+ *
+ * @hook-class telemetry
  */
 'use strict';
 

@@ -24,7 +24,7 @@ from platform_lib.markdown_parser import extract_frontmatter  # noqa: E402
 from platform_lib.formatters import markdown_table, json_output  # noqa: E402
 
 SKILLS_DIR = paths.ROOT / ".claude" / "skills"
-FRAMEWORKS = ["MAT", "PSY", "CRE", "GRO", "ORC", "COM"]
+FRAMEWORKS = ["MAT", "PSY", "CRE", "GRO", "ORC", "COM", "EVL"]
 EVENT = re.compile(r"\b(" + "|".join(FRAMEWORKS) + r")\.([a-z][a-z_]+)\b")
 # Arrow chains like "MAT.integrated → PSY.refresh → CRE.recalibrate"
 ARROW = re.compile(r"([A-Z]{3}\.[a-z_]+)\s*(?:→|->)\s*([A-Z]{3}\.[a-z_]+)")

@@ -24,6 +24,9 @@ _AUDIT_EVENT_TYPES = [
     "CRE.published",
     "CRE.privacy_cleared",  # emitted by cre:privacy-guard on a clean scan (rules-14 §CRE.privacy_cleared)
     "CRE.humanized",  # emitted by cre:humanize after a scan/rewrite (log only)
+    "EVL.compared",        # emitted by evl:compare when a cross-character ranking may feed CRE (log only, no cascade)
+    "EVL.tracked",         # emitted by evl:track on a significant verdict/coverage change (log only)
+    "EVL.rubric_imported", # emitted by evl:rubric-import after a draft rubric is written (log only)
     "ORC.bootstrap",
     "ORC.decision",
     "ORC.classify",

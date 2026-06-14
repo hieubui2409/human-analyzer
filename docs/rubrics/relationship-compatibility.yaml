@@ -1,0 +1,78 @@
+# Relationship compatibility (dyad) — Gottman Four Horsemen + repair + 5:1 ratio +
+# ECR-R attachment pairing + similarity/complementarity. Scores a PAIR of characters.
+# Criteria + weights from the dyadic research (Horsemen 0.25 > Repair 0.20 = Ratio 0.20
+# = Attachment 0.20 > Similarity/Complementarity 0.15; sums to 1.0). Scale 0-5; higher = better.
+#
+# All criteria oriented "higher = better": horsemen-absence is scored so 5 = respectful
+# conflict (no horsemen) and 0 = all four pervasive (the source's negative count inverted).
+id: relationship-compatibility
+version: 1.0.0
+title: "Relationship Compatibility (Dyad)"
+kind: dyad
+subject: dyad
+high_stakes: false
+verdict: decision
+cache: allow
+normalization: none
+min_judges: 1
+scale:
+  min: 0
+  max: 5
+aggregate: weighted_mean
+
+domains:
+  - id: dyadic
+    weight: 1.0
+    criteria:
+      - id: horsemen-absence
+        text: "Absence of Gottman's Four Horsemen (criticism, contempt, defensiveness, stonewalling) in conflict. Higher = healthier conflict."
+        weight: 0.25
+        anchors:
+          "0": "All four horsemen pervasive; contempt present (strongest breakup predictor)."
+          "2.5": "Some character attacks / defensiveness during conflict; recoverable."
+          "5": "Respect maintained even in conflict; feedback is behavioural, not character attacks."
+        evidence_hint: ["relationships/*.md"]
+        min_tier: T3
+      - id: repair-attempts
+        text: "Repair attempts: softened start-ups, accepting influence, humour, taking responsibility, compromise, physiological soothing."
+        weight: 0.20
+        anchors:
+          "0": "No repair attempts; conflict escalates unabated."
+          "2.5": "Some repair attempts; inconsistently successful."
+          "5": "Consistent, effective repair; reliably de-escalates."
+        evidence_hint: ["relationships/*.md"]
+        min_tier: T3
+      - id: positivity-ratio
+        text: "Positive-to-negative interaction ratio in conflict (Gottman's 5:1 rule)."
+        weight: 0.20
+        anchors:
+          "0": "Below 3:1; at-risk; breakup likely within years."
+          "2.5": "Between 3:1 and 5:1; declining; needs active intervention."
+          "5": "At or above 5:1; sustainable; repair adequate."
+        evidence_hint: ["relationships/*.md"]
+        min_tier: T3
+      - id: attachment-pairing
+        text: "ECR-R attachment-pairing stability (Secure×Secure most stable; Preoccupied×Dismissing and Fearful×Fearful least)."
+        weight: 0.20
+        anchors:
+          "0": "Very-low-stability pairing (e.g. Preoccupied×Dismissing, Fearful×Fearful); chronic conflict."
+          "2.5": "Moderate-stability pairing; workable with conscious effort."
+          "5": "Secure×Secure (or Secure-anchored) pairing; secure base for both."
+        evidence_hint: ["psychology/attachment-style.md", "relationships/*.md"]
+        min_tier: T3
+      - id: similarity-complementarity
+        text: "Similarity (shared values/traits; moderate is optimal) plus complementarity (strengths offset weaknesses)."
+        weight: 0.15
+        anchors:
+          "0": "Opposite on most domains AND reinforce each other's dysfunction."
+          "2.5": "Some shared traits; one strong where the other is weak; balanced."
+          "5": "Optimal moderate similarity plus complementary strengths covering each other's gaps."
+        evidence_hint: ["relationships/*.md", "identity/*.md"]
+        min_tier: T3
+
+# Incompatible (<2.0) / At-Risk (2.0-3.0) / Compatible (3.0-4.0) / Highly-Compatible (>=4.0).
+verdict_thresholds:
+  "Incompatible": {min: 0, max: 2.0}
+  "At-Risk": {min: 2.0, max: 3.0}
+  "Compatible": {min: 3.0, max: 4.0}
+  "Highly-Compatible": {min: 4.0, max: 5}

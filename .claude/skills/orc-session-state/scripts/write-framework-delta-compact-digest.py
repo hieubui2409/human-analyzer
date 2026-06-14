@@ -105,7 +105,7 @@ def main() -> None:
         print(json.dumps(digest, ensure_ascii=False))
     else:
         total = sum(f["count"] for f in digest["frameworks"].values())
-        print(f"✓ compact-digest: {total} events across 6 frameworks + "
+        print(f"✓ compact-digest: {total} events across 7 frameworks + "
               f"{len(digest['observations'])} observations → {DIGEST.name} "
               f"({len(json.dumps(digest).encode('utf-8'))} bytes)")
 

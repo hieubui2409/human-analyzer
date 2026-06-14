@@ -21,7 +21,7 @@ The MCP semantic memory graph is **intentionally not built**:
 - Deferred at Batch 5 OQ#7. The two needs it would serve are already covered:
   - **Relational/semantic structure** → the Knowledge Graph (NetworkX file-graph over profiles +
     relationships, `docs/graph/`), not an MCP event server.
-  - **Event memory** → the Batch 5 JSONL event streams (`orc:event-log`, 6 append-only streams).
+  - **Event memory** → the Batch 5 JSONL event streams (`orc:event-log`, 7 append-only streams).
 - Adding an MCP server is an external runtime dependency → YAGNI until a query need exists that the
   file-graph + JSONL cannot serve. Revisit only with a concrete failing query.
 
@@ -33,6 +33,7 @@ The MCP semantic memory graph is **intentionally not built**:
 | **PSY** | L4 (formulation findings) + L6 (discarded hypotheses) | Profiles synthesize L5 evidence; `psy:arc-tracker` logs hypotheses that didn't hold → L6. |
 | **CRE** | L4 (angle/report reuse) | Content angles draw on L4 reports + L5 evidence (gated by tier). |
 | **GRO** | L4 (career findings) | Growth assessments persist to `plans/reports/` + profile `growth/`. |
+| **EVL** | L4 (scorecards) + L5 (evidence citations) | Rubric scorecards persist to profile `eval/`; each criterion cites an L5 evidence tier. |
 | **ORC** | L1 + L2 (session + memory) | `orc:session-state` drives L1; `orc:compounding`/`orc:dream` write L2. |
 | **COM** | cross-cutting | `com:git` versions everything; `com:health-check` watches L1 execution. |
 

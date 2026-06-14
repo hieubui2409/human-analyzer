@@ -32,6 +32,7 @@ ROOT = find_project_root()
 PROFILES = ROOT / "docs" / "profiles"
 MATERIALS = ROOT / "docs" / "materials"
 REFERENCES = ROOT / "docs" / "references"
+RUBRICS = ROOT / "docs" / "rubrics"  # EVL shared rubric library (versioned, character-agnostic)
 GRAPH = ROOT / "docs" / "graph"
 RULES = ROOT / "docs" / "rules"
 SCHEMAS = ROOT / ".claude" / "schemas"
@@ -120,6 +121,7 @@ CONTENT_EVENTS = TELEMETRY / "content-events.jsonl"  # CRE
 GROWTH_SIGNALS = TELEMETRY / "growth-signals.jsonl"  # GRO
 CASCADE_EVENTS = TELEMETRY / "cascade-events.jsonl"  # ORC
 GOVERNANCE_AUDIT = TELEMETRY / "governance-audit.jsonl"  # COM
+EVAL_EVENTS = TELEMETRY / "evl-events.jsonl"  # EVL
 
 # Other consolidated JSONL sinks (signals + audits), same root.
 INSTINCTS = TELEMETRY / "instincts.jsonl"  # continuous-learning store (B3)
@@ -136,6 +138,7 @@ EVENT_STREAMS = {
     "GRO": GROWTH_SIGNALS,
     "ORC": CASCADE_EVENTS,
     "COM": GOVERNANCE_AUDIT,
+    "EVL": EVAL_EVENTS,
 }
 
 # --- Character roster: DATA, not code. Loaded from docs/profiles/characters.yaml ---------------

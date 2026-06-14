@@ -8,6 +8,8 @@
  * The lazy rebuild inside get_graph() remains the source of truth — this is only a head-start.
  *
  * Deliberately self-contained: requires no ck config utilities (project/ck boundary, CAP-1).
+ *
+ * @hook-class telemetry
  */
 const { spawn } = require("child_process");
 const path = require("path");

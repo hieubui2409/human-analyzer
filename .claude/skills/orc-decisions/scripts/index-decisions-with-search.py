@@ -14,7 +14,7 @@ DECISIONS_DIR = DECISIONS
 
 
 def load_decisions(decisions_dir: Path) -> list[dict]:
-    """Load all decision records from directory."""
+    """Load all decision records from directory, including supersedes lineage fields."""
     if not decisions_dir.exists():
         return []
     results = []
@@ -36,7 +36,16 @@ def load_decisions(decisions_dir: Path) -> list[dict]:
             "summary": summary,
             "lines": count_lines(f),
             "path": str(f),
+            # Lineage fields: supersedes = id this record retired; superseded_by = populated below.
+            "supersedes": str(fm.get("supersedes", "")).strip(),
+            "superseded_by": "",
+            "id": str(fm.get("id", "")).strip(),
         })
+    # Resolve superseded_by: for each record that supersedes another, mark the target.
+    id_to_rec = {r["id"]: r for r in results if r["id"]}
+    for rec in results:
+        if rec["supersedes"] and rec["supersedes"] in id_to_rec:
+            id_to_rec[rec["supersedes"]]["superseded_by"] = rec["id"]
     return results
 
 
@@ -91,9 +100,19 @@ def main():
         print("_(no matching records)_")
         return
 
-    headers = ["Date", "Title", "Character", "Category", "Status", "Lines"]
-    rows = [[d["date"], d["title"][:50], d["character"], d["category"], d["status"], str(d["lines"])]
-            for d in decisions]
+    headers = ["Date", "ID", "Title", "Character", "Status", "Lineage"]
+    rows = [
+        [
+            d["date"],
+            d["id"] or "legacy",
+            d["title"][:40],
+            d["character"],
+            d["status"],
+            (f"supersedes {d['supersedes']}" if d.get("supersedes") else
+             f"superseded_by {d['superseded_by']}" if d.get("superseded_by") else ""),
+        ]
+        for d in decisions
+    ]
     print_table(headers, rows)
 
     if args.search or args.character:

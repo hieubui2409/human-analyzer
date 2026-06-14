@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to the **human-analyzer frameworks toolkit** are documented here.
-The bundle ships 6 domain frameworks (ORC · PSY · CRE · GRO · MAT · COM) with their skills, domain
+The bundle ships 7 domain frameworks (ORC · PSY · CRE · GRO · MAT · COM · EVL) with their skills, domain
 agents, and framework hooks. Tags `frameworks-v*` version the bundle as a whole.
 Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: [semver](https://semver.org/).
 
@@ -12,6 +12,34 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 > auto-derived from git at build time — this file is the human-curated truth of record.
 
 ## [Unreleased]
+
+## [1.4.0] — 2026-06-14
+### Added
+- **EVL — 7th domain framework (evidence-cited rubric scoring engine).** Consumes MAT/PSY/GRO
+  profiles and scores a character against pluggable, versioned rubrics → standardized scorecard +
+  verdict. Engine modules under `platform_lib/evl_*.py` do deterministic gathering + weighted
+  aggregation only; the LLM does per-criterion judgment. Every criterion cites a MAT evidence tier
+  (T1–T5); an uncited score is reported `[UNVERIFIED]` (counted, never a silent pass). High-stakes
+  rubrics use ≥2 independent judges → convergence (a divergence routes to manual review, never an
+  auto-average). Ships 8 skills (`evl:score · standardize · fit · compatibility · compare · track ·
+  validate · rubric-import`), 4 reference rubrics (Big Five+Dark Triad+attachment, role/casting fit,
+  clinical risk & safety, relationship compatibility), and a rubric-importer agent. Event wiring:
+  `PSY.refresh` / `GRO.assessed` → `EVL.rescore` → `EVL.scored` → `CRE.recalibrate` (acyclic; EVL is
+  a forward-only sink — content may consume eval verdicts, eval never consumes content).
+- **Decision register write side (`orc:decisions`).** Atomic allocated IDs + lock-serialised append +
+  supersede lineage, so concurrent agents can record decisions without clobbering each other.
+- **Three-class hook taxonomy.** Every hook carries `@hook-class telemetry|nudge|compliance`; an
+  invariant gate asserts telemetry/nudge hooks never block a tool call.
+- **Structural skill-eval gate** (`tests/golden/run_skill_evals.py`) — boolean checks of a skill's
+  exit code / stdout / filesystem effect against the synthetic fixture, wired into CI.
+- **Context-footprint gate.** Per-skill authored-size baseline + GATE-token co-presence check
+  (every referenced `GATE-*` resolves to a full-prose definition).
+
+### Changed
+- `safety_filter` drops `.claude/decisions/` from the projected pack (the register holds
+  character-tagged records).
+- Red-team/validate discipline now applies the evidence bar **bidirectionally** — the plan's own
+  settled open-decisions must cite `file:line` or carry `[UNVERIFIED]`, symmetric with findings.
 
 ## [1.3.0] — 2026-06-09
 ### Added

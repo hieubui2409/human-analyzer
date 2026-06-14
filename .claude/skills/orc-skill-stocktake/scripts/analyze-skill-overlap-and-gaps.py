@@ -29,7 +29,7 @@ from platform_lib.markdown_parser import extract_frontmatter
 from platform_lib import paths
 
 SKILLS_DIR = paths.ROOT / ".claude" / "skills"
-FRAMEWORKS = ["orc", "psy", "cre", "gro", "mat", "com"]
+FRAMEWORKS = ["orc", "psy", "cre", "gro", "mat", "com", "evl"]
 
 _STOP = {"the", "a", "an", "and", "or", "to", "of", "for", "in", "on", "with", "use",
          "when", "via", "vs", "from", "by", "is", "are", "be", "this", "that", "it",

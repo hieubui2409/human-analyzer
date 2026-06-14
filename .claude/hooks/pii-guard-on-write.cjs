@@ -17,6 +17,8 @@
  *
  * Test seam: PII_GUARD_PROFILES_DIR redirects the helper's roster dir so an integration test can drive
  * the guard with a synthetic roster (keeping the test name-free) instead of the real characters.yaml.
+ *
+ * @hook-class compliance
  */
 'use strict';
 

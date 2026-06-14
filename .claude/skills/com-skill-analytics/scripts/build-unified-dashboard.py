@@ -176,7 +176,7 @@ def gather(skip: set[str] | None = None) -> dict:
 
 def framework_view(raw: dict) -> list[dict]:
     """Per-framework scorecard from S2 (health) + S1 (usage) + S4 (tokens)."""
-    fws = ["MAT", "PSY", "CRE", "GRO", "ORC", "COM"]
+    fws = ["MAT", "PSY", "CRE", "GRO", "ORC", "COM", "EVL"]
     s2 = raw.get("s2") or {}
     s1 = raw.get("s1") or {}
     s4 = raw.get("s4") or {}

@@ -8,7 +8,7 @@ As domains fire events (PSY.refresh, CRE.recalibrate), they get logged. Event-lo
 
 ## 2. Core concepts (the mental model)
 
-**6 framework streams.** Each domain (MAT, PSY, CRE, GRO, ORC, COM) has its own JSONL file. Events route by prefix (PSY.* → character-events.jsonl, etc.).
+**7 framework streams.** Each domain (MAT, PSY, CRE, GRO, EVL, ORC, COM) has its own JSONL file. Events route by prefix (PSY.* → character-events.jsonl, etc.).
 
 **Append-only.** Once logged, events never change. Always searchable history.
 
@@ -38,7 +38,7 @@ As domains fire events (PSY.refresh, CRE.recalibrate), they get logged. Event-lo
 
 > You: "Show all events for Character C."
 >
-> Skill: Queries across all 6 streams for `character=character-c`. Returns: MAT.integrated, PSY.refresh, GRO.assessed events in order. You see full activity chain for that character.
+> Skill: Queries across all 7 streams for `character=character-c`. Returns: MAT.integrated, PSY.refresh, GRO.assessed events in order. You see full activity chain for that character.
 
 ### Use case: Log a domain event
 

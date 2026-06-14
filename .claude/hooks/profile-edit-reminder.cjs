@@ -9,6 +9,8 @@
  *
  * Standalone: reads hook data from stdin, no ck-config-utils gate. Fail-open —
  * always emits { continue: true } so an error never blocks the edit.
+ *
+ * @hook-class nudge
  */
 
 const fs = require("fs");

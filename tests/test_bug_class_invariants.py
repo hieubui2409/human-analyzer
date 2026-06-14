@@ -24,7 +24,7 @@ PY = str(VENV) if VENV.exists() else sys.executable
 
 pytestmark = pytest.mark.bug_class
 
-FRAMEWORKS = ("orc", "psy", "cre", "gro", "mat", "com")
+FRAMEWORKS = ("orc", "psy", "cre", "gro", "mat", "com", "evl")
 
 
 def _framework_script_files():

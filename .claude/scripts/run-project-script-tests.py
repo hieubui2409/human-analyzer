@@ -1,7 +1,7 @@
 """Project script test runner (C6) — subprocess-exercise every PROJECT script as a matrix.
 
 GOLDEN RULE #4: deterministic gather only. Enumerates project-owned Python scripts
-(`platform_lib/*` modules + framework skill `scripts/*.py` across all 6 frameworks) and runs
+(`platform_lib/*` modules + framework skill `scripts/*.py` across all 7 frameworks) and runs
 each through two cheap subprocess smokes: py_compile (syntax) + `--help`/import (entry sanity).
 Reports a pass/fail matrix and exits non-zero on any failure.
 
@@ -29,7 +29,7 @@ if not PYTHON.exists():
     PYTHON = ROOT / ".claude" / "skills" / ".venv" / "bin" / "python3"
 if not PYTHON.exists():
     PYTHON = Path(sys.executable)  # no project venv (e.g. CI): use the running interpreter
-FRAMEWORKS = ("mat", "psy", "cre", "gro", "orc", "com")
+FRAMEWORKS = ("mat", "psy", "cre", "gro", "orc", "com", "evl")
 
 
 def discover() -> list[Path]:

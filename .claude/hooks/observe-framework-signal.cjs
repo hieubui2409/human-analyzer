@@ -11,6 +11,8 @@
  * Standalone: reads hook data from stdin, NO require of ck-config-utils (CAP-1). Reads its
  * enable flag from project framework-config.json. Fail-open + fast (<50ms, no subprocess) —
  * always emits { continue: true } so an error never blocks the edit.
+ *
+ * @hook-class telemetry
  */
 
 const fs = require("fs");

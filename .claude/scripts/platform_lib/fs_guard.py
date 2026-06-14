@@ -29,6 +29,10 @@ FRAMEWORK_WRITE_ROOTS = {
     "PSY": [paths.PROFILES, paths.REFERENCES, paths.GRAPH],
     "CRE": [paths.ASSETS],
     "GRO": [paths.PROFILES],
+    # EVL writes per-character scorecards under docs/profiles/*/eval/ and authors shared
+    # rubrics under docs/rubrics/. The fence contains it to those trees; the eval-only
+    # convention (never touching PSY/GRO files) is enforced by write_scorecard's path marker.
+    "EVL": [paths.PROFILES, paths.RUBRICS],
     "ORC": [_CLAUDE_DIR],
     "COM": [_CLAUDE_DIR],
 }

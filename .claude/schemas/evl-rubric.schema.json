@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "evl-rubric.schema.json",
+  "title": "EVL canonical rubric",
+  "description": "Shared, versioned, character-agnostic rubric. Shape + enums only; cross-field invariants (weight sums, high-stakes judge floor, clinical rails, threshold coverage) are enforced by the loader, which JSON-Schema cannot express.",
+  "type": "object",
+  "required": ["id", "version", "title", "kind", "subject", "verdict", "cache", "normalization", "min_judges", "scale", "aggregate", "domains"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["psychometric", "decision", "clinical", "dyad"]},
+    "subject": {"enum": ["single", "dyad"]},
+    "high_stakes": {"type": "boolean"},
+    "verdict": {"enum": ["scalar", "tri_state", "decision"]},
+    "cache": {"enum": ["allow", "never"]},
+    "normalization": {"enum": ["z_score", "percentile", "min_max", "none"]},
+    "min_judges": {"type": "integer", "minimum": 1},
+    "scale": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {"min": {"type": "number"}, "max": {"type": "number"}},
+      "additionalProperties": false
+    },
+    "aggregate": {"enum": ["weighted_mean", "weighted_sum"]},
+    "domains": {"type": "array", "minItems": 1, "items": {"$ref": "#/definitions/domain"}},
+    "verdict_thresholds": {"type": "object"},
+    "target_profile": {"type": "string"},
+    "red_flags": {"type": "array", "items": {"type": "string"}}
+  },
+  "definitions": {
+    "domain": {
+      "type": "object",
+      "required": ["id", "weight", "criteria"],
+      "additionalProperties": true,
+      "properties": {
+        "id": {"type": "string"},
+        "weight": {"type": "number", "minimum": 0, "maximum": 1},
+        "criteria": {"type": "array", "minItems": 1, "items": {"$ref": "#/definitions/criterion"}}
+      }
+    },
+    "criterion": {
+      "type": "object",
+      "required": ["id", "text", "weight", "anchors", "evidence_hint", "min_tier"],
+      "additionalProperties": true,
+      "properties": {
+        "id": {"type": "string"},
+        "text": {"type": "string", "minLength": 1},
+        "weight": {"type": "number", "minimum": 0, "maximum": 1},
+        "anchors": {"type": "object", "minProperties": 2},
+        "evidence_hint": {"type": "array", "items": {"type": "string"}},
+        "min_tier": {"enum": ["T1", "T2", "T3", "T4", "T5"]}
+      }
+    }
+  }
+}

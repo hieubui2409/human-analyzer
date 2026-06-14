@@ -76,8 +76,13 @@ class TestEventSignals:
             json.dumps({"timestamp": fresh, "event": "ORC.bootstrap",
                         "character": None, "reason": "session boot"}) + "\n",
             encoding="utf-8")
+        evl = tmp_path / "evl-events.jsonl"
+        evl.write_text(
+            json.dumps({"timestamp": fresh, "event": "EVL.scored",
+                        "character": "test-alpha", "reason": "big-five battery rescored"}) + "\n",
+            encoding="utf-8")
         monkeypatch.setattr(agg_mod.paths, "EVENT_STREAMS",
-                            {"CRE": cre, "ORC": orc, "PSY": tmp_path / "x.jsonl",
+                            {"CRE": cre, "ORC": orc, "EVL": evl, "PSY": tmp_path / "x.jsonl",
                              "MAT": tmp_path / "y.jsonl", "GRO": tmp_path / "z.jsonl"})
         return agg_mod
 
@@ -96,6 +101,16 @@ class TestEventSignals:
         # ORC.bootstrap has character=None → must not be filtered out
         sigs = streams.event_signals(["ORC"], "test-alpha", 30, NOW)
         assert any(s["origin"] == "ORC.bootstrap" for s in sigs)
+
+    def test_evl_event_maps_to_evaluative_lens(self, streams):
+        # EVL.scored is a content-angle source (eval verdict → evaluative lens).
+        sigs = streams.event_signals(["EVL"], "test-alpha", 30, NOW)
+        assert sigs[0]["source_framework"] == "EVL"
+        assert sigs[0]["signal_type"] == "evaluative"
+        assert "big-five battery rescored" in [s["summary"] for s in sigs]
+
+    def test_all_frameworks_includes_evl(self, agg_mod):
+        assert "EVL" in agg_mod._frameworks("all")
 
     def test_read_only_no_stream_mutation(self, streams, tmp_path):
         before = (tmp_path / "content-events.jsonl").read_text(encoding="utf-8")

@@ -1,4 +1,4 @@
-"""Gather raw content-angle SIGNALS from all 6 frameworks (deterministic, READ-ONLY).
+"""Gather raw content-angle SIGNALS from all source frameworks (deterministic, READ-ONLY).
 
 GOLDEN RULE #4 split:
   - SCRIPT (here): over-gather raw signals from B5 event streams (date-filtered)
@@ -12,11 +12,11 @@ Freshness = recency decay over a window: 1.0 today -> 0.0 at/after --since-days.
 Older-than-window signals are dropped (stale -> no stale angles, plan risk row).
 
 Framework -> angle TYPE (the lens the signal feeds):
-  PSY->emotional  MAT->story  GRO->professional  CRE->distribution  ORC->timing
+  PSY->emotional  MAT->story  GRO->professional  CRE->distribution  ORC->timing  EVL->evaluative
 
 Usage:
   aggregate-angle-signals-across-frameworks.py --character <c>
-      [--framework psy|mat|gro|cre|orc|all] [--since-days 30] [--json]
+      [--framework psy|mat|gro|cre|orc|evl|all] [--since-days 30] [--json]
 READ-ONLY across every framework.
 """
 from __future__ import annotations
@@ -39,6 +39,10 @@ FRAMEWORK_ANGLE = {
     "GRO": "professional",
     "CRE": "distribution",
     "ORC": "timing",
+    # EVL emits EVL.scored when a scorecard is (re)written; an eval verdict/benchmark is a
+    # legitimate content-angle source (eval→CRE is allowed; CRE→eval is not). The LLM synthesis
+    # layer decides whether a given verdict makes a real, publishable angle.
+    "EVL": "evaluative",
     # COM (governance/audit) is intentionally NOT a content-angle source — privacy scans, commit
     # logs and rule-compliance are not publishable angles. It is excluded from _frameworks() too.
 }
@@ -187,7 +191,7 @@ def aggregate(character: str, frameworks: list[str], since_days: int,
 
 def _frameworks(arg: str) -> list[str]:
     if arg == "all":
-        return ["PSY", "MAT", "GRO", "CRE", "ORC"]
+        return ["PSY", "MAT", "GRO", "CRE", "ORC", "EVL"]
     return [arg.upper()]
 
 
@@ -195,7 +199,7 @@ def main():
     ap = argparse.ArgumentParser(description="Gather raw angle signals across frameworks (READ-ONLY).")
     ap.add_argument("--character", required=True)
     ap.add_argument("--framework", default="all",
-                    choices=["psy", "mat", "gro", "cre", "orc", "all"])
+                    choices=["psy", "mat", "gro", "cre", "orc", "evl", "all"])
     ap.add_argument("--since-days", type=int, default=30, help="Freshness window (default 30)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()

@@ -4,7 +4,7 @@
 
 ## What it does
 
-Appends framework events (MAT.integrated, PSY.refresh, CRE.recalibrate, etc.) to 6 framework-partitioned JSONL streams. Query with filters (event type, character, date, skill). Provides audit trail for all domain cascades. Read-only for queries; append-only for events.
+Appends framework events (MAT.integrated, PSY.refresh, CRE.recalibrate, etc.) to 7 framework-partitioned JSONL streams. Query with filters (event type, character, date, skill). Provides audit trail for all domain cascades. Read-only for queries; append-only for events.
 
 ## When to use
 
@@ -42,7 +42,7 @@ Appends framework events (MAT.integrated, PSY.refresh, CRE.recalibrate, etc.) to
 
 ### Nó làm gì
 
-Ghi thêm các sự kiện khung (MAT.integrated, PSY.refresh, CRE.recalibrate, v.v.) vào 6 luồng JSONL được phân vùng khung. Truy vấn với bộ lọc (loại sự kiện, nhân vật, ngày, kỹ năng). Cung cấp dấu vết kiểm tra cho tất cả các tầng miền. Chỉ đọc cho truy vấn; chỉ ghi thêm cho các sự kiện.
+Ghi thêm các sự kiện khung (MAT.integrated, PSY.refresh, CRE.recalibrate, v.v.) vào 7 luồng JSONL được phân vùng khung. Truy vấn với bộ lọc (loại sự kiện, nhân vật, ngày, kỹ năng). Cung cấp dấu vết kiểm tra cho tất cả các tầng miền. Chỉ đọc cho truy vấn; chỉ ghi thêm cho các sự kiện.
 
 ### Khi nào dùng
 

@@ -1,6 +1,6 @@
 ---
 name: cre:angle-discovery
-description: "Discover publishable content angles by proactively mining all 6 frameworks — PSY growth-edges (emotional), MAT new materials (story), GRO milestones (professional), CRE/ORC event history (distribution/timing), plus psy:relation-intelligence (relationship). Aggregates raw signals, ranks by freshness × evidence × platform-fit, tags each {source_framework, evidence_tier, primary_character, freshness, consent_status}, and emits a CONTEXT.md block for cre:post-writer. READ-ONLY, autonomous (cron/event-runnable). Use when deciding what to post next or seeding cre:exploring/post-writer. Triggers: 'angle discovery', 'find content angles', 'what should we post', 'mine angles', 'proactive ideation', 'content opportunities'."
+description: "Discover publishable content angles by proactively mining all 7 frameworks — PSY growth-edges (emotional), MAT new materials (story), GRO milestones (professional), CRE/ORC event history (distribution/timing), EVL scorecard verdicts (evaluative), plus psy:relation-intelligence (relationship). Aggregates raw signals, ranks by freshness × evidence × platform-fit, tags each {source_framework, evidence_tier, primary_character, freshness, consent_status}, and emits a CONTEXT.md block for cre:post-writer. READ-ONLY, autonomous (cron/event-runnable). Use when deciding what to post next or seeding cre:exploring/post-writer. Triggers: 'angle discovery', 'find content angles', 'what should we post', 'mine angles', 'proactive ideation', 'content opportunities'."
 argument-hint: "--character <slug> [--framework psy|mat|gro|cre|orc|all] [--since-days N] [--top N] [--graph-signal] [--to-context] [--json]"
 metadata:
   author: hieubt
@@ -48,7 +48,7 @@ $PY $SK/aggregate-angle-signals-across-frameworks.py --character character-a --f
 $PY $SK/rank-angles-by-freshness-and-evidence.py --angles angles.json --top 5 --json
 ```
 
-`--framework all` reads PSY/MAT/GRO/CRE/ORC. `--since-days` sets the freshness window
+`--framework all` reads PSY/MAT/GRO/CRE/ORC/EVL. `--since-days` sets the freshness window
 (signals older than the window decay to 0 and are dropped → no stale angles).
 
 ## Signal → Angle Lens
@@ -60,6 +60,7 @@ $PY $SK/rank-angles-by-freshness-and-evidence.py --angles angles.json --top 5 --
 | GRO       | milestones (ACHIEVED/IN_PROGRESS), competency deltas | professional |
 | CRE       | content-events history (engagement, prior posts)     | distribution |
 | ORC       | cascade/timing events                                | timing       |
+| EVL       | scorecard verdicts (`EVL.scored`) — eval benchmarks  | evaluative   |
 
 ## Ranking & Scoring
 

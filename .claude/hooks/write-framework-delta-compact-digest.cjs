@@ -9,6 +9,8 @@
  * Standalone: NO require of ck-config-utils (CAP-1); does NOT touch ck write-compact-marker.cjs
  * (both PreCompact hooks run independently). Reads its enable flag from project framework-config.json.
  * Fail-open — a digest error must never block compaction.
+ *
+ * @hook-class telemetry
  */
 
 const fs = require("fs");

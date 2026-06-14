@@ -1,0 +1,30 @@
+# Minimal valid canonical EVL rubric — golden fixture for evl_schema tests.
+# Exercises every required field with the smallest legal shape (1 domain, 1 criterion).
+id: minimal-test
+version: "1.0.0"
+title: Minimal Test Rubric
+kind: psychometric
+subject: single
+high_stakes: false
+verdict: scalar
+cache: allow
+normalization: z_score
+min_judges: 1
+scale:
+  min: 0
+  max: 5
+aggregate: weighted_mean
+domains:
+  - id: d1
+    weight: 1.0
+    criteria:
+      - id: c1
+        text: Criterion one
+        weight: 1.0
+        anchors:
+          "0": low
+          "2": mid
+          "5": high
+        evidence_hint:
+          - behavioral-patterns.md
+        min_tier: T2

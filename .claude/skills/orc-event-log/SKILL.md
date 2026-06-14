@@ -12,7 +12,7 @@ metadata:
 
 # orc:event-log — Persistent Event Logging
 
-Append framework events to **6 framework-partitioned JSONL streams** under `.claude/session-state/` and query the history with filters. Events route by event-type prefix.
+Append framework events to **7 framework-partitioned JSONL streams** under `.claude/session-state/` and query the history with filters. Events route by event-type prefix.
 
 ## Framework Streams (B2 partition)
 

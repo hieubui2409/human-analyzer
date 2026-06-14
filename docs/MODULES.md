@@ -1,10 +1,10 @@
 # MODULES — Skill Grouping & Cross-Framework Dependency Map
 
-Navigation map for the **60 project-owned skills** across 6 frameworks. Semi-derived from each
+Navigation map for the **68 project-owned skills** across 7 frameworks. Semi-derived from each
 `SKILL.md` `metadata.dependencies` frontmatter + the CLAUDE.md catalog — **regenerate after skill
 changes** (`orc:skill-stocktake --quick` catches count drift; `--conformance` checks structure).
 
-Count reconciles with CLAUDE.md: **ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 5 = 60**.
+Count reconciles with CLAUDE.md: **ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 5 · EVL 8 = 68**.
 ck-origin skills (`cook`, `plan`, `scout`, `skill-creator`, `/ck:*`, `/ckm:*`) are **excluded** — they
 are dev tools used read-only, not part of the framework catalog.
 
@@ -97,6 +97,19 @@ are dev tools used read-only, not part of the framework catalog.
 | `com:rules`           | Modular rules management                                              | `orc:classify` |
 | `com:skill-analytics` | Skill/script observability — 11 read-only lenses + profile-drift gate | —              |
 | `com:release`         | Cut a versioned pack release — Keep a Changelog lock + manifest bump  | —              |
+
+## EVL — Evaluation (8)
+
+| Skill                | Purpose                                                          | Depends on  |
+| -------------------- | --------------------------------------------------------------- | ----------- |
+| `evl:score`          | Generic rubric scoring engine (gather → judge → aggregate)      | —           |
+| `evl:standardize`    | Psychometric battery preset (Big Five + Dark Triad + attachment) | `evl:score` |
+| `evl:fit`            | Role / casting-fit decision (CAST / CONDITIONAL / NO + veto)    | `evl:score` |
+| `evl:compatibility`  | Dyad compatibility scoring on the relationship rubric           | `evl:score` |
+| `evl:compare`        | Cross-character ranking on one rubric (uses written scorecards) | —           |
+| `evl:track`          | Score-over-time diff + deterministic event attribution          | —           |
+| `evl:validate`       | Rubric + scorecard structural checker                           | —           |
+| `evl:rubric-import`  | External framework → canonical rubric draft                    | —           |
 
 ## Cross-framework dependency edges
 

@@ -1,0 +1,126 @@
+{
+  "rubric_id": "psychometric-big-five",
+  "rubric_version": "1.0.0",
+  "rubric_title": "Psychometric Battery — Big Five + Dark Triad + Attachment",
+  "kind": "psychometric",
+  "subject": "single",
+  "character": "test-alpha",
+  "overall": 2.9999999999999996,
+  "verdict": null,
+  "verified_coverage": 1.0,
+  "scale": {
+    "min": 0,
+    "max": 5
+  },
+  "domains": [
+    {
+      "id": "big-five",
+      "weight": 0.7,
+      "score": 3.0,
+      "coverage": 1.0
+    },
+    {
+      "id": "dark-triad",
+      "weight": 0.1,
+      "score": 2.9999999999999996,
+      "coverage": 1.0
+    },
+    {
+      "id": "attachment",
+      "weight": 0.2,
+      "score": 3.0,
+      "coverage": 1.0
+    }
+  ],
+  "criteria": [
+    {
+      "criterion_id": "openness",
+      "score": 3,
+      "citation": "openness.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "conscientiousness",
+      "score": 3,
+      "citation": "conscientiousness.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "extraversion",
+      "score": 3,
+      "citation": "extraversion.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "agreeableness",
+      "score": 3,
+      "citation": "agreeableness.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "neuroticism",
+      "score": 3,
+      "citation": "neuroticism.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "narcissism",
+      "score": 3,
+      "citation": "narcissism.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "machiavellianism",
+      "score": 3,
+      "citation": "machiavellianism.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "psychopathy",
+      "score": 3,
+      "citation": "psychopathy.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "attachment-anxiety",
+      "score": 3,
+      "citation": "attachment-anxiety.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "attachment-avoidance",
+      "score": 3,
+      "citation": "attachment-avoidance.md:1",
+      "tier": "T2",
+      "justification": "synthetic fixture score",
+      "verdict": "PASS"
+    }
+  ],
+  "unverified": [],
+  "below_min_tier": [],
+  "cache": "allow",
+  "reassess_required": false,
+  "judges": null,
+  "convergence": null,
+  "normalization": null,
+  "asof": "2026-06-14",
+  "updated_by": "evl:score"
+}

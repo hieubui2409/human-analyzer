@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
 PY = str(REPO / ".claude" / "skills" / ".venv" / "bin" / "python3")
 PY = PY if Path(PY).exists() else sys.executable
 
@@ -32,7 +32,7 @@ def _dig(data, dotted):
 
 
 def main():
-    spec = json.loads((REPO / "eval" / "evals.json").read_text(encoding="utf-8"))
+    spec = json.loads((Path(__file__).parent / "evals.json").read_text(encoding="utf-8"))
     fixture = REPO / spec["fixture"]
     env = dict(os.environ)
     env["PMC_PROJECT_ROOT"] = str(fixture)

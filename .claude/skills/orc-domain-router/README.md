@@ -4,7 +4,7 @@
 
 ## What it does
 
-Detects domain changes from git diffs or accepts explicit events, then maps downstream skill recommendations. Reads from hardcoded EVENT_ROUTING table to show what should execute next across MAT, PSY, CRE, GRO, COM, ORC. Read-only orchestration utility—doesn't execute, only recommends.
+Detects domain changes from git diffs or accepts explicit events, then maps downstream skill recommendations. Reads from hardcoded EVENT_ROUTING table to show what should execute next across MAT, PSY, CRE, GRO, EVL, COM, ORC. Read-only orchestration utility—doesn't execute, only recommends.
 
 ## When to use
 
@@ -39,7 +39,7 @@ Detects domain changes from git diffs or accepts explicit events, then maps down
 
 ### Nó làm gì
 
-Phát hiện các thay đổi miền từ diffs git hoặc chấp nhận các sự kiện rõ ràng, sau đó lập bản đồ các khuyến nghị kỹ năng tầng dưới. Đọc từ bảng EVENT_ROUTING được mã hóa cứng để hiển thị những gì nên thực hiện tiếp theo trên MAT, PSY, CRE, GRO, COM, ORC. Công cụ điều phối chỉ đọc—không thực hiện, chỉ khuyến nghị.
+Phát hiện các thay đổi miền từ diffs git hoặc chấp nhận các sự kiện rõ ràng, sau đó lập bản đồ các khuyến nghị kỹ năng tầng dưới. Đọc từ bảng EVENT_ROUTING được mã hóa cứng để hiển thị những gì nên thực hiện tiếp theo trên MAT, PSY, CRE, GRO, EVL, COM, ORC. Công cụ điều phối chỉ đọc—không thực hiện, chỉ khuyến nghị.
 
 ### Khi nào dùng
 

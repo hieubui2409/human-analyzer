@@ -1,0 +1,37 @@
+# Structural eval assertions for evl-validate — opt-in, declarative gate.
+#
+# Checks that run_validate.py behaves deterministically: exits 0, emits valid
+# JSON, and reports a PASS verdict when the synthetic fixture's single rubric
+# (psychometric-big-five) is structurally sound. No LLM judgment, no network.
+#
+# Runner: tests/golden/run_skill_evals.py
+# Fixture: e2e/synthetic-project (set via PMC_PROJECT_ROOT)
+
+scenarios:
+  - id: validate-all-rubrics-exit-zero
+    exec:
+      - "{py}"
+      - "{repo}/.claude/skills/evl-validate/scripts/run_validate.py"
+      - "--all"
+      - "--json"
+    assertions:
+      - id: exits-zero
+        check: exit_zero
+
+      - id: stdout-is-json
+        check: stdout_json
+        path: verdict
+
+      - id: verdict-is-pass
+        check: stdout_json
+        path: verdict
+        equals: "PASS"
+
+      - id: rubrics-list-present
+        check: stdout_json
+        path: rubrics
+
+      - id: mode-is-rubric
+        check: stdout_json
+        path: mode
+        equals: "rubric"
