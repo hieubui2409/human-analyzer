@@ -24,8 +24,8 @@ character-agnostic and resolves subjects dynamically via `paths.py`.
 [Event flow](#event-flow--processing) ·
 [Use cases](#use-cases) ·
 [Quick start](#quick-start) ·
-[The six frameworks](#the-six-frameworks) ·
-[Skill catalog (59)](#skill-catalog--59-skills) ·
+[The seven frameworks](#the-seven-frameworks) ·
+[Skill catalog (68)](#skill-catalog--68-skills) ·
 [Examples & e2e](#examples--end-to-end) ·
 [Distribution](#distribution--packaging) ·
 [Tests & gates](#tests--gates) ·
@@ -41,7 +41,7 @@ character-agnostic and resolves subjects dynamically via `paths.py`.
 3. **Generate** platform content (Facebook, LinkedIn, blog, …), gated by evidence tier and confidentiality.
 
 Everything is **event-driven**: ingesting material cascades into a profile refresh, which cascades into
-content recalibration. **59 framework skills** across **6 frameworks**, invoked as `{framework}:{skill}`
+content recalibration. **68 framework skills** across **7 frameworks**, invoked as `{framework}:{skill}`
 (e.g. `psy:crossref`). The full per-skill catalog is below and in [`CLAUDE.md`](./CLAUDE.md); per-skill
 walkthroughs live in each skill's `GUIDE-EN.md` / `GUIDE-VI.md`.
 
@@ -49,7 +49,7 @@ walkthroughs live in each skill's `GUIDE-EN.md` / `GUIDE-VI.md`.
 
 ## Architecture
 
-Four domain frameworks + one orchestrator + one common toolkit, wired by an event bus. Each framework
+Five domain frameworks + one orchestrator + one common toolkit, wired by an event bus. Each framework
 **owns exactly one data location** and communicates through events — never cross-domain direct writes
 (enforced by [Rule 12](./docs/rules/12-orc-orchestration.md) + `platform_lib/fs_guard.py`).
 
@@ -62,6 +62,9 @@ flowchart LR
       PSY["PSY · Psychology<br/>docs/profiles + references + graph"]
       GRO["GRO · Growth<br/>docs/profiles/*/growth/"]
     end
+    subgraph EV["Evaluation"]
+      EVL["EVL · Evaluation<br/>docs/profiles/*/eval · docs/rubrics/"]
+    end
     subgraph OUT["Output"]
       CRE["CRE · Content<br/>assets/"]
     end
@@ -72,10 +75,14 @@ flowchart LR
     GRO -->|"GRO.assessed"| PSY
     GRO --> CRE
     PSY -->|"PSY.refresh"| CRE
+    PSY -->|"PSY.refresh"| EVL
+    GRO -->|"GRO.assessed"| EVL
+    EVL -->|"EVL.scored"| CRE
     ORC -.->|routes / audits / cascades| MAT
     ORC -.-> PSY
     ORC -.-> CRE
     ORC -.-> GRO
+    ORC -.-> EVL
     COM -.->|utilities| ORC
 ```
 
@@ -85,6 +92,7 @@ flowchart LR
 | **PSY** | Domain | `docs/profiles/` · `docs/references/` · `docs/graph/` | Clinical 5P formulation |
 | **CRE** | Domain | `assets/` | Platform content creation |
 | **GRO** | Domain | `docs/profiles/*/growth/` | Career + competency intelligence |
+| **EVL** | Domain | `docs/profiles/*/eval/` · `docs/rubrics/` | Evidence-cited rubric scoring + verdicts |
 | **ORC** | Orchestrator | `.claude/` | Event routing, domain boundaries, memory, graph |
 | **COM** | Common | `.claude/` | Git, health-check, rules, observability |
 
@@ -139,7 +147,7 @@ sequenceDiagram
 ## Use cases
 
 "I want to…" → the skill (or chain) that does it. Every node deep-links to its `GUIDE-EN.md` in the
-[catalog below](#skill-catalog--59-skills).
+[catalog below](#skill-catalog--68-skills).
 
 ```mermaid
 flowchart LR
@@ -165,7 +173,7 @@ flowchart LR
 flowchart TD
     S0["git clone + cd"] --> S1["bash .claude/scripts/install.sh<br/>provision .venv (pyyaml · jsonschema · pytest)"]
     S1 --> S2["pytest tests/ -q -m 'not gemini'<br/>→ ~665 pass, ~170 skip (corpus-dependent + live-LLM)"]
-    S2 --> S3["eval/run_evals.py<br/>→ golden deterministic cases"]
+    S2 --> S3["tests/golden/run_evals.py<br/>→ golden deterministic cases"]
     S3 --> S4["e2e/run-full-pipeline.py<br/>→ deterministic synthetic-fixture steps"]
     S4 --> S5["invoke any skill:<br/>{framework}:{skill}"]
 ```
@@ -191,7 +199,7 @@ When working *through Claude Code*, you don't call scripts by hand — you invok
 
 ---
 
-## The six frameworks
+## The seven frameworks
 
 ### `MAT` — Materials (input) · 4 skills
 
@@ -208,7 +216,7 @@ ICD-11), trauma, strengths, timeline, and cross-character consistency from integ
 **Rules:** [`01`](./docs/rules/01-profile-structure.md) · [`02`](./docs/rules/02-clinical-reference-usage.md) · [`08`](./docs/rules/08-cross-validation.md) · [`06`](./docs/rules/06-crisis-protocol.md).
 **Does NOT:** expose raw psychiatric labels in published content (show-don't-tell, Rule 02); cache crisis verdicts (always re-assessed); write outside `docs/profiles` · `references` · `graph`.
 
-### `CRE` — Content (output) · 9 skills
+### `CRE` — Content (output) · 10 skills
 
 **Does:** translates the refreshed profile into platform-native content under `assets/`, gated per-claim
 by evidence tier (T1–T5) and per-asset by confidentiality + voice consistency before publish.
@@ -229,15 +237,26 @@ session state, memory, decisions, and the knowledge graph.
 **Rules:** [`12`](./docs/rules/12-orc-orchestration.md) · [`13`](./docs/rules/13-orc-workflow.md) · [`16`](./docs/rules/16-knowledge-graph.md).
 **Does NOT:** own content — it routes and audits; writes only `.claude/`.
 
-### `COM` — Common · 4 skills
+### `COM` — Common · 5 skills
 
-**Does:** shared toolkit — git operations, session-health monitoring, rules management, and skill/script
-observability (11 read-only lenses).
+**Does:** shared toolkit — git operations, session-health monitoring, rules management, release
+cutting (Keep a Changelog lifecycle), and skill/script observability (11 read-only lenses).
 **Does NOT:** edit domain content; utility only.
+
+### `EVL` — Evaluation · 8 skills
+
+**Does:** scores a character against pluggable, versioned rubrics (psychometric · decision/role-fit ·
+clinical-risk · dyad compatibility) → an evidence-cited scorecard + verdict. Scripts do deterministic
+gathering + weighted aggregation; the LLM does the per-criterion judgment. Every criterion cites a MAT
+evidence tier (T1–T5) — an uncited score is reported `[UNVERIFIED]` (counted, never a silent pass).
+High-stakes rubrics use ≥2 independent judges → convergence (a divergence routes to manual review,
+never an auto-average). Rubrics live in [`docs/rubrics/`](./docs/rubrics/), validated against a JSON-schema.
+**Rules:** [`17`](./docs/rules/17-evl-framework.md).
+**Does NOT:** consume CRE content — evaluation is a forward-only sink (`EVL.scored` may feed CRE, never the reverse); write outside `docs/profiles/*/eval/` · `docs/rubrics/`.
 
 ---
 
-## Skill catalog — 59 skills
+## Skill catalog — 68 skills
 
 Invoke as `{framework}:{skill}`. Each row deep-links its bilingual walkthrough (`GUIDE-EN` / `GUIDE-VI`).
 `SKILL.md` is the operating contract; `CLAUDE.md` is the canonical index (the `bug_class` CI gate asserts
@@ -280,7 +299,7 @@ this count stays in sync).
 | `cre:post-writer` | End-to-end content pipeline — profile → voice → draft → `assets/` | [EN](./.claude/skills/cre-post-writer/GUIDE-EN.md) · [VI](./.claude/skills/cre-post-writer/GUIDE-VI.md) |
 | `cre:multiplatform` | 1→N platform-NATIVE variant generation (per-variant gated) | [EN](./.claude/skills/cre-multiplatform/GUIDE-EN.md) · [VI](./.claude/skills/cre-multiplatform/GUIDE-VI.md) |
 | `cre:repurpose` | Adapt one published post to another platform (1→1) | [EN](./.claude/skills/cre-repurpose/GUIDE-EN.md) · [VI](./.claude/skills/cre-repurpose/GUIDE-VI.md) |
-| `cre:angle-discovery` | Mine all 6 frameworks for ranked, evidence-backed content angles | [EN](./.claude/skills/cre-angle-discovery/GUIDE-EN.md) · [VI](./.claude/skills/cre-angle-discovery/GUIDE-VI.md) |
+| `cre:angle-discovery` | Mine all 7 frameworks for ranked, evidence-backed content angles | [EN](./.claude/skills/cre-angle-discovery/GUIDE-EN.md) · [VI](./.claude/skills/cre-angle-discovery/GUIDE-VI.md) |
 | `cre:exploring` | 7-question structured exploration → `CONTEXT.md` | [EN](./.claude/skills/cre-exploring/GUIDE-EN.md) · [VI](./.claude/skills/cre-exploring/GUIDE-VI.md) |
 | `cre:prompt-leverage` | 5-layer prompt strengthening before execution | [EN](./.claude/skills/cre-prompt-leverage/GUIDE-EN.md) · [VI](./.claude/skills/cre-prompt-leverage/GUIDE-VI.md) |
 | `cre:evidence-scanner` | Per-claim evidence-tier gate (T1–T5) + Rule-09 leak detection | [EN](./.claude/skills/cre-evidence-scanner/GUIDE-EN.md) · [VI](./.claude/skills/cre-evidence-scanner/GUIDE-VI.md) |
@@ -323,7 +342,7 @@ this count stays in sync).
 | `orc:observe` | Passive cross-framework observation signals → instinct | [EN](./.claude/skills/orc-observe/GUIDE-EN.md) · [VI](./.claude/skills/orc-observe/GUIDE-VI.md) |
 | `orc:skill-stocktake` | Skill catalog audit — count / metadata / overlap | [EN](./.claude/skills/orc-skill-stocktake/GUIDE-EN.md) · [VI](./.claude/skills/orc-skill-stocktake/GUIDE-VI.md) |
 
-### COM — Common (4)
+### COM — Common (5)
 
 | Skill | Purpose | Guide |
 | --- | --- | --- |
@@ -331,6 +350,20 @@ this count stays in sync).
 | `com:health-check` | Session health — stall / error / death detection | [EN](./.claude/skills/com-health-check/GUIDE-EN.md) · [VI](./.claude/skills/com-health-check/GUIDE-VI.md) |
 | `com:rules` | Modular rules management + change validation | [EN](./.claude/skills/com-rules/GUIDE-EN.md) · [VI](./.claude/skills/com-rules/GUIDE-VI.md) |
 | `com:skill-analytics` | Skill/script observability — 11 read-only lenses | [EN](./.claude/skills/com-skill-analytics/GUIDE-EN.md) · [VI](./.claude/skills/com-skill-analytics/GUIDE-VI.md) |
+| `com:release` | Cut a versioned frameworks-pack release (Keep a Changelog lifecycle) | [EN](./.claude/skills/com-release/GUIDE-EN.md) · [VI](./.claude/skills/com-release/GUIDE-VI.md) |
+
+### EVL — Evaluation (8)
+
+| Skill | Purpose | Guide |
+| --- | --- | --- |
+| `evl:score` | Score a character against any versioned rubric → evidence-cited scorecard + verdict | [EN](./.claude/skills/evl-score/GUIDE-EN.md) · [VI](./.claude/skills/evl-score/GUIDE-VI.md) |
+| `evl:standardize` | Psychometric-battery preset — Big Five + Dark Triad (SD3) + Attachment (ECR-R) | [EN](./.claude/skills/evl-standardize/GUIDE-EN.md) · [VI](./.claude/skills/evl-standardize/GUIDE-VI.md) |
+| `evl:fit` | Role / casting-fit decision engine (≥2 independent judges → convergence) | [EN](./.claude/skills/evl-fit/GUIDE-EN.md) · [VI](./.claude/skills/evl-fit/GUIDE-VI.md) |
+| `evl:compatibility` | Dyad rubric scoring — a PAIR of characters on a relationship-compatibility rubric | [EN](./.claude/skills/evl-compatibility/GUIDE-EN.md) · [VI](./.claude/skills/evl-compatibility/GUIDE-VI.md) |
+| `evl:compare` | Cross-character ranking on the same rubric (reuses written scorecards) | [EN](./.claude/skills/evl-compare/GUIDE-EN.md) · [VI](./.claude/skills/evl-compare/GUIDE-VI.md) |
+| `evl:track` | Score-over-time tracker — verdict / coverage delta vs the prior scorecard | [EN](./.claude/skills/evl-track/GUIDE-EN.md) · [VI](./.claude/skills/evl-track/GUIDE-VI.md) |
+| `evl:validate` | Deterministic structural checker — rubric shape + scorecard cross-field invariants | [EN](./.claude/skills/evl-validate/GUIDE-EN.md) · [VI](./.claude/skills/evl-validate/GUIDE-VI.md) |
+| `evl:rubric-import` | Ingest an external framework (file / text / URL) → canonical rubric schema | [EN](./.claude/skills/evl-rubric-import/GUIDE-EN.md) · [VI](./.claude/skills/evl-rubric-import/GUIDE-VI.md) |
 
 ---
 
@@ -363,7 +396,7 @@ What the run covers (see [`e2e/RUN-LOG-six-framework-deterministic-pipeline.md`]
 
 ## Distribution / packaging
 
-The 6-framework toolkit is packaged **deterministically** (same source + manifest ⇒ byte-identical
+The 7-framework toolkit is packaged **deterministically** (same source + manifest ⇒ byte-identical
 `tar.gz`) and ships **only the toolkit, never the live character corpus**. A non-removable safety filter
 drops PII / secrets / runtime state *after* the manifest include-globs, so a misconfigured include can
 never leak clinical data.
@@ -396,9 +429,10 @@ Build + verify locally:
 All deterministic — no API key required. Also run in CI (`.github/workflows/`):
 
 ```bash
-.claude/skills/.venv/bin/python3 -m pytest tests/ -q            # full deterministic suite (~665 pass, ~170 skip without a roster)
+.claude/skills/.venv/bin/python3 -m pytest tests/ -q            # full deterministic suite (~885 pass, ~175 skip without a roster)
 .claude/skills/.venv/bin/python3 -m pytest tests/ -m bug_class  # closed-bug-class invariants
-.claude/skills/.venv/bin/python3 eval/run_evals.py              # golden deterministic-skill evals
+.claude/skills/.venv/bin/python3 tests/golden/run_evals.py        # golden deterministic-skill evals
+.claude/skills/.venv/bin/python3 tests/golden/run_skill_evals.py  # per-skill structural skill-evals
 .claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py       # synthetic-fixture pipeline run
 .claude/skills/.venv/bin/python3 .claude/scripts/validate-all-against-schemas.py  # 119 files vs schemas
 ```
@@ -473,8 +507,8 @@ phân giải động qua `paths.py`.
 [Luồng xử lý](#luồng-sự-kiện--xử-lý) ·
 [Use case](#trường-hợp-sử-dụng) ·
 [Bắt đầu nhanh](#bắt-đầu-nhanh) ·
-[Sáu framework](#sáu-framework) ·
-[Danh mục skill (58)](#danh-mục-skill--58) ·
+[Bảy framework](#bảy-framework) ·
+[Danh mục skill (68)](#danh-mục-skill--68) ·
 [Ví dụ & e2e](#ví-dụ--end-to-end) ·
 [Phân phối](#phân-phối--đóng-gói) ·
 [Kiểm thử](#kiểm-thử--cổng-gác) ·
@@ -486,12 +520,12 @@ phân giải động qua `paths.py`.
 2. **Phân tích** thành hồ sơ lâm sàng có cấu trúc — case formulation, cơ chế phòng vệ, gắn bó, sang chấn, sức mạnh, dòng thời gian, phát triển.
 3. **Tạo** nội dung nền tảng (Facebook, LinkedIn, blog…), kiểm soát theo bậc bằng chứng + bảo mật.
 
-Tất cả **theo sự kiện**: thêm tư liệu → làm mới hồ sơ → hiệu chỉnh nội dung. **59 skill** trên **6 framework**,
+Tất cả **theo sự kiện**: thêm tư liệu → làm mới hồ sơ → hiệu chỉnh nội dung. **68 skill** trên **7 framework**,
 gọi dạng `{framework}:{skill}` (vd `psy:crossref`).
 
 ## Kiến trúc
 
-Bốn framework miền + một bộ điều phối + một bộ công cụ chung, nối bằng event bus. Mỗi framework **sở hữu đúng
+Năm framework miền + một bộ điều phối + một bộ công cụ chung, nối bằng event bus. Mỗi framework **sở hữu đúng
 một vị trí dữ liệu** và giao tiếp qua sự kiện — không bao giờ ghi chéo miền ([Rule 12](./docs/rules/12-orc-orchestration.md)
 + `platform_lib/fs_guard.py` cưỡng chế).
 
@@ -504,6 +538,9 @@ flowchart LR
       PSY["PSY · Tâm lý<br/>docs/profiles + references + graph"]
       GRO["GRO · Phát triển<br/>docs/profiles/*/growth/"]
     end
+    subgraph EV["Đánh giá"]
+      EVL["EVL · Đánh giá<br/>docs/profiles/*/eval · docs/rubrics/"]
+    end
     subgraph OUT["Đầu ra"]
       CRE["CRE · Nội dung<br/>assets/"]
     end
@@ -514,10 +551,14 @@ flowchart LR
     GRO -->|"GRO.assessed"| PSY
     GRO --> CRE
     PSY -->|"PSY.refresh"| CRE
+    PSY -->|"PSY.refresh"| EVL
+    GRO -->|"GRO.assessed"| EVL
+    EVL -->|"EVL.scored"| CRE
     ORC -.->|định tuyến / kiểm toán / cascade| MAT
     ORC -.-> PSY
     ORC -.-> CRE
     ORC -.-> GRO
+    ORC -.-> EVL
     COM -.->|tiện ích| ORC
 ```
 
@@ -527,6 +568,7 @@ flowchart LR
 | **PSY** | Miền | `docs/profiles` · `references` · `graph` | Formulation lâm sàng 5P |
 | **CRE** | Miền | `assets/` | Tạo nội dung nền tảng |
 | **GRO** | Miền | `docs/profiles/*/growth/` | Tình báo sự nghiệp + năng lực |
+| **EVL** | Miền | `docs/profiles/*/eval/` · `docs/rubrics/` | Chấm điểm rubric có trích dẫn bằng chứng + phán quyết |
 | **ORC** | Điều phối | `.claude/` | Định tuyến sự kiện, ranh giới miền, bộ nhớ, đồ thị |
 | **COM** | Chung | `.claude/` | Git, health-check, rules, quan trắc |
 
@@ -553,7 +595,7 @@ flowchart TD
 
 ## Trường hợp sử dụng
 
-"Tôi muốn…" → skill (hoặc chuỗi) làm việc đó. Mỗi node deep-link tới `GUIDE-VI.md` trong [danh mục](#danh-mục-skill--58).
+"Tôi muốn…" → skill (hoặc chuỗi) làm việc đó. Mỗi node deep-link tới `GUIDE-VI.md` trong [danh mục](#danh-mục-skill--68).
 
 ```mermaid
 flowchart LR
@@ -577,7 +619,7 @@ flowchart LR
 flowchart TD
     S0["git clone + cd"] --> S1["bash .claude/scripts/install.sh<br/>dựng .venv (pyyaml · jsonschema · pytest)"]
     S1 --> S2["pytest tests/ -q -m 'not gemini'<br/>→ ~665 đạt, ~170 bỏ qua (phụ thuộc corpus + LLM thật)"]
-    S2 --> S3["eval/run_evals.py<br/>→ 4/4 golden"]
+    S2 --> S3["tests/golden/run_evals.py<br/>→ 4/4 golden"]
     S3 --> S4["e2e/run-full-pipeline.py<br/>→ 16/16 bước tất định"]
     S4 --> S5["gọi skill bất kỳ:<br/>{framework}:{skill}"]
 ```
@@ -595,28 +637,30 @@ bash .claude/scripts/install.sh
 Khi làm việc *qua Claude Code*, bạn không gọi script thủ công — bạn gọi skill theo tên
 (`psy:health-check`, `cre:post-writer`…) và skill tự điều phối script + suy luận LLM của nó.
 
-## Sáu framework
+## Bảy framework
 
 - **MAT — Tư liệu (4):** thu nhận + phân loại nguồn (bậc T1–T5, CRAAP); tư liệu phải *tích hợp* trước khi PSY phân tích. Quy tắc [04](./docs/rules/04-materials-ingestion.md) · [11](./docs/rules/11-mat-pipeline.md).
 - **PSY — Tâm lý (16):** dựng + làm mới formulation 5P, chẩn đoán, sang chấn, dòng thời gian, kiểm tra nhất quán 10 chiều. Không lộ thuật ngữ lâm sàng thô ra nội dung (Rule 02). Quy tắc [01](./docs/rules/01-profile-structure.md) · [02](./docs/rules/02-clinical-reference-usage.md) · [08](./docs/rules/08-cross-validation.md).
 - **CRE — Nội dung (10):** chuyển hồ sơ thành nội dung gốc nền tảng, kiểm soát theo bậc bằng chứng + bảo mật trước khi đăng. Quy tắc [03](./docs/rules/03-content-creation-pipeline.md) · [09](./docs/rules/09-confidentiality-protocol.md) · [14](./docs/rules/14-cre-evidence-and-events.md).
 - **GRO — Phát triển (8):** sự nghiệp, năng lực (Dreyfus), học tập (Kolb), cố vấn (Kram). Dự báo gắn nhãn `[FORECAST — NOT FACTUAL]`. Quy tắc [15](./docs/rules/15-gro-framework.md).
 - **ORC — Điều phối (17):** định tuyến sự kiện, giải cascade, kiểm toán nhất quán, sở hữu session/memory/đồ thị tri thức. Quy tắc [12](./docs/rules/12-orc-orchestration.md) · [13](./docs/rules/13-orc-workflow.md) · [16](./docs/rules/16-knowledge-graph.md).
-- **COM — Chung (4):** git, giám sát sức khỏe phiên, quản lý quy tắc, quan trắc skill/script.
+- **COM — Chung (5):** git, giám sát sức khỏe phiên, quản lý quy tắc, cắt bản release (vòng đời Keep a Changelog), quan trắc skill/script.
+- **EVL — Đánh giá (8):** chấm điểm nhân vật theo rubric có phiên bản (tâm trắc · quyết định/role-fit · rủi ro lâm sàng · tương hợp cặp) → scorecard có trích dẫn bằng chứng + phán quyết. Script chỉ gather + tổng hợp trọng số; LLM chấm từng tiêu chí. Mỗi tiêu chí trích bậc bằng chứng MAT (T1–T5); thiếu trích dẫn → `[UNVERIFIED]`, không bao giờ pass ngầm. Rubric rủi ro cao dùng ≥2 giám khảo độc lập → hội tụ. Là sink một chiều: `EVL.scored` có thể nuôi CRE, không chiều ngược lại. Quy tắc [17](./docs/rules/17-evl-framework.md).
 
-## Danh mục skill — 58
+## Danh mục skill — 68
 
-Bảng tra cứu đầy đủ + deep-link song ngữ nằm ở [phần tiếng Anh](#skill-catalog--59-skills) (ID skill, tên flag,
+Bảng tra cứu đầy đủ + deep-link song ngữ nằm ở [phần tiếng Anh](#skill-catalog--68-skills) (ID skill, tên flag,
 tên sự kiện giữ tiếng Anh theo quy ước). Mỗi dòng có link `GUIDE-EN` / `GUIDE-VI`. Tóm tắt theo framework:
 
 | Framework | Skill |
 | --- | --- |
 | **MAT** (4) | `loader` · `indexer` · `archive` · `rescore` |
 | **PSY** (16) | `wave` · `crossref` · `crisis-assess` · `health-check` · `timeline-sync` · `narrative-twist` · `hypothesis` · `arc-tracker` · `propagate` · `profile-lite` · `profile-compare` · `ref-audit` · `ref-scan` · `ref-create` · `ref-maintain` · `relation-intelligence` |
-| **CRE** (9) | `post-writer` · `multiplatform` · `repurpose` · `angle-discovery` · `exploring` · `prompt-leverage` · `evidence-scanner` · `privacy-guard` · `voice-audit` |
+| **CRE** (10) | `post-writer` · `multiplatform` · `repurpose` · `angle-discovery` · `exploring` · `prompt-leverage` · `evidence-scanner` · `humanize` · `privacy-guard` · `voice-audit` |
 | **GRO** (8) | `career-path` · `competency-map` · `learning-profile` · `mentoring-track` · `career-forecast` · `milestone-tracker` · `compare` · `validate` |
 | **ORC** (17) | `bootstrap` · `intake` · `classify` · `session-state` · `event-log` · `domain-router` · `cascade` · `audit` · `graph` · `council` · `santa` · `decisions` · `agent-memory` · `compounding` · `dream` · `observe` · `skill-stocktake` |
-| **COM** (4) | `git` · `health-check` · `rules` · `skill-analytics` |
+| **COM** (5) | `git` · `health-check` · `rules` · `skill-analytics` · `release` |
+| **EVL** (8) | `score` · `standardize` · `fit` · `compatibility` · `compare` · `track` · `validate` · `rubric-import` |
 
 ## Ví dụ & end-to-end
 
@@ -634,7 +678,7 @@ Không có key thì bỏ qua — đúng thiết kế, không phải lỗi.
 
 ## Phân phối / đóng gói
 
-Bộ toolkit 6 framework được đóng gói **tất định** (cùng nguồn + manifest ⇒ `tar.gz` giống hệt từng byte) và
+Bộ toolkit 7 framework được đóng gói **tất định** (cùng nguồn + manifest ⇒ `tar.gz` giống hệt từng byte) và
 **chỉ ship toolkit, không bao giờ ship corpus nhân vật thật**. Một safety filter không-thể-gỡ loại bỏ
 PII/secret/runtime *sau* các include-glob, nên include cấu hình sai cũng không thể rò rỉ dữ liệu lâm sàng.
 
@@ -651,9 +695,10 @@ PII/secret/runtime *sau* các include-glob, nên include cấu hình sai cũng k
 Tất cả tất định — không cần API key. Cũng chạy trên CI (`.github/workflows/`):
 
 ```bash
-.claude/skills/.venv/bin/python3 -m pytest tests/ -q            # toàn bộ tất định (~665 đạt, ~170 bỏ qua khi không có roster)
+.claude/skills/.venv/bin/python3 -m pytest tests/ -q            # toàn bộ tất định (~885 đạt, ~175 bỏ qua khi không có roster)
 .claude/skills/.venv/bin/python3 -m pytest tests/ -m bug_class  # bất biến chống tái phát lớp lỗi
-.claude/skills/.venv/bin/python3 eval/run_evals.py              # golden cho skill tất định
+.claude/skills/.venv/bin/python3 tests/golden/run_evals.py        # golden cho skill tất định
+.claude/skills/.venv/bin/python3 tests/golden/run_skill_evals.py  # skill-eval cấu trúc từng skill
 .claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py       # chạy pipeline trên fixture giả lập
 ```
 
