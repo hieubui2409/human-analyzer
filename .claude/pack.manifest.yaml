@@ -68,3 +68,7 @@ include:
   - pyproject.toml
   - .github/workflows/frameworks-ci.yml
   - .github/workflows/cross-framework-bug-class.yml
+  # Tag-triggered reproducible-pack release. Projected so the public mirror auto-builds + publishes its
+  # own Release on a frameworks-v* tag (same build/scan/determinism gates), instead of being released by
+  # hand. Each repo builds from its own content, so the SHA256 a consumer rebuilds matches that repo's asset.
+  - .github/workflows/frameworks-pack-release.yml

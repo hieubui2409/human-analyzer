@@ -1,0 +1,76 @@
+name: frameworks pack release
+
+# Tag-triggered, CI-ONLY build. NEVER build + upload by hand — a manual build's mtime/uid would differ from
+# CI's reproducible build, breaking the SHA256 a recipient verifies. Tag form: frameworks-vX.Y.Z (must match
+# the version in .claude/pack.manifest.yaml).
+
+on:
+  push:
+    tags:
+      - 'frameworks-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # create the release + upload the asset
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install pinned deps
+        run: python -m pip install --quiet "pyyaml>=6.0,<7"
+
+      - name: Assert tag matches manifest version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          MANIFEST_VER=$(python -c "import yaml; print(yaml.safe_load(open('.claude/pack.manifest.yaml'))['version'])")
+          TAG_VER="${GITHUB_REF_NAME#frameworks-v}"
+          echo "manifest=$MANIFEST_VER tag=$TAG_VER"
+          test "$MANIFEST_VER" = "$TAG_VER"
+
+      - name: Determinism gate (build twice, must be byte-identical)
+        run: python .claude/skills/_framework-shared/scripts/build_pack.py --verify --source-date-epoch 0
+
+      - name: PII / secret gate (fail closed over the built pack)
+        run: python .claude/skills/_framework-shared/scripts/scan_pack_pii.py --source-date-epoch 0
+
+      - name: Build reproducible pack
+        run: python .claude/skills/_framework-shared/scripts/build_pack.py --source-date-epoch 0
+
+      - name: Record SHA256
+        run: |
+          cd dist
+          sha256sum *.tar.gz | tee SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Build the GitHub Release body from CHANGELOG.md
+        id: body
+        run: |
+          if [ "${GITHUB_REF_NAME:-}" != "${GITHUB_REF_NAME#frameworks-v}" ]; then
+            VER="${GITHUB_REF_NAME#frameworks-v}"
+          else
+            VER=$(python -c "import yaml; print(yaml.safe_load(open('.claude/pack.manifest.yaml'))['version'])")
+          fi
+          python .claude/skills/_framework-shared/scripts/release.py --extract "$VER" > dist/RELEASE-BODY.md
+          cat dist/RELEASE-BODY.md
+          # Pre-release iff the SEMVER (after the frameworks-v prefix) carries a pre-release suffix,
+          # e.g. 1.0.0-rc.1. Checking the whole tag would always match the '-' in the prefix itself.
+          case "$VER" in
+            *-*) echo "is_prerelease=true"  >> "$GITHUB_OUTPUT" ;;
+            *)   echo "is_prerelease=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/SHA256SUMS
+          body_path: dist/RELEASE-BODY.md
+          prerelease: ${{ steps.body.outputs.is_prerelease }}
