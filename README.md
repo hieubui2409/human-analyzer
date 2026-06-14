@@ -371,21 +371,22 @@ this count stays in sync).
 
 A fully **synthetic 2-character corpus** (no real PII) lives under [`e2e/synthetic-project/`](./e2e/synthetic-project/)
 — it doubles as a worked example, the eval fixture, and the regression harness. The harness exercises the
-**deterministic leg** of all 6 frameworks plus the shared `platform_lib` cache/preferences CLIs:
+**deterministic leg** of all 7 frameworks plus the shared `platform_lib` cache/preferences CLIs:
 
 ```bash
-.claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py            # run (16 steps)
+.claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py            # run (19 steps)
 .claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py --write-log # + refresh RUN-LOG
 ```
 
-What the run covers (see [`e2e/RUN-LOG-six-framework-deterministic-pipeline.md`](./e2e/RUN-LOG-six-framework-deterministic-pipeline.md)):
+What the run covers (see [`e2e/RUN-LOG-seven-framework-deterministic-pipeline.md`](./e2e/RUN-LOG-seven-framework-deterministic-pipeline.md)):
 
 | Leg | Steps exercised |
 | --- | --- |
 | **PSY** | health-check completeness · crossref (timeline / bidirectional refs / event extraction) · timeline-sync |
 | **GRO** | validate growth · competency gather |
 | **MAT** | indexer (coverage gaps / stale) · loader (inventory / dup detection) |
-| **CRE** | privacy-guard (asset scan / confidential names) |
+| **CRE** | humanize (ai-tell scan) · privacy-guard (asset scan / confidential names) |
+| **EVL** | validate (all rubrics · scorecard invariants) |
 | **LIB** | verdict_cache (crisis = never-cached · store→hit) · preferences (read knobs) |
 
 > The **LLM-judgment legs** (crossref's 6 heuristic dimensions, voice-audit, council, …) require a
@@ -620,7 +621,7 @@ flowchart TD
     S0["git clone + cd"] --> S1["bash .claude/scripts/install.sh<br/>dựng .venv (pyyaml · jsonschema · pytest)"]
     S1 --> S2["pytest tests/ -q -m 'not gemini'<br/>→ ~665 đạt, ~170 bỏ qua (phụ thuộc corpus + LLM thật)"]
     S2 --> S3["tests/golden/run_evals.py<br/>→ 4/4 golden"]
-    S3 --> S4["e2e/run-full-pipeline.py<br/>→ 16/16 bước tất định"]
+    S3 --> S4["e2e/run-full-pipeline.py<br/>→ 19/19 bước tất định"]
     S4 --> S5["gọi skill bất kỳ:<br/>{framework}:{skill}"]
 ```
 
@@ -665,10 +666,10 @@ tên sự kiện giữ tiếng Anh theo quy ước). Mỗi dòng có link `GUIDE
 ## Ví dụ & end-to-end
 
 Một **corpus 2 nhân vật giả lập hoàn toàn** (không PII thật) nằm dưới [`e2e/synthetic-project/`](./e2e/synthetic-project/)
-— vừa là ví dụ mẫu, vừa là fixture eval, vừa là bộ regression. Bộ harness chạy **nhánh tất định** của cả 6 framework:
+— vừa là ví dụ mẫu, vừa là fixture eval, vừa là bộ regression. Bộ harness chạy **nhánh tất định** của cả 7 framework:
 
 ```bash
-.claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py            # chạy (16 bước)
+.claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py            # chạy (19 bước)
 .claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py --write-log # + cập nhật RUN-LOG
 ```
 
