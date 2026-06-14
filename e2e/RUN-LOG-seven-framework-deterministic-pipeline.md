@@ -1,8 +1,8 @@
-# E2E run log — 6 frameworks on the synthetic fixture
+# E2E run log — 7 frameworks on the synthetic fixture
 
-Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no real PII). Deterministic legs only (no API key). Generated: 2026-06-05T00:00:00Z.
+Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no real PII). Deterministic legs only (no API key). Generated: 2026-06-14T00:00:00Z.
 
-**17/17 steps exit 0.**
+**19/19 steps exit 0.**
 
 | Framework | Feature | Status | Output head |
 |---|---|---|---|
@@ -17,9 +17,11 @@ Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no
 | MAT | indexer · stale materials | OK | ====================================================================== |
 | MAT | loader · inventory | OK | ====================================================================== |
 | MAT | loader · dup detection | OK | ## Duplicate Material Detection |
-| CRE | humanize · scan ai-tells | FINDINGS | Scan: /home/user/human-analyzer/eval/fixtures/ai-slop-sample-vi.md  (strictness=balanced, files=1) |
+| CRE | humanize · scan ai-tells | FINDINGS | Scan: ./tests/golden/fixtures/ai-slop-sample-vi.md  (strictness=balanced, files=1) |
 | CRE | privacy-guard · scan assets | OK | | Severity | File | Line | Violation | Context | |
 | CRE | privacy-guard · confidential names | OK | ## Confidential Names Extracted from Profiles |
+| EVL | validate · all rubrics | OK | [PASS] psychometric-big-five |
+| EVL | validate · scorecard invariants | OK | Scorecard : ./e2e/synthetic-project/docs/profiles/test-alpha/eval/psychometric-big-five.json |
 | LIB | verdict_cache · crisis is never-cached | OK | {"hit": false, "verdict": null, "never_cached": true} |
 | LIB | verdict_cache · store+hit a verdict | OK | {"stored": true, "check": "evidential_backing", "ids": ["n1"]} |
 | LIB | preferences · read knobs | OK | { |
@@ -62,29 +64,17 @@ Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no
     "type": "BEFORE_DOB",
     "file": "timeline/overview.md",
     "line": 17,
-    "detail": "Date 2000 is before DOB 2026-01-01 (01-15: Born in Hà Nội)"
+    "detail": "Date 2000 is before DOB 2000-01-15 (01-15: Born in Hà Nội)"
   },
   {
-    "slug": "test-alpha",
-    "character": "test-alpha",
+    "slug": "test-beta",
+    "character": "test-beta",
     "type": "BEFORE_DOB",
     "file": "timeline/overview.md",
-    "line": 18,
-    "detail": "Date 09/2018 is before DOB 2026-01-01 (University enrollment at HUST)"
-  },
-  {
-    "slug": "test-alpha",
-    "character": "test-alpha",
-    "type": "BEFORE_DOB",
-    "file": "timeline/overview.md",
-    "line": 19,
-    "detail": "Date 06/2022 is before DOB 2026-01-01 (Graduation — first in family to complete university)"
-  },
-  {
-    "slug": "test-alpha",
-    "character": "test-alpha",
-    "type": "BEFORE_DOB",
-    "file"
+    "line": 17,
+    "detail": "Date 2005 is before DOB 2005-06-20 (06-20: Born in Province X)"
+  }
+]
 ```
 
 ### [PSY] crossref · bidirectional refs
@@ -214,8 +204,8 @@ Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no
 ======================================================================
   File                                     Status         Updated      Days 
   ---------------------------------------- -------------- ------------ -----
-  transcript-t1-raw.md                     raw            2025-01-15   506  
-  conversation-t3-contradict.md            extracted      2025-03-10   452  
+  transcript-t1-raw.md                     raw            2025-01-15   515  
+  conversation-t3-contradict.md            extracted      2025-03-10   461  
 
   TOTAL: 2 stale materials
 ```
@@ -240,7 +230,7 @@ Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no
 ```
 ## Duplicate Material Detection
 
-Scanned: /home/user/human-analyzer/e2e/synthetic-project/docs/materials
+Scanned: ./e2e/synthetic-project/docs/materials
 Filtered to: test-alpha
 
 No duplicate pairs found.
@@ -249,10 +239,10 @@ No duplicate pairs found.
 ### [CRE] humanize · scan ai-tells
 `FINDINGS`
 ```
-Scan: /home/user/human-analyzer/eval/fixtures/ai-slop-sample-vi.md  (strictness=balanced, files=1)
+Scan: ./tests/golden/fixtures/ai-slop-sample-vi.md  (strictness=balanced, files=1)
   Findings: 15
 
-  • /home/user/human-analyzer/eval/fixtures/ai-slop-sample-vi.md  (15)
+  • ./tests/golden/fixtures/ai-slop-sample-vi.md  (15)
       [high  ] formulaic_opener   @0     Trong thế giới ngày nay
       [high  ] filler_phrase      @25    không thể phủ nhận rằng
       [high  ] filler_phrase      @59    đáng chú ý là
@@ -263,7 +253,8 @@ Scan: /home/user/human-analyzer/eval/fixtures/ai-slop-sample-vi.md  (strictness=
       [medium] filler_phrase      @152   nhằm mục đích
       [low   ] filler_phrase      @194   mạnh mẽ
       [low   ] filler_phrase      @205   toàn diện
-      [medium] filler_phrase      @216   Nó đóng vai trò
+      [medium] filler_phrase      @216   Nó đóng vai trò như
+      [low   ] hedging_dens
 ```
 
 ### [CRE] privacy-guard · scan assets
@@ -287,6 +278,35 @@ These names MUST NOT appear unredacted in assets/:
 
 
 **No [CONFIDENTIAL: name] tags found.** Either profiles are clean or tags not yet applied.
+```
+
+### [EVL] validate · all rubrics
+`OK`
+```
+[PASS] psychometric-big-five
+
+PASS — 1 rubric(s) valid
+```
+
+### [EVL] validate · scorecard invariants
+`OK`
+```
+Scorecard : ./e2e/synthetic-project/docs/profiles/test-alpha/eval/psychometric-big-five.json
+Rubric    : psychometric-big-five
+
+Check                               Status    Detail
+----------------------------------------------------
+rubric_schema_valid                 PASS      
+criteria_mapped                     PASS      
+every_criterion_cited               PASS      
+weight_sum_unity                    PASS      
+aggregate_math_correct              PASS      
+score_in_bounds                     PASS      
+verdict_thresholds_cover_range      SKIP      scalar verdict has no bands
+verdict_matches_band                SKIP      scalar verdict has no band
+red_flags_assessed                  SKIP      no red_flags declared
+
+PASS — PASS
 ```
 
 ### [LIB] verdict_cache · crisis is never-cached

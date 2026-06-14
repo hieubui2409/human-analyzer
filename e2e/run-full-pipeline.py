@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""End-to-end harness — exercise the 6 frameworks against the synthetic fixture, record a RUN-LOG.
+"""End-to-end harness — exercise the 7 frameworks against the synthetic fixture, record a RUN-LOG.
 
 Runs the DETERMINISTIC leg of each framework (the script halves — gather/scan/validate) against
 e2e/synthetic-project/ (a fully synthetic two-character corpus, no real PII). The LLM-judgment legs are
@@ -40,6 +40,8 @@ STEPS = [
     ("CRE", "humanize · scan ai-tells", [f"{SKILLS}/cre-humanize/scripts/scan-content-for-ai-tells.py", "--path", str(REPO / "tests" / "golden" / "fixtures" / "ai-slop-sample-vi.md"), "--strictness", "balanced"]),
     ("CRE", "privacy-guard · scan assets", [f"{SKILLS}/cre-privacy-guard/scripts/scan-assets-for-privacy-violations.py"]),
     ("CRE", "privacy-guard · confidential names", [f"{SKILLS}/cre-privacy-guard/scripts/extract-confidential-names-from-all-profiles.py"]),
+    ("EVL", "validate · all rubrics", [f"{SKILLS}/evl-validate/scripts/run_validate.py", "--all"]),
+    ("EVL", "validate · scorecard invariants", [f"{SKILLS}/evl-validate/scripts/run_validate.py", "--scorecard", str(FIXTURE / "docs" / "profiles" / "test-alpha" / "eval" / "psychometric-big-five.json"), "--rubric", "psychometric-big-five"]),
     ("LIB", "verdict_cache · crisis is never-cached", ["-m:platform_lib.verdict_cache", "--check", "crisis_assess", "--ids", "n1", "--bodies-file", str(FIXTURE / "_bodies.json")]),
     ("LIB", "verdict_cache · store+hit a verdict", ["-m:platform_lib.verdict_cache", "--check", "evidential_backing", "--ids", "n1", "--bodies-file", str(FIXTURE / "_bodies.json"), "--store", '{"label":"consistent","score":3}']),
     ("LIB", "preferences · read knobs", ["-m:platform_lib.preferences", "--json"]),
@@ -60,7 +62,10 @@ def run_step(label, argv):
         cmd = [PY] + argv
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=90, env=env)
-        out = (r.stdout or r.stderr or "").strip().splitlines()
+        # Scrub the builder's absolute repo path so the RUN-LOG stays machine-independent
+        # (reproducible doc + no local-path token leaking into the shipped artifact).
+        combined = (r.stdout + r.stderr).replace(str(REPO), ".")
+        out = combined.strip().splitlines()
         head = out[0][:120] if out else ""
         if r.returncode == 0:
             status = "OK"
@@ -68,7 +73,7 @@ def run_step(label, argv):
             status = "FINDINGS"
         else:
             status = f"EXIT {r.returncode}"
-        return status, head, (r.stdout + r.stderr)
+        return status, head, combined
     except Exception as e:  # noqa: BLE001
         return "ERROR", str(e)[:120], str(e)
 
@@ -93,7 +98,7 @@ def main():
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT00:00:00Z")  # canonical
     table = "\n".join(f"| {fw} | {label} | {status} | {head} |" for fw, label, status, head in rows)
     log = (
-        f"# E2E run log — 6 frameworks on the synthetic fixture\n\n"
+        f"# E2E run log — 7 frameworks on the synthetic fixture\n\n"
         f"Fixture: `e2e/synthetic-project/` (synthetic chars: test-alpha, test-beta — no real PII). "
         f"Deterministic legs only (no API key). Generated: {ts}.\n\n"
         f"**{ok}/{len(STEPS)} steps exit 0.**\n\n"
@@ -101,7 +106,7 @@ def main():
         f"---\n\n## Raw output\n\n" + "\n\n".join(raw) + "\n"
     )
     if args.write_log:
-        (REPO / "e2e" / "RUN-LOG-six-framework-deterministic-pipeline.md").write_text(log, encoding="utf-8")
+        (REPO / "e2e" / "RUN-LOG-seven-framework-deterministic-pipeline.md").write_text(log, encoding="utf-8")
         print(f"\nwrote RUN-LOG ({ok}/{len(STEPS)} OK)")
     return 0 if ok == len(STEPS) else 1
 
