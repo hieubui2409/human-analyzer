@@ -1,0 +1,258 @@
+<!-- ===================== EVL ===================== -->
+<section id="evl">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--evl)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <rect x="6" y="5" width="22" height="28" rx="3" stroke="var(--evl)" stroke-width="2"/>
+          <path d="M11 14h12M11 19h12M11 24h8" stroke="var(--evl)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="30" cy="29" r="7" fill="var(--bg)" stroke="var(--evl)" stroke-width="2"/>
+          <path d="m27 29 2 2 4-4" stroke="var(--evl)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who"><span class="en">Score a character against versioned rubrics → an evidence-cited scorecard + verdict</span><span class="vi">Chấm điểm nhân vật theo rubric có phiên bản → scorecard có trích dẫn + phán quyết</span></div>
+        <h2>EVL · Evaluation</h2>
+      </div>
+      <div class="ver">8 skills · Rule 17</div>
+    </div>
+    <div class="divider" style="--ac:var(--evl)"></div>
+
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en">EVL is a generic, versioned, evidence-cited rubric scoring engine. It consumes a character's existing profile (MAT materials + PSY clinical profile + GRO growth data — <b>never CRE</b>) and scores the character against pluggable rubrics, emitting a standardized scorecard + verdict. Two layers ride the same engine: decision and fit rubrics (casting, role-fit, suitability) and standardized psychometric and clinical batteries (Big Five, Dark Triad, attachment, DSM-5/ICD-11 severity). EVL is a <b>forward-only sink</b> — it feeds CRE and never back-edges to PSY or GRO.</span>
+      <span class="vi">EVL là một engine chấm điểm rubric tổng quát, có phiên bản, có trích dẫn bằng chứng. Nó tiêu thụ hồ sơ nhân vật hiện có (tư liệu MAT + hồ sơ lâm sàng PSY + dữ liệu phát triển GRO — <b>không bao giờ CRE</b>) và chấm điểm nhân vật theo các rubric có thể cắm vào, phát ra một scorecard chuẩn hóa + phán quyết. Hai tầng chạy trên cùng một engine: rubric quyết định và phù hợp (diễn xuất, phù hợp vai, phù hợp) và các bộ đo tâm lý và lâm sàng chuẩn hóa (Big Five, Dark Triad, gắn bó, mức độ nghiêm trọng DSM-5/ICD-11). EVL là một <b>sink chỉ đi về phía trước</b> — nó nuôi CRE và không bao giờ có cạnh quay lại PSY hoặc GRO.</span>
+    </p>
+
+    <!-- THE 4 RUBRIC TYPES -->
+    <h2 class="sectitle" id="evl-rubrics"><span class="en">The 4 rubric types</span><span class="vi">4 loại rubric</span></h2>
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en">All four kinds are validated by the same JSON Schema Draft-7 engine (<code>.claude/schemas/evl-rubric.schema.json</code>) and versioned independently. External frameworks can be imported as canonical drafts under <code>docs/rubrics/imported/</code> via <code>evl:rubric-import</code>, then human-reviewed before scoring use.</span>
+      <span class="vi">Cả bốn loại đều được xác nhận bởi cùng một engine JSON Schema Draft-7 (<code>.claude/schemas/evl-rubric.schema.json</code>) và có phiên bản độc lập. Các framework bên ngoài có thể được nhập dưới dạng bản nháp chính tắc vào <code>docs/rubrics/imported/</code> qua <code>evl:rubric-import</code>, sau đó được người xem xét trước khi dùng để chấm điểm.</span>
+    </p>
+
+    <div class="lenses">
+      <div class="lens" style="--lc:var(--evl)">
+        <svg class="lic" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="13" stroke="var(--evl)" stroke-width="2"/><path d="M14 20l4 4 8-8" stroke="var(--evl)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h4><span class="en">Psychometric</span><span class="vi">Tâm lý đo lường</span></h4>
+        <div class="fw"><span class="en">Big Five personality + Dark Triad (SD3) + Attachment (ECR-R). z-score normalised. Preset via <code>evl:standardize</code>.</span><span class="vi">Big Five nhân cách + Dark Triad (SD3) + Gắn bó (ECR-R). Chuẩn hóa z-score. Preset qua <code>evl:standardize</code>.</span></div>
+      </div>
+      <div class="lens" style="--lc:var(--evl)">
+        <svg class="lic" viewBox="0 0 40 40" fill="none"><rect x="8" y="8" width="24" height="24" rx="4" stroke="var(--evl)" stroke-width="2"/><path d="M14 20h12M20 14v12" stroke="var(--evl)" stroke-width="2" stroke-linecap="round"/></svg>
+        <h4><span class="en">Decision / role-fit</span><span class="vi">Quyết định / phù hợp vai</span></h4>
+        <div class="fw"><span class="en"><code>target_profile</code> + <code>red_flags</code>. Verdict: CAST / CONDITIONAL / NO. A single red-flag veto overrides the numeric score. Run via <code>evl:fit</code>.</span><span class="vi"><code>target_profile</code> + <code>red_flags</code>. Phán quyết: CAST / CONDITIONAL / NO. Một veto red-flag duy nhất ghi đè điểm số. Chạy qua <code>evl:fit</code>.</span></div>
+      </div>
+      <div class="lens" style="--lc:var(--crit)">
+        <svg class="lic" viewBox="0 0 40 40" fill="none"><path d="M20 8l3 9h9l-7 5 3 9-8-6-8 6 3-9-7-5h9z" stroke="var(--crit)" stroke-width="2" stroke-linejoin="round"/></svg>
+        <h4><span class="en">Clinical-risk</span><span class="vi">Rủi ro lâm sàng</span></h4>
+        <div class="fw"><span class="en">High-stakes: <code>min_judges: 2</code>, tri-state verdict, <code>cache: never</code>. A stale risk scorecard is never reused. <code>DIVERGED</code> → mandatory manual review.</span><span class="vi">Độ rủi ro cao: <code>min_judges: 2</code>, phán quyết ba trạng thái, <code>cache: never</code>. Scorecard rủi ro cũ không bao giờ tái dùng. <code>DIVERGED</code> → xem xét thủ công bắt buộc.</span></div>
+      </div>
+      <div class="lens" style="--lc:var(--gro)">
+        <svg class="lic" viewBox="0 0 40 40" fill="none"><circle cx="13" cy="20" r="5" stroke="var(--gro)" stroke-width="2"/><circle cx="27" cy="20" r="5" stroke="var(--gro)" stroke-width="2"/><path d="M18 20h4" stroke="var(--gro)" stroke-width="2" stroke-linecap="round"/></svg>
+        <h4><span class="en">Dyad</span><span class="vi">Cặp đôi</span></h4>
+        <div class="fw"><span class="en"><code>subject: dyad</code>. Gottman Four Horsemen + repair + 5:1 ratio + attachment pairing. Evidence pooled from both characters. Run via <code>evl:compatibility</code>.</span><span class="vi"><code>subject: dyad</code>. Gottman Four Horsemen + sửa chữa + tỉ lệ 5:1 + cặp gắn bó. Bằng chứng gộp từ cả hai nhân vật. Chạy qua <code>evl:compatibility</code>.</span></div>
+      </div>
+    </div>
+
+    <!-- GATHER → JUDGE → AGGREGATE -->
+    <h2 class="sectitle" id="evl-flow" style="margin-top:48px"><span class="en">The gather → judge → aggregate flow</span><span class="vi">Luồng gather → judge → aggregate</span></h2>
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en"><b>Design law (non-negotiable):</b> scripts do deterministic gathering and weighted aggregation only; the LLM does per-criterion judgment. Reasoning is never delegated to a script — and a script's gather output is never treated as a verdict.</span>
+      <span class="vi"><b>Quy luật thiết kế (không thể thương lượng):</b> script chỉ thực hiện gom bằng chứng tất định và tổng hợp có trọng số; LLM thực hiện phán xử từng tiêu chí. Lý luận không bao giờ được ủy quyền cho script — và kết quả gom của script không bao giờ được coi là phán quyết.</span>
+    </p>
+
+    <div class="card" style="--ac:var(--evl);margin-top:14px">
+      <div class="flowline" style="--ac:var(--evl)">
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M6 8h20M6 14h14M6 20h18M6 26h10" stroke="var(--evl)" stroke-width="2" stroke-linecap="round"/></svg>
+          <div class="fn"><span class="en">gather</span><span class="vi">gom</span></div>
+          <div class="fd"><span class="en">scripts collect evidence per criterion from profile + materials</span><span class="vi">script gom bằng chứng từng tiêu chí từ hồ sơ + tư liệu</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--evl)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M16 4c-6 5-9 7-9 13a9 9 0 0 0 18 0c0-6-3-8-9-13Z" stroke="var(--evl)" stroke-width="2" stroke-linejoin="round"/></svg>
+          <div class="fn"><span class="en">judge</span><span class="vi">phán xử</span></div>
+          <div class="fd"><span class="en">LLM scores each criterion, cites a MAT tier (T1–T5), writes rationale</span><span class="vi">LLM chấm từng tiêu chí, trích bậc MAT (T1–T5), viết lý do</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--evl)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="11" stroke="var(--evl)" stroke-width="2"/><path d="m11 16 3.5 3.5L22 12" stroke="var(--evl)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="fn"><span class="en">aggregate</span><span class="vi">tổng hợp</span></div>
+          <div class="fd"><span class="en">scripts roll up weighted scores → overall + coverage%; [UNVERIFIED] excluded &amp; counted</span><span class="vi">script tổng hợp điểm có trọng số → tổng thể + coverage%; [UNVERIFIED] bị loại &amp; được đếm</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--evl)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M8 6h16v20H8z" stroke="var(--evl)" stroke-width="2"/><path d="m11 17 3 3 5-6" stroke="var(--evl)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="fn"><span class="en">scorecard</span><span class="vi">scorecard</span></div>
+          <div class="fd"><span class="en">{rubric-id}.json (machine) + .md (human); history snapshot; emits EVL.scored</span><span class="vi">{rubric-id}.json (máy) + .md (người); snapshot lịch sử; phát EVL.scored</span></div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.85rem;margin-top:16px">
+        <span class="en">Each scoring run writes to <code>docs/profiles/{char}/eval/{rubric-id}.json</code> (authoritative) and <code>.md</code> (derived). Prior runs snapshot to <code>eval/history/</code> — <code>evl:track</code> diffs them. The JSON carries the full frontmatter: character, rubric, rubric_version, verdict, overall, coverage, confidence, cache policy, last_updated.</span>
+        <span class="vi">Mỗi lần chạy chấm điểm ghi vào <code>docs/profiles/{char}/eval/{rubric-id}.json</code> (có thẩm quyền) và <code>.md</code> (dẫn xuất). Các lần chạy trước snapshot vào <code>eval/history/</code> — <code>evl:track</code> so sánh chúng. JSON mang đầy đủ frontmatter: character, rubric, rubric_version, verdict, overall, coverage, confidence, chính sách cache, last_updated.</span>
+      </p>
+    </div>
+
+    <!-- EVIDENCE CITATION REQUIREMENT -->
+    <h2 class="sectitle" id="evl-evidence" style="margin-top:48px"><span class="en">Every criterion cites a MAT tier — uncited = [UNVERIFIED]</span><span class="vi">Mọi tiêu chí trích bậc MAT — không trích = [UNVERIFIED]</span></h2>
+    <p class="lead" style="margin-bottom:16px">
+      <span class="en">This is not advisory — it is the honesty contract of the entire engine. An uncited score is excluded from the roll-up, counted in the coverage metric, and flagged loudly. Coverage percentage headlines every scorecard so the reader immediately knows how much of the verdict rests on verified evidence.</span>
+      <span class="vi">Đây không phải là tư vấn — đây là hợp đồng trung thực của toàn bộ engine. Điểm không trích nguồn bị loại khỏi tổng hợp, được đếm trong số liệu coverage, và được cờ rõ ràng. Phần trăm coverage được đặt ở đầu mỗi scorecard để người đọc biết ngay bao nhiêu phán quyết dựa trên bằng chứng đã xác minh.</span>
+    </p>
+
+    <div class="cards grid-2" style="margin-top:12px">
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><span class="en">Evidence tier → EVL usage</span><span class="vi">Bậc bằng chứng → cách EVL dùng</span></h3>
+        <table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:10px">
+          <thead><tr style="color:var(--txt-faint);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase"><th style="text-align:left;padding:4px 0">Tier</th><th style="text-align:left;padding:4px 8px"><span class="en">EVL Usage</span><span class="vi">Cách EVL dùng</span></th></tr></thead>
+          <tbody style="color:var(--txt-dim)">
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--evl);font-weight:700">T1</td><td style="padding:5px 8px"><span class="en">Direct first-person material grounding the score</span><span class="vi">Tư liệu người thứ nhất trực tiếp làm nền điểm</span></td></tr>
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--evl);font-weight:700">T2</td><td style="padding:5px 8px"><span class="en">Corroborated assessment / clinical observation</span><span class="vi">Đánh giá được corroborate / quan sát lâm sàng</span></td></tr>
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--evl);font-weight:700">T3</td><td style="padding:5px 8px"><span class="en">Single-source or social-signal grounding</span><span class="vi">Nền đơn nguồn hoặc tín hiệu xã hội</span></td></tr>
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--evl);font-weight:700">T4</td><td style="padding:5px 8px"><span class="en">Third-party / reported grounding</span><span class="vi">Nền bên thứ ba / được báo cáo</span></td></tr>
+            <tr><td style="padding:5px 0;font-family:var(--txt-faint);font-weight:700">T5</td><td style="padding:5px 8px"><span class="en">Inference/metadata — typically below a rubric's <code>min_tier</code></span><span class="vi">Suy luận/metadata — thường dưới <code>min_tier</code> của rubric</span></td></tr>
+          </tbody>
+        </table>
+        <div class="gate" style="margin-top:12px">
+          <b><span class="en">Below min_tier:</span><span class="vi">Dưới min_tier:</span></b>
+          <span class="en"> criterion is excluded as <code>below_min_tier</code> — loud, counted, never a silent pass. Different from <code>[UNVERIFIED]</code> (which means no citation at all).</span>
+          <span class="vi"> tiêu chí bị loại là <code>below_min_tier</code> — rõ ràng, được đếm, không bao giờ pass im lặng. Khác với <code>[UNVERIFIED]</code> (có nghĩa là không trích nguồn nào cả).</span>
+        </div>
+      </div>
+
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><span class="en">High-stakes: ≥2 input-isolated judges</span><span class="vi">Độ rủi ro cao: ≥2 thẩm phán cô lập đầu vào</span></h3>
+        <p><span class="en">Clinical-risk and role-fit rubrics run <code>min_judges: 2</code> — two subagent instances each receive the same evidence without seeing the other's scoring. Convergence → verdict accepted. Disagreement → scorecard records <code>DIVERGED</code> and sets <code>manual_review_required: true</code>. Auto-averaging a disagreement is never allowed.</span><span class="vi">Rubric rủi ro lâm sàng và phù hợp vai chạy <code>min_judges: 2</code> — hai instance subagent mỗi cái nhận cùng bằng chứng mà không thấy chấm điểm của cái kia. Hội tụ → phán quyết được chấp nhận. Bất đồng → scorecard ghi <code>DIVERGED</code> và đặt <code>manual_review_required: true</code>. Tự động lấy trung bình bất đồng không bao giờ được phép.</span></p>
+        <div class="chips" style="margin-top:10px">
+          <span class="chip"><span class="en">CAST</span><span class="vi">CAST</span></span>
+          <span class="chip"><span class="en">CONDITIONAL</span><span class="vi">CONDITIONAL</span></span>
+          <span class="chip"><span class="en">NO</span><span class="vi">NO</span></span>
+          <span class="chip" style="color:var(--crit)">DIVERGED</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE SCORECARD TOKEN -->
+    <h2 class="sectitle" id="evl-scorecard" style="margin-top:48px"><span class="en">Live scorecard validation</span><span class="vi">Xác nhận scorecard thực tiễn</span></h2>
+    <p class="lead" style="margin-bottom:16px">
+      <span class="en">The token below renders a real rubric validation output from <code>evl:validate</code> — structural check on rubric shape + invariants, or a finished scorecard against its rubric. A malformed rubric or tampered scorecard fails here and cannot be scored.</span>
+      <span class="vi">Token bên dưới render kết quả xác nhận rubric thật từ <code>evl:validate</code> — kiểm tra cấu trúc hình dạng rubric + bất biến, hoặc scorecard đã hoàn thành đối chiếu với rubric của nó. Rubric sai dạng hoặc scorecard bị giả mạo thất bại ở đây và không thể được chấm điểm.</span>
+    </p>
+    <!--EVL_SCORECARD-->
+
+    <!-- EVL IS A FORWARD-ONLY SINK -->
+    <h2 class="sectitle" id="evl-sink" style="margin-top:48px"><span class="en">EVL is a forward-only sink — it never consumes CRE</span><span class="vi">EVL là sink chỉ đi về phía trước — không bao giờ tiêu thụ CRE</span></h2>
+
+    <div class="callout" style="--ac:var(--evl)">
+      <span class="ci">→</span>
+      <div>
+        <span class="en"><b>Domain boundary (Rule 12, Rule 17):</b> EVL reads <code>docs/profiles/</code> (identity/, psychology/, growth/, relationships/ — read-only), <code>docs/materials/</code>, and writes only to <code>docs/profiles/{char}/eval/</code> and <code>docs/rubrics/</code>. It emits <code>EVL.scored</code> which CRE may subscribe to for content recalibration. The edge is <em>forward only</em> — CRE output never flows back into EVL as input. This keeps the event cascade acyclic.</span>
+        <span class="vi"><b>Ranh giới miền (Rule 12, Rule 17):</b> EVL đọc <code>docs/profiles/</code> (identity/, psychology/, growth/, relationships/ — chỉ đọc), <code>docs/materials/</code>, và chỉ ghi vào <code>docs/profiles/{char}/eval/</code> và <code>docs/rubrics/</code>. Nó phát <code>EVL.scored</code> mà CRE có thể subscribe để hiệu chỉnh nội dung. Cạnh là <em>chỉ về phía trước</em> — đầu ra CRE không bao giờ chảy ngược lại vào EVL như đầu vào. Điều này giữ cho chuỗi sự kiện không có chu kỳ.</span>
+      </div>
+    </div>
+
+    <div class="card" style="--ac:var(--evl);margin-top:18px">
+      <h3><span class="pin"></span><span class="en">Event cascade</span><span class="vi">Chuỗi sự kiện</span></h3>
+      <div class="flowline" style="--ac:var(--evl);flex-wrap:wrap;gap:6px;margin-top:10px">
+        <div class="fstep"><div class="fn" style="font-size:.78rem"><code>PSY.refresh</code></div><div class="fd"><span class="en">profile updated</span><span class="vi">hồ sơ cập nhật</span></div></div>
+        <div class="farrow" style="--ac:var(--evl)">→</div>
+        <div class="fstep"><div class="fn" style="font-size:.78rem"><code>EVL.rescore</code></div><div class="fd"><span class="en">re-score triggered</span><span class="vi">kích hoạt chấm lại</span></div></div>
+        <div class="farrow" style="--ac:var(--evl)">→</div>
+        <div class="fstep"><div class="fn" style="font-size:.78rem"><code>evl:score</code></div><div class="fd"><span class="en">run engine</span><span class="vi">chạy engine</span></div></div>
+        <div class="farrow" style="--ac:var(--evl)">→</div>
+        <div class="fstep"><div class="fn" style="font-size:.78rem"><code>EVL.scored</code></div><div class="fd"><span class="en">scorecard written</span><span class="vi">scorecard đã ghi</span></div></div>
+        <div class="farrow" style="--ac:var(--evl)">→</div>
+        <div class="fstep"><div class="fn" style="font-size:.78rem"><code>CRE.recalibrate</code></div><div class="fd"><span class="en">new content angle</span><span class="vi">góc nội dung mới</span></div></div>
+      </div>
+      <p class="muted" style="font-size:.82rem;margin-top:12px"><span class="en"><code>GRO.assessed</code> also triggers <code>EVL.rescore</code> via the same path. A change to <code>docs/profiles/*/eval/</code> classifies as <code>EVL.scored</code> (announcing a scorecard), never a rescore — preventing the cascade from looping.</span><span class="vi"><code>GRO.assessed</code> cũng kích hoạt <code>EVL.rescore</code> qua cùng đường. Thay đổi với <code>docs/profiles/*/eval/</code> phân loại là <code>EVL.scored</code> (thông báo scorecard), không bao giờ là rescore — ngăn chuỗi lặp.</span></p>
+    </div>
+
+    <!-- THE 8 EVL SKILLS -->
+    <h2 class="sectitle" id="evl-skills" style="margin-top:48px"><span class="en">All 8 EVL skills</span><span class="vi">Toàn bộ 8 skill EVL</span></h2>
+
+    <div class="eyebrow" style="margin-top:8px"><span class="en">Scoring engine</span><span class="vi">Engine chấm điểm</span></div>
+    <div class="cards grid-2" style="gap:12px;margin-top:8px">
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><code>evl:score</code></h3>
+        <p><span class="en">Generic rubric scoring engine — gather evidence, LLM judges each criterion with a MAT-tier citation, aggregate to an evidence-cited scorecard + verdict. Works on all four rubric types.</span><span class="vi">Engine chấm điểm rubric tổng quát — gom bằng chứng, LLM phán xử từng tiêu chí kèm trích dẫn bậc MAT, tổng hợp thành scorecard có trích dẫn + phán quyết. Hoạt động trên cả bốn loại rubric.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><code>evl:standardize</code></h3>
+        <p><span class="en">Psychometric battery preset — Big Five + Dark Triad (SD3) + Attachment (ECR-R). LLM narrates the attachment quadrant and flags Dark Triad elevations. Runs atop <code>evl:score</code>.</span><span class="vi">Preset bộ đo tâm lý — Big Five + Dark Triad (SD3) + Gắn bó (ECR-R). LLM trần thuật góc phần tư gắn bó và cờ nâng cao Dark Triad. Chạy trên <code>evl:score</code>.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><code>evl:fit</code></h3>
+        <p><span class="en">Role / casting-fit decision against a target profile — CAST / CONDITIONAL / NO with a RED safety-flag veto. High-stakes → ≥2 input-isolated judges + convergence required.</span><span class="vi">Quyết định phù hợp vai / diễn xuất đối chiếu hồ sơ mục tiêu — CAST / CONDITIONAL / NO với veto cờ an toàn ĐỎ. Độ rủi ro cao → ≥2 thẩm phán cô lập đầu vào + yêu cầu hội tụ.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><code>evl:compatibility</code></h3>
+        <p><span class="en">Dyad compatibility scoring on the relationship rubric — Gottman Four Horsemen + repair capacity + 5:1 positivity ratio + attachment pairing. Evidence pooled from both characters.</span><span class="vi">Chấm điểm tương thích cặp đôi trên rubric mối quan hệ — Gottman Four Horsemen + năng lực sửa chữa + tỉ lệ tích cực 5:1 + cặp gắn bó. Bằng chứng gộp từ cả hai nhân vật.</span></p>
+      </div>
+    </div>
+
+    <div class="eyebrow" style="margin-top:24px"><span class="en">Analysis &amp; management</span><span class="vi">Phân tích &amp; quản lý</span></div>
+    <div class="cards grid-2" style="gap:12px;margin-top:8px">
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><code>evl:compare</code></h3>
+        <p><span class="en">Cross-character ranking on one rubric — reads already-written scorecards, computes raw + z-score + percentile ranks. Missing scorecards are surfaced, never silently dropped from the comparison.</span><span class="vi">Xếp hạng liên nhân vật trên một rubric — đọc scorecard đã viết, tính xếp hạng thô + z-score + phần trăm. Scorecard thiếu được đưa ra, không bao giờ im lặng bị loại khỏi so sánh.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><code>evl:track</code></h3>
+        <p><span class="en">Score-over-time diff — compares a character's current scorecard vs. the latest snapshot in <code>eval/history/</code>. Lists profile-change events in the window for the LLM to narrate the delta with deterministic event attribution.</span><span class="vi">So sánh điểm theo thời gian — so sánh scorecard hiện tại của nhân vật với snapshot mới nhất trong <code>eval/history/</code>. Liệt kê các sự kiện thay đổi hồ sơ trong cửa sổ để LLM trần thuật delta với quy kết sự kiện tất định.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><code>evl:validate</code></h3>
+        <p><span class="en">Deterministic structural checker — rubric shape + invariants, or a finished scorecard against its rubric. Blocks malformed or tampered artifacts before they enter the scoring pipeline. Runs automatically before any <code>evl:score</code> invocation.</span><span class="vi">Kiểm tra cấu trúc tất định — hình dạng rubric + bất biến, hoặc scorecard hoàn chỉnh đối chiếu rubric của nó. Chặn artifact sai dạng hoặc bị giả mạo trước khi vào pipeline chấm điểm. Chạy tự động trước mọi lần gọi <code>evl:score</code>.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><code>evl:rubric-import</code></h3>
+        <p><span class="en">Ingest an external evaluation framework (file / text / URL) → canonical rubric draft under <code>docs/rubrics/imported/</code>. The <code>evl-rubric-importer</code> subagent performs semantic mapping — the draft is human-reviewed before any scoring use.</span><span class="vi">Nhập framework đánh giá bên ngoài (file / text / URL) → bản nháp rubric chính tắc dưới <code>docs/rubrics/imported/</code>. Subagent <code>evl-rubric-importer</code> thực hiện ánh xạ ngữ nghĩa — bản nháp được người xem xét trước khi dùng chấm điểm.</span></p>
+      </div>
+    </div>
+
+    <!-- HONESTY CONTRACT -->
+    <h2 class="sectitle" id="evl-honesty" style="margin-top:48px"><span class="en">The honesty contract</span><span class="vi">Hợp đồng trung thực</span></h2>
+
+    <div class="callout" style="--ac:var(--gold)">
+      <span class="ci">🤝</span>
+      <div>
+        <span class="en">
+          <b>Four non-negotiable rails:</b>
+          <ul style="margin:.6em 0 0;padding-left:1.1em;font-size:.92rem;color:var(--txt-dim)">
+            <li><b>Uncited ⇒ [UNVERIFIED]</b> — excluded from roll-up, counted, coverage% headlines every scorecard.</li>
+            <li><b>High-stakes rubrics run ≥2 input-isolated judges</b> — disagreement is <code>DIVERGED</code> + <code>manual_review_required</code>, never auto-averaged.</li>
+            <li><b>Clinical rubrics are <code>cache: never</code></b> — a stale risk verdict is never reused; <code>reassess_required</code> stamps every prior snapshot.</li>
+            <li><b>A malformed rubric or tampered scorecard fails <code>evl:validate</code></b> and cannot be scored or trusted — the structural check is the first gate, not the last.</li>
+          </ul>
+        </span>
+        <span class="vi">
+          <b>Bốn thanh không thể thương lượng:</b>
+          <ul style="margin:.6em 0 0;padding-left:1.1em;font-size:.92rem;color:var(--txt-dim)">
+            <li><b>Không trích ⇒ [UNVERIFIED]</b> — bị loại khỏi tổng hợp, được đếm, coverage% đứng đầu mọi scorecard.</li>
+            <li><b>Rubric rủi ro cao chạy ≥2 thẩm phán cô lập đầu vào</b> — bất đồng là <code>DIVERGED</code> + <code>manual_review_required</code>, không bao giờ tự trung bình.</li>
+            <li><b>Rubric lâm sàng là <code>cache: never</code></b> — phán quyết rủi ro cũ không bao giờ tái dùng; <code>reassess_required</code> đóng dấu mọi snapshot trước.</li>
+            <li><b>Rubric sai dạng hoặc scorecard bị giả mạo thất bại ở <code>evl:validate</code></b> và không thể được chấm điểm hoặc tin tưởng — kiểm tra cấu trúc là cổng đầu tiên, không phải cuối cùng.</li>
+          </ul>
+        </span>
+      </div>
+    </div>
+
+    <!-- STATS + LINKS -->
+    <div class="stats" style="margin-top:36px">
+      <div class="stat"><div class="n" data-count="8">8</div><div class="l"><span class="en">EVL skills</span><span class="vi">skill EVL</span></div></div>
+      <div class="stat"><div class="n" data-count="4">4</div><div class="l"><span class="en">rubric types</span><span class="vi">loại rubric</span></div></div>
+      <div class="stat"><div class="n" data-count="2">2</div><div class="l"><span class="en">min judges (high-stakes)</span><span class="vi">thẩm phán tối thiểu (rủi ro cao)</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">silent passes — uncited is always loud</span><span class="vi">pass im lặng — không trích luôn rõ ràng</span></div></div>
+    </div>
+
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@rubrics" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><span class="en">Browse the rubric library</span><span class="vi">Duyệt thư viện rubric</span></h3>
+        <p><span class="en">The 4 reference rubrics, their schema, and how to import an external framework via <code>evl:rubric-import</code>.</span><span class="vi">4 rubric tham chiếu, schema của chúng, và cách nhập framework bên ngoài qua <code>evl:rubric-import</code>.</span></p>
+      </a>
+      <a class="card" href="@catalog" style="--ac:var(--gold)">
+        <h3><span class="pin"></span><span class="en">Full skill catalog</span><span class="vi">Danh mục skill đầy đủ</span></h3>
+        <p><span class="en">All 68 skills across 7 frameworks — with a use-case finder and one-line descriptions for rapid lookup.</span><span class="vi">Toàn bộ 68 skill trên 7 framework — kèm bộ chọn theo use-case và mô tả một dòng để tra nhanh.</span></p>
+      </a>
+    </div>
+  </div>
+</section>

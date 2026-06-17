@@ -1,0 +1,218 @@
+<!-- ===================== JOURNEY ===================== -->
+<section id="journey">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--gold)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <path d="M8 32 L20 8 L32 32" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M13 24h14" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="20" cy="8" r="3" fill="var(--gold)"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--gold)"><span class="en">Follow one synthetic material from ingest to a gated, published asset</span><span class="vi">Theo một tư liệu giả lập từ thu nhận đến asset đã-gate, đã-đăng</span></div>
+        <h2><span class="en">Journey</span><span class="vi">Hành trình</span></h2>
+      </div>
+      <div class="ver">source → MAT → PSY → EVL → CRE → assets/</div>
+    </div>
+    <div class="divider" style="--ac:var(--gold)"></div>
+
+    <p class="lead"><span class="en">This page traces a single synthetic material — no real PII, sourced from <code>e2e/synthetic-project/</code> — through every event hand-off in the cascade. Each station names the skill, the event it emits, and what gates before the next stage can proceed. The full run is captured live: <span class="realtag">real output</span></span><span class="vi">Trang này theo dấu một tư liệu giả lập — không có PII thật, lấy từ <code>e2e/synthetic-project/</code> — qua mọi lần bàn giao sự kiện trong cascade. Mỗi trạm nêu tên skill, sự kiện nó phát, và những gì cần qua cổng trước khi giai đoạn kế tiếp có thể tiếp tục. Toàn bộ lần chạy được chụp thật: <span class="realtag">đầu ra thật</span></span></p>
+
+    <div class="term" style="margin-bottom:8px">
+      <div class="tbar"><i></i><i></i><i></i><span class="tcmd">python3 e2e/run-full-pipeline.py</span></div>
+      <!--E2E-->
+    </div>
+    <p class="muted" style="font-size:.82rem;margin-bottom:28px"><span class="en">The run above drives all 19 deterministic steps across 7 frameworks. Follow along below for what each station does and why the event matters.</span><span class="vi">Lần chạy trên điều khiển cả 19 bước tất định qua 7 framework. Theo dõi bên dưới để biết từng trạm làm gì và tại sao sự kiện quan trọng.</span></p>
+
+    <!-- CASCADE PIPELINE VISUAL -->
+    <h2 class="sectitle" id="jr-pipeline"><span class="en">The cascade — station by station</span><span class="vi">Cascade — từng trạm</span></h2>
+    <p class="muted" style="margin:-2px 0 20px"><span class="en">Material must clear each gate before the next framework may act. ORC is the event bus throughout — it routes, it doesn't own content. Each station emits exactly one event when it succeeds; a gate failure is <b>fail-closed</b> (the material stays at that station).</span><span class="vi">Tư liệu phải qua mỗi cổng trước khi framework kế tiếp có thể hành động. ORC là event bus xuyên suốt — định tuyến, không sở hữu nội dung. Mỗi trạm phát đúng một sự kiện khi thành công; lỗi cổng là <b>fail-closed</b> (tư liệu ở lại trạm đó).</span></p>
+
+    <div class="pipe-stage">
+      <div class="pstation" style="--ac:var(--mat)">
+        <div class="num">01 · MAT</div>
+        <h4><code>mat:loader</code></h4>
+        <p><span class="en">Ingest the raw source. Classify type (transcript / article / interview), run the 15-criterion CRAAP score, assign evidence tier T1–T5, inject frontmatter. The loader writes only to <code>docs/materials/</code>. A source that fails minimum CRAAP stays at stage 1 — never reaches analysis.</span><span class="vi">Thu nhận nguồn thô. Phân loại loại (bản ghi / bài báo / phỏng vấn), chạy chấm CRAAP 15 tiêu chí, gán bậc bằng chứng T1–T5, chèn frontmatter. Loader chỉ ghi vào <code>docs/materials/</code>. Nguồn trượt CRAAP tối thiểu ở lại giai đoạn 1 — không bao giờ đến phân tích.</span></p>
+        <span class="role"><span class="en">writes docs/materials/ · no event yet</span><span class="vi">ghi docs/materials/ · chưa phát sự kiện</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--mat)">
+        <div class="num">02 · MAT</div>
+        <h4><code>mat:indexer</code></h4>
+        <p><span class="en">Run the integration gate: contradiction detection (does this source conflict with existing evidence?), coverage gap analysis (which profile dimensions does it fill?), and the final integration check. Only a source that passes all three checks is marked <b>integrated</b>. Premature PSY analysis is explicitly blocked until this point.</span><span class="vi">Chạy cổng tích hợp: phát hiện mâu thuẫn (nguồn này có mâu thuẫn với bằng chứng hiện có không?), phân tích khoảng trống phủ sóng (nó lấp đầy chiều hồ sơ nào?), và kiểm tra tích hợp cuối. Chỉ nguồn qua cả ba kiểm tra mới được đánh dấu <b>tích hợp</b>. Phân tích PSY sớm bị chặn rõ ràng đến tận điểm này.</span></p>
+        <span class="role"><span class="en">emits MAT.integrated → triggers PSY.refresh</span><span class="vi">phát MAT.integrated → kích hoạt PSY.refresh</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--psy)">
+        <div class="num">03 · PSY</div>
+        <h4><code>psy:wave</code></h4>
+        <p><span class="en">Three-wave 5P clinical formulation: Wave 1 (Foundation — presenting picture, history, predisposing factors), Wave 2 (Deep Dive — defenses, attachment, trauma, Big Five, ICD-11 diagnostics), Wave 3 (Validation — internal consistency, cross-wave coherence). Each wave reads the integrated material; the formulation writes to the 25-file profile schema under <code>docs/profiles/</code>.</span><span class="vi">Formulation 5P lâm sàng 3 đợt: Đợt 1 (Nền tảng — tranh bày hiện tại, lịch sử, yếu tố tiền định), Đợt 2 (Khai phá — cơ chế phòng vệ, gắn bó, sang chấn, Big Five, chẩn đoán ICD-11), Đợt 3 (Xác nhận — nhất quán nội bộ, kết hợp liên đợt). Mỗi đợt đọc tư liệu đã tích hợp; formulation ghi vào schema hồ sơ 25-file dưới <code>docs/profiles/</code>.</span></p>
+        <span class="role"><span class="en">writes docs/profiles/ · no event yet</span><span class="vi">ghi docs/profiles/ · chưa phát sự kiện</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--psy)">
+        <div class="num">04 · PSY</div>
+        <h4><code>psy:crossref</code> · <code>psy:health-check</code></h4>
+        <p><span class="en"><code>psy:crossref</code> runs 10-dimension consistency validation (4 automated script checks + 6 LLM heuristic checks): timeline integrity, bidirectional reference symmetry, event extraction coherence, and cross-character relationship consistency. <code>psy:health-check</code> scores the 25-file profile 0–100 for completeness. Both must pass before the profile is considered refreshed.</span><span class="vi"><code>psy:crossref</code> chạy xác nhận nhất quán 10 chiều (4 kiểm tra script tự động + 6 kiểm tra heuristic LLM): tính toàn vẹn dòng thời gian, đối xứng tham chiếu hai chiều, mạch lạc trích xuất sự kiện, và nhất quán quan hệ liên nhân vật. <code>psy:health-check</code> chấm hồ sơ 25-file từ 0–100 về độ đầy đủ. Cả hai phải pass trước khi hồ sơ được coi là đã làm mới.</span></p>
+        <span class="role"><span class="en">emits PSY.refresh → triggers EVL + CRE</span><span class="vi">phát PSY.refresh → kích hoạt EVL + CRE</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--evl)">
+        <div class="num">05 · EVL</div>
+        <h4><code>evl:score</code></h4>
+        <p><span class="en">Score the refreshed profile against a versioned rubric. Scripts do deterministic gathering and weighted aggregation; the LLM judges each criterion. Every criterion must cite a MAT evidence tier (T1–T5) — an uncited score is reported <code>[UNVERIFIED]</code> and counted, never a silent pass. High-stakes rubrics use ≥2 independent judges → convergence; a divergence routes to manual review, never an auto-average.</span><span class="vi">Chấm hồ sơ đã làm mới theo rubric có phiên bản. Script thực hiện thu thập tất định và tổng hợp trọng số; LLM phán xét từng tiêu chí. Mỗi tiêu chí phải trích dẫn bậc bằng chứng MAT (T1–T5) — điểm không trích là <code>[UNVERIFIED]</code> và được đếm, không bao giờ pass ngầm. Rubric rủi ro cao dùng ≥2 giám khảo độc lập → hội tụ; phân kỳ được chuyển đến review thủ công, không bao giờ tự lấy trung bình.</span></p>
+        <span class="role"><span class="en">writes docs/profiles/*/eval/ · emits EVL.scored → CRE.recalibrate</span><span class="vi">ghi docs/profiles/*/eval/ · phát EVL.scored → CRE.recalibrate</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--cre)">
+        <div class="num">06 · CRE</div>
+        <h4><code>cre:post-writer</code></h4>
+        <p><span class="en">Draft platform-native content (Facebook, LinkedIn, blog…) using the refreshed profile + EVL scorecard. The skill reads the character's voice identity from <code>docs/profiles/*/identity/writing-voice.md</code>, selects the highest-evidence angle from the material index, and produces a draft in <code>assets/{platform}/{YYMMDD}-{slug}/post.txt</code>. The draft is not yet gated — it proceeds immediately to the two CRE gates.</span><span class="vi">Soạn nội dung gốc cho nền tảng (Facebook, LinkedIn, blog…) dùng hồ sơ đã làm mới + scorecard EVL. Skill đọc danh tính giọng văn nhân vật từ <code>docs/profiles/*/identity/writing-voice.md</code>, chọn góc độ có bằng chứng cao nhất từ chỉ mục tư liệu, và tạo bản thảo trong <code>assets/{platform}/{YYMMDD}-{slug}/post.txt</code>. Bản thảo chưa qua cổng — tiến ngay đến hai cổng CRE.</span></p>
+        <span class="role"><span class="en">writes assets/ draft · proceeds to gate 1</span><span class="vi">ghi bản thảo assets/ · tiến đến cổng 1</span></span>
+      </div>
+    </div>
+
+    <!-- THE TWO CRE GATES -->
+    <h2 class="sectitle" id="jr-gates" style="margin-top:34px"><span class="en">The two CRE gates — fail-closed</span><span class="vi">Hai cổng CRE — fail-closed</span></h2>
+    <p class="muted" style="margin:-2px 0 18px"><span class="en">Both gates run on <b>every draft, every platform, every publish</b>. Either gate failing stops publication entirely — no partial publish, no bypass. The gates are not advisory; they are blocking.</span><span class="vi">Cả hai cổng chạy trên <b>mọi bản thảo, mọi nền tảng, mọi lần đăng</b>. Bất kỳ cổng nào thất bại đều dừng việc đăng hoàn toàn — không đăng một phần, không bỏ qua. Các cổng không phải tư vấn; chúng là chặn.</span></p>
+
+    <div class="cards grid-2">
+      <div class="card" style="--ac:var(--crit);padding:20px">
+        <div class="eyebrow" style="color:var(--crit)">⛔ <span class="en">Gate 1</span><span class="vi">Cổng 1</span></div>
+        <h3 style="color:var(--crit);margin:6px 0 10px"><code>cre:evidence-scanner</code></h3>
+        <p style="font-size:.88rem"><span class="en">Scans every claim in the draft against the MAT evidence index. Each claim must be traceable to an integrated source at T1–T5. Claims without a traceable source are flagged and <b>block publication</b>. The scanner also applies Rule 09 (confidentiality) — any claim that would require revealing a raw clinical label is flagged as a leak.</span><span class="vi">Quét mọi claim trong bản thảo theo chỉ mục bằng chứng MAT. Mỗi claim phải truy nguyên được đến nguồn đã tích hợp ở T1–T5. Claim thiếu nguồn truy nguyên bị đánh dấu và <b>chặn đăng</b>. Scanner cũng áp dụng Rule 09 (bảo mật) — mọi claim cần tiết lộ nhãn lâm sàng thô bị đánh dấu là rò rỉ.</span></p>
+        <div class="tri" style="margin-top:12px">
+          <span class="change"><span class="en">per-claim T1–T5 check</span><span class="vi">kiểm T1–T5 từng claim</span></span>
+          <span class="change"><span class="en">Rule 09 leak detect</span><span class="vi">phát hiện rò rỉ Rule 09</span></span>
+          <span class="keep"><span class="en">fail-closed</span><span class="vi">fail-closed</span></span>
+        </div>
+      </div>
+      <div class="card" style="--ac:var(--crit);padding:20px">
+        <div class="eyebrow" style="color:var(--crit)">⛔ <span class="en">Gate 2</span><span class="vi">Cổng 2</span></div>
+        <h3 style="color:var(--crit);margin:6px 0 10px"><code>cre:privacy-guard</code></h3>
+        <p style="font-size:.88rem"><span class="en">Pre-publish confidentiality scan of the <code>assets/</code> draft. Checks for: PII patterns (names, dates, identifiers that could de-anonymize), raw psychiatric labels that must not appear in public content (show-don't-tell, Rule 02), and any data marked confidential in the source frontmatter. A single match blocks the entire asset — no claim-by-claim partial pass.</span><span class="vi">Quét bảo mật trước khi đăng trên bản thảo <code>assets/</code>. Kiểm tra: mẫu PII (tên, ngày tháng, định danh có thể phi ẩn danh hóa), nhãn tâm thần thô không được xuất hiện trong nội dung công khai (thể hiện không kể, Rule 02), và bất kỳ dữ liệu nào được đánh dấu bảo mật trong frontmatter nguồn. Một kết quả khớp chặn toàn bộ asset — không có pass từng phần theo claim.</span></p>
+        <div class="tri" style="margin-top:12px">
+          <span class="change"><span class="en">PII / de-anon scan</span><span class="vi">quét PII / phi ẩn danh</span></span>
+          <span class="change"><span class="en">Rule 02 label guard</span><span class="vi">bảo vệ nhãn Rule 02</span></span>
+          <span class="keep"><span class="en">fail-closed</span><span class="vi">fail-closed</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTCOME -->
+    <div class="pstation" style="--ac:var(--ok);margin-top:20px">
+      <div class="num">07 · PUBLISHED</div>
+      <h4><code>assets/{platform}/{YYMMDD}-{slug}/</code></h4>
+      <p><span class="en">Both gates pass → the asset is published to <code>assets/</code>. The package convention is: <code>post.txt</code> (the content), <code>image-prompts.txt</code> (optional), <code>images/</code> (optional), <code>README.txt</code> (provenance — which profile version, which rubric, which material batch fed this asset). The README.txt is the audit trail; it stays alongside the content forever.</span><span class="vi">Cả hai cổng pass → asset được đăng vào <code>assets/</code>. Quy ước gói là: <code>post.txt</code> (nội dung), <code>image-prompts.txt</code> (tùy chọn), <code>images/</code> (tùy chọn), <code>README.txt</code> (nguồn gốc — phiên bản hồ sơ nào, rubric nào, lô tư liệu nào nuôi asset này). README.txt là dấu vết kiểm toán; nó ở lại cùng nội dung mãi mãi.</span></p>
+      <span class="role"><span class="en">emits CRE.recalibrate · asset is live</span><span class="vi">phát CRE.recalibrate · asset đã đăng</span></span>
+    </div>
+
+    <!-- EVENT HAND-OFF TABLE -->
+    <h2 class="sectitle" id="jr-events" style="margin-top:34px"><span class="en">Event hand-offs at a glance</span><span class="vi">Bàn giao sự kiện tổng quan</span></h2>
+    <table class="modetable" style="--ac:var(--gold);margin-top:8px">
+      <thead>
+        <tr>
+          <th><span class="en">Event</span><span class="vi">Sự kiện</span></th>
+          <th><span class="en">Emitted by</span><span class="vi">Phát bởi</span></th>
+          <th><span class="en">Triggers</span><span class="vi">Kích hoạt</span></th>
+          <th><span class="en">Gate condition</span><span class="vi">Điều kiện cổng</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>MAT.integrated</code></td>
+          <td><code>mat:indexer</code></td>
+          <td><code>psy:wave</code> (PSY.refresh)</td>
+          <td><span class="en">contradiction-clean · coverage-adequate · CRAAP ≥ min</span><span class="vi">sạch mâu thuẫn · phủ sóng đủ · CRAAP ≥ tối thiểu</span></td>
+        </tr>
+        <tr>
+          <td><code>PSY.refresh</code></td>
+          <td><code>psy:crossref</code> + <code>psy:health-check</code></td>
+          <td><code>evl:score</code> + <code>cre:post-writer</code></td>
+          <td><span class="en">crossref 10-dim pass · health-check score ≥ threshold</span><span class="vi">crossref 10-chiều pass · điểm health-check ≥ ngưỡng</span></td>
+        </tr>
+        <tr>
+          <td><code>GRO.assessed</code></td>
+          <td><code>gro:*</code></td>
+          <td><code>psy:wave</code> + <code>evl:score</code> + <code>cre:post-writer</code></td>
+          <td><span class="en">growth data consistent · date-aligned (gro:validate)</span><span class="vi">dữ liệu phát triển nhất quán · ngày tháng khớp (gro:validate)</span></td>
+        </tr>
+        <tr>
+          <td><code>EVL.scored</code></td>
+          <td><code>evl:score</code></td>
+          <td><code>cre:post-writer</code> (recalibrate)</td>
+          <td><span class="en">all criteria cited · no [UNVERIFIED] blocking verdict</span><span class="vi">mọi tiêu chí có trích dẫn · không có [UNVERIFIED] chặn phán quyết</span></td>
+        </tr>
+        <tr>
+          <td><code>CRE.recalibrate</code></td>
+          <td><code>cre:evidence-scanner</code> + <code>cre:privacy-guard</code></td>
+          <td><span class="en">assets/ published</span><span class="vi">assets/ đã đăng</span></td>
+          <td><span class="en">all claims cited · no PII / label leaks · both gates pass</span><span class="vi">mọi claim có trích dẫn · không rò rỉ PII / nhãn · cả hai cổng pass</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ORC note -->
+    <div class="callout" style="--ac:var(--orc);margin-top:20px">
+      <span class="ci">🔄</span>
+      <div><span class="en"><b>ORC is the bus — not a content owner.</b> <code>orc:cascade</code> resolves the multi-domain chain above; <code>orc:audit</code> verifies every declared event matches what actually ran (it exits 0 only when the event log and the cascade plan are consistent). ORC writes only to <code>.claude/</code> — it never touches <code>docs/</code> or <code>assets/</code>. Domain boundary violations are caught by <code>platform_lib/fs_guard.py</code> (Rule 12).</span><span class="vi"><b>ORC là bus — không phải chủ sở hữu nội dung.</b> <code>orc:cascade</code> giải chuỗi đa-miền trên; <code>orc:audit</code> xác minh mọi sự kiện khai báo khớp với thực chạy (chỉ exit 0 khi log sự kiện và kế hoạch cascade nhất quán). ORC chỉ ghi vào <code>.claude/</code> — không bao giờ đụng <code>docs/</code> hay <code>assets/</code>. Vi phạm ranh giới miền bị bắt bởi <code>platform_lib/fs_guard.py</code> (Rule 12).</span></div>
+    </div>
+
+    <!-- GRO side edge -->
+    <h2 class="sectitle" id="jr-gro" style="margin-top:34px"><span class="en">The GRO side edge</span><span class="vi">Cạnh bên GRO</span></h2>
+    <p class="muted" style="margin:-2px 0 14px"><span class="en"><code>GRO</code> (Growth) is not a linear step in the main cascade — it feeds <b>PSY, EVL, and CRE in parallel</b> whenever a growth assessment runs. Its output enriches the formulation (career trajectory feeds into the presenting picture), the rubric scoring (competency data feeds EVL criteria), and the content angle selection (growth milestones are high-evidence content angles). All GRO forecasts are explicitly labelled <code>[FORECAST — NOT FACTUAL]</code>.</span><span class="vi"><code>GRO</code> (Phát triển) không phải bước tuyến tính trong cascade chính — nó nuôi <b>PSY, EVL, và CRE song song</b> bất cứ khi nào đánh giá phát triển chạy. Đầu ra của nó làm giàu formulation (quỹ đạo sự nghiệp nuôi tranh bày hiện tại), chấm điểm rubric (dữ liệu năng lực nuôi tiêu chí EVL), và chọn góc độ nội dung (cột mốc phát triển là góc độ nội dung có bằng chứng cao). Mọi dự báo GRO được gắn nhãn rõ ràng <code>[FORECAST — NOT FACTUAL]</code>.</span></p>
+
+    <div class="cards grid-2">
+      <div class="card" style="padding:16px;--ac:var(--gro)">
+        <div class="eyebrow" style="color:var(--gro)"><span class="en">GRO skills that feed the cascade</span><span class="vi">Skill GRO nuôi cascade</span></div>
+        <ul style="font-size:.84rem;margin:8px 0 0;padding-left:1.2em">
+          <li><code>gro:career-path</code> → <span class="en">stage mapping (Super) → PSY wave 1</span><span class="vi">ánh xạ giai đoạn (Super) → PSY đợt 1</span></li>
+          <li><code>gro:competency-map</code> → <span class="en">Dreyfus gaps → EVL criteria</span><span class="vi">khoảng trống Dreyfus → tiêu chí EVL</span></li>
+          <li><code>gro:learning-profile</code> → <span class="en">Kolb style → CRE angle</span><span class="vi">phong cách Kolb → góc độ CRE</span></li>
+          <li><code>gro:mentoring-track</code> → <span class="en">Kram phases → relationship content</span><span class="vi">giai đoạn Kram → nội dung quan hệ</span></li>
+          <li><code>gro:career-forecast</code> → <span class="en">[FORECAST] label required</span><span class="vi">bắt buộc nhãn [FORECAST]</span></li>
+        </ul>
+      </div>
+      <div class="card" style="padding:16px;--ac:var(--gro)">
+        <div class="eyebrow" style="color:var(--gro)"><span class="en">GRO boundary rules</span><span class="vi">Quy tắc ranh giới GRO</span></div>
+        <p style="font-size:.84rem;margin:8px 0 0"><span class="en">GRO does not do clinical analysis — that belongs to PSY (Rule 15 / GRO↔PSY boundary). GRO reads the profile but never writes to <code>docs/profiles/</code> except under <code>docs/profiles/*/growth/</code>. The GRO↔PSY interface is the event <code>GRO.assessed</code> — GRO never calls PSY directly.</span><span class="vi">GRO không phân tích lâm sàng — đó thuộc về PSY (Rule 15 / ranh giới GRO↔PSY). GRO đọc hồ sơ nhưng không bao giờ ghi vào <code>docs/profiles/</code> ngoại trừ dưới <code>docs/profiles/*/growth/</code>. Giao diện GRO↔PSY là sự kiện <code>GRO.assessed</code> — GRO không bao giờ gọi PSY trực tiếp.</span></p>
+      </div>
+    </div>
+
+    <!-- honest limits -->
+    <h2 class="sectitle" id="jr-limits" style="margin-top:34px"><span class="en">Honest limits</span><span class="vi">Giới hạn trung thực</span></h2>
+    <div class="callout" style="--ac:var(--gold);margin-top:4px">
+      <span class="ci">⚖️</span>
+      <div>
+        <ul style="margin:0;padding-left:1.2em;font-size:.92rem">
+          <li><span class="en"><b>Scripts gather, LLM judges.</b> The deterministic scripts may over-flag — false positives are expected and documented. The LLM does the heuristic judgment. Never delegate reasoning to scripts; never accept a script flag as a verdict without LLM review.</span><span class="vi"><b>Script thu thập, LLM phán xử.</b> Script tất định có thể over-flag — dương tính giả được mong đợi và ghi lại. LLM thực hiện phán xét heuristic. Không bao giờ ủy thác suy luận cho script; không bao giờ chấp nhận cờ script là phán quyết mà không có review LLM.</span></li>
+          <li style="margin-top:6px"><span class="en"><b>Crisis flags are never cached.</b> <code>psy:crisis-assess</code> is always re-run from raw material — a verdict cache hit is explicitly blocked for crisis results. A stale crisis verdict is worse than no verdict.</span><span class="vi"><b>Cờ khủng hoảng không bao giờ cache.</b> <code>psy:crisis-assess</code> luôn chạy lại từ tư liệu thô — cache verdict bị chặn rõ ràng cho kết quả khủng hoảng. Phán quyết khủng hoảng cũ kỹ còn tệ hơn không có phán quyết.</span></li>
+          <li style="margin-top:6px"><span class="en"><b>[UNVERIFIED] is counted, never silently passed.</b> An EVL criterion without a MAT evidence citation is reported as [UNVERIFIED] in the scorecard — it contributes to the count but does not produce a silent passing score.</span><span class="vi"><b>[UNVERIFIED] được đếm, không bao giờ pass ngầm.</b> Tiêu chí EVL thiếu trích dẫn bằng chứng MAT được báo là [UNVERIFIED] trong scorecard — nó đóng góp vào số đếm nhưng không tạo điểm pass ngầm.</span></li>
+          <li style="margin-top:6px"><span class="en"><b>The e2e fixture has no real PII.</b> <code>e2e/synthetic-project/</code> is a fully synthetic 2-character corpus. It doubles as a worked example, the eval fixture, and the regression harness. It contains no real names, dates, or clinical data.</span><span class="vi"><b>Fixture e2e không có PII thật.</b> <code>e2e/synthetic-project/</code> là corpus giả lập hoàn toàn 2 nhân vật. Nó vừa là ví dụ mẫu, vừa là fixture eval, vừa là bộ regression. Không chứa tên thật, ngày tháng thật, hay dữ liệu lâm sàng thật.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="stats" style="margin-top:28px">
+      <div class="stat"><div class="n" data-count="5">5</div><div class="l"><span class="en">cascade events</span><span class="vi">sự kiện cascade</span></div></div>
+      <div class="stat"><div class="n" data-count="2">2</div><div class="l"><span class="en">CRE gates (both fail-closed)</span><span class="vi">cổng CRE (đều fail-closed)</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">cross-domain direct writes</span><span class="vi">lần ghi trực tiếp chéo miền</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">real PII in e2e fixture</span><span class="vi">PII thật trong fixture e2e</span></div></div>
+    </div>
+
+    <!-- FAQ -->
+    <h3 class="sectitle" style="font-size:1.25rem;margin:34px 0 0"><span class="en">FAQ</span><span class="vi">Hỏi đáp</span></h3>
+    <div class="faq" style="--ac:var(--gold)">
+      <details><summary><span class="en">Why must material be integrated before PSY can run?</span><span class="vi">Vì sao tư liệu phải tích hợp trước khi PSY chạy?</span></summary><div class="fa"><span class="en">Premature analysis — profiling a character before the material's contradictions and coverage gaps are resolved — produces inconsistent, unreliable formulations. The MAT integration gate (mat:indexer) exists to block exactly this: PSY may not consume a source until indexer has confirmed it's contradiction-clean and coverage-adequate. Rule 11 enforces this boundary.</span><span class="vi">Phân tích sớm — hồ sơ hóa nhân vật trước khi mâu thuẫn và khoảng trống phủ sóng của tư liệu được giải quyết — tạo ra các formulation không nhất quán, không đáng tin. Cổng tích hợp MAT (mat:indexer) tồn tại để chặn chính xác điều này: PSY không được tiêu thụ nguồn cho đến khi indexer xác nhận nó sạch mâu thuẫn và phủ sóng đủ. Rule 11 thực thi ranh giới này.</span></div></details>
+      <details><summary><span class="en">What happens if the evidence-scanner blocks a claim?</span><span class="vi">Điều gì xảy ra nếu evidence-scanner chặn một claim?</span></summary><div class="fa"><span class="en">The entire asset is blocked — not just the flagged claim. The scanner returns a list of flagged claims with their evidence gap: which source tier is needed and which claim needs revision. You revise the draft, re-run cre:evidence-scanner, and re-run cre:privacy-guard. No partial publish path exists.</span><span class="vi">Toàn bộ asset bị chặn — không chỉ claim bị đánh dấu. Scanner trả về danh sách claim bị đánh dấu kèm khoảng trống bằng chứng: bậc nguồn nào cần và claim nào cần sửa. Bạn sửa bản thảo, chạy lại cre:evidence-scanner, và chạy lại cre:privacy-guard. Không có đường đăng một phần.</span></div></details>
+      <details><summary><span class="en">Can I skip EVL and go straight from PSY to CRE?</span><span class="vi">Có thể bỏ EVL và đi thẳng từ PSY sang CRE không?</span></summary><div class="fa"><span class="en">Yes — EVL is a side branch, not a required step in the minimal cascade. The minimal path is: MAT.integrated → psy:wave → psy:crossref → PSY.refresh → cre:post-writer → two CRE gates → publish. EVL enriches the content angle and evidence depth, but cre:post-writer can draft from the PSY profile alone. EVL.scored feeds CRE recalibration when it runs.</span><span class="vi">Có — EVL là nhánh bên, không phải bước bắt buộc trong cascade tối thiểu. Đường tối thiểu là: MAT.integrated → psy:wave → psy:crossref → PSY.refresh → cre:post-writer → hai cổng CRE → đăng. EVL làm giàu góc độ nội dung và chiều sâu bằng chứng, nhưng cre:post-writer có thể soạn từ hồ sơ PSY đơn thuần. EVL.scored nuôi CRE recalibration khi nó chạy.</span></div></details>
+      <details><summary><span class="en">How does orc:audit verify the cascade actually ran?</span><span class="vi">orc:audit xác minh cascade đã thực sự chạy như thế nào?</span></summary><div class="fa"><span class="en"><code>orc:audit</code> reads the JSONL event log (appended by each skill when it completes) and compares the declared cascade plan against the events that actually fired. It exits 0 only when every declared event appears in the log with a success record. A missing event or out-of-order sequence causes a non-zero exit — blocking any dependent stage.</span><span class="vi"><code>orc:audit</code> đọc log sự kiện JSONL (được append bởi từng skill khi hoàn thành) và so sánh kế hoạch cascade khai báo với sự kiện thực sự kích hoạt. Chỉ exit 0 khi mọi sự kiện khai báo xuất hiện trong log với bản ghi thành công. Thiếu sự kiện hoặc chuỗi sai thứ tự gây exit khác 0 — chặn mọi giai đoạn phụ thuộc.</span></div></details>
+      <details><summary><span class="en">What does CRE.recalibrate trigger downstream?</span><span class="vi">CRE.recalibrate kích hoạt gì ở hạ lưu?</span></summary><div class="fa"><span class="en">CRE.recalibrate signals that an asset has been published — or that a gate blocked it. Downstream: orc:event-log appends the outcome; orc:session-state updates the session domain tracker; and if EVL produced a new scorecard in the same cycle, EVL.scored can feed the next CRE draft's angle calibration. The event is the close of one cascade loop — the system is ready for the next material or the next content pass.</span><span class="vi">CRE.recalibrate báo hiệu rằng một asset đã được đăng — hoặc cổng đã chặn nó. Ở hạ lưu: orc:event-log append kết quả; orc:session-state cập nhật bộ theo dõi miền phiên; và nếu EVL tạo scorecard mới trong cùng chu kỳ, EVL.scored có thể nuôi hiệu chỉnh góc độ cho bản thảo CRE kế tiếp. Sự kiện là kết thúc của một vòng cascade — hệ thống sẵn sàng cho tư liệu tiếp theo hoặc lần content pass tiếp theo.</span></div></details>
+    </div>
+
+    <!-- next cards -->
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@pipeline" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Pipeline — deep dive</span><span class="vi">Pipeline — khai phá sâu</span></h3><p><span class="en">The full event-driven loop with upstream discovery skills, the GRO side edges, and the ORC bus in detail.</span><span class="vi">Vòng lặp theo sự kiện đầy đủ với skill khám phá thượng lưu, cạnh bên GRO, và bus ORC chi tiết.</span></p></a>
+      <a class="card" href="@gates" style="--ac:var(--crit)"><h3><span class="pin"></span><span class="en">Gates — evidence + privacy</span><span class="vi">Cổng — bằng chứng + bảo mật</span></h3><p><span class="en">How cre:evidence-scanner and cre:privacy-guard work, what they catch, and their honest limits.</span><span class="vi">Cách cre:evidence-scanner và cre:privacy-guard hoạt động, chúng bắt gì, và giới hạn trung thực của chúng.</span></p></a>
+      <a class="card" href="@catalog" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Skill catalog — all 68</span><span class="vi">Danh mục skill — cả 68</span></h3><p><span class="en">Every skill with purpose, framework, and guide links. Find the right chain for your use case.</span><span class="vi">Mọi skill với mục đích, framework, và link hướng dẫn. Tìm chuỗi phù hợp cho use case của bạn.</span></p></a>
+      <a class="card" href="@quickstart" style="--ac:var(--ok)"><h3><span class="pin"></span><span class="en">Quick start</span><span class="vi">Bắt đầu nhanh</span></h3><p><span class="en">Run the e2e pipeline yourself: clone, install the venv, and invoke your first skill.</span><span class="vi">Tự chạy pipeline e2e: clone, dựng venv, và gọi skill đầu tiên.</span></p></a>
+    </div>
+  </div>
+</section>

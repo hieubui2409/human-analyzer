@@ -1,0 +1,4 @@
+$ pytest tests/ -q -m 'not gemini'
+1100 passed, 34 deselected, 2 warnings in 55.77s
+
+→ deterministic suite green · 0 network calls · corpus-dependent tests skip cleanly

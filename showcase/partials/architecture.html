@@ -1,0 +1,231 @@
+<!-- ===================== ARCHITECTURE ===================== -->
+<section id="architecture">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--tel)">
+      <div class="badge"><svg width="34" height="34" viewBox="0 0 40 40" fill="none"><rect x="6" y="6" width="12" height="12" rx="3" stroke="var(--tel)" stroke-width="2"/><rect x="22" y="6" width="12" height="12" rx="3" stroke="var(--tel)" stroke-width="2"/><rect x="6" y="22" width="12" height="12" rx="3" stroke="var(--tel)" stroke-width="2"/><rect x="22" y="22" width="12" height="12" rx="3" stroke="var(--tel)" stroke-width="2"/><path d="M18 12h4M12 18v4M28 18v4M18 28h4" stroke="var(--tel)" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <div class="ttl">
+        <div class="who"><span class="en">Inside the machinery — data locations, platform_lib, the knowledge graph, schemas + COM.</span><span class="vi">Bên trong bộ máy — vị trí dữ liệu, platform_lib, đồ thị tri thức, schema + COM.</span></div>
+        <h2 id="architecture-title"><span class="en">Architecture &amp; Internals</span><span class="vi">Kiến trúc &amp; Nội tại</span></h2>
+      </div>
+      <div class="ver">7 write-roots · platform_lib · 4-layer KG</div>
+    </div>
+    <div class="divider" style="--ac:var(--tel)"></div>
+
+    <p class="lead" style="margin-bottom:18px"><span class="en">The system is character-agnostic by construction — character subjects are resolved dynamically via <code>paths.py</code>, so the public toolkit ships <b>no corpus at all</b> and still imports, compiles, and tests. Every framework owns exactly one write-root and communicates via an event bus, never through cross-domain file writes.</span><span class="vi">Hệ thống character-agnostic theo cấu trúc — nhân vật được resolve động qua <code>paths.py</code>, nên toolkit công khai ship <b>không corpus nào</b> mà vẫn import, compile, và test. Mỗi framework sở hữu đúng một write-root và giao tiếp qua event bus, không bao giờ qua ghi file chéo miền.</span></p>
+
+    <!-- WRITE-ROOTS TABLE -->
+    <h2 class="sectitle" id="arch-write-roots"><span class="en">7 write-roots — one per framework</span><span class="vi">7 write-root — một cho mỗi framework</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Each framework owns exactly the directories listed. Cross-domain writes are banned (Rule 12) — if a framework needs another's data, it fires an event and waits for the response.</span><span class="vi">Mỗi framework sở hữu đúng những thư mục được liệt kê. Ghi chéo miền bị cấm (Rule 12) — nếu một framework cần dữ liệu của framework khác, nó phát sự kiện và chờ phản hồi.</span></p>
+    <table class="modetable" style="--ac:var(--tel);margin-top:8px">
+      <thead><tr>
+        <th><span class="en">Framework</span><span class="vi">Framework</span></th>
+        <th><span class="en">Write-root(s)</span><span class="vi">Write-root</span></th>
+        <th><span class="en">Purpose</span><span class="vi">Mục đích</span></th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="color:var(--mat)">MAT</td><td><code>docs/materials/</code></td><td><span class="en">Evidence ingestion, CRAAP scores, T1–T5 tier files</span><span class="vi">Thu nhận bằng chứng, điểm CRAAP, file bậc T1–T5</span></td></tr>
+        <tr><td style="color:var(--psy)">PSY</td><td><code>docs/profiles/</code> · <code>docs/references/</code> · <code>docs/graph/</code></td><td><span class="en">25-file profile schema, clinical references, knowledge graph</span><span class="vi">Schema hồ sơ 25-file, reference lâm sàng, đồ thị tri thức</span></td></tr>
+        <tr><td style="color:var(--cre)">CRE</td><td><code>assets/</code></td><td><span class="en">Platform-native content packages (<code>{platform}/{YYMMDD}-{slug}/</code>)</span><span class="vi">Gói nội dung gốc nền tảng (<code>{platform}/{YYMMDD}-{slug}/</code>)</span></td></tr>
+        <tr><td style="color:var(--gro)">GRO</td><td><code>docs/profiles/*/growth/</code></td><td><span class="en">Career trajectory, competency maps, mentoring records</span><span class="vi">Quỹ đạo sự nghiệp, bản đồ năng lực, hồ sơ cố vấn</span></td></tr>
+        <tr><td style="color:var(--evl)">EVL</td><td><code>docs/rubrics/</code> · <code>docs/profiles/*/eval/</code></td><td><span class="en">Versioned rubrics, evidence-cited scorecards</span><span class="vi">Rubric có phiên bản, scorecard trích nguồn bằng chứng</span></td></tr>
+        <tr><td style="color:var(--orc)">ORC</td><td><code>.claude/</code></td><td><span class="en">Event routing, session state, decisions log, agent memory</span><span class="vi">Định tuyến sự kiện, trạng thái phiên, nhật ký quyết định, bộ nhớ agent</span></td></tr>
+        <tr><td style="color:var(--com)">COM</td><td><code>.claude/</code> <span style="color:var(--txt-faint);font-size:.8rem"><span class="en">(shared; utility-only)</span><span class="vi">(dùng chung; chỉ tiện ích)</span></span></td><td><span class="en">Git hygiene, health monitoring, rules validation, skill analytics</span><span class="vi">Vệ sinh git, giám sát sức khỏe, kiểm rule, phân tích skill</span></td></tr>
+      </tbody>
+    </table>
+
+    <!-- PLATFORM_LIB -->
+    <h2 class="sectitle" id="arch-platform-lib"><span class="en">platform_lib — shared Python toolkit</span><span class="vi">platform_lib — bộ toolkit Python dùng chung</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Shared Python helpers under <code>.claude/scripts/platform_lib/</code>. Skills import these directly; they are not addressable via the skill catalog. The design principle: <b>scripts gather deterministically (may over-flag); the LLM judges</b>. Never delegate reasoning to scripts.</span><span class="vi">Helper Python dùng chung dưới <code>.claude/scripts/platform_lib/</code>. Skill import trực tiếp; chúng không địa chỉ được qua catalog skill. Nguyên tắc thiết kế: <b>script gom tất định (có thể over-flag); LLM phán xử</b>. Không bao giờ giao lập luận cho script.</span></p>
+
+    <div class="rig" style="margin-top:10px">
+      <div class="rcell">
+        <div class="rt">paths.py<span class="rn">character-agnostic</span></div>
+        <ul>
+          <li><span class="en">Project root + character resolution from <code>characters.yaml</code>.</span><span class="vi">Gốc dự án + resolve nhân vật từ <code>characters.yaml</code>.</span></li>
+          <li><span class="en">All framework scripts resolve paths through here — never hardcode character names.</span><span class="vi">Mọi script framework resolve path qua đây — không bao giờ hardcode tên nhân vật.</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">schema_validator.py<span class="rn">JSON-Schema</span></div>
+        <ul>
+          <li><span class="en">Validates rubrics + scorecards against <code>.claude/schemas/</code> at runtime.</span><span class="vi">Validate rubric + scorecard theo <code>.claude/schemas/</code> lúc chạy.</span></li>
+          <li><span class="en">Rejects malformed EVL output before it reaches the verdict cache.</span><span class="vi">Từ chối đầu ra EVL sai cấu trúc trước khi đến cache phán quyết.</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">clinical_terms.py<span class="rn">80+ patterns</span></div>
+        <ul>
+          <li><span class="en">Regex scanner for 80+ clinical terms — over-flags (by design); LLM decides relevance.</span><span class="vi">Scanner regex cho 80+ thuật ngữ lâm sàng — over-flag (theo thiết kế); LLM quyết độ liên quan.</span></li>
+          <li><span class="en">Used by <code>psy:ref-audit</code> and <code>psy:ref-scan</code>.</span><span class="vi">Dùng bởi <code>psy:ref-audit</code> và <code>psy:ref-scan</code>.</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">instinct_store.py<span class="rn">JSONL · atomic</span></div>
+        <ul>
+          <li><span class="en">Atomic learnings CRUD with confidence scoring — backs <code>orc:agent-memory</code>.</span><span class="vi">CRUD học nguyên tử có chấm độ tự tin — hậu thuẫn <code>orc:agent-memory</code>.</span></li>
+          <li><span class="en">Append-only JSONL; never in-place edits.</span><span class="vi">JSONL chỉ-nối; không bao giờ sửa tại chỗ.</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">telemetry.py<span class="rn">observability</span></div>
+        <ul>
+          <li><span class="en">Consolidated sink root + auto script-metrics + crash excepthook.</span><span class="vi">Gốc sink hợp nhất + auto script-metrics + excepthook crash.</span></li>
+          <li><span class="en">Fail-open: a telemetry error never blocks a skill run.</span><span class="vi">Fail-open: lỗi telemetry không bao giờ cản chạy skill.</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">profile_stats.py · formatters.py<span class="rn">inventory · output</span></div>
+        <ul>
+          <li><span class="en"><code>profile_stats</code> — file inventory + git hash cache validation.</span><span class="vi"><code>profile_stats</code> — kiểm kê file + xác thực cache hash git.</span></li>
+          <li><span class="en"><code>formatters</code> — markdown tables, JSON output, severity badges.</span><span class="vi"><code>formatters</code> — bảng markdown, đầu ra JSON, huy hiệu mức độ.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- KNOWLEDGE GRAPH -->
+    <h2 class="sectitle" id="arch-kg"><span class="en">4-layer knowledge graph</span><span class="vi">Đồ thị tri thức 4 lớp</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">The knowledge graph lives at <code>docs/graph/</code> and is owned by PSY (it models profile relationships). <code>orc:graph</code> queries it via seven <code>platform_lib</code> modules. Layers are incremental — each builds on the last.</span><span class="vi">Đồ thị tri thức nằm ở <code>docs/graph/</code> và do PSY sở hữu (nó mô hình hóa các quan hệ hồ sơ). <code>orc:graph</code> truy vấn nó qua bảy module <code>platform_lib</code>. Các lớp là tăng dần — mỗi lớp xây trên lớp trước.</span></p>
+
+    <div class="lenses" style="margin-top:10px">
+      <div class="lens p" style="--lc:var(--psy)">
+        <h4><span class="en">Layer 1+2 — Core</span><span class="vi">Lớp 1+2 — Lõi</span></h4>
+        <div class="fw"><code>knowledge_graph.py</code></div>
+        <p style="font-size:.8rem;color:var(--txt-dim);margin-top:6px"><span class="en">File-graph over profiles + relationships. <code>get_graph</code>, <code>graph_context</code>, <code>validate_graph</code>. NetworkX-backed. SHA256+JSON node-link cache (lazy/incremental via <code>knowledge_graph_cache.py</code>).</span><span class="vi">Đồ thị file trên hồ sơ + quan hệ. <code>get_graph</code>, <code>graph_context</code>, <code>validate_graph</code>. Dựa trên NetworkX. Cache node-link SHA256+JSON (lười/tăng dần qua <code>knowledge_graph_cache.py</code>).</span></p>
+      </div>
+      <div class="lens t" style="--lc:var(--evl)">
+        <h4><span class="en">Layer 3 — Cross-lingual</span><span class="vi">Lớp 3 — Đa ngôn ngữ</span></h4>
+        <div class="fw"><code>knowledge_graph_embeddings.py</code></div>
+        <p style="font-size:.8rem;color:var(--txt-dim);margin-top:6px"><span class="en">bge-m3 + Gemini fallback: <code>embed_corpus</code>, <code>cached_embedding_edges</code>. Enables semantic similarity across EN/VI content without language mismatch.</span><span class="vi">bge-m3 + Gemini fallback: <code>embed_corpus</code>, <code>cached_embedding_edges</code>. Kích hoạt tương đồng ngữ nghĩa xuyên nội dung EN/VI không lệch ngôn ngữ.</span></p>
+      </div>
+      <div class="lens m" style="--lc:var(--gro)">
+        <h4><span class="en">Analytics — NetworkX</span><span class="vi">Phân tích — NetworkX</span></h4>
+        <div class="fw"><code>knowledge_graph_analytics.py</code></div>
+        <p style="font-size:.8rem;color:var(--txt-dim);margin-top:6px"><span class="en"><code>centrality</code> / <code>community</code> / <code>find_paths</code> / <code>structural_holes</code>. Size-gated (≥500 nodes). Used by <code>orc:graph analytics|centrality|community|path</code>.</span><span class="vi"><code>centrality</code> / <code>community</code> / <code>find_paths</code> / <code>structural_holes</code>. Gate kích thước (≥500 node). Dùng bởi <code>orc:graph analytics|centrality|community|path</code>.</span></p>
+      </div>
+      <div class="lens c" style="--lc:var(--orc)">
+        <h4><span class="en">Advisory — tagged</span><span class="vi">Tư vấn — được gắn thẻ</span></h4>
+        <div class="fw"><code>knowledge_graph_advisory.py</code></div>
+        <p style="font-size:.8rem;color:var(--txt-dim);margin-top:6px"><span class="en">All outputs tagged <code>authoritative:false</code> + <code>owning_skill</code>. Feeds <code>psy:ref-audit</code>, <code>psy:timeline-sync</code>, <code>psy:propagate</code> as optional inputs — the consuming skill stays source-of-truth.</span><span class="vi">Mọi đầu ra gắn <code>authoritative:false</code> + <code>owning_skill</code>. Cung cấp cho <code>psy:ref-audit</code>, <code>psy:timeline-sync</code>, <code>psy:propagate</code> như đầu vào tùy chọn — skill tiêu dùng vẫn là nguồn sự thật.</span></p>
+      </div>
+    </div>
+
+    <div class="callout" style="--ac:var(--tel);margin-top:16px">
+      <span class="ci">🗺️</span>
+      <div><span class="en"><b>Pyvis dark-theme HTML visualization</b> via <code>knowledge_graph_viz.py</code> — <code>orc:graph visualize</code> renders an interactive focus-graph as a standalone HTML file. The L3 MCP semantic memory graph is intentionally <b>not built</b> (deferred at Batch 5, OQ#7): the two needs it would serve are already covered by the file-graph + JSONL event streams.</span><span class="vi"><b>Hình ảnh hóa HTML dark-theme Pyvis</b> qua <code>knowledge_graph_viz.py</code> — <code>orc:graph visualize</code> render đồ thị tập trung tương tác thành HTML độc lập. Đồ thị bộ nhớ ngữ nghĩa MCP L3 cố tình <b>chưa xây</b> (hoãn ở Batch 5, OQ#7): hai nhu cầu nó phục vụ đã được đáp bởi file-graph + luồng sự kiện JSONL.</span></div>
+    </div>
+
+    <!-- DESIGN PRINCIPLE -->
+    <h2 class="sectitle" id="arch-principle"><span class="en">The core design principle</span><span class="vi">Nguyên tắc thiết kế cốt lõi</span></h2>
+    <div class="callout" style="--ac:var(--gold);margin-top:8px">
+      <span class="ci">⚖️</span>
+      <div><span class="en"><b>Scripts gather deterministically — the LLM judges.</b> Scripts are allowed to over-flag (false positives are expected and acceptable); the LLM applies heuristic judgment to the gathered signals. This separation means the gathering step is fully reproducible and auditable, while the judgment step gets the full reasoning power of the model. Never delegate reasoning to a script; never trust a script's output as a final verdict.</span><span class="vi"><b>Script gom tất định — LLM phán xử.</b> Script được phép over-flag (dương tính giả được kỳ vọng và chấp nhận); LLM áp dụng phán đoán heuristic lên các tín hiệu đã gom. Tách biệt này có nghĩa là bước gom hoàn toàn tái tạo và kiểm được, trong khi bước phán xử có toàn bộ sức lập luận của model. Không bao giờ giao lập luận cho script; không bao giờ tin đầu ra script là phán quyết cuối.</span></div>
+    </div>
+
+    <!-- SELF-CONTAINED TREE -->
+    <h2 class="sectitle" id="arch-tree"><span class="en">The self-contained <code>.claude/</code> tree</span><span class="vi">Cây <code>.claude/</code> tự chứa</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Everything needed to run the system is under <code>.claude/</code>. No global install, no dashboard, no external server. The project is self-contained — the venv at <code>.claude/skills/.venv/</code> is the only Python runtime needed.</span><span class="vi">Mọi thứ cần để chạy hệ thống nằm dưới <code>.claude/</code>. Không cài global, không dashboard, không server ngoài. Dự án tự chứa — venv tại <code>.claude/skills/.venv/</code> là runtime Python duy nhất cần.</span></p>
+    <div class="rig" style="margin-top:8px">
+      <div class="rcell">
+        <div class="rt">.claude/skills/<span class="rn">68 skills</span></div>
+        <ul>
+          <li><span class="en">7 framework dirs: <code>orc-*</code> · <code>psy-*</code> · <code>cre-*</code> · <code>gro-*</code> · <code>mat-*</code> · <code>com-*</code> · <code>evl-*</code></span><span class="vi">7 thư mục framework: <code>orc-*</code> · <code>psy-*</code> · <code>cre-*</code> · <code>gro-*</code> · <code>mat-*</code> · <code>com-*</code> · <code>evl-*</code></span></li>
+          <li><span class="en">Each skill: <code>SKILL.md</code> + <code>README.md</code> + <code>GUIDE-EN.md</code> + <code>GUIDE-VI.md</code></span><span class="vi">Mỗi skill: <code>SKILL.md</code> + <code>README.md</code> + <code>GUIDE-EN.md</code> + <code>GUIDE-VI.md</code></span></li>
+          <li><code>_framework-shared/</code> — <span class="en">shared references + build scripts</span><span class="vi">reference dùng chung + build script</span></li>
+          <li><code>.venv/</code> — <span class="en">project-local Python runtime</span><span class="vi">runtime Python cục bộ dự án</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">.claude/agents/<span class="rn">20 agents</span></div>
+        <ul>
+          <li><span class="en">7 framework-domain + 13 dev-engineer agent specs</span><span class="vi">7 domain-framework + 13 agent dev-engineer spec</span></li>
+          <li><span class="en">Each is a Markdown file with role + tool permissions</span><span class="vi">Mỗi cái là file Markdown với vai trò + quyền tool</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">.claude/hooks/<span class="rn">CJS hooks</span></div>
+        <ul>
+          <li><code>gateguard-profile-protect.cjs</code></li>
+          <li><code>pii-guard-on-write.cjs</code></li>
+          <li><code>rebuild-knowledge-graph.cjs</code></li>
+          <li><span class="en">+ 7 more telemetry/observe hooks</span><span class="vi">+ 7 hook telemetry/observe khác</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">.claude/schemas/<span class="rn">JSON Schema</span></div>
+        <ul>
+          <li><span class="en">10 schemas — rubrics + scorecards + EVL verdicts</span><span class="vi">10 schema — rubric + scorecard + phán quyết EVL</span></li>
+          <li><span class="en">Validated at runtime by <code>schema_validator.py</code></span><span class="vi">Validate lúc chạy bởi <code>schema_validator.py</code></span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">.claude/scripts/<span class="rn">platform_lib</span></div>
+        <ul>
+          <li><span class="en"><code>platform_lib/</code> — 10+ shared Python modules</span><span class="vi"><code>platform_lib/</code> — 10+ module Python dùng chung</span></li>
+          <li><span class="en">7 knowledge-graph modules + non-KG utilities</span><span class="vi">7 module knowledge-graph + tiện ích non-KG</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">.claude/rules/<span class="rn">engineering rules</span></div>
+        <ul>
+          <li><span class="en">CK-origin dev rules (team-coordination, primary-workflow, orchestration-protocol, etc.)</span><span class="vi">Rule dev CK-origin (team-coordination, primary-workflow, orchestration-protocol, v.v.)</span></li>
+          <li><span class="en">Separate from framework domain rules at <code>docs/rules/</code></span><span class="vi">Riêng biệt với rule domain framework tại <code>docs/rules/</code></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- JSON SCHEMAS -->
+    <h2 class="sectitle" id="arch-schemas"><span class="en">JSON schemas &amp; runtime validation</span><span class="vi">JSON schema &amp; xác thực lúc chạy</span></h2>
+    <p class="muted" style="margin:-4px 0 10px"><span class="en">Rubrics and scorecards are validated at runtime — <code>evl:validate</code> runs the check and <code>schema_validator.py</code> fails closed on structural violations. The token below is injected by the build pipeline with live schema stats:</span><span class="vi">Rubric và scorecard được validate lúc chạy — <code>evl:validate</code> chạy kiểm và <code>schema_validator.py</code> fail-closed khi vi phạm cấu trúc. Token bên dưới được build pipeline chèn với thống kê schema trực tiếp:</span></p>
+    <!--SCHEMA_VALIDATE-->
+
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--evl)"><h3><span class="pin"></span><span class="en">Rubric schema</span><span class="vi">Schema rubric</span></h3><p><span class="en">4 built-in versioned rubrics (psychometric-big-five · role-casting-fit · clinical-risk-safety · relationship-compatibility) + <code>imported/</code> for external ones. Each version is pinned — scorecards reference a specific version and fail validation if the rubric moves under them.</span><span class="vi">4 rubric tích hợp có phiên bản (psychometric-big-five · role-casting-fit · clinical-risk-safety · relationship-compatibility) + <code>imported/</code> cho rubric ngoài. Mỗi phiên bản được ghim — scorecard tham chiếu phiên bản cụ thể và thất bại validation nếu rubric thay đổi phía dưới.</span></p></div>
+      <div class="card" style="--ac:var(--evl)"><h3><span class="pin"></span><span class="en">Scorecard schema</span><span class="vi">Schema scorecard</span></h3><p><span class="en">Every criterion in a scorecard must carry a <code>evidence_tier</code> (T1–T5 from MAT) and a <code>source_citation</code>. Uncited criteria are flagged <code>[UNVERIFIED]</code> — they are counted and surfaced, never silently passed.</span><span class="vi">Mọi tiêu chí trong scorecard phải mang <code>evidence_tier</code> (T1–T5 từ MAT) và <code>source_citation</code>. Tiêu chí không trích nguồn được gắn cờ <code>[UNVERIFIED]</code> — chúng được đếm và hiển thị, không bao giờ pass im lặng.</span></p></div>
+    </div>
+
+    <!-- COM SECTION -->
+    <h2 class="sectitle" id="arch-com"><span class="en">COM — utility framework (not a domain)</span><span class="vi">COM — framework tiện ích (không phải miền)</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">COM handles cross-cutting concerns that no domain framework should own. It performs <b>no domain writes</b> — its only output surfaces are git history, session logs, and reports. Its 5 skills are invoked on-demand, not as part of the event cascade.</span><span class="vi">COM xử lý các mối quan tâm xuyên cắt mà không framework domain nào nên sở hữu. Nó thực hiện <b>không ghi miền</b> — bề mặt đầu ra duy nhất là lịch sử git, log phiên, và báo cáo. 5 skill của nó được gọi theo-yêu-cầu, không phải là một phần của chuỗi sự kiện.</span></p>
+    <div class="cards grid-3" style="margin-top:10px">
+      <div class="card" style="--ac:var(--com)">
+        <h3><span class="pin"></span><code>com:git</code></h3>
+        <p><span class="en">Project-aware git operations with conventional commits. Enforces: no corpus in commits, no <code>.env</code>, no credentials. Pre-commit secret scan is mandatory.</span><span class="vi">Thao tác git nhận biết dự án với conventional commit. Ép: không corpus trong commit, không <code>.env</code>, không credentials. Quét secret trước commit là bắt buộc.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--com)">
+        <h3><span class="pin"></span><code>com:health-check</code></h3>
+        <p><span class="en">Session health monitoring — detects stalls, API errors, and process death for Claude Code subagents. Auto-invoked only when the user confirms monitoring or a health Monitor already runs; never auto-spawned silently.</span><span class="vi">Giám sát sức khỏe phiên — phát hiện đình trệ, lỗi API, và chết tiến trình cho subagent Claude Code. Tự gọi chỉ khi người dùng xác nhận giám sát hoặc Monitor sức khỏe đang chạy; không bao giờ sinh im lặng.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--com)">
+        <h3><span class="pin"></span><code>com:rules</code></h3>
+        <p><span class="en">Validates changed files against <code>docs/rules/*.md</code>. Depends on <code>orc:classify</code> for risk classification. Output is advisory — surfaces violations, does not auto-revert.</span><span class="vi">Validate file đã thay đổi theo <code>docs/rules/*.md</code>. Phụ thuộc <code>orc:classify</code> để phân loại rủi ro. Đầu ra là tư vấn — nêu vi phạm, không tự-hoàn-tác.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--com)">
+        <h3><span class="pin"></span><code>com:skill-analytics</code></h3>
+        <p><span class="en">11 read-only lenses over the skill corpus — usage frequency, script execution counts, error rates, profile-drift gate. Never writes to domain data.</span><span class="vi">11 lăng kính chỉ-đọc trên corpus skill — tần suất sử dụng, số lượt script, tỷ lệ lỗi, gate profile-drift. Không bao giờ ghi vào dữ liệu miền.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--com)">
+        <h3><span class="pin"></span><code>com:release</code></h3>
+        <p><span class="en">Cuts a versioned distribution pack release — Keep-a-Changelog lock + <code>pack.manifest.yaml</code> version bump. Triggers the CI tag-release workflow that builds the pack and posts a GitHub Release.</span><span class="vi">Cắt một bản release gói phân phối có phiên bản — khóa Keep-a-Changelog + bump phiên bản <code>pack.manifest.yaml</code>. Kích hoạt workflow CI tag-release để build gói và đăng GitHub Release.</span></p>
+      </div>
+    </div>
+
+    <div class="callout" style="--ac:var(--com);margin-top:14px">
+      <span class="ci">🛠️</span>
+      <div><span class="en"><b>COM is a utility layer, not a domain.</b> It does not participate in the <code>MAT.integrated → PSY.refresh → CRE.recalibrate</code> cascade. It does not own any profile, material, rubric, or asset data. Its scope is limited to: git hygiene, session observability, rule enforcement, skill observability, and release gating. If COM needs to reference domain data, it reads — it never writes.</span><span class="vi"><b>COM là lớp tiện ích, không phải miền.</b> Nó không tham gia vào chuỗi <code>MAT.integrated → PSY.refresh → CRE.recalibrate</code>. Nó không sở hữu bất kỳ dữ liệu hồ sơ, tư liệu, rubric, hay asset nào. Phạm vi giới hạn ở: vệ sinh git, quan sát phiên, ép rule, quan sát skill, và gate release. Nếu COM cần tham chiếu dữ liệu miền, nó đọc — không bao giờ ghi.</span></div>
+    </div>
+
+    <!-- STATS + LINKS -->
+    <div class="stats" style="margin-top:30px">
+      <div class="stat"><div class="n" data-count="7">7</div><div class="l"><span class="en">write-roots (one per framework)</span><span class="vi">write-root (một mỗi framework)</span></div></div>
+      <div class="stat"><div class="n" data-count="10">10</div><div class="l"><span class="en">platform_lib modules</span><span class="vi">module platform_lib</span></div></div>
+      <div class="stat"><div class="n" data-count="7">7</div><div class="l"><span class="en">knowledge-graph KG modules</span><span class="vi">module KG đồ thị tri thức</span></div></div>
+      <div class="stat"><div class="n" data-count="10">10</div><div class="l"><span class="en">JSON schemas validated at runtime</span><span class="vi">JSON schema validate lúc chạy</span></div></div>
+    </div>
+
+    <div class="cta-row" style="margin-top:24px">
+      <a class="btn-cta ghost" href="@subagents"><span class="en">Subagents →</span><span class="vi">Subagent →</span></a>
+      <a class="btn-cta ghost" href="@distribution"><span class="en">Distribution &amp; pack</span><span class="vi">Phân phối &amp; gói</span></a>
+      <a class="btn-cta ghost" href="@pipeline"><span class="en">Event pipeline</span><span class="vi">Quy trình sự kiện</span></a>
+    </div>
+  </div>
+</section>

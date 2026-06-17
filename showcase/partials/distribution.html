@@ -1,0 +1,176 @@
+<!-- ===================== DISTRIBUTION ===================== -->
+<section id="distribution">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--tel)">
+      <div class="badge"><svg width="34" height="34" viewBox="0 0 40 40" fill="none"><path d="M20 5v18M13 17l7 7 7-7" stroke="var(--tel)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 27v5a2 2 0 0 0 2 2h22a2 2 0 0 0 2-2v-5" stroke="var(--tel)" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+      <div class="ttl">
+        <div class="who"><span class="en">Deterministic toolkit packaging that ships no corpus, verified by SHA.</span><span class="vi">Đóng gói toolkit tất định không ship corpus, xác minh bằng SHA.</span></div>
+        <h2 id="distribution-title"><span class="en">Distribution &amp; Packaging</span><span class="vi">Phân phối &amp; Đóng gói</span></h2>
+      </div>
+      <div class="ver">pack.manifest.yaml · PAX · SHA256</div>
+    </div>
+    <div class="divider" style="--ac:var(--tel)"></div>
+
+    <p class="lead" style="margin-bottom:18px"><span class="en">The distribution pack ships the <b>framework toolkit only</b> — 68 skills, 7 domain agents, hooks, schemas, platform_lib, rules, and rubrics. It ships <b>zero character corpus</b>: a non-removable safety filter enforced after the manifest globs drops every file that could contain real-character PII. The same source + same manifest produces a byte-identical archive every time.</span><span class="vi">Gói phân phối ship <b>chỉ bộ framework toolkit</b> — 68 skill, 7 agent domain, hook, schema, platform_lib, rule, và rubric. Nó ship <b>không corpus nhân vật</b>: một safety filter không-thể-gỡ được ép sau manifest glob loại mọi file có thể chứa PII nhân vật thật. Cùng nguồn + cùng manifest tạo ra một archive byte-identical mỗi lần.</span></p>
+
+    <!-- PACK PIPELINE -->
+    <h2 class="sectitle" id="dist-pipeline"><span class="en">The pack pipeline</span><span class="vi">Quy trình đóng gói</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Four deterministic stages. Each stage is a discrete script; they compose into a single CI step triggered only on <code>frameworks-v*</code> tags.</span><span class="vi">Bốn giai đoạn tất định. Mỗi giai đoạn là một script rời nhau; chúng kết hợp thành một bước CI duy nhất chỉ kích hoạt trên tag <code>frameworks-v*</code>.</span></p>
+
+    <div class="flowline" style="margin-top:14px;gap:6px;flex-wrap:nowrap;overflow-x:auto">
+      <div class="fstep" style="--ac:var(--tel)">
+        <div class="fi"><svg viewBox="0 0 30 30" fill="none"><rect x="4" y="4" width="22" height="22" rx="3" stroke="var(--tel)" stroke-width="2"/><path d="M9 10h12M9 15h8M9 20h5" stroke="var(--tel)" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="fn"><span class="en">① Manifest</span><span class="vi">① Manifest</span></div>
+        <div class="fd"><code>pack.manifest.yaml</code><br><span class="en">include globs select toolkit files</span><span class="vi">glob include chọn file toolkit</span></div>
+      </div>
+      <div class="farrow" style="--ac:var(--tel)">→</div>
+      <div class="fstep" style="--ac:var(--crit)">
+        <div class="fi"><svg viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="10" stroke="var(--crit)" stroke-width="2"/><path d="M10 15l4 4 6-7" stroke="var(--crit)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="fn"><span class="en">② Safety Filter</span><span class="vi">② Safety Filter</span></div>
+        <div class="fd"><code>safety_filter.py</code><br><span class="en">NON-REMOVABLE PII drop</span><span class="vi">loại PII KHÔNG-THỂ-GỠ</span></div>
+      </div>
+      <div class="farrow" style="--ac:var(--tel)">→</div>
+      <div class="fstep" style="--ac:var(--tel)">
+        <div class="fi"><svg viewBox="0 0 30 30" fill="none"><path d="M15 4l3 8h8l-6.5 5 2.5 8L15 20l-7 5 2.5-8L4 12h8z" stroke="var(--tel)" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <div class="fn"><span class="en">③ Build</span><span class="vi">③ Build</span></div>
+        <div class="fd"><code>build_pack.py</code><br><span class="en">PAX · mtime=0 · sorted entries</span><span class="vi">PAX · mtime=0 · mục đã sắp xếp</span></div>
+      </div>
+      <div class="farrow" style="--ac:var(--tel)">→</div>
+      <div class="fstep" style="--ac:var(--ok)">
+        <div class="fi"><svg viewBox="0 0 30 30" fill="none"><path d="M15 4l2.5 7.5H25l-6 4.5 2.5 7.5-7-4.5-7 4.5 2.5-7.5-6-4.5h7.5z" stroke="var(--ok)" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <div class="fn"><span class="en">④ MANIFEST</span><span class="vi">④ MANIFEST</span></div>
+        <div class="fd"><span class="en">per-file SHA256<br>sidecar alongside tar.gz</span><span class="vi">SHA256 từng file<br>sidecar bên cạnh tar.gz</span></div>
+      </div>
+    </div>
+
+    <!-- STAGE DETAIL -->
+    <h2 class="sectitle" id="dist-stages"><span class="en">Stage detail</span><span class="vi">Chi tiết từng giai đoạn</span></h2>
+
+    <div class="steps" style="--ac:var(--tel)">
+      <div class="step">
+        <h4><span class="en">① <code>pack.manifest.yaml</code> — include globs</span><span class="vi">① <code>pack.manifest.yaml</code> — include glob</span></h4>
+        <p><span class="en">Lists repo-relative include globs that select the toolkit files: <code>.claude/skills/orc-*/**/*</code>, all 7 framework skill dirs, the 7 framework-domain agents, all hooks + hook-lib files, <code>.claude/scripts/**/*</code>, <code>.claude/schemas/**/*</code>, <code>docs/rules/**/*</code>, <code>docs/rubrics/**/*</code>, test fixtures, CHANGELOG, README, LICENSE. The corpus directories — <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>docs/graph/</code>, <code>docs/references/</code> — are <b>not listed</b> and are additionally blocked by the safety filter.</span><span class="vi">Liệt kê các glob include tương đối theo repo để chọn file toolkit: <code>.claude/skills/orc-*/**/*</code>, toàn bộ 7 thư mục skill framework, 7 agent domain-framework, toàn bộ file hook + hook-lib, <code>.claude/scripts/**/*</code>, <code>.claude/schemas/**/*</code>, <code>docs/rules/**/*</code>, <code>docs/rubrics/**/*</code>, fixture test, CHANGELOG, README, LICENSE. Thư mục corpus — <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>docs/graph/</code>, <code>docs/references/</code> — <b>không được liệt kê</b> và còn bị chặn thêm bởi safety filter.</span></p>
+      </div>
+      <div class="step">
+        <h4><span class="en">② <code>safety_filter.py</code> — NON-REMOVABLE backstop</span><span class="vi">② <code>safety_filter.py</code> — chốt chặn KHÔNG-THỂ-GỠ</span></h4>
+        <p><span class="en">Applied <b>after</b> the manifest globs — it is a second independent check, not a replacement for careful manifesting. It drops: (a) <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>docs/graph/</code>, <code>docs/references/</code> — real-character PII; (b) any <code>.env</code>, credentials, private key, or secret file; (c) runtime-only state (<code>.venv/</code> trees, <code>__pycache__/</code>, telemetry sinks). The label "NON-REMOVABLE" means it is coded into the build script — there is no config flag to skip it. A whole-pack PII scan runs after build as the closing gate.</span><span class="vi">Áp dụng <b>sau</b> các glob manifest — là kiểm tra độc lập thứ hai, không thay thế việc viết manifest cẩn thận. Nó loại: (a) <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>docs/graph/</code>, <code>docs/references/</code> — PII nhân vật thật; (b) mọi <code>.env</code>, credentials, private key, hoặc file bí mật; (c) trạng thái chỉ-runtime (<code>.venv/</code> tree, <code>__pycache__/</code>, sink telemetry). Nhãn "KHÔNG-THỂ-GỠ" có nghĩa là được code vào build script — không có flag config để bỏ qua. Một lần quét PII toàn-gói chạy sau build như gate chốt.</span></p>
+      </div>
+      <div class="step">
+        <h4><span class="en">③ <code>build_pack.py</code> — deterministic archive</span><span class="vi">③ <code>build_pack.py</code> — archive tất định</span></h4>
+        <p><span class="en">Produces a byte-identical <code>.tar.gz</code> from the same input every time by enforcing three determinism invariants: <b>PAX format</b> (portable extended headers, no platform-specific GNU extensions), <b>mtime=0</b> (all entry timestamps zeroed, removing filesystem-time variance), <b>sorted entries</b> (alphabetical traversal order, removing OS readdir ordering). Same source + same manifest = same SHA256.</span><span class="vi">Tạo <code>.tar.gz</code> byte-identical từ cùng đầu vào mỗi lần bằng cách ép ba bất biến tất định: <b>định dạng PAX</b> (header mở rộng portable, không có phần mở rộng GNU đặc thù nền tảng), <b>mtime=0</b> (mọi timestamp mục bằng không, loại bỏ phương sai thời-gian filesystem), <b>mục đã sắp xếp</b> (thứ tự duyệt theo alphabet, loại bỏ thứ tự readdir của OS). Cùng nguồn + cùng manifest = cùng SHA256.</span></p>
+      </div>
+      <div class="step">
+        <h4><span class="en">④ Per-file SHA256 MANIFEST — sidecar integrity</span><span class="vi">④ SHA256 từng file MANIFEST — toàn vẹn sidecar</span></h4>
+        <p><span class="en">A <code>MANIFEST</code> sidecar lists the SHA256 of every file inside the archive. It ships alongside the <code>.tar.gz</code> as a separate release asset. <code>install.sh</code> verifies the sidecar against the downloaded archive before extracting — a single-bit corruption or substitution fails the check. The per-file hashes let consumers verify individual files after extraction without re-hashing the whole archive.</span><span class="vi">Sidecar <code>MANIFEST</code> liệt kê SHA256 của mọi file bên trong archive. Nó ship cùng với <code>.tar.gz</code> như một release asset riêng biệt. <code>install.sh</code> xác minh sidecar theo archive đã tải trước khi giải nén — một bit bị hỏng hoặc thay thế làm kiểm tra thất bại. Hash từng file giúp người dùng xác minh các file riêng lẻ sau khi giải nén mà không cần hash lại toàn bộ archive.</span></p>
+      </div>
+    </div>
+
+    <!-- WHAT IS DROPPED -->
+    <h2 class="sectitle" id="dist-filter"><span class="en">What the safety filter drops</span><span class="vi">Safety filter loại cái gì</span></h2>
+    <div class="strip" style="margin-top:10px">
+      <div class="striprow drop"><span class="fn">docs/profiles/</span><span class="rule">real-character PII</span><span class="vb">DROPPED</span></div>
+      <div class="striprow drop"><span class="fn">docs/materials/</span><span class="rule">real-character PII · evidence corpus</span><span class="vb">DROPPED</span></div>
+      <div class="striprow drop"><span class="fn">docs/graph/</span><span class="rule">real-character PII · knowledge graph data</span><span class="vb">DROPPED</span></div>
+      <div class="striprow drop"><span class="fn">docs/references/</span><span class="rule">real-character PII · clinical references</span><span class="vb">DROPPED</span></div>
+      <div class="striprow drop"><span class="fn">.env · *.pem · credentials.*</span><span class="rule">secrets</span><span class="vb">DROPPED</span></div>
+      <div class="striprow drop"><span class="fn">.claude/skills/.venv/ · __pycache__/</span><span class="rule">runtime-only · not portable</span><span class="vb">DROPPED</span></div>
+      <div class="striprow kept"><span class="fn">.claude/skills/orc-*/**/*  psy-*/**/*  cre-*/**/*  …</span><span class="rule">68 skills · all 7 frameworks</span><span class="vb">KEPT</span></div>
+      <div class="striprow kept"><span class="fn">.claude/agents/psychologist.md  material-analyst.md  …</span><span class="rule">7 framework-domain agents</span><span class="vb">KEPT</span></div>
+      <div class="striprow kept"><span class="fn">.claude/hooks/gateguard-profile-protect.cjs  pii-guard-on-write.cjs  …</span><span class="rule">framework hooks + hook-lib</span><span class="vb">KEPT</span></div>
+      <div class="striprow kept"><span class="fn">.claude/schemas/**/*  docs/rules/**/*  docs/rubrics/**/*</span><span class="rule">schemas · 17 rules · 4 rubrics</span><span class="vb">KEPT</span></div>
+      <div class="striprow kept"><span class="fn">.claude/scripts/**/*</span><span class="rule">platform_lib + build/scan scripts</span><span class="vb">KEPT</span></div>
+      <div class="striprow kept"><span class="fn">tests/**/*  e2e/**/*  eval/**/*</span><span class="rule">test fixtures (synthetic · no corpus)</span><span class="vb">KEPT</span></div>
+    </div>
+
+    <!-- BUILD TOKEN -->
+    <h2 class="sectitle" id="dist-build"><span class="en">Live build output</span><span class="vi">Đầu ra build trực tiếp</span></h2>
+    <p class="muted" style="margin:-4px 0 10px"><span class="en">The token below is injected by the showcase build pipeline with the actual output of <code>build_pack.py</code> from the last tagged release:</span><span class="vi">Token bên dưới được build pipeline showcase chèn với đầu ra thực tế của <code>build_pack.py</code> từ lần release được tag gần nhất:</span></p>
+    <!--PACK_BUILD-->
+
+    <!-- CI / RELEASE -->
+    <h2 class="sectitle" id="dist-ci"><span class="en">CI-only tagged release</span><span class="vi">Release được tag chỉ qua CI</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">The pack build runs <b>only in CI</b>, triggered exclusively by a <code>frameworks-v*</code> tag push — never by a manual run or a PR. This prevents accidental releases and ensures the artifact in the GitHub Release matches what the reproducibility check produces.</span><span class="vi">Build gói chạy <b>chỉ trong CI</b>, chỉ kích hoạt bởi push tag <code>frameworks-v*</code> — không bao giờ bởi chạy thủ công hay PR. Điều này ngăn release vô tình và đảm bảo artifact trong GitHub Release khớp với kết quả kiểm tra tính tái tạo.</span></p>
+
+    <div class="cards grid-2">
+      <div class="card" style="--ac:var(--tel)">
+        <h3><span class="pin"></span><span class="en">Workflow: <code>frameworks-pack-release.yml</code></span><span class="vi">Workflow: <code>frameworks-pack-release.yml</code></span></h3>
+        <p><span class="en">Triggered on: <code>push: tags: ['frameworks-v*']</code>. Steps: checkout → build_pack.py → whole-pack PII scan → sha256sum MANIFEST → GitHub Release with <code>.tar.gz</code> + <code>MANIFEST</code> + <code>install.sh</code> as release assets. Fails the release if the PII scan flags any file.</span><span class="vi">Kích hoạt trên: <code>push: tags: ['frameworks-v*']</code>. Các bước: checkout → build_pack.py → quét PII toàn-gói → sha256sum MANIFEST → GitHub Release với <code>.tar.gz</code> + <code>MANIFEST</code> + <code>install.sh</code> làm release asset. Fail release nếu quét PII đánh dấu bất kỳ file nào.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--tel)">
+        <h3><span class="pin"></span><span class="en">Public mirror — filtered projection</span><span class="vi">Gương công khai — chiếu đã lọc</span></h3>
+        <p><span class="en">The public mirror is a filtered projection of this repo: no corpus (profiles/materials/graph/references), no private keys, same framework toolkit. It carries its own <code>frameworks-pack-release.yml</code> — when a <code>frameworks-v*</code> tag is projected, the mirror builds and publishes its own Release independently. Licensed AGPL-3.0.</span><span class="vi">Gương công khai là chiếu đã-lọc của repo này: không corpus (profiles/materials/graph/references), không private key, cùng bộ framework toolkit. Nó mang <code>frameworks-pack-release.yml</code> riêng — khi tag <code>frameworks-v*</code> được chiếu, gương tự build và đăng Release độc lập. Giấy phép AGPL-3.0.</span></p>
+      </div>
+    </div>
+
+    <!-- INSTALL.SH -->
+    <h2 class="sectitle" id="dist-install"><span class="en"><code>install.sh</code> — verify then provision</span><span class="vi"><code>install.sh</code> — xác minh rồi cấp phát</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">The installer is a standalone shell script that ships as a separate release asset — it does not live inside the <code>.tar.gz</code> it verifies. It runs five phases in order, fail-fast at the first problem:</span><span class="vi">Trình cài là shell script độc lập ship như release asset riêng biệt — nó không nằm trong <code>.tar.gz</code> mà nó xác minh. Nó chạy năm pha theo thứ tự, dừng ngay ở lỗi đầu tiên:</span></p>
+
+    <div class="walk" style="grid-template-columns:repeat(5,1fr)">
+      <div class="wstep v"><span class="wtag">phase 1</span><div class="wt"><span class="en">SHA verify</span><span class="vi">Xác minh SHA</span></div><div class="wd"><span class="en">compare <code>MANIFEST</code> against downloaded <code>.tar.gz</code> — fail on any mismatch</span><span class="vi">so <code>MANIFEST</code> với <code>.tar.gz</code> đã tải — fail nếu bất kỳ không khớp</span></div></div>
+      <div class="wstep b"><span class="wtag">phase 2</span><div class="wt"><span class="en">Extract</span><span class="vi">Giải nén</span></div><div class="wd"><span class="en">untar into target repo's <code>.claude/</code> — additive, no existing files removed</span><span class="vi">untar vào <code>.claude/</code> của repo đích — cộng thêm, không xóa file hiện có</span></div></div>
+      <div class="wstep p"><span class="wtag">phase 3</span><div class="wt"><span class="en">Check deps</span><span class="vi">Kiểm deps</span></div><div class="wd"><span class="en">Python ≥3.9 + required pip packages — prints exact install command if missing</span><span class="vi">Python ≥3.9 + gói pip cần — in lệnh cài chính xác nếu thiếu</span></div></div>
+      <div class="wstep e"><span class="wtag">phase 4</span><div class="wt"><span class="en">Provision venv</span><span class="vi">Dựng venv</span></div><div class="wd"><span class="en">create <code>.claude/skills/.venv/</code> + install packages — wires the project-local Python runtime</span><span class="vi">tạo <code>.claude/skills/.venv/</code> + cài gói — kết nối runtime Python cục bộ dự án</span></div></div>
+      <div class="wstep s"><span class="wtag">phase 5</span><div class="wt"><span class="en">Run tests</span><span class="vi">Chạy test</span></div><div class="wd"><span class="en">run <code>tests/</code> + <code>e2e/</code> against freshly installed copy — green before you trust the gate</span><span class="vi">chạy <code>tests/</code> + <code>e2e/</code> trên bản vừa cài — xanh trước khi tin vào gate</span></div></div>
+    </div>
+
+    <div class="callout" style="--ac:var(--crit);margin-top:16px">
+      <span class="ci">🔐</span>
+      <div><span class="en"><b>Why SHA verification before extract?</b> Extracting an unverified archive could overwrite <code>.claude/settings.json</code>, hooks, or rule files with attacker-controlled content before the user notices. The verify-first order guarantees the archive is byte-for-byte identical to what the CI build produced — a tampered bundle or a partial download fails before a single file is written to disk.</span><span class="vi"><b>Tại sao xác minh SHA trước khi giải nén?</b> Giải nén archive chưa xác minh có thể ghi đè <code>.claude/settings.json</code>, hook, hoặc file rule với nội dung do kẻ tấn công kiểm soát trước khi người dùng nhận ra. Thứ tự xác-minh-trước đảm bảo archive byte-for-byte giống với kết quả build CI — bundle bị giả mạo hoặc tải xuống một phần thất bại trước khi một file nào được ghi vào đĩa.</span></div>
+    </div>
+
+    <!-- REPRODUCIBILITY -->
+    <h2 class="sectitle" id="dist-repro"><span class="en">Reproducibility check</span><span class="vi">Kiểm tra tính tái tạo</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Any user can reproduce the exact release artifact from their local clone:</span><span class="vi">Bất kỳ người dùng nào cũng có thể tái tạo artifact release chính xác từ clone cục bộ của họ:</span></p>
+
+    <div class="deterministic" style="margin-top:10px">
+      <div class="dt"><b>1.</b> <code>git checkout frameworks-v1.4.0</code></div>
+      <div class="dt"><b>2.</b> <code>.claude/skills/.venv/bin/python3 .claude/skills/_framework-shared/scripts/build_pack.py</code></div>
+      <div class="dt"><b>3.</b> <code>sha256sum human-analyzer-frameworks-1.4.0.tar.gz</code></div>
+      <div class="dt"><b>→</b> <span style="color:var(--ok)"><b>must match CI artifact SHA</b></span></div>
+    </div>
+
+    <p class="muted" style="margin-top:14px;font-size:.9rem"><span class="en">The three determinism invariants (PAX format, mtime=0, sorted entries) ensure no OS, filesystem, or time-of-day variance affects the output. If your local SHA differs from the published one, the build inputs changed — check <code>git status</code> and <code>pack.manifest.yaml</code> version field.</span><span class="vi">Ba bất biến tất định (định dạng PAX, mtime=0, mục đã sắp xếp) đảm bảo không có OS, filesystem, hoặc phương sai thời-điểm-trong-ngày nào ảnh hưởng đến đầu ra. Nếu SHA cục bộ của bạn khác với SHA đã đăng, đầu vào build đã thay đổi — kiểm tra <code>git status</code> và trường phiên bản <code>pack.manifest.yaml</code>.</span></p>
+
+    <!-- PUBLIC MIRROR -->
+    <h2 class="sectitle" id="dist-mirror"><span class="en">Public mirror structure</span><span class="vi">Cấu trúc gương công khai</span></h2>
+    <div class="cards grid-2">
+      <div class="card" style="--ac:var(--ok)">
+        <h3><span class="pin"></span><span class="en">What the mirror contains</span><span class="vi">Gương chứa gì</span></h3>
+        <ul style="font-size:.86rem;color:var(--txt-dim);padding-left:1.1em;margin:.5em 0 0;line-height:1.8">
+          <li><span class="en">All 68 framework skills (identical to private)</span><span class="vi">Tất cả 68 skill framework (giống hệt private)</span></li>
+          <li><span class="en">7 framework-domain agents</span><span class="vi">7 agent domain-framework</span></li>
+          <li><span class="en">All hooks, schemas, platform_lib, rules, rubrics</span><span class="vi">Tất cả hook, schema, platform_lib, rule, rubric</span></li>
+          <li><span class="en">Synthetic test fixtures (no corpus)</span><span class="vi">Fixture test tổng hợp (không corpus)</span></li>
+          <li><span class="en">CHANGELOG · README · LICENSE (AGPL-3.0)</span><span class="vi">CHANGELOG · README · LICENSE (AGPL-3.0)</span></li>
+          <li><span class="en">CI workflows including <code>frameworks-pack-release.yml</code></span><span class="vi">Workflow CI bao gồm <code>frameworks-pack-release.yml</code></span></li>
+        </ul>
+      </div>
+      <div class="card" style="--ac:var(--bad)">
+        <h3><span class="pin"></span><span class="en">What the mirror never contains</span><span class="vi">Gương không bao giờ chứa</span></h3>
+        <ul style="font-size:.86rem;color:var(--txt-dim);padding-left:1.1em;margin:.5em 0 0;line-height:1.8">
+          <li><code>docs/profiles/</code> — <span class="en">real-character profiles</span><span class="vi">hồ sơ nhân vật thật</span></li>
+          <li><code>docs/materials/</code> — <span class="en">evidence corpus</span><span class="vi">corpus bằng chứng</span></li>
+          <li><code>docs/graph/</code> — <span class="en">knowledge graph data</span><span class="vi">dữ liệu đồ thị tri thức</span></li>
+          <li><code>docs/references/</code> — <span class="en">clinical reference files</span><span class="vi">file reference lâm sàng</span></li>
+          <li><span class="en">Any <code>.env</code>, API keys, credentials</span><span class="vi">Bất kỳ <code>.env</code>, API key, credentials</span></li>
+          <li><span class="en">Dev-engineer agents (planner, researcher, tester, …)</span><span class="vi">Agent dev-engineer (planner, researcher, tester, …)</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STATS + LINKS -->
+    <div class="stats" style="margin-top:30px">
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">corpus bytes in the pack</span><span class="vi">byte corpus trong gói</span></div></div>
+      <div class="stat"><div class="n" data-count="4">4</div><div class="l"><span class="en">deterministic build stages</span><span class="vi">giai đoạn build tất định</span></div></div>
+      <div class="stat"><div class="n" data-count="1">1</div><div class="l"><span class="en">CI trigger: <code>frameworks-v*</code> tag only</span><span class="vi">kích hoạt CI: chỉ tag <code>frameworks-v*</code></span></div></div>
+      <div class="stat"><div class="n" data-count="256">256</div><div class="l"><span class="en">bit SHA per file in MANIFEST</span><span class="vi">bit SHA mỗi file trong MANIFEST</span></div></div>
+    </div>
+
+    <div class="cta-row" style="margin-top:24px">
+      <a class="btn-cta ghost" href="@privacy"><span class="en">Privacy &amp; gates →</span><span class="vi">Bảo mật &amp; gate →</span></a>
+      <a class="btn-cta ghost" href="@install"><span class="en">Install guide</span><span class="vi">Hướng dẫn cài đặt</span></a>
+      <a class="btn-cta ghost" href="@architecture"><span class="en">Architecture internals</span><span class="vi">Bên trong kiến trúc</span></a>
+    </div>
+  </div>
+</section>

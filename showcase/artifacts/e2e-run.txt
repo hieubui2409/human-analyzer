@@ -1,0 +1,21 @@
+[FINDINGS] PSY · health-check · completeness
+[OK      ] PSY · crossref · timeline (dim 1)
+[OK      ] PSY · crossref · bidirectional refs
+[OK      ] PSY · crossref · extract events
+[OK      ] PSY · timeline-sync
+[FINDINGS] GRO · validate growth
+[OK      ] GRO · competency gather
+[OK      ] MAT · indexer · coverage gaps
+[OK      ] MAT · indexer · stale materials
+[OK      ] MAT · loader · inventory
+[OK      ] MAT · loader · dup detection
+[FINDINGS] CRE · humanize · scan ai-tells
+[OK      ] CRE · privacy-guard · scan assets
+[OK      ] CRE · privacy-guard · confidential names
+[OK      ] EVL · validate · all rubrics
+[OK      ] EVL · validate · scorecard invariants
+[OK      ] LIB · verdict_cache · crisis is never-cached
+[OK      ] LIB · verdict_cache · store+hit a verdict
+[OK      ] LIB · preferences · read knobs
+
+→ 19/19 steps OK · 7 frameworks · synthetic fixture · exit 0

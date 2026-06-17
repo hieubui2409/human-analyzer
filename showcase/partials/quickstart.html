@@ -1,0 +1,157 @@
+<!-- ===================== QUICK START ===================== -->
+<section id="quickstart">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--ok)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <path d="M20 5v10M20 25v10M5 20h10M25 20h10" stroke="var(--ok)" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="20" cy="20" r="7" stroke="var(--ok)" stroke-width="2"/>
+          <circle cx="20" cy="20" r="3" fill="var(--ok)"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--ok)"><span class="en">Clone · install venv · run deterministic pipeline · invoke your first skill</span><span class="vi">Clone · dựng venv · chạy pipeline tất định · gọi skill đầu tiên</span></div>
+        <h2><span class="en">Quick start</span><span class="vi">Bắt đầu nhanh</span></h2>
+      </div>
+      <div class="ver">Linux · Python ≥3.9 · git · Claude Code</div>
+    </div>
+    <div class="divider" style="--ac:var(--ok)"></div>
+
+    <p class="lead"><span class="en">Five steps from a fresh clone to a skill invocation — all deterministic, no API key needed, no external dependencies. Everything lives under <code>.claude/</code>; the project is self-contained. Without a corpus (<code>docs/profiles/characters.yaml</code>) the suite degrades cleanly — corpus-dependent tests skip while imports, compile, and the synthetic pipeline still pass.</span><span class="vi">Năm bước từ clone mới đến gọi skill — hoàn toàn tất định, không cần API key, không phụ thuộc ngoài. Tất cả nằm dưới <code>.claude/</code>; dự án tự đóng gói. Không có corpus (<code>docs/profiles/characters.yaml</code>) thì bộ kiểm thử xuống cấp êm — test phụ thuộc corpus bị bỏ qua, còn import, compile, và pipeline giả lập vẫn pass.</span></p>
+
+    <!-- Step 1: clone -->
+    <div style="margin-top:28px">
+      <span class="eyebrow" style="display:block">Step 1 · <span class="en">shell</span><span class="vi">shell</span></span>
+      <h2 class="sectitle" id="qs-clone" style="font-size:1.3rem;margin:2px 0 6px"><span class="en">Clone the repo</span><span class="vi">Clone repo</span></h2>
+      <p class="muted" style="font-size:.9rem"><span class="en">The public toolkit ships with no character corpus — <code>docs/profiles/</code>, <code>docs/materials/</code>, and <code>assets/</code> are absent by design. Bring your own subjects by creating <code>docs/profiles/characters.yaml</code>; the tooling resolves them dynamically via <code>paths.py</code>. This is also where you'd clone the private repo if you have access.</span><span class="vi">Toolkit công khai không kèm corpus nhân vật — <code>docs/profiles/</code>, <code>docs/materials/</code>, và <code>assets/</code> vắng mặt theo thiết kế. Mang nhân vật của bạn bằng cách tạo <code>docs/profiles/characters.yaml</code>; công cụ phân giải động qua <code>paths.py</code>. Đây cũng là nơi bạn clone repo riêng nếu có quyền truy cập.</span></p>
+      <div class="cmdline"><code>git clone https://github.com/your-org/human-analyzer.git &amp;&amp; cd human-analyzer</code></div>
+    </div>
+
+    <!-- Step 2: install venv -->
+    <div style="margin-top:28px">
+      <span class="eyebrow" style="display:block">Step 2 · <span class="en">shell</span><span class="vi">shell</span></span>
+      <h2 class="sectitle" id="qs-install" style="font-size:1.3rem;margin:2px 0 6px"><span class="en">Provision the project venv</span><span class="vi">Dựng venv nội bộ</span></h2>
+      <p class="muted" style="font-size:.9rem"><span class="en"><b>One command.</b> <code>install.sh</code> creates a project-local virtualenv under <code>.claude/skills/.venv/</code> and installs three packages — <code>pyyaml</code>, <code>jsonschema</code>, <code>pytest</code>. No global <code>pip</code> is touched. The venv path is canonical: every script in every skill uses <code>.claude/skills/.venv/bin/python3</code>, never the system interpreter. Full install docs: <a href="@install">Install</a>.</span><span class="vi"><b>Một lệnh.</b> <code>install.sh</code> tạo virtualenv nội bộ dưới <code>.claude/skills/.venv/</code> và cài ba gói — <code>pyyaml</code>, <code>jsonschema</code>, <code>pytest</code>. Không đụng <code>pip</code> toàn cục. Đường dẫn venv là chuẩn: mọi script trong mọi skill dùng <code>.claude/skills/.venv/bin/python3</code>, không dùng trình thông dịch hệ thống. Tài liệu cài đầy đủ: <a href="@install">Cài đặt</a>.</span></p>
+      <div class="cmdline"><code>bash .claude/scripts/install.sh</code></div>
+      <p class="muted" style="font-size:.82rem;margin-top:8px"><span class="en">The rule is absolute: <b>all skill scripts are invoked as</b> <code>.claude/skills/.venv/bin/python3 .claude/skills/{fw}-{skill}/scripts/{script}.py</code>. Never <code>python3</code> bare — the system interpreter won't have the installed packages.</span><span class="vi">Quy tắc tuyệt đối: <b>mọi script skill được gọi là</b> <code>.claude/skills/.venv/bin/python3 .claude/skills/{fw}-{skill}/scripts/{script}.py</code>. Không bao giờ dùng <code>python3</code> trần — trình thông dịch hệ thống sẽ thiếu gói cài.</span></p>
+    </div>
+
+    <!-- Step 3: pytest deterministic suite -->
+    <div style="margin-top:28px">
+      <span class="eyebrow" style="display:block">Step 3 · <span class="en">shell — deterministic suite</span><span class="vi">shell — bộ test tất định</span></span>
+      <h2 class="sectitle" id="qs-pytest" style="font-size:1.3rem;margin:2px 0 6px"><span class="en">Run the deterministic test suite</span><span class="vi">Chạy bộ kiểm thử tất định</span></h2>
+      <p class="muted" style="font-size:.9rem"><span class="en">The <code>-m 'not gemini'</code> marker skips the 34 live-LLM tests that need a <code>GEMINI_API_KEY</code> — all deterministic tests run. Without a roster you see ~665 pass, ~170 skip (corpus-dependent); with a roster the skip count drops. No API key, no external calls. <span class="realtag">real output</span></span><span class="vi">Tham số <code>-m 'not gemini'</code> bỏ qua 34 test LLM thật cần <code>GEMINI_API_KEY</code> — mọi test tất định vẫn chạy. Không có roster thì ~665 đạt, ~170 bỏ qua (phụ thuộc corpus); có roster thì số bỏ qua giảm. Không cần API key, không gọi mạng. <span class="realtag">đầu ra thật</span></span></p>
+      <div class="cmdline"><code>.claude/skills/.venv/bin/python3 -m pytest tests/ -q -m 'not gemini'</code></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">pytest tests/ -q -m 'not gemini'</span></div>
+        <!--PYTEST-->
+      </div>
+      <p class="muted" style="font-size:.82rem;margin-top:8px"><span class="en">Additional gates (all deterministic, no key needed):</span><span class="vi">Cổng bổ sung (tất định, không cần key):</span></p>
+      <div class="cmdline" style="margin-top:4px"><code>.claude/skills/.venv/bin/python3 -m pytest tests/ -m bug_class</code> <span class="muted" style="font-size:.82rem"><!-- closed-bug-class invariants --></span></div>
+      <div class="cmdline" style="margin-top:6px"><code>.claude/skills/.venv/bin/python3 tests/golden/run_evals.py</code> <span class="muted" style="font-size:.82rem"><!-- golden deterministic evals --></span></div>
+    </div>
+
+    <!-- Step 4: e2e pipeline -->
+    <div style="margin-top:28px">
+      <span class="eyebrow" style="display:block">Step 4 · <span class="en">shell — 7-framework e2e</span><span class="vi">shell — e2e 7 framework</span></span>
+      <h2 class="sectitle" id="qs-e2e" style="font-size:1.3rem;margin:2px 0 6px"><span class="en">Run the full e2e pipeline (19 steps)</span><span class="vi">Chạy pipeline e2e đầy đủ (19 bước)</span></h2>
+      <p class="muted" style="font-size:.9rem"><span class="en"><code>run-full-pipeline.py</code> exercises the <b>deterministic leg</b> of all 7 frameworks against <code>e2e/synthetic-project/</code> — a fully synthetic 2-character corpus with no real PII. 19 steps covering PSY · GRO · MAT · CRE · EVL + the <code>platform_lib</code> verdict-cache and preferences CLIs. Every step is a real script run, not a mock. Add <code>--write-log</code> to refresh the run log. <span class="realtag">real output</span></span><span class="vi"><code>run-full-pipeline.py</code> chạy <b>nhánh tất định</b> của cả 7 framework trên <code>e2e/synthetic-project/</code> — corpus giả lập 2 nhân vật hoàn toàn, không có PII thật. 19 bước bao phủ PSY · GRO · MAT · CRE · EVL + <code>platform_lib</code> verdict-cache và preferences CLI. Mỗi bước là chạy script thật, không phải mock. Thêm <code>--write-log</code> để cập nhật run log. <span class="realtag">đầu ra thật</span></span></p>
+      <div class="cmdline"><code>.claude/skills/.venv/bin/python3 e2e/run-full-pipeline.py</code></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">python3 e2e/run-full-pipeline.py</span></div>
+        <!--E2E-->
+      </div>
+
+      <div class="cards grid-2" style="margin-top:18px">
+        <div class="card" style="padding:16px;--ac:var(--ok)">
+          <h4 style="margin-bottom:6px;color:var(--ok)"><span class="en">What the 19 steps cover</span><span class="vi">19 bước bao phủ gì</span></h4>
+          <table class="modetable" style="margin-top:4px;font-size:.8rem">
+            <thead><tr><th><span class="en">Leg</span><span class="vi">Nhánh</span></th><th><span class="en">Steps</span><span class="vi">Bước</span></th></tr></thead>
+            <tbody>
+              <tr><td><code>PSY</code></td><td><span class="en">health-check · crossref · timeline-sync</span><span class="vi">health-check · crossref · timeline-sync</span></td></tr>
+              <tr><td><code>GRO</code></td><td><span class="en">validate growth · competency gather</span><span class="vi">kiểm tra phát triển · thu thập năng lực</span></td></tr>
+              <tr><td><code>MAT</code></td><td><span class="en">indexer (coverage gaps · stale) · loader (inventory · dup)</span><span class="vi">indexer (khoảng trống · cũ) · loader (kho · trùng)</span></td></tr>
+              <tr><td><code>CRE</code></td><td><span class="en">humanize (ai-tell scan) · privacy-guard (asset scan)</span><span class="vi">humanize (quét ai-tell) · privacy-guard (quét asset)</span></td></tr>
+              <tr><td><code>EVL</code></td><td><span class="en">validate (all rubrics · scorecard invariants)</span><span class="vi">kiểm tra (mọi rubric · bất biến scorecard)</span></td></tr>
+              <tr><td><code>LIB</code></td><td><span class="en">verdict_cache (crisis=never-cached · store→hit) · preferences</span><span class="vi">verdict_cache (khủng hoảng=không cache · lưu→hit) · preferences</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card" style="padding:16px;--ac:var(--ok)">
+          <h4 style="margin-bottom:6px;color:var(--ok)"><span class="en">Degrade-clean guarantee</span><span class="vi">Đảm bảo xuống cấp êm</span></h4>
+          <p style="font-size:.84rem"><span class="en">No <code>characters.yaml</code>? The e2e runner uses its own synthetic fixture — it never reads your corpus. Corpus-dependent unit tests skip. All imports, compiles, and script executions still pass. The toolkit is structurally sound before you add a single real subject.</span><span class="vi">Không có <code>characters.yaml</code>? Runner e2e dùng fixture giả lập của chính nó — không đọc corpus của bạn. Test unit phụ thuộc corpus bị bỏ qua. Tất cả import, compile, và thực thi script vẫn pass. Toolkit vững chắc về cấu trúc trước khi bạn thêm một nhân vật thật.</span></p>
+          <div class="tri" style="margin-top:10px">
+            <span class="keep"><span class="en">imports pass</span><span class="vi">import pass</span></span>
+            <span class="keep"><span class="en">scripts compile</span><span class="vi">script compile</span></span>
+            <span class="keep"><span class="en">e2e 19/19</span><span class="vi">e2e 19/19</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: invoke a skill -->
+    <div style="margin-top:28px">
+      <span class="eyebrow" style="display:block">Step 5 · <span class="en">Claude Code — invoke a skill</span><span class="vi">Claude Code — gọi skill</span></span>
+      <h2 class="sectitle" id="qs-skill" style="font-size:1.3rem;margin:2px 0 6px"><span class="en">Invoke your first skill</span><span class="vi">Gọi skill đầu tiên</span></h2>
+      <p class="muted" style="font-size:.9rem"><span class="en">All 68 skills are invoked by name as <code>{fw}:{skill}</code> inside Claude Code — the skill orchestrates its own scripts and LLM reasoning. You never call scripts directly when working through Claude Code. A good first skill without a corpus is <code>mat:loader</code> (needs a source file to ingest) or <code>psy:health-check</code> (needs a character slug + profile).</span><span class="vi">Tất cả 68 skill được gọi theo tên <code>{fw}:{skill}</code> trong Claude Code — skill tự điều phối script và suy luận LLM. Bạn không bao giờ gọi script thủ công khi làm qua Claude Code. Skill đầu tốt để thử không cần corpus là <code>mat:loader</code> (cần file nguồn để thu nhận) hoặc <code>psy:health-check</code> (cần slug nhân vật + hồ sơ).</span></p>
+
+      <div class="cards grid-2" style="margin-top:14px">
+        <div class="card" style="padding:16px;--ac:var(--mat)">
+          <div class="eyebrow" style="color:var(--mat)"><code>mat:loader</code></div>
+          <p style="font-size:.84rem;margin-top:6px"><span class="en">Ingest, classify, CRAAP-score, and frontmatter-inject a source document into <code>docs/materials/</code>. Stage 1–2 of the MAT pipeline. Emits <code>MAT.integrated</code> when the integration gate passes — triggering <code>PSY.refresh</code> on the next step.</span><span class="vi">Thu nhận, phân loại, chấm CRAAP, và chèn frontmatter cho tài liệu nguồn vào <code>docs/materials/</code>. Giai đoạn 1–2 của pipeline MAT. Phát <code>MAT.integrated</code> khi cổng tích hợp thông qua — kích hoạt <code>PSY.refresh</code> ở bước kế tiếp.</span></p>
+        </div>
+        <div class="card" style="padding:16px;--ac:var(--psy)">
+          <div class="eyebrow" style="color:var(--psy)"><code>psy:health-check</code></div>
+          <p style="font-size:.84rem;margin-top:6px"><span class="en">Profile completeness scoring — 25 files × quality dimensions = a 0–100 score with per-file gap flags. Good diagnostics after the first <code>psy:wave</code> build. Also the entry point for COM framework health monitoring.</span><span class="vi">Chấm điểm độ đầy đủ hồ sơ — 25 file × chiều chất lượng = điểm 0–100 kèm cờ khoảng trống từng file. Chẩn đoán tốt sau lần build <code>psy:wave</code> đầu tiên. Cũng là điểm vào giám sát sức khỏe framework COM.</span></p>
+        </div>
+      </div>
+
+      <div class="cmdline" style="margin-top:16px">
+        <span class="en">In Claude Code:</span><span class="vi">Trong Claude Code:</span>
+        <code>mat:loader</code> &nbsp;·&nbsp; <code>psy:health-check</code> &nbsp;·&nbsp; <code>orc:bootstrap --quick</code>
+      </div>
+
+      <p class="muted" style="font-size:.82rem;margin-top:8px"><span class="en">Or invoke a script directly (for testing outside Claude Code):</span><span class="vi">Hoặc gọi script trực tiếp (để kiểm thử ngoài Claude Code):</span></p>
+      <div class="cmdline"><code>.claude/skills/.venv/bin/python3 .claude/skills/psy-health-check/scripts/score-profile-completeness.py --character &lt;your-slug&gt;</code></div>
+    </div>
+
+    <!-- schema validate -->
+    <div style="margin-top:28px">
+      <h2 class="sectitle" id="qs-schema" style="font-size:1.2rem"><span class="en">Verify schemas (optional but recommended)</span><span class="vi">Xác minh schema (tùy chọn nhưng khuyến nghị)</span></h2>
+      <p class="muted" style="font-size:.9rem"><span class="en">Validates 119 files — rubrics, scorecards, and references — against their JSON schemas. Run it after adding a rubric or scorecard to catch shape errors early.</span><span class="vi">Kiểm tra 119 file — rubric, scorecard, và tài liệu tham khảo — theo schema JSON. Chạy sau khi thêm rubric hoặc scorecard để phát hiện lỗi hình dạng sớm.</span></p>
+      <div class="cmdline"><code>.claude/skills/.venv/bin/python3 .claude/scripts/validate-all-against-schemas.py</code></div>
+    </div>
+
+    <!-- callout: self-contained -->
+    <div class="callout" style="--ac:var(--ok);margin-top:22px">
+      <span class="ci">🔒</span>
+      <div><span class="en"><b>Fully self-contained under <code>.claude/</code></b> — skills, subagents, hooks, rules, schemas, the shared <code>platform_lib</code>, and the venv all live there. Nothing installs into the system Python. Nothing calls the network in the deterministic leg. The toolkit ships <b>no character corpus</b>; the e2e synthetic fixture contains no real PII. AGPL-3.0 licensed — network/SaaS use of a modified version must release full source.</span><span class="vi"><b>Hoàn toàn tự đóng gói dưới <code>.claude/</code></b> — skill, subagent, hook, rule, schema, <code>platform_lib</code> chung, và venv đều ở đó. Không cài vào Python hệ thống. Không gọi mạng trong nhánh tất định. Toolkit ship <b>không corpus nhân vật</b>; fixture giả lập e2e không có PII thật. Giấy phép AGPL-3.0 — dùng mạng/SaaS bản sửa đổi phải công bố mã nguồn đầy đủ.</span></div>
+    </div>
+
+    <!-- stats -->
+    <div class="stats" style="margin-top:28px">
+      <div class="stat"><div class="n" data-count="68">68</div><div class="l"><span class="en">framework skills</span><span class="vi">skill framework</span></div></div>
+      <div class="stat"><div class="n" data-count="7">7</div><div class="l"><span class="en">frameworks</span><span class="vi">framework</span></div></div>
+      <div class="stat"><div class="n" data-count="19">19</div><div class="l"><span class="en">e2e synthetic steps</span><span class="vi">bước e2e giả lập</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">network calls (deterministic leg)</span><span class="vi">lần gọi mạng (nhánh tất định)</span></div></div>
+    </div>
+
+    <!-- FAQ -->
+    <h3 class="sectitle" style="font-size:1.25rem;margin:34px 0 0"><span class="en">FAQ</span><span class="vi">Hỏi đáp</span></h3>
+    <div class="faq" style="--ac:var(--ok)">
+      <details><summary><span class="en">Do I need a character corpus to run anything?</span><span class="vi">Cần corpus nhân vật để chạy không?</span></summary><div class="fa"><span class="en">No. The e2e runner uses <code>e2e/synthetic-project/</code> — a fully synthetic fixture. Unit tests that depend on a real roster skip gracefully. You only need a corpus to run character-specific skills like <code>psy:health-check --character &lt;slug&gt;</code>.</span><span class="vi">Không. Runner e2e dùng <code>e2e/synthetic-project/</code> — fixture hoàn toàn giả lập. Test unit phụ thuộc roster thật bị bỏ qua một cách khéo léo. Bạn chỉ cần corpus để chạy skill cụ thể cho nhân vật như <code>psy:health-check --character &lt;slug&gt;</code>.</span></div></details>
+      <details><summary><span class="en">Why must I use <code>.claude/skills/.venv/bin/python3</code> instead of <code>python3</code>?</span><span class="vi">Vì sao phải dùng <code>.claude/skills/.venv/bin/python3</code> thay vì <code>python3</code>?</span></summary><div class="fa"><span class="en">The project-local venv is the only place where <code>pyyaml</code>, <code>jsonschema</code>, and <code>pytest</code> are installed. Using the system interpreter will raise <code>ModuleNotFoundError</code> on the first import. The venv rule is enforced across every skill — it's not optional.</span><span class="vi">Venv nội bộ là nơi duy nhất có cài <code>pyyaml</code>, <code>jsonschema</code>, và <code>pytest</code>. Dùng trình thông dịch hệ thống sẽ báo <code>ModuleNotFoundError</code> ở lần import đầu tiên. Quy tắc venv được áp dụng trên mọi skill — không có ngoại lệ.</span></div></details>
+      <details><summary><span class="en">34 tests are skipping — is that a problem?</span><span class="vi">34 test bị bỏ qua — có vấn đề không?</span></summary><div class="fa"><span class="en">No — those 34 are the live-LLM tests marked <code>gemini</code>. They need <code>GEMINI_API_KEY</code> and are expected to skip without one. Set a key (or a <code>.env</code> file) to run them. The deterministic suite is the ground truth for correctness.</span><span class="vi">Không — 34 cái đó là test LLM thật được đánh dấu <code>gemini</code>. Cần <code>GEMINI_API_KEY</code> và được thiết kế để bỏ qua khi thiếu key. Đặt key (hoặc file <code>.env</code>) để chạy chúng. Bộ test tất định là cơ sở đánh giá tính đúng đắn.</span></div></details>
+      <details><summary><span class="en">Can I invoke skills without Claude Code?</span><span class="vi">Có thể gọi skill mà không dùng Claude Code không?</span></summary><div class="fa"><span class="en">The deterministic scripts run standalone: <code>.claude/skills/.venv/bin/python3 .claude/skills/{fw}-{skill}/scripts/{script}.py [args]</code>. But skills also contain LLM reasoning steps — those only run when invoked through Claude Code where the LLM orchestrates the full skill contract defined in <code>SKILL.md</code>.</span><span class="vi">Script tất định chạy độc lập: <code>.claude/skills/.venv/bin/python3 .claude/skills/{fw}-{skill}/scripts/{script}.py [args]</code>. Nhưng skill còn có bước suy luận LLM — những bước đó chỉ chạy khi gọi qua Claude Code, nơi LLM điều phối hợp đồng skill đầy đủ định nghĩa trong <code>SKILL.md</code>.</span></div></details>
+      <details><summary><span class="en">Does anything call the network during the deterministic suite?</span><span class="vi">Có gì gọi mạng trong bộ test tất định không?</span></summary><div class="fa"><span class="en">No. Zero network calls in the deterministic leg. The e2e pipeline runs entirely in a synthetic fixture directory. Even this showcase makes no external requests. The only network path is the Gemini-gated LLM tests which are explicitly excluded by <code>-m 'not gemini'</code>.</span><span class="vi">Không. Không có lần gọi mạng nào trong nhánh tất định. Pipeline e2e chạy hoàn toàn trong thư mục fixture giả lập. Ngay cả showcase này cũng không gọi mạng. Đường dẫn mạng duy nhất là test LLM qua Gemini, được loại trừ rõ ràng bằng <code>-m 'not gemini'</code>.</span></div></details>
+    </div>
+
+    <!-- next cards -->
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@install" style="--ac:var(--ok)"><h3><span class="pin"></span><span class="en">Install — full details</span><span class="vi">Cài đặt — chi tiết đầy đủ</span></h3><p><span class="en">Venv convention, degrade-clean guarantee, schema validation, AGPL-3.0, and the distribution pack.</span><span class="vi">Quy ước venv, đảm bảo xuống cấp êm, xác minh schema, AGPL-3.0, và gói phân phối.</span></p></a>
+      <a class="card" href="@journey" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Journey — ingest to asset</span><span class="vi">Hành trình — thu nhận đến asset</span></h3><p><span class="en">Follow one synthetic material end-to-end: mat:loader → psy:wave → evl:score → cre:post-writer → two CRE gates → assets/.</span><span class="vi">Theo một tư liệu giả lập từ đầu đến cuối: mat:loader → psy:wave → evl:score → cre:post-writer → hai cổng CRE → assets/.</span></p></a>
+      <a class="card" href="@catalog" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Skill catalog — all 68</span><span class="vi">Danh mục skill — cả 68</span></h3><p><span class="en">Every skill with its purpose, guide links, and use-case finder to pick the right chain.</span><span class="vi">Mọi skill với mục đích, link hướng dẫn, và bộ chọn theo use-case để chọn chuỗi phù hợp.</span></p></a>
+      <a class="card" href="@hub" style="--ac:var(--ok)"><h3><span class="pin"></span><span class="en">Hub — overview</span><span class="vi">Hub — tổng quan</span></h3><p><span class="en">The 7-framework architecture, the event pipeline, and the honest-by-design guarantees at a glance.</span><span class="vi">Kiến trúc 7 framework, pipeline sự kiện, và đảm bảo trung thực-theo-thiết-kế trong nháy mắt.</span></p></a>
+    </div>
+  </div>
+</section>

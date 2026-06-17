@@ -1,0 +1,183 @@
+<!-- ===================== PIPELINE ===================== -->
+<section id="pipeline">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="color:var(--orc)"><span class="en">ORC · Event Bus</span><span class="vi">ORC · Event Bus</span></div>
+    <h2 class="sectitle" id="pipeline-title">
+      <span class="en">How MAT.integrated → PSY.refresh → CRE.recalibrate flows, gated and audited</span>
+      <span class="vi">Cách MAT.integrated → PSY.refresh → CRE.recalibrate chảy, có gate và kiểm toán</span>
+    </h2>
+    <p class="lead">
+      <span class="en">The system is <b>event-driven</b>, not procedural. Each framework emits a named event when its work completes; downstream frameworks react. ORC is the bus — it routes, audits, and cascades. It does <em>not</em> own any domain data, only workflow state in <code>.claude/</code>. Every declared event is verified by <code>orc:audit</code>; any mismatch between the declaration and what actually ran is flagged exit-non-zero.</span>
+      <span class="vi">Hệ thống chạy theo <b>sự kiện</b>, không phải thủ tục. Mỗi framework phát một sự kiện khi xong việc; các framework phía sau phản ứng. ORC là bus — định tuyến, kiểm toán, và lan chuỗi. Nó <em>không</em> sở hữu dữ liệu miền nào, chỉ trạng thái workflow trong <code>.claude/</code>. Mọi sự kiện khai báo đều được <code>orc:audit</code> xác minh; bất kỳ sai lệch nào giữa khai báo và thực tế đều bị báo exit khác 0.</span>
+    </p>
+
+    <!-- sequence diagram (ASCII) -->
+    <div class="hero-ex" style="--ac:var(--orc);margin-top:28px">
+      <div class="xlabel"><span class="en">Sequence — ORC as bus, not owner</span><span class="vi">Trình tự — ORC là bus, không phải chủ</span></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">orc:cascade --trigger MAT.integrated</span></div>
+        <pre>
+ MAT          ORC (bus)        PSY           EVL           CRE
+  │                │            │             │             │
+  │── MAT.integrated ──────────▶│             │             │
+  │                │──PSY.refresh ──────────▶│             │
+  │                │────────────────────────────EVL.rescore▶│             │
+  │                │            │──PSY.refresh────────────▶│             │
+  │                │            │             │──EVL.scored▶│             │
+  │                │────────────────────────────────────────CRE.recalibrate
+  │                │            │             │             │
+  │       GRO ─ GRO.assessed ──▶│             │             │
+  │                │            │── PSY.refresh ──────────▶│             │
+  │                │────────────────────────── EVL.rescore ▶│             │
+  │                │            │             │── EVL.scored▶│            │
+  │                │────────────────────────────────────────CRE.recalibrate
+  │                │            │             │             │</pre>
+      </div>
+      <p class="faint" style="font-size:.76rem;margin-top:10px">
+        <span class="en">ORC routes — it never writes to profiles, materials, or assets. Each arrow is a convention (named event), not a code call.</span>
+        <span class="vi">ORC định tuyến — không bao giờ ghi vào profile, tư liệu, hay asset. Mỗi mũi tên là quy ước (sự kiện tên), không phải lời gọi code.</span>
+      </p>
+    </div>
+
+    <!-- full event catalog -->
+    <h2 class="sectitle" id="pipeline-events" style="margin-top:48px">
+      <span class="en">Full event catalog</span>
+      <span class="vi">Toàn bộ danh mục sự kiện</span>
+    </h2>
+    <p class="lead">
+      <span class="en">Events are named <code>{DOMAIN}.{action}</code>. They are conventions for skill-routing decisions — not code calls.</span>
+      <span class="vi">Sự kiện được đặt tên <code>{DOMAIN}.{action}</code>. Chúng là quy ước định tuyến skill — không phải lời gọi code.</span>
+    </p>
+    <div style="overflow-x:auto;margin-top:14px">
+      <table class="modetable">
+        <thead>
+          <tr>
+            <th><span class="en">Event</span><span class="vi">Sự kiện</span></th>
+            <th><span class="en">Emitted by</span><span class="vi">Phát bởi</span></th>
+            <th><span class="en">Trigger condition</span><span class="vi">Điều kiện kích</span></th>
+            <th><span class="en">Downstream action</span><span class="vi">Hành động tiếp theo</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>MAT.integrated</code></td><td>mat:indexer</td><td><span class="en">processing_status → "integrated"; CRAAP ≥15/25</span><span class="vi">processing_status → "integrated"; CRAAP ≥15/25</span></td><td><span class="en">→ PSY.refresh + CRE.recalibrate</span><span class="vi">→ PSY.refresh + CRE.recalibrate</span></td></tr>
+          <tr><td><code>MAT.contradiction</code></td><td>mat:indexer</td><td><span class="en">Contradiction detected, severity medium+</span><span class="vi">Phát hiện mâu thuẫn, mức medium+</span></td><td><span class="en">→ PSY.flag → human review or PSY.updated</span><span class="vi">→ PSY.flag → xem xét người dùng hoặc PSY.updated</span></td></tr>
+          <tr><td><code>PSY.refresh</code></td><td>psy:wave / psy:crossref</td><td><span class="en">Profile sections affected by new material</span><span class="vi">Các mục profile bị ảnh hưởng bởi tư liệu mới</span></td><td><span class="en">→ EVL.rescore + CRE.recalibrate (if voice-relevant)</span><span class="vi">→ EVL.rescore + CRE.recalibrate (nếu liên quan voice)</span></td></tr>
+          <tr><td><code>PSY.updated</code></td><td>psy:wave</td><td><span class="en">Profile file(s) modified</span><span class="vi">File profile bị sửa</span></td><td><span class="en">→ psy:propagate cascade + CRE.recalibrate</span><span class="vi">→ chuỗi psy:propagate + CRE.recalibrate</span></td></tr>
+          <tr><td><code>PSY.crisis</code></td><td>psy:crisis-assess</td><td><span class="en">Crisis assessment triggered</span><span class="vi">Kích hoạt đánh giá khủng hoảng</span></td><td><span class="en">Log + escalate to user immediately; never cached</span><span class="vi">Ghi log + leo thang ngay tới người dùng; không cache</span></td></tr>
+          <tr><td><code>GRO.assessed</code></td><td>gro:competency-map / gro:career-path</td><td><span class="en">Competency or career assessment completed</span><span class="vi">Hoàn thành đánh giá năng lực hoặc sự nghiệp</span></td><td><span class="en">→ PSY.refresh + EVL.rescore + CRE.recalibrate</span><span class="vi">→ PSY.refresh + EVL.rescore + CRE.recalibrate</span></td></tr>
+          <tr><td><code>GRO.mentored</code></td><td>gro:mentoring-track</td><td><span class="en">Mentoring session documented</span><span class="vi">Ghi nhận phiên mentoring</span></td><td><span class="en">→ PSY.refresh (mentoring reveals psych insights)</span><span class="vi">→ PSY.refresh (mentoring tiết lộ insight tâm lý)</span></td></tr>
+          <tr><td><code>EVL.rescore</code></td><td>orc:cascade</td><td><span class="en">PSY.refresh or GRO.assessed received</span><span class="vi">Nhận PSY.refresh hoặc GRO.assessed</span></td><td><span class="en">→ evl:score --rescore → EVL.scored</span><span class="vi">→ evl:score --rescore → EVL.scored</span></td></tr>
+          <tr><td><code>EVL.scored</code></td><td>evl:score</td><td><span class="en">Scorecard (re)written under eval/</span><span class="vi">Scorecard được (tái)ghi dưới eval/</span></td><td><span class="en">→ CRE.recalibrate (verdict is a content-angle source)</span><span class="vi">→ CRE.recalibrate (phán quyết là nguồn góc độ nội dung)</span></td></tr>
+          <tr><td><code>CRE.recalibrate</code></td><td>orc:cascade</td><td><span class="en">Voice/tone assumptions may be stale</span><span class="vi">Giả định về giọng/tone có thể lỗi thời</span></td><td><span class="en">Reload 3-layer voice architecture from updated profiles</span><span class="vi">Tải lại kiến trúc giọng 3 lớp từ profile mới</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- domain boundary rule -->
+    <h2 class="sectitle" id="pipeline-boundary" style="margin-top:48px">
+      <span class="en">Domain-boundary rule — one write-root per framework</span>
+      <span class="vi">Quy tắc ranh giới miền — mỗi framework một write-root</span>
+    </h2>
+    <div class="callout" style="--ac:var(--orc)">
+      <span class="ci">🔒</span>
+      <div>
+        <span class="en"><b>Rule 12 — hard:</b> No domain writes outside its boundary. Cross-boundary writes are bugs. The <code>platform_lib/fs_guard</code> write-jail enforces this at runtime — any tool call attempting to write outside the declared root exits with an error before it touches the filesystem.</span>
+        <span class="vi"><b>Rule 12 — cứng:</b> Không miền nào ghi ngoài ranh giới của nó. Ghi chéo ranh giới là lỗi. Nhà tù ghi <code>platform_lib/fs_guard</code> ép điều này lúc chạy — bất kỳ lời gọi tool nào cố ghi ngoài root khai báo đều bị thoát lỗi trước khi chạm filesystem.</span>
+      </div>
+    </div>
+    <div style="overflow-x:auto;margin-top:14px">
+      <table class="modetable">
+        <thead>
+          <tr>
+            <th><span class="en">Domain</span><span class="vi">Miền</span></th>
+            <th><span class="en">Writes to (write-root)</span><span class="vi">Ghi vào (write-root)</span></th>
+            <th><span class="en">Reads from</span><span class="vi">Đọc từ</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><b>MAT</b></td><td><code>docs/materials/{character}/</code></td><td><span class="en">Raw source files only</span><span class="vi">Chỉ file nguồn thô</span></td></tr>
+          <tr><td><b>PSY</b></td><td><code>docs/profiles/</code> · <code>docs/references/</code> · <code>docs/graph/</code></td><td><code>docs/materials/</code> <span class="en">(read-only after MAT)</span><span class="vi">(chỉ đọc sau MAT)</span></td></tr>
+          <tr><td><b>GRO</b></td><td><code>docs/profiles/*/growth/</code></td><td><span class="en">profiles + materials (read-only)</span><span class="vi">profile + tư liệu (chỉ đọc)</span></td></tr>
+          <tr><td><b>EVL</b></td><td><code>docs/profiles/*/eval/</code> · <code>docs/rubrics/</code></td><td><span class="en">profiles + materials (read-only); never CRE</span><span class="vi">profile + tư liệu (chỉ đọc); không bao giờ CRE</span></td></tr>
+          <tr><td><b>CRE</b></td><td><code>assets/</code></td><td><span class="en">profiles (read-only), materials</span><span class="vi">profile (chỉ đọc), tư liệu</span></td></tr>
+          <tr><td><b>ORC</b></td><td><code>.claude/</code> <span class="en">(workflow state, session, cache)</span><span class="vi">(trạng thái workflow, phiên, cache)</span></td><td><span class="en">All domains — orchestration only, no edits</span><span class="vi">Tất cả miền — chỉ điều phối, không sửa</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- cascade resolution -->
+    <h2 class="sectitle" id="pipeline-cascade" style="margin-top:48px">
+      <span class="en">Cascade resolution — orc:cascade</span>
+      <span class="vi">Giải chuỗi cascade — orc:cascade</span>
+    </h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">orc:cascade — what it does</span><span class="vi">orc:cascade — chức năng</span></h3>
+        <p>
+          <span class="en">Given a trigger event (e.g. <code>MAT.integrated</code>), <code>orc:cascade</code> walks the event graph, determines which downstream skills must fire, checks for pending contradictions, and emits a sequenced execution plan. It handles idempotency — the same event fired twice does not double-process (session state is checked before acting).</span>
+          <span class="vi">Với sự kiện kích (vd. <code>MAT.integrated</code>), <code>orc:cascade</code> duyệt đồ thị sự kiện, xác định các skill phía sau phải kích, kiểm tra mâu thuẫn đang chờ, và phát kế hoạch thực thi có thứ tự. Nó xử lý idempotency — cùng một sự kiện bắn hai lần không được xử lý kép (trạng thái phiên được kiểm trước khi thực hiện).</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">Multi-step workflow guards</span><span class="vi">Bảo vệ workflow nhiều bước</span></h3>
+        <ul style="margin:.4em 0 0;padding-left:1.1em;font-size:.86rem;color:var(--txt-dim);line-height:1.75">
+          <li><span class="en">No concurrent domain writes — PSY updating a profile blocks CRE until <code>PSY.updated</code></span><span class="vi">Không ghi miền đồng thời — PSY đang cập nhật profile chặn CRE đến khi <code>PSY.updated</code></span></li>
+          <li><span class="en">Contradiction ceiling — safety-relevant contradiction stops all automation, surfaces to user</span><span class="vi">Trần mâu thuẫn — mâu thuẫn liên quan an toàn dừng mọi tự động, đưa lên người dùng</span></li>
+          <li><span class="en">Stale-voice guard — if last material integration is newer than last PSY refresh, force <code>CRE.recalibrate</code></span><span class="vi">Bảo vệ voice lỗi thời — nếu tích hợp tư liệu mới hơn refresh PSY gần nhất, ép <code>CRE.recalibrate</code></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- orc:audit exit-0 invariant -->
+    <h2 class="sectitle" id="pipeline-audit" style="margin-top:48px">
+      <span class="en">orc:audit — the exit-0 invariant</span>
+      <span class="vi">orc:audit — bất biến exit-0</span>
+    </h2>
+    <p class="lead">
+      <span class="en"><code>orc:audit --domain all</code> verifies that every event declared in the skill catalog matches what was actually recorded in the event log. Declared events that have no corresponding log entry — or log entries that have no skill declaration — both cause exit non-zero. This is not telemetry; it is a hard correctness gate.</span>
+      <span class="vi"><code>orc:audit --domain all</code> xác minh rằng mọi sự kiện khai báo trong danh mục skill đều khớp với những gì thực sự được ghi trong event log. Sự kiện khai báo không có entry log tương ứng — hoặc entry log không có khai báo skill — đều khiến exit khác 0. Đây không phải telemetry; đây là gate đúng đắn cứng.</span>
+    </p>
+    <div class="hero-ex" style="--ac:var(--orc);margin-top:18px">
+      <div class="xlabel"><span class="en">Live audit output</span><span class="vi">Đầu ra audit thật</span></div>
+      <div class="cmdline"><span class="en">Run in Claude Code:</span><span class="vi">Chạy trong Claude Code:</span><code>/orc:audit --domain all</code></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">orc:audit --domain all</span></div>
+        <!--ORC_AUDIT-->
+      </div>
+      <p class="faint" style="font-size:.76rem;margin-top:10px">
+        <span class="en">Exit 0 means declared == actual. Any mismatch is a bug, not a warning.</span>
+        <span class="vi">Exit 0 nghĩa là khai báo == thực tế. Bất kỳ sai lệch nào là lỗi, không phải cảnh báo.</span>
+      </p>
+    </div>
+
+    <!-- e2e test block -->
+    <h2 class="sectitle" id="pipeline-e2e" style="margin-top:48px">
+      <span class="en">End-to-end test — the full cascade in a single run</span>
+      <span class="vi">Kiểm thử đầu-cuối — toàn bộ cascade trong một lần chạy</span>
+    </h2>
+    <div class="hero-ex" style="--ac:var(--orc);margin-top:18px">
+      <div class="xlabel"><span class="en">e2e harness output</span><span class="vi">Đầu ra harness e2e</span></div>
+      <div class="cmdline"><code>python3 tests/e2e/run_e2e.py --leg deterministic</code></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">run_e2e.py --leg deterministic</span></div>
+        <!--E2E-->
+      </div>
+    </div>
+
+    <!-- pipeline stats -->
+    <div class="stats" style="margin-top:40px">
+      <div class="stat"><div class="n" data-count="7">7</div><div class="l"><span class="en">frameworks · 1 event bus (ORC)</span><span class="vi">framework · 1 event bus (ORC)</span></div></div>
+      <div class="stat"><div class="n" data-count="10">10</div><div class="l"><span class="en">named domain events in catalog</span><span class="vi">sự kiện miền trong danh mục</span></div></div>
+      <div class="stat"><div class="n" data-count="3">3</div><div class="l"><span class="en">quality gates before publish</span><span class="vi">cổng chất lượng trước đăng</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">cross-domain direct writes allowed</span><span class="vi">ghi chéo miền trực tiếp được phép</span></div></div>
+    </div>
+
+    <!-- related cards -->
+    <div class="cards grid-2" style="margin-top:32px">
+      <a class="card" href="@gates" style="--ac:var(--crit)"><h3><span class="pin"></span><span class="en">Gates &amp; evidence</span><span class="vi">Cổng &amp; bằng chứng</span></h3><p><span class="en">The three gates — MAT integration, per-claim evidence scan, and privacy guard — that run before any content publishes.</span><span class="vi">Ba cổng — tích hợp MAT, quét bằng chứng từng claim, và bảo vệ bảo mật — chạy trước khi nội dung nào được đăng.</span></p></a>
+      <a class="card" href="@orc" style="--ac:var(--orc)"><h3><span class="pin"></span><span class="en">ORC framework guide</span><span class="vi">Hướng dẫn framework ORC</span></h3><p><span class="en">17 ORC skills — intake, classify, cascade, audit, event-log, domain-router, and more — with trigger conditions and GUIDE routing.</span><span class="vi">17 skill ORC — intake, classify, cascade, audit, event-log, domain-router, và hơn nữa — kèm điều kiện kích và định tuyến GUIDE.</span></p></a>
+      <a class="card" href="@subagents" style="--ac:var(--tel)"><h3><span class="pin"></span><span class="en">Subagents</span><span class="vi">Subagent</span></h3><p><span class="en">20 input-isolated subagents — psychologist, material-analyst, content-strategist, cross-validator — that run inside the event pipeline.</span><span class="vi">20 subagent cô lập đầu vào — psychologist, material-analyst, content-strategist, cross-validator — chạy bên trong pipeline sự kiện.</span></p></a>
+      <a class="card" href="@catalog" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Skill catalog</span><span class="vi">Danh mục skill</span></h3><p><span class="en">All 68 skills across 7 frameworks, with use-case finder and per-skill trigger table.</span><span class="vi">Toàn bộ 68 skill trên 7 framework, với bộ tìm use-case và bảng kích từng skill.</span></p></a>
+    </div>
+  </div>
+</section>

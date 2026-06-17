@@ -72,3 +72,10 @@ include:
   # own Release on a frameworks-v* tag (same build/scan/determinism gates), instead of being released by
   # hand. Each repo builds from its own content, so the SHA256 a consumer rebuilds matches that repo's asset.
   - .github/workflows/frameworks-pack-release.yml
+  # Single-source-of-truth GitHub Pages deploy for the showcase. Job is guarded to the public repo, so the
+  # synced copy is a no-op in the private mirror. Builds showcase/ once → this repo's Pages + the dedicated
+  # human-analyzer-showcase mirror.
+  - .github/workflows/pages.yml
+  # Standalone bilingual 3D showcase (system/framework tour — no character corpus). Source of truth for both
+  # Pages sites; pages.yml runs showcase/build.py to generate index.html + guides/ + the portable file.
+  - showcase/**/*

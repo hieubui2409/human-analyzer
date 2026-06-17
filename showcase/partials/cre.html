@@ -1,0 +1,197 @@
+<!-- ===================== CRE — Content Creation ===================== -->
+<section id="cre">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--cre)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <path d="M26 7l7 7-17 17-8 2 2-8L26 7Z" stroke="var(--cre)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M23 10l7 7" stroke="var(--cre)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M9 32h8" stroke="var(--cre)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--cre)"><span class="en">Profile → platform-native content, double-gated by evidence and confidentiality</span><span class="vi">Hồ sơ → nội dung gốc nền tảng, gate kép bởi bằng chứng và bảo mật</span></div>
+        <h2 id="cre">CRE</h2>
+      </div>
+      <div class="ver">10 skills · Rules 03·09·14</div>
+    </div>
+    <div class="divider" style="--ac:var(--cre)"></div>
+
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en">The CRE framework is the only framework that <b>writes to <code>assets/</code></b>. It translates clinical profiles into platform-native content — and it never publishes a claim it cannot back with an evidence tier. Two mandatory gates stand between draft and published asset: <code>cre:evidence-scanner</code> checks every claim (T1–T5 tier-permission) and <code>cre:privacy-guard</code> scans for Rule 09 leaks. A single failure at either gate blocks the publish — no exceptions, no silent passes.</span>
+      <span class="vi">CRE là framework duy nhất <b>ghi vào <code>assets/</code></b>. Nó dịch hồ sơ lâm sàng thành nội dung gốc nền tảng — và không bao giờ đăng một claim không có bậc bằng chứng chống lưng. Hai gate bắt buộc đứng giữa bản thảo và asset đã đăng: <code>cre:evidence-scanner</code> kiểm từng claim (tier-permission T1–T5) và <code>cre:privacy-guard</code> quét rò rỉ Rule 09. Một lỗi ở bất kỳ gate nào đều chặn đăng — không ngoại lệ, không pass im lặng.</span>
+    </p>
+
+    <!-- ===== THE POST-WRITER PIPELINE ===== -->
+    <h2 class="sectitle" id="cre-pipeline"><span class="en">The cre:post-writer pipeline</span><span class="vi">Pipeline cre:post-writer</span></h2>
+    <p class="lead" style="margin-bottom:14px">
+      <span class="en">End-to-end content creation from a blank angle to a published asset. Six phases run in order; every phase gate is enforced before the next begins.</span>
+      <span class="vi">Sáng tạo nội dung end-to-end từ góc trống đến asset đã đăng. Sáu phase chạy theo thứ tự; gate mỗi phase được ép trước khi phase tiếp bắt đầu.</span>
+    </p>
+
+    <div class="pipe-stage" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
+      <div class="pstation" style="--ac:var(--orc)">
+        <div class="num">01 · orc:intake</div>
+        <h4><span class="en">Bootstrap</span><span class="vi">Khởi động</span></h4>
+        <p><span class="en">Classify work type, load 3-layer voice (core identity → writing-voice → defense-mechanisms). Missing layer → STOP and delegate to PSY.</span><span class="vi">Phân loại loại việc, tải kiến trúc giọng 3 lớp (core identity → writing-voice → defense-mechanisms). Thiếu lớp → DỪNG và chuyển PSY.</span></p>
+        <span class="role"><span class="en">emits ORC.intake</span><span class="vi">phát ORC.intake</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--cre)">
+        <div class="num">02 · cre:prompt-leverage</div>
+        <h4><span class="en">Prompt leverage</span><span class="vi">Tăng cường prompt</span></h4>
+        <p><span class="en">Strengthen the content prompt — lock angle, tone register, platform constraints, evidence scope, and defense-gate before writing begins.</span><span class="vi">Tăng cường prompt nội dung — khóa góc, thanh điệu, ràng buộc nền tảng, phạm vi bằng chứng và defense-gate trước khi viết.</span></p>
+        <span class="role"><span class="en">input to post-writer</span><span class="vi">đầu vào cho post-writer</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--cre)">
+        <div class="num">03 · cre:post-writer</div>
+        <h4><span class="en">Draft</span><span class="vi">Soạn thảo</span></h4>
+        <p><span class="en">Write the platform-native draft. Defense-mechanism gating applied inline — denial blocks direct acknowledgement; intellectualization frames through analysis, not raw emotion.</span><span class="vi">Viết bản thảo gốc nền tảng. Defense-mechanism gating áp dụng trực tiếp — denial chặn thừa nhận trực tiếp; intellectualization đóng khung qua phân tích, không cảm xúc thô.</span></p>
+        <span class="role"><span class="en">draft → assets/</span><span class="vi">bản thảo → assets/</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--crit)">
+        <div class="num">04 · cre:evidence-scanner</div>
+        <h4><span class="en">⛔ Evidence gate</span><span class="vi">⛔ Gate bằng chứng</span></h4>
+        <p><span class="en">Per-claim T1–T5 PASS / WARN / FAIL. T5-only claims never surface in public content. A FAIL blocks publish and emits <code>CRE.evidence-checked</code> with fail reasons logged.</span><span class="vi">PASS / WARN / FAIL từng claim T1–T5. Claim chỉ-T5 không bao giờ lộ trong nội dung công khai. FAIL chặn đăng và phát <code>CRE.evidence-checked</code> với lý do fail được ghi lại.</span></p>
+        <span class="role"><span class="en">emits CRE.evidence-checked</span><span class="vi">phát CRE.evidence-checked</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--crit)">
+        <div class="num">05 · cre:privacy-guard</div>
+        <h4><span class="en">⛔ Privacy gate</span><span class="vi">⛔ Gate bảo mật</span></h4>
+        <p><span class="en">Rule 09 leak scan — <code>[PRIVATE]</code>, <code>[CONFIDENTIAL]</code>, clinical terms, diagnosis labels, crisis details. A Rule-09 leak also emits <code>COM.governance</code> to the governance audit log.</span><span class="vi">Quét rò rỉ Rule 09 — <code>[PRIVATE]</code>, <code>[CONFIDENTIAL]</code>, thuật ngữ lâm sàng, nhãn chẩn đoán, chi tiết khủng hoảng. Rò rỉ Rule-09 cũng phát <code>COM.governance</code> vào log audit quản trị.</span></p>
+        <span class="role"><span class="en">emits CRE.privacy_cleared</span><span class="vi">phát CRE.privacy_cleared</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--cre)">
+        <div class="num">06 · cre:humanize + cre:voice-audit</div>
+        <h4><span class="en">Humanize → Voice audit</span><span class="vi">Nhân hóa → Kiểm giọng</span></h4>
+        <p><span class="en">De-AI-slop scan (EN + VI tells) before voice-audit runs. Voice-audit checks consistency against <code>identity/writing-voice.md</code>. Both gates clear → asset written to <code>assets/{platform}/{slug}/</code>.</span><span class="vi">Quét AI-slop (EN + VI) trước khi chạy voice-audit. Voice-audit kiểm nhất quán với <code>identity/writing-voice.md</code>. Hai gate đều qua → asset ghi vào <code>assets/{platform}/{slug}/</code>.</span></p>
+        <span class="role"><span class="en">emits CRE.recalibrate</span><span class="vi">phát CRE.recalibrate</span></span>
+      </div>
+    </div>
+
+    <!-- ===== THE TWO PUBLISH GATES ===== -->
+    <h2 class="sectitle" id="cre-gates"><span class="en">The two publish gates</span><span class="vi">Hai gate đăng nội dung</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin" style="background:var(--crit)"></span><code>cre:evidence-scanner</code></h3>
+        <p>
+          <span class="en">Single source of tier-permission logic (<code>platform_lib/evidence_tier_permissions.py</code>). Every claim in a draft is classified against its MAT evidence tier. T1–T2: publish freely with privacy scan. T3: qualified ("theo quan sát…"). T4: angle inspiration only, cannot assert as fact. T5: internal framework only — never surfaces. A <code>FAIL</code> logs and blocks; no auto re-draft (pass@k is a WATCH pattern). Post-writer delegates — no duplicate logic.</span>
+          <span class="vi">Nguồn duy nhất của logic tier-permission (<code>platform_lib/evidence_tier_permissions.py</code>). Mỗi claim trong bản thảo được phân loại theo bậc bằng chứng MAT. T1–T2: đăng tự do kèm quét bảo mật. T3: có điều kiện ("theo quan sát…"). T4: chỉ cảm hứng góc, không khẳng định là sự thật. T5: nội bộ framework — không bao giờ lộ. <code>FAIL</code> ghi log và chặn; không tự re-draft (pass@k là pattern WATCH). Post-writer ủy quyền — không logic trùng lặp.</span>
+        </p>
+        <div class="tri" style="margin-top:14px">
+          <span class="keep">T1–T2 PASS</span>
+          <span class="change">T3 WARN</span>
+          <span class="hybrid">T4–T5 FAIL</span>
+        </div>
+      </div>
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin" style="background:var(--crit)"></span><code>cre:privacy-guard</code></h3>
+        <p>
+          <span class="en">Scans <code>assets/</code> and cross-framework directories for leaked PII, privacy tags, and clinical terminology. Tags enforced: <code>[PRIVATE]</code> (never surface), <code>[CONFIDENTIAL:{person}]</code> (no real name — use role descriptions: "người mentor", "người thân"), <code>[ANONYMIZE]</code> (pseudonym or role). Clinical terms and diagnosis labels are never allowed in social media content. A leak also emits <code>COM.governance</code> — cross-framework governance trail in addition to blocking publish.</span>
+          <span class="vi">Quét <code>assets/</code> và thư mục liên framework tìm PII rò rỉ, thẻ bảo mật và thuật ngữ lâm sàng. Thẻ được ép: <code>[PRIVATE]</code> (không bao giờ lộ), <code>[CONFIDENTIAL:{person}]</code> (không tên thật — dùng mô tả vai: "người mentor", "người thân"), <code>[ANONYMIZE]</code> (bút danh hoặc vai). Thuật ngữ lâm sàng và nhãn chẩn đoán không bao giờ được phép trong nội dung mạng xã hội. Rò rỉ cũng phát <code>COM.governance</code> — vết quản trị liên framework ngoài việc chặn đăng.</span>
+        </p>
+        <div class="gate" style="margin-top:12px"><b><span class="en">Fail mode:</span><span class="vi">Chế độ fail:</span></b> <span class="en">leak → block + log + <code>COM.governance</code>. No silent pass. Clinical terms in public content always fail, regardless of evidence tier.</span><span class="vi">rò rỉ → chặn + ghi log + <code>COM.governance</code>. Không pass im lặng. Thuật ngữ lâm sàng trong nội dung công khai luôn fail, bất kể bậc bằng chứng.</span></div>
+      </div>
+    </div>
+
+    <!-- ===== 1→N MULTIPLATFORM vs 1→1 REPURPOSE ===== -->
+    <h2 class="sectitle" id="cre-platform"><span class="en">1→N multiplatform vs 1→1 repurpose</span><span class="vi">1→N đa nền tảng vs 1→1 tái sử dụng</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--cre)">
+        <h3><span class="pin"></span><code>cre:multiplatform</code> — <span class="en">1→N native variants</span><span class="vi">1→N biến thể gốc</span></h3>
+        <p>
+          <span class="en">Generate N platform-native content variants from one source angle simultaneously. Each variant is independently gated — both <code>cre:evidence-scanner</code> and <code>cre:privacy-guard</code> run per variant. A FAIL on any variant blocks that variant only; others proceed. Platform constraints are hard-wired: LinkedIn ~3000 chars, professional tone even for vulnerability; Instagram 2200 chars, visual-first; TikTok 60s script with 3-second hook; Twitter/X 280 chars or thread. Emits <code>CRE.published</code> per variant that passes.</span>
+          <span class="vi">Tạo N biến thể nội dung gốc nền tảng từ một góc nguồn đồng thời. Mỗi biến thể được gate độc lập — cả <code>cre:evidence-scanner</code> và <code>cre:privacy-guard</code> chạy cho mỗi biến thể. FAIL ở biến thể nào chặn biến thể đó; các biến thể khác tiếp tục. Ràng buộc nền tảng được hard-wire: LinkedIn ~3000 ký tự, giọng chuyên nghiệp ngay cả khi dễ bị tổn thương; Instagram 2200 ký tự, hình ảnh trước; TikTok kịch bản 60s với hook 3 giây; Twitter/X 280 ký tự hoặc thread. Phát <code>CRE.published</code> mỗi biến thể qua gate.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--cre)">
+        <h3><span class="pin"></span><code>cre:repurpose</code> — <span class="en">1→1 platform adaptation</span><span class="vi">1→1 thích nghi nền tảng</span></h3>
+        <p>
+          <span class="en">Adapt existing content from one platform to another while respecting platform conventions and evidence constraints. Source content already cleared the gates — repurpose still re-runs both gates on the adapted output, since platform-specific reformatting can introduce new claims or expose context that was safe on the source platform but not the target. The voice architecture reloads from the same 3-layer stack.</span>
+          <span class="vi">Thích nghi nội dung hiện có từ một nền tảng sang nền tảng khác trong khi tôn trọng quy ước nền tảng và ràng buộc bằng chứng. Nội dung nguồn đã qua gate — repurpose vẫn chạy lại cả hai gate trên đầu ra đã thích nghi, vì định dạng lại theo nền tảng có thể đưa vào claim mới hoặc để lộ ngữ cảnh an toàn ở nền tảng nguồn nhưng không phải nền tảng đích. Kiến trúc giọng tải lại từ cùng stack 3 lớp.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== 5P → CONTENT TRANSLATION ===== -->
+    <h2 class="sectitle" id="cre-psy-translation"><span class="en">How the 5P formulation feeds content angles</span><span class="vi">5P formulation nuôi góc nội dung thế nào</span></h2>
+    <p class="lead" style="margin-bottom:14px">
+      <span class="en">The PSY 5P formulation maps directly to content types. CRE reads the formulation <b>read-only</b> — it never writes to <code>docs/profiles/</code>.</span>
+      <span class="vi">5P formulation của PSY ánh xạ trực tiếp thành loại nội dung. CRE đọc formulation <b>chỉ-đọc</b> — không bao giờ ghi vào <code>docs/profiles/</code>.</span>
+    </p>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin" style="background:var(--psy)"></span><span class="en">PSY → CRE: formulation to angle</span><span class="vi">PSY → CRE: formulation thành góc</span></h3>
+        <p>
+          <span class="en"><b>Presenting</b> → vulnerability/reality content. <b>Predisposing</b> → narrative arc content. <b>Precipitating</b> → timely/relevant hooks. <b>Perpetuating</b> → analytical/insight content. <b>Protective</b> → inspirational/growth content. Defense state from <code>psychology/defense-mechanisms.md</code> gates HOW the character can express: denial blocks direct acknowledgement (use metaphor), intellectualization requires analytical framing, suppression produces "measured confession" style.</span>
+          <span class="vi"><b>Presenting</b> → nội dung dễ bị tổn thương/thực tế. <b>Predisposing</b> → nội dung arc tường thuật. <b>Precipitating</b> → hook kịp thời/liên quan. <b>Perpetuating</b> → nội dung phân tích/insight. <b>Protective</b> → nội dung truyền cảm hứng/tăng trưởng. Trạng thái defense từ <code>psychology/defense-mechanisms.md</code> gate CÁCH nhân vật có thể biểu đạt: denial chặn thừa nhận trực tiếp (dùng ẩn dụ), intellectualization yêu cầu đóng khung phân tích, suppression tạo phong cách "thú nhận có chừng mực".</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--cre)">
+        <h3><span class="pin"></span><span class="en">Phase-appropriate routing</span><span class="vi">Định tuyến phù hợp giai đoạn</span></h3>
+        <p>
+          <span class="en">Content routing respects the character's current psychological state phase from <code>timeline/state-timeline.md</code>. <b>Crisis/Acute</b>: only retrospective reflection and hope signals — raw vulnerability and confrontation blocked. <b>Stabilizing</b>: growth narratives and learning — triggering themes without resolve blocked. <b>Integration</b>: full arc stories and transformation — nothing blocked. <b>Maintenance</b>: all types permitted. <code>cre:angle-discovery</code> checks the phase before ranking angles.</span>
+          <span class="vi">Định tuyến nội dung tôn trọng giai đoạn trạng thái tâm lý hiện tại của nhân vật từ <code>timeline/state-timeline.md</code>. <b>Khủng hoảng/Cấp tính</b>: chỉ suy ngẫm hồi cố và tín hiệu hy vọng — dễ bị tổn thương thô và đối đầu bị chặn. <b>Ổn định</b>: narrative tăng trưởng và học tập — chủ đề kích thích không có giải quyết bị chặn. <b>Tích hợp</b>: arc đầy đủ và chuyển hóa — không có gì bị chặn. <b>Bảo trì</b>: tất cả loại được phép. <code>cre:angle-discovery</code> kiểm giai đoạn trước khi xếp hạng góc.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== 10 CRE SKILLS ===== -->
+    <h2 class="sectitle" id="cre-skills"><span class="en">10 CRE skills</span><span class="vi">10 skill CRE</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--cre)">
+        <h3><span class="pin"></span><span class="en">Discovery &amp; exploration</span><span class="vi">Khám phá &amp; thám hiểm</span></h3>
+        <p>
+          <span class="en"><code>cre:angle-discovery</code> — proactively mines all 6 frameworks to rank publishable angles; emits <code>CRE.angle-discovered</code>. Angle reason carries paraphrased title/framework/score only — never raw ORC event payload or <code>[CONFIDENTIAL]</code> material.<br><code>cre:exploring</code> — structured interactive exploration before content planning; produces <code>CONTEXT.md</code> with locked decisions. Run when the angle is fuzzy.</span>
+          <span class="vi"><code>cre:angle-discovery</code> — chủ động khai thác cả 6 framework để xếp hạng các góc có thể đăng; phát <code>CRE.angle-discovered</code>. Lý do góc chỉ mang tiêu đề/framework/điểm số đã diễn giải — không bao giờ payload sự kiện ORC thô hoặc tư liệu <code>[CONFIDENTIAL]</code>.<br><code>cre:exploring</code> — thám hiểm tương tác có cấu trúc trước khi lập kế hoạch nội dung; tạo <code>CONTEXT.md</code> với quyết định đã khóa. Chạy khi góc còn mơ hồ.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--cre)">
+        <h3><span class="pin"></span><span class="en">Writing &amp; platform</span><span class="vi">Viết &amp; nền tảng</span></h3>
+        <p>
+          <span class="en"><code>cre:post-writer</code> — end-to-end pipeline (bootstrap → prompt-leverage → draft → gates → asset).<br><code>cre:prompt-leverage</code> — strengthen prompts before execution; applies sensitivity scan layer.<br><code>cre:multiplatform</code> — N native variants simultaneously, each independently gated.<br><code>cre:repurpose</code> — 1→1 platform adaptation, re-gates the adapted output.</span>
+          <span class="vi"><code>cre:post-writer</code> — pipeline end-to-end (bootstrap → prompt-leverage → soạn → gate → asset).<br><code>cre:prompt-leverage</code> — tăng cường prompt trước khi thực thi; áp lớp quét độ nhạy cảm.<br><code>cre:multiplatform</code> — N biến thể gốc đồng thời, mỗi cái được gate độc lập.<br><code>cre:repurpose</code> — thích nghi nền tảng 1→1, gate lại đầu ra đã thích nghi.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin" style="background:var(--crit)"></span><span class="en">The two gates</span><span class="vi">Hai gate</span></h3>
+        <p>
+          <span class="en"><code>cre:evidence-scanner</code> — per-claim T1–T5 PASS/WARN/FAIL; the single source of tier-permission logic; post-writer delegates entirely.<br><code>cre:privacy-guard</code> — Rule 09 leak scan across <code>assets/</code> and cross-framework dirs; a leak emits <code>COM.governance</code>.</span>
+          <span class="vi"><code>cre:evidence-scanner</code> — PASS/WARN/FAIL từng claim T1–T5; nguồn duy nhất của logic tier-permission; post-writer ủy quyền hoàn toàn.<br><code>cre:privacy-guard</code> — quét rò rỉ Rule 09 trên <code>assets/</code> và thư mục liên framework; rò rỉ phát <code>COM.governance</code>.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--cre)">
+        <h3><span class="pin"></span><span class="en">Quality &amp; voice</span><span class="vi">Chất lượng &amp; giọng</span></h3>
+        <p>
+          <span class="en"><code>cre:humanize</code> — de-AI-slop scan (VN+EN tells) + opt-in rewrite; runs pre-publish, before voice-audit.<br><code>cre:voice-audit</code> — audit published content for voice/tone consistency against <code>identity/writing-voice.md</code>. Both must clear before asset is written to <code>assets/</code>.</span>
+          <span class="vi"><code>cre:humanize</code> — quét AI-slop (VN+EN) + rewrite tùy chọn; chạy trước đăng, trước voice-audit.<br><code>cre:voice-audit</code> — kiểm nội dung đã đăng về nhất quán giọng/điệu với <code>identity/writing-voice.md</code>. Cả hai phải qua trước khi asset được ghi vào <code>assets/</code>.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== EVENTS ===== -->
+    <h2 class="sectitle" id="cre-events"><span class="en">CRE events</span><span class="vi">Sự kiện CRE</span></h2>
+    <div class="callout" style="--ac:var(--cre);margin-top:14px">
+      <span class="ci">📡</span>
+      <div>
+        <span class="en"><code>CRE.recalibrate</code> — fired when PSY or MAT upstream changes may stale voice assumptions (sources: <code>MAT.integrated</code>, <code>PSY.refresh</code>, <code>GRO.assessed</code>, <code>GRO.profiled</code>, <code>EVL.scored</code>). Action: reload 3-layer voice, re-run voice-audit on active drafts. <code>CRE.evidence-checked</code> — per evidence-scanner run (PASS/WARN/FAIL + claim count). <code>CRE.privacy_cleared</code> — privacy-guard passed with zero violations; consumed by post-writer Phase 5 gate. <code>CRE.published</code> — asset successfully passed all gates; payload includes evidence tiers used and clinical refs cited. <code>CRE.angle-discovered</code> — angle-discovery ranked angles; feeds exploring, post-writer, or multiplatform.</span>
+        <span class="vi"><code>CRE.recalibrate</code> — bắn khi thay đổi upstream PSY hoặc MAT có thể làm giả định giọng trở nên cũ (nguồn: <code>MAT.integrated</code>, <code>PSY.refresh</code>, <code>GRO.assessed</code>, <code>GRO.profiled</code>, <code>EVL.scored</code>). Hành động: tải lại giọng 3 lớp, chạy lại voice-audit trên bản thảo đang hoạt động. <code>CRE.evidence-checked</code> — mỗi lần chạy evidence-scanner (PASS/WARN/FAIL + số claim). <code>CRE.privacy_cleared</code> — privacy-guard qua với không vi phạm; được tiêu thụ bởi gate Phase 5 của post-writer. <code>CRE.published</code> — asset qua thành công tất cả gate; payload bao gồm bậc bằng chứng đã dùng và ref lâm sàng đã trích. <code>CRE.angle-discovered</code> — angle-discovery xếp hạng góc; nuôi exploring, post-writer hoặc multiplatform.</span>
+      </div>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <div class="stats" style="margin-top:28px">
+      <div class="stat"><div class="n" data-count="10">10</div><div class="l"><span class="en">CRE skills</span><span class="vi">skill CRE</span></div></div>
+      <div class="stat"><div class="n" data-count="2">2</div><div class="l"><span class="en">mandatory publish gates</span><span class="vi">gate đăng bắt buộc</span></div></div>
+      <div class="stat"><div class="n" data-count="3">3</div><div class="l"><span class="en">rules governed (03·09·14)</span><span class="vi">rule điều chỉnh (03·09·14)</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">T5 claims ever published</span><span class="vi">claim T5 từng được đăng</span></div></div>
+    </div>
+
+    <!-- ===== SEE ALSO ===== -->
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@gates" style="--ac:var(--crit)"><h3><span class="pin" style="background:var(--crit)"></span><span class="en">Gates &amp; anti-rationalization</span><span class="vi">Gate &amp; chống hợp lý hóa</span></h3><p><span class="en">The full gates reference — why the LLM judges and scripts only gather, what makes a gate hard vs advisory.</span><span class="vi">Tài liệu tham khảo gate đầy đủ — tại sao LLM phán xét và script chỉ thu thập, điều gì làm gate cứng vs advisory.</span></p></a>
+      <a class="card" href="@privacy" style="--ac:var(--crit)"><h3><span class="pin" style="background:var(--crit)"></span><span class="en">Confidentiality protocol</span><span class="vi">Giao thức bảo mật</span></h3><p><span class="en">Rule 09 — privacy tag definitions, content boundary rules, clinical information handling.</span><span class="vi">Rule 09 — định nghĩa thẻ bảo mật, quy tắc ranh giới nội dung, xử lý thông tin lâm sàng.</span></p></a>
+      <a class="card" href="@psy" style="--ac:var(--psy)"><h3><span class="pin" style="background:var(--psy)"></span><span class="en">PSY — the upstream</span><span class="vi">PSY — nguồn upstream</span></h3><p><span class="en">The 5P formulation and 25-file profile that CRE reads (never writes) to build platform-native content.</span><span class="vi">5P formulation và hồ sơ 25-file mà CRE đọc (không bao giờ ghi) để xây dựng nội dung gốc nền tảng.</span></p></a>
+      <a class="card" href="@catalog" style="--ac:var(--gold)"><h3><span class="pin" style="background:var(--gold)"></span><span class="en">Full skill catalog</span><span class="vi">Danh mục skill đầy đủ</span></h3><p><span class="en">All 10 CRE skills with trigger keywords, GUIDE links, and use-case cross-references.</span><span class="vi">Toàn bộ 10 skill CRE với từ khóa trigger, liên kết GUIDE và tham chiếu cross-use-case.</span></p></a>
+    </div>
+  </div>
+</section>

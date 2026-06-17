@@ -1,0 +1,171 @@
+<!-- ===================== FINDER ===================== -->
+<section id="finder">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--gold)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <circle cx="17" cy="17" r="10" stroke="var(--gold)" stroke-width="2"/>
+          <path d="m24.5 24.5 7 7" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M13 17h8M17 13v8" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--gold)"><span class="en">Which skill do I run?</span><span class="vi">Mình nên chạy skill nào?</span></div>
+        <h2 id="finder"><span class="en">Skill finder</span><span class="vi">Chọn skill</span></h2>
+      </div>
+      <div class="ver">match the intent</div>
+    </div>
+    <div class="divider" style="--ac:var(--gold)"></div>
+
+    <p class="lead"><span class="en">Answer "I want to…" and get the exact skill or chain to run. Match the <b>goal</b>, not the name. Find where you are in the cycle, scan the intent rows, run the skill on the right. Full descriptions in the <a href="@catalog">catalog</a>; quick tables in the <a href="@cheatsheet">cheatsheet</a>.</span><span class="vi">Trả lời "Tôi muốn…" và nhận đúng skill hoặc chuỗi cần chạy. Khớp theo <b>mục tiêu</b>, không theo tên. Tìm bạn đang ở đâu trong vòng đời, đọc các dòng ý định, chạy skill bên phải. Mô tả đầy đủ ở <a href="@catalog">catalog</a>; bảng tra nhanh ở <a href="@cheatsheet">cheatsheet</a>.</span></p>
+
+    <!-- ── Pipeline stage map ── -->
+    <h2 class="sectitle" id="fnd-stage"><span class="en">Step 1 — where are you?</span><span class="vi">Bước 1 — bạn đang ở đâu?</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Four pipeline stages. Most work lives in one at a time — find yours, then read its rows below.</span><span class="vi">Bốn giai đoạn quy trình. Phần lớn việc nằm ở một giai đoạn tại một thời điểm — tìm giai đoạn của bạn, rồi đọc các dòng của nó bên dưới.</span></p>
+    <div class="flowline" style="margin-top:6px;--ac:var(--gold)">
+      <div class="fstep">
+        <svg class="fi" viewBox="0 0 32 32" fill="none"><rect x="6" y="4" width="16" height="22" rx="2" stroke="var(--mat)" stroke-width="2"/><path d="M10 10h8M10 14h8M10 18h5" stroke="var(--mat)" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="fn" style="color:var(--mat)"><span class="en">Ingest</span><span class="vi">Thu nhận</span></div>
+        <div class="fd"><span class="en">material arrives</span><span class="vi">tư liệu mới đến</span></div>
+      </div>
+      <div class="farrow" style="--ac:var(--gold)">→</div>
+      <div class="fstep">
+        <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M16 6c-5.5 0-9 4-9 8 0 3 1.5 5 1.5 7 0 2 2 3.5 4.5 3.5h6c2.5 0 4.5-1.5 4.5-3.5 0-2 1.5-4 1.5-7 0-4-3.5-8-9-8Z" stroke="var(--psy)" stroke-width="2" stroke-linejoin="round"/><path d="M13 13a3 3 0 0 1 6 0" stroke="var(--psy)" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="fn" style="color:var(--psy)"><span class="en">Analyze</span><span class="vi">Phân tích</span></div>
+        <div class="fd"><span class="en">build or refresh profile</span><span class="vi">xây/làm mới hồ sơ</span></div>
+      </div>
+      <div class="farrow" style="--ac:var(--gold)">→</div>
+      <div class="fstep">
+        <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M6 16h5l3-8 4 16 3-10 2 2h9" stroke="var(--evl)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="fn" style="color:var(--evl)"><span class="en">Evaluate</span><span class="vi">Đánh giá</span></div>
+        <div class="fd"><span class="en">score / verdict</span><span class="vi">chấm điểm / phán quyết</span></div>
+      </div>
+      <div class="farrow" style="--ac:var(--gold)">→</div>
+      <div class="fstep">
+        <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M23 5l6 6-14 14-7 2 2-7L23 5Z" stroke="var(--cre)" stroke-width="2" stroke-linejoin="round"/><path d="M20 8l6 6" stroke="var(--cre)" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="fn" style="color:var(--cre)"><span class="en">Create</span><span class="vi">Sáng tạo</span></div>
+        <div class="fd"><span class="en">write + publish asset</span><span class="vi">viết + đăng asset</span></div>
+      </div>
+    </div>
+
+    <!-- ── Ingest / MAT ── -->
+    <h2 class="sectitle" id="fnd-ingest"><span class="en">Ingesting new material</span><span class="vi">Thu nhận tư liệu mới</span></h2>
+    <table class="modetable" style="--ac:var(--mat)">
+      <thead><tr><th><span class="en">If you're trying to…</span><span class="vi">Nếu bạn đang muốn…</span></th><th><span class="en">Run</span><span class="vi">Chạy</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="en">Import a new transcript, interview, or source file</span><span class="vi">Nhập bảng ghi, phỏng vấn, hoặc file nguồn mới</span></td><td><code>mat:loader</code> → <code>mat:indexer</code></td></tr>
+        <tr><td><span class="en">CRAAP-score an existing material or flag for re-evaluation</span><span class="vi">Chấm CRAAP tư liệu hiện có hoặc gắn cờ cần đánh giá lại</span></td><td><code>mat:rescore</code></td></tr>
+        <tr><td><span class="en">Soft-delete or archive outdated material with audit trail</span><span class="vi">Xóa-mềm hoặc lưu trữ tư liệu lỗi thời kèm vết kiểm toán</span></td><td><code>mat:archive</code></td></tr>
+        <tr><td><span class="en">Not sure what to ingest — explore the angle first</span><span class="vi">Chưa biết thu nhận gì — khám phá góc độ nên theo trước</span></td><td><code>cre:exploring</code> → <code>mat:loader</code></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── Analyze / PSY ── -->
+    <h2 class="sectitle" id="fnd-analyze"><span class="en">Building or refreshing a profile</span><span class="vi">Xây hoặc làm mới hồ sơ</span></h2>
+    <table class="modetable" style="--ac:var(--psy)">
+      <thead><tr><th><span class="en">If you're trying to…</span><span class="vi">Nếu bạn đang muốn…</span></th><th><span class="en">Run</span><span class="vi">Chạy</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="en">Build or refresh the full 3-wave 5P clinical formulation</span><span class="vi">Xây hoặc làm mới formulation 5P lâm sàng 3-đợt đầy đủ</span></td><td><code>psy:wave</code></td></tr>
+        <tr><td><span class="en">Check profile completeness against the 25-file schema</span><span class="vi">Kiểm tính đầy đủ hồ sơ theo schema 25-file</span></td><td><code>psy:health-check</code></td></tr>
+        <tr><td><span class="en">Validate consistency across characters on 10 dimensions</span><span class="vi">Xác thực nhất quán liên nhân vật trên 10 chiều</span></td><td><code>psy:crossref</code></td></tr>
+        <tr><td><span class="en">Assess crisis risk or dangerous behavioral patterns (never cached)</span><span class="vi">Đánh giá rủi ro khủng hoảng hoặc mẫu hành vi nguy hiểm (không bao giờ cache)</span></td><td><code>psy:crisis-assess</code></td></tr>
+        <tr><td><span class="en">Predict behavior under a hypothetical scenario</span><span class="vi">Dự đoán hành vi trong tình huống giả định</span></td><td><code>psy:hypothesis</code></td></tr>
+        <tr><td><span class="en">Track how a character's arc has evolved vs earlier hypotheses</span><span class="vi">Theo dõi arc nhân vật thực tế vs giả thuyết trước đó</span></td><td><code>psy:arc-tracker</code></td></tr>
+        <tr><td><span class="en">Handle a revealed falsehood that changes prior profile facts</span><span class="vi">Xử lý sự thật bị lộ làm thay đổi dữ kiện hồ sơ trước đó</span></td><td><code>psy:narrative-twist</code></td></tr>
+        <tr><td><span class="en">Sync timelines across multiple characters</span><span class="vi">Đồng bộ dòng thời gian giữa nhiều nhân vật</span></td><td><code>psy:timeline-sync</code></td></tr>
+        <tr><td><span class="en">Compare two characters side-by-side on psychological dimensions</span><span class="vi">So sánh hai nhân vật song song trên các chiều tâm lý</span></td><td><code>psy:profile-compare</code></td></tr>
+        <tr><td><span class="en">Compress a profile to fit in a tight context window</span><span class="vi">Nén hồ sơ để vừa vào cửa sổ context chật</span></td><td><code>psy:profile-lite</code></td></tr>
+        <tr><td><span class="en">Audit references for clinical accuracy and coverage gaps</span><span class="vi">Kiểm tra reference về độ chính xác lâm sàng và khoảng trống bao phủ</span></td><td><code>psy:ref-audit</code> → <code>psy:ref-scan</code></td></tr>
+        <tr><td><span class="en">Find relationship-driven content angles from the dyad graph</span><span class="vi">Tìm góc nội dung theo quan hệ từ đồ thị dyad</span></td><td><code>psy:relation-intelligence</code></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── Evaluate / EVL ── -->
+    <h2 class="sectitle" id="fnd-evaluate"><span class="en">Scoring &amp; evaluating</span><span class="vi">Chấm điểm &amp; đánh giá</span></h2>
+    <table class="modetable" style="--ac:var(--evl)">
+      <thead><tr><th><span class="en">If you're trying to…</span><span class="vi">Nếu bạn đang muốn…</span></th><th><span class="en">Run</span><span class="vi">Chạy</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="en">Score against any rubric → evidence-cited scorecard + verdict</span><span class="vi">Chấm theo rubric bất kỳ → scorecard có trích dẫn + phán quyết</span></td><td><code>evl:score</code></td></tr>
+        <tr><td><span class="en">Run the full psychometric battery (Big Five + Dark Triad + attachment)</span><span class="vi">Chạy bộ đo tâm lý đầy đủ (Big Five + Dark Triad + gắn bó)</span></td><td><code>evl:standardize</code></td></tr>
+        <tr><td><span class="en">Decide casting / role fit — CAST / CONDITIONAL / NO + veto</span><span class="vi">Quyết định phù hợp vai diễn — CAST / CONDITIONAL / NO + veto</span></td><td><code>evl:fit</code></td></tr>
+        <tr><td><span class="en">Score dyad compatibility on the relationship rubric</span><span class="vi">Chấm điểm tương thích dyad trên rubric quan hệ</span></td><td><code>evl:compatibility</code></td></tr>
+        <tr><td><span class="en">Rank multiple characters against one rubric</span><span class="vi">Xếp hạng nhiều nhân vật theo một rubric</span></td><td><code>evl:compare</code></td></tr>
+        <tr><td><span class="en">Track how scores shifted over time and attribute to events</span><span class="vi">Theo dõi điểm thay đổi theo thời gian và quy về sự kiện</span></td><td><code>evl:track</code></td></tr>
+        <tr><td><span class="en">Import an external framework → canonical rubric draft</span><span class="vi">Nhập framework ngoài → bản thảo rubric chuẩn</span></td><td><code>evl:rubric-import</code></td></tr>
+        <tr><td><span class="en">Check rubric or scorecard structural integrity</span><span class="vi">Kiểm tra tính toàn vẹn cấu trúc rubric hoặc scorecard</span></td><td><code>evl:validate</code></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── Create / CRE ── -->
+    <h2 class="sectitle" id="fnd-create"><span class="en">Creating &amp; publishing content</span><span class="vi">Tạo &amp; xuất bản nội dung</span></h2>
+    <table class="modetable" style="--ac:var(--cre)">
+      <thead><tr><th><span class="en">If you're trying to…</span><span class="vi">Nếu bạn đang muốn…</span></th><th><span class="en">Run</span><span class="vi">Chạy</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="en">Write a post end-to-end — draft → evidence scan → publish</span><span class="vi">Viết một bài đầu-cuối — soạn → quét bằng chứng → xuất bản</span></td><td><code>cre:post-writer</code></td></tr>
+        <tr><td><span class="en">Generate native variants for many platforms at once</span><span class="vi">Tạo biến thể gốc cho nhiều nền tảng cùng lúc</span></td><td><code>cre:multiplatform</code></td></tr>
+        <tr><td><span class="en">Adapt existing content to a different platform (1→1)</span><span class="vi">Chuyển nội dung hiện có sang nền tảng khác (1→1)</span></td><td><code>cre:repurpose</code></td></tr>
+        <tr><td><span class="en">Discover what angles the evidence actually supports</span><span class="vi">Khám phá góc độ mà bằng chứng thực sự hỗ trợ</span></td><td><code>cre:angle-discovery</code></td></tr>
+        <tr><td><span class="en">Explore what to write — 7-question brief before drafting</span><span class="vi">Khám phá nên viết gì — brief 7 câu trước khi soạn</span></td><td><code>cre:exploring</code></td></tr>
+        <tr><td><span class="en">Strengthen a prompt across 5 layers for richer output</span><span class="vi">Tăng cường prompt qua 5 lớp cho đầu ra phong phú hơn</span></td><td><code>cre:prompt-leverage</code></td></tr>
+        <tr><td><span class="en">Scan draft for per-claim evidence-tier violations (T1–T5)</span><span class="vi">Quét bản thảo tìm vi phạm bậc bằng chứng từng claim (T1–T5)</span></td><td><code>cre:evidence-scanner</code></td></tr>
+        <tr><td><span class="en">De-AI-slop a draft (VN + EN) before publishing</span><span class="vi">Tẩy AI-slop một bản thảo (VN + EN) trước khi đăng</span></td><td><code>cre:humanize</code></td></tr>
+        <tr><td><span class="en">Check voice and tone consistency across content pieces</span><span class="vi">Kiểm tra nhất quán giọng/tông giữa các bài nội dung</span></td><td><code>cre:voice-audit</code></td></tr>
+        <tr><td><span class="en">Run a pre-publish privacy and confidentiality scan</span><span class="vi">Chạy quét bảo mật và bí mật trước khi đăng</span></td><td><code>cre:privacy-guard</code></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── Growth / GRO ── -->
+    <h2 class="sectitle" id="fnd-growth"><span class="en">Growth &amp; career intelligence</span><span class="vi">Tăng trưởng &amp; tình báo sự nghiệp</span></h2>
+    <table class="modetable" style="--ac:var(--gro)">
+      <thead><tr><th><span class="en">If you're trying to…</span><span class="vi">Nếu bạn đang muốn…</span></th><th><span class="en">Run</span><span class="vi">Chạy</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="en">Map a character's career trajectory and current stage</span><span class="vi">Lập bản đồ quỹ đạo và giai đoạn hiện tại của sự nghiệp nhân vật</span></td><td><code>gro:career-path</code></td></tr>
+        <tr><td><span class="en">Inventory skills and identify competency gaps</span><span class="vi">Kiểm kê kỹ năng và xác định khoảng trống năng lực</span></td><td><code>gro:competency-map</code></td></tr>
+        <tr><td><span class="en">Document the learning style and acquisition patterns</span><span class="vi">Tài liệu hóa phong cách học tập và mẫu tiếp thu</span></td><td><code>gro:learning-profile</code></td></tr>
+        <tr><td><span class="en">Document a mentoring relationship and its dynamics</span><span class="vi">Tài liệu hóa mối quan hệ cố vấn và động lực của nó</span></td><td><code>gro:mentoring-track</code></td></tr>
+        <tr><td><span class="en">Generate a career projection (always labelled [FORECAST — NOT FACTUAL])</span><span class="vi">Tạo dự báo sự nghiệp (luôn gán nhãn [FORECAST — NOT FACTUAL])</span></td><td><code>gro:career-forecast</code></td></tr>
+        <tr><td><span class="en">Compare career trajectories across multiple characters</span><span class="vi">So sánh quỹ đạo sự nghiệp giữa nhiều nhân vật</span></td><td><code>gro:compare</code></td></tr>
+        <tr><td><span class="en">Track milestones — actual vs planned</span><span class="vi">Theo dõi cột mốc — thực tế vs kế hoạch</span></td><td><code>gro:milestone-tracker</code></td></tr>
+        <tr><td><span class="en">Cross-check growth data for internal consistency</span><span class="vi">Kiểm tra chéo dữ liệu tăng trưởng về nhất quán nội bộ</span></td><td><code>gro:validate</code></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── Orchestration / start ── -->
+    <h2 class="sectitle" id="fnd-orc"><span class="en">Don't know where to start?</span><span class="vi">Chưa biết bắt đầu từ đâu?</span></h2>
+    <table class="modetable" style="--ac:var(--orc)">
+      <thead><tr><th><span class="en">If you're trying to…</span><span class="vi">Nếu bạn đang muốn…</span></th><th><span class="en">Run</span><span class="vi">Chạy</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="en">Load project context at the start of any deep-analysis session</span><span class="vi">Tải bối cảnh dự án đầu bất kỳ phiên phân tích sâu nào</span></td><td><code>orc:bootstrap</code></td></tr>
+        <tr><td><span class="en">Route an ambiguous task to the right skill chain automatically</span><span class="vi">Định tuyến nhiệm vụ mơ hồ đến đúng chuỗi skill tự động</span></td><td><code>orc:intake</code></td></tr>
+        <tr><td><span class="en">Check session health and see what events have fired</span><span class="vi">Kiểm tra sức khỏe phiên và xem sự kiện nào đã kích hoạt</span></td><td><code>com:health-check</code></td></tr>
+        <tr><td><span class="en">Query the knowledge graph for entity relationships and paths</span><span class="vi">Truy vấn đồ thị tri thức cho quan hệ thực thể và đường đi</span></td><td><code>orc:graph</code></td></tr>
+        <tr><td><span class="en">Run a two-voice adversarial quality gate on an output</span><span class="vi">Chạy cổng chất lượng đối nghịch hai giọng trên một đầu ra</span></td><td><code>orc:santa</code></td></tr>
+        <tr><td><span class="en">Make a contested decision through 4-voice deliberation</span><span class="vi">Đưa ra quyết định tranh cãi qua thảo luận 4 giọng</span></td><td><code>orc:council</code></td></tr>
+        <tr><td><span class="en">Verify the event audit trail — declared vs actually executed</span><span class="vi">Xác minh vết kiểm toán sự kiện — khai báo vs thực chạy</span></td><td><code>orc:audit</code></td></tr>
+        <tr><td><span class="en">Check the skill count and detect catalog drift vs CLAUDE.md</span><span class="vi">Kiểm tra số lượng skill và phát hiện lệch catalog vs CLAUDE.md</span></td><td><code>orc:skill-stocktake</code></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── Tie-breakers ── -->
+    <h2 class="sectitle" id="fnd-tiebreak"><span class="en">When two skills both fit</span><span class="vi">Khi hai skill cùng hợp</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Disambiguation rules — the exact routing logic behind <code>orc:intake</code>.</span><span class="vi">Quy tắc phân định — logic định tuyến chính xác đằng sau <code>orc:intake</code>.</span></p>
+    <div class="card" style="--ac:var(--gold)">
+      <ul class="tielist">
+        <li><b><span class="en">Ingest new material:</span><span class="vi">Thu nhận tư liệu mới:</span></b> <span class="en">always start with <code>mat:loader</code>; integration gate at <code>mat:indexer</code> before any PSY work.</span><span class="vi">luôn bắt đầu bằng <code>mat:loader</code>; cổng tích hợp tại <code>mat:indexer</code> trước mọi công việc PSY.</span></li>
+        <li><b><span class="en">Profile work:</span><span class="vi">Công việc hồ sơ:</span></b> <span class="en">full formulation → <code>psy:wave</code>; quick completeness check → <code>psy:health-check</code>; consistency only → <code>psy:crossref</code>.</span><span class="vi">formulation đầy đủ → <code>psy:wave</code>; kiểm nhanh tính đầy đủ → <code>psy:health-check</code>; chỉ nhất quán → <code>psy:crossref</code>.</span></li>
+        <li><b><span class="en">Scoring:</span><span class="vi">Chấm điểm:</span></b> <span class="en">generic rubric → <code>evl:score</code>; psychometric battery → <code>evl:standardize</code>; casting decision → <code>evl:fit</code>; dyad compatibility → <code>evl:compatibility</code>.</span><span class="vi">rubric tổng quát → <code>evl:score</code>; bộ đo tâm lý → <code>evl:standardize</code>; quyết định vai diễn → <code>evl:fit</code>; tương thích dyad → <code>evl:compatibility</code>.</span></li>
+        <li><b><span class="en">Content creation:</span><span class="vi">Sáng tạo nội dung:</span></b> <span class="en">one post → <code>cre:post-writer</code>; many platforms at once → <code>cre:multiplatform</code>; adapt existing → <code>cre:repurpose</code>.</span><span class="vi">một bài → <code>cre:post-writer</code>; nhiều nền tảng cùng lúc → <code>cre:multiplatform</code>; chuyển đổi sẵn có → <code>cre:repurpose</code>.</span></li>
+        <li><b><span class="en">Crisis assessment:</span><span class="vi">Đánh giá khủng hoảng:</span></b> <span class="en">always <code>psy:crisis-assess</code> — output is never cached, never gated through EVL.</span><span class="vi">luôn dùng <code>psy:crisis-assess</code> — đầu ra không bao giờ cache, không bao giờ gate qua EVL.</span></li>
+        <li><b><span class="en">Fuzzy start:</span><span class="vi">Bắt đầu mơ hồ:</span></b> <span class="en"><code>orc:intake</code> classifies the task type; <code>cre:exploring</code> clarifies what content to write; <code>cre:angle-discovery</code> surfaces angles from existing evidence.</span><span class="vi"><code>orc:intake</code> phân loại loại nhiệm vụ; <code>cre:exploring</code> làm rõ nên viết gì; <code>cre:angle-discovery</code> lộ ra góc độ từ bằng chứng hiện có.</span></li>
+      </ul>
+    </div>
+
+    <div class="callout" style="--ac:var(--txt-faint);margin-top:24px">
+      <span class="ci">💡</span>
+      <div>
+        <span class="en">For the full skill list with one-line descriptions, see the <a href="@catalog">catalog</a>. For commands in scannable tables, see the <a href="@cheatsheet">cheatsheet</a>. For the pipeline flow and event model, see <a href="@pipeline">pipeline</a>. For the publish gates, see <a href="@gates">gates &amp; privacy</a>.</span>
+        <span class="vi">Danh sách đầy đủ skill kèm mô tả một dòng, xem <a href="@catalog">catalog</a>. Lệnh dạng bảng tra nhanh, xem <a href="@cheatsheet">cheatsheet</a>. Luồng quy trình và mô hình sự kiện, xem <a href="@pipeline">pipeline</a>. Cổng xuất bản, xem <a href="@gates">gates &amp; privacy</a>.</span>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,161 @@
+<!-- ===================== MAT ===================== -->
+<section id="mat">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--mat)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <rect x="7" y="5" width="20" height="28" rx="3" stroke="var(--mat)" stroke-width="2"/>
+          <path d="M12 12h10M12 17h10M12 22h6" stroke="var(--mat)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M25 27l3 3 6-6" stroke="var(--mat)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who"><span class="en">Evidence ingestion — classify, CRAAP-score, tier, gate</span><span class="vi">Thu nhận bằng chứng — phân loại, chấm CRAAP, bậc, gate</span></div>
+        <h2>MAT · Materials</h2>
+      </div>
+      <div class="ver">4 skills · Rule 04 + 11</div>
+    </div>
+    <div class="divider" style="--ac:var(--mat)"></div>
+
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en">Every claim in this system traces back to a piece of evidence. MAT is the entry point — it receives raw source material (transcripts, letters, clinical notes, news), classifies it, runs the CRAAP quality test, assigns an evidence tier (T1–T5), and holds a hard integration gate that blocks the PSY analysis pipeline until evidence is fully validated. Without MAT clearance, no material reaches a profile.</span>
+      <span class="vi">Mọi claim trong hệ thống này đều truy về một mảnh bằng chứng. MAT là điểm vào — nhận tư liệu nguồn thô (bản ghi, thư, ghi chú lâm sàng, bài báo), phân loại, chạy bài kiểm CRAAP, gán bậc bằng chứng (T1–T5), và giữ một cổng tích hợp cứng ngăn quy trình phân tích PSY cho đến khi bằng chứng được xác nhận hoàn toàn. Không có giấy thông qua của MAT, không tư liệu nào chạm được đến hồ sơ.</span>
+    </p>
+
+    <!-- 5-STAGE PIPELINE -->
+    <h2 class="sectitle" id="mat-pipeline"><span class="en">The 5-stage pipeline</span><span class="vi">Quy trình 5 giai đoạn</span></h2>
+    <p class="lead" style="margin-bottom:20px">
+      <span class="en">Materials flow forward only — a material cannot move to a prior state. Each stage gate is deterministic; the LLM's judgment is reserved for extraction and clinical mapping, not for deciding stage transitions.</span>
+      <span class="vi">Tư liệu chỉ đi về phía trước — không thể quay lại trạng thái trước. Gate mỗi giai đoạn là tất định; phán xét của LLM được dành cho trích xuất và ánh xạ lâm sàng, không phải để quyết định chuyển giai đoạn.</span>
+    </p>
+
+    <div class="pipe-stage" style="grid-template-columns:repeat(5,1fr)">
+      <div class="pstation" style="--ac:var(--mat)">
+        <div class="num">01 · INGESTION</div>
+        <h4><span class="en">Receive &amp; normalize</span><span class="vi">Nhận &amp; chuẩn hóa</span></h4>
+        <p><span class="en">UTF-8 normalize, YAML frontmatter skeleton, confidentiality tag, source category assignment. Stored at <code>docs/materials/{char}/raw/</code>.</span><span class="vi">Chuẩn hóa UTF-8, skeleton frontmatter YAML, nhãn bảo mật, gán danh mục nguồn. Lưu tại <code>docs/materials/{char}/raw/</code>.</span></p>
+        <span class="role"><span class="en">status → raw</span><span class="vi">trạng thái → raw</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--mat)">
+        <div class="num">02 · OCR/TRANSCRIPTION</div>
+        <h4><span class="en">Extract text</span><span class="vi">Trích xuất văn bản</span></h4>
+        <p><span class="en">Images → OCR; audio → speech-to-text; handwriting → HTR. Confidence scoring per section. Only runs when source is non-text.</span><span class="vi">Ảnh → OCR; âm thanh → speech-to-text; chữ tay → HTR. Chấm điểm độ tin cậy theo từng phần. Chỉ chạy khi nguồn không phải văn bản.</span></p>
+        <span class="role"><span class="en">status → extracted</span><span class="vi">trạng thái → extracted</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--mat)">
+        <div class="num">03 · EXTRACTION</div>
+        <h4><span class="en">Structure &amp; map</span><span class="vi">Cấu trúc &amp; ánh xạ</span></h4>
+        <p><span class="en">LLM parses dates, names, events, psychological constructs; maps to clinical reference library; flags potential contradictions with existing materials.</span><span class="vi">LLM phân tích ngày tháng, tên, sự kiện, cấu trúc tâm lý; ánh xạ đến thư viện tham chiếu lâm sàng; cờ mâu thuẫn tiềm ẩn với tư liệu hiện có.</span></p>
+        <span class="role"><span class="en">status → analyzed</span><span class="vi">trạng thái → analyzed</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--mat)">
+        <div class="num">04 · VALIDATION</div>
+        <h4><span class="en">CRAAP + crossref</span><span class="vi">CRAAP + crossref</span></h4>
+        <p><span class="en">5-dimension CRAAP test (≥ 15/25 to gate-pass); contradiction detection against profile data; severity scoring (low → critical).</span><span class="vi">Bài kiểm CRAAP 5 chiều (≥ 15/25 để qua cổng); phát hiện mâu thuẫn với dữ liệu hồ sơ; chấm điểm mức độ nghiêm trọng (thấp → nghiêm trọng).</span></p>
+        <span class="role"><span class="en">status → validated</span><span class="vi">trạng thái → validated</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--mat)">
+        <div class="num">05 · INTEGRATION</div>
+        <h4><span class="en">Merge &amp; emit</span><span class="vi">Gộp &amp; phát</span></h4>
+        <p><span class="en">Findings merged into profile sections; cross-reference links updated; <code>MAT.integrated</code> event fires → PSY analysis may now proceed.</span><span class="vi">Phát hiện gộp vào các mục hồ sơ; liên kết tham chiếu chéo cập nhật; sự kiện <code>MAT.integrated</code> phát → phân tích PSY mới được tiến hành.</span></p>
+        <span class="role"><span class="en">emits MAT.integrated</span><span class="vi">phát MAT.integrated</span></span>
+      </div>
+    </div>
+
+    <!-- TWO AXES: TIER vs CRAAP -->
+    <h2 class="sectitle" id="mat-axes" style="margin-top:48px"><span class="en">Two orthogonal axes: evidence tier vs. CRAAP score</span><span class="vi">Hai trục trực giao: bậc bằng chứng vs. điểm CRAAP</span></h2>
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en"><b>They measure different things.</b> The evidence tier (T1–T5) comes from the source's <em>category</em> — who created it and how close they were to the subject. CRAAP is a <em>quality</em> gate on the material itself — how current, relevant, authoritative, accurate, and purposeful it is. A T1 source (direct personal letter) can still fail CRAAP if it's riddled with inconsistencies; a T3 article can pass CRAAP cleanly. Both axes must be tracked separately.</span>
+      <span class="vi"><b>Chúng đo hai thứ khác nhau.</b> Bậc bằng chứng (T1–T5) đến từ <em>danh mục</em> nguồn — ai tạo ra và khoảng cách với đối tượng như thế nào. CRAAP là cổng <em>chất lượng</em> trên chính tư liệu — mức độ hiện tại, liên quan, có thẩm quyền, chính xác và có mục đích. Nguồn T1 (thư cá nhân trực tiếp) vẫn có thể trượt CRAAP nếu đầy mâu thuẫn; bài báo T3 vẫn có thể qua CRAAP sạch. Cả hai trục phải theo dõi riêng biệt.</span>
+    </p>
+
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--mat)">
+        <h3><span class="pin"></span><span class="en">Evidence Tier (T1–T5) — source category</span><span class="vi">Bậc bằng chứng (T1–T5) — danh mục nguồn</span></h3>
+        <table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:10px">
+          <thead><tr style="color:var(--txt-faint);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase"><th style="text-align:left;padding:4px 0">Tier</th><th style="text-align:left;padding:4px 8px">Category</th><th style="text-align:left;padding:4px 0">Weight</th><th style="text-align:left;padding:4px 8px">Examples</th></tr></thead>
+          <tbody style="color:var(--txt-dim)">
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--mat);font-weight:700">T1</td><td style="padding:5px 8px"><span class="en">Primary</span><span class="vi">Sơ cấp</span></td><td style="padding:5px 0">1.0</td><td style="padding:5px 8px"><span class="en">Direct testimony, letters</span><span class="vi">Chứng nhân trực tiếp, thư</span></td></tr>
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--mat);font-weight:700">T2</td><td style="padding:5px 8px"><span class="en">Secondary</span><span class="vi">Thứ cấp</span></td><td style="padding:5px 0">0.9</td><td style="padding:5px 8px"><span class="en">Clinical evaluations</span><span class="vi">Đánh giá lâm sàng</span></td></tr>
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--mat);font-weight:700">T3</td><td style="padding:5px 8px"><span class="en">Tertiary</span><span class="vi">Tam cấp</span></td><td style="padding:5px 0">0.7</td><td style="padding:5px 8px"><span class="en">News, social media, logs</span><span class="vi">Báo, mạng xã hội, nhật ký</span></td></tr>
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--mat);font-weight:700">T4</td><td style="padding:5px 8px"><span class="en">Contextual</span><span class="vi">Bối cảnh</span></td><td style="padding:5px 0">0.5</td><td style="padding:5px 8px"><span class="en">Third-party accounts</span><span class="vi">Lời kể bên thứ ba</span></td></tr>
+            <tr><td style="padding:5px 0;font-family:monospace;color:var(--mat);font-weight:700">T5</td><td style="padding:5px 8px"><span class="en">Auxiliary</span><span class="vi">Bổ trợ</span></td><td style="padding:5px 0">0.3</td><td style="padding:5px 8px"><span class="en">Metadata inference</span><span class="vi">Suy luận metadata</span></td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:10px;font-size:.8rem;color:var(--txt-faint)"><span class="en">Tier derives from <code>source_category</code> in the YAML frontmatter. Higher tier wins conflict resolution; newer supersedes older within the same tier.</span><span class="vi">Bậc lấy từ <code>source_category</code> trong frontmatter YAML. Bậc cao hơn thắng khi giải quyết mâu thuẫn; mới hơn thay thế cũ hơn trong cùng bậc.</span></p>
+      </div>
+
+      <div class="card" style="--ac:var(--mat)">
+        <h3><span class="pin"></span><span class="en">CRAAP Score — 5-dimension quality gate (≥ 15/25)</span><span class="vi">Điểm CRAAP — cổng chất lượng 5 chiều (≥ 15/25)</span></h3>
+        <div class="chips" style="margin-top:10px;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:baseline;gap:10px"><code style="min-width:95px">Currency</code><span style="font-size:.82rem;color:var(--txt-dim)"><span class="en">When created? Older ≠ less valuable — historical context matters.</span><span class="vi">Khi nào tạo? Cũ hơn ≠ kém giá trị — bối cảnh lịch sử quan trọng.</span></span></div>
+          <div style="display:flex;align-items:baseline;gap:10px"><code style="min-width:95px">Relevance</code><span style="font-size:.82rem;color:var(--txt-dim)"><span class="en">Direct connection to which profile sections?</span><span class="vi">Kết nối trực tiếp với mục hồ sơ nào?</span></span></div>
+          <div style="display:flex;align-items:baseline;gap:10px"><code style="min-width:95px">Authority</code><span style="font-size:.82rem;color:var(--txt-dim)"><span class="en">Creator's credentials and proximity to subject.</span><span class="vi">Năng lực và khoảng cách của tác giả đến đối tượng.</span></span></div>
+          <div style="display:flex;align-items:baseline;gap:10px"><code style="min-width:95px">Accuracy</code><span style="font-size:.82rem;color:var(--txt-dim)"><span class="en">Can claims be cross-referenced? Internal consistency?</span><span class="vi">Claim có thể tham chiếu chéo không? Nhất quán nội bộ?</span></span></div>
+          <div style="display:flex;align-items:baseline;gap:10px"><code style="min-width:95px">Purpose</code><span style="font-size:.82rem;color:var(--txt-dim)"><span class="en">Clinical note vs. social media post vs. personal reflection.</span><span class="vi">Ghi chú lâm sàng vs. bài mạng xã hội vs. suy ngẫm cá nhân.</span></span></div>
+        </div>
+        <div class="gate" style="margin-top:14px">
+          <b><span class="en">Integration gate:</span><span class="vi">Cổng tích hợp:</span></b>
+          <span class="en"> CRAAP total &lt; 15/25 → material is held at <code>validated</code>, never <code>integrated</code>. PSY framework cannot read material that has not cleared this gate. This is enforced at <code>mat:indexer</code>, not as a convention.</span>
+          <span class="vi"> CRAAP tổng &lt; 15/25 → tư liệu bị giữ ở <code>validated</code>, không bao giờ <code>integrated</code>. PSY framework không thể đọc tư liệu chưa qua cổng này. Được ép tại <code>mat:indexer</code>, không phải quy ước.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- THE INTEGRATION GATE -->
+    <h2 class="sectitle" id="mat-gate" style="margin-top:48px"><span class="en">The integration gate — why premature analysis is blocked</span><span class="vi">Cổng tích hợp — tại sao phân tích sớm bị chặn</span></h2>
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en">The gate exists because PSY analysis builds clinical hypotheses from evidence. If raw or only partially-validated material slips into a profile, those hypotheses inherit the material's noise — and a psychological profile built on unverified evidence is not a clinical profile, it is speculation with a plausible surface. <b>MAT.integrated is the prerequisite event that releases PSY.refresh.</b></span>
+      <span class="vi">Cổng tồn tại vì phân tích PSY xây dựng giả thuyết lâm sàng từ bằng chứng. Nếu tư liệu thô hoặc chỉ được xác nhận một phần lọt vào hồ sơ, các giả thuyết đó thừa hưởng nhiễu của tư liệu — và một hồ sơ tâm lý xây trên bằng chứng chưa xác minh không phải là hồ sơ lâm sàng, mà là suy đoán với bề mặt hợp lý. <b>MAT.integrated là sự kiện tiên quyết giải phóng PSY.refresh.</b></span>
+    </p>
+
+    <div class="callout" style="--ac:var(--mat)">
+      <span class="ci">⛔</span>
+      <div>
+        <span class="en"><b>Contradiction handling:</b> when new material contradicts an existing profile fact, <code>mat:indexer</code> records the contradiction in <code>contradiction_flags</code>, rates severity (low · medium · high · critical), and emits <code>MAT.contradiction</code> → ORC decides resolution routing. The conflict is never silently resolved by a script — the LLM adjudicates.</span>
+        <span class="vi"><b>Xử lý mâu thuẫn:</b> khi tư liệu mới mâu thuẫn với sự kiện hồ sơ hiện có, <code>mat:indexer</code> ghi mâu thuẫn vào <code>contradiction_flags</code>, đánh giá mức độ nghiêm trọng (thấp · trung · cao · nghiêm trọng), và phát <code>MAT.contradiction</code> → ORC quyết định định tuyến giải quyết. Xung đột không bao giờ được giải quyết ngầm bởi script — LLM phán xử.</span>
+      </div>
+    </div>
+
+    <!-- THE 4 SKILLS -->
+    <h2 class="sectitle" id="mat-skills" style="margin-top:48px"><span class="en">The 4 MAT skills</span><span class="vi">4 skill MAT</span></h2>
+
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--mat)">
+        <h3><span class="pin"></span><code>mat:loader</code></h3>
+        <p><span class="en">Stage 1–2 — receive raw material, normalize to UTF-8, populate YAML frontmatter, assign source category and evidence tier T1–T5. The entry point for every material.</span><span class="vi">Giai đoạn 1–2 — nhận tư liệu thô, chuẩn hóa sang UTF-8, điền frontmatter YAML, gán danh mục nguồn và bậc bằng chứng T1–T5. Điểm vào cho mọi tư liệu.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--mat)">
+        <h3><span class="pin"></span><code>mat:indexer</code></h3>
+        <p><span class="en">Stage 3–4 — contradiction detection, cross-reference validation, CRAAP scoring, and integration gating. Decides whether a material advances to <code>integrated</code>.</span><span class="vi">Giai đoạn 3–4 — phát hiện mâu thuẫn, xác nhận tham chiếu chéo, chấm CRAAP, và gate tích hợp. Quyết định liệu tư liệu có tiến lên <code>integrated</code> không.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--mat)">
+        <h3><span class="pin"></span><code>mat:archive</code></h3>
+        <p><span class="en">Soft-delete / archival with a full audit trail. Marks superseded or fully-merged materials as <code>archived</code> without destroying the evidence record.</span><span class="vi">Xóa mềm / lưu trữ với đường mòn kiểm tra đầy đủ. Đánh dấu tư liệu bị thay thế hoặc đã gộp hoàn toàn là <code>archived</code> mà không phá hủy bản ghi bằng chứng.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--mat)">
+        <h3><span class="pin"></span><code>mat:rescore</code></h3>
+        <p><span class="en">Flag materials with missing, incomplete, or outdated CRAAP scores for re-evaluation. Keeps the evidence quality record fresh as new cross-references emerge.</span><span class="vi">Cờ tư liệu có điểm CRAAP thiếu, không đầy đủ hoặc lỗi thời để đánh giá lại. Giữ bản ghi chất lượng bằng chứng tươi khi các tham chiếu chéo mới xuất hiện.</span></p>
+      </div>
+    </div>
+
+    <!-- STATS + LINKS -->
+    <div class="stats" style="margin-top:36px">
+      <div class="stat"><div class="n" data-count="5">5</div><div class="l"><span class="en">pipeline stages</span><span class="vi">giai đoạn quy trình</span></div></div>
+      <div class="stat"><div class="n" data-count="5">5</div><div class="l"><span class="en">CRAAP dimensions</span><span class="vi">chiều CRAAP</span></div></div>
+      <div class="stat"><div class="n" data-count="4">4</div><div class="l"><span class="en">MAT skills</span><span class="vi">skill MAT</span></div></div>
+      <div class="stat"><div class="n" data-count="1">1</div><div class="l"><span class="en">write-root: docs/materials/</span><span class="vi">write-root: docs/materials/</span></div></div>
+    </div>
+
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@psy" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><span class="en">Next: PSY receives MAT.integrated</span><span class="vi">Tiếp: PSY nhận MAT.integrated</span></h3>
+        <p><span class="en">Once evidence clears the gate, PSY begins its 3-wave clinical formulation — building a 5P profile from the integrated materials.</span><span class="vi">Khi bằng chứng qua cổng, PSY bắt đầu formulation lâm sàng 3-wave — xây hồ sơ 5P từ tư liệu đã tích hợp.</span></p>
+      </a>
+      <a class="card" href="@gates" style="--ac:var(--crit)">
+        <h3><span class="pin"></span><span class="en">Gates &amp; anti-rationalization</span><span class="vi">Cổng &amp; chống hợp lý hóa</span></h3>
+        <p><span class="en">How the integration gate, evidence-tier scanner, and confidentiality guard work together to fail closed — not open.</span><span class="vi">Cổng tích hợp, scanner bậc bằng chứng và bảo vệ bảo mật phối hợp như thế nào để fail-closed — không phải fail-open.</span></p>
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,195 @@
+<!-- ===================== GATES ===================== -->
+<section id="gates">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="color:var(--crit)"><span class="en">Evidence · Privacy · Integration</span><span class="vi">Bằng chứng · Bảo mật · Tích hợp</span></div>
+    <h2 class="sectitle" id="gates-title">
+      <span class="en">The MAT integration gate, the per-claim evidence gate, and the privacy gate</span>
+      <span class="vi">Cổng tích hợp MAT, cổng bằng chứng từng claim, và cổng bảo mật</span>
+    </h2>
+    <p class="lead">
+      <span class="en">Three gates run in sequence before any content reaches <code>assets/</code>. All three are <b>fail-closed</b>: no source → no claim; a leak → no publish. There is no override path. Gates do not warn and proceed — they block.</span>
+      <span class="vi">Ba cổng chạy tuần tự trước khi nội dung nào đến <code>assets/</code>. Cả ba đều <b>fail-closed</b>: không có nguồn → không có claim; rò rỉ → không đăng. Không có đường tắt. Cổng không cảnh báo rồi tiếp tục — chúng chặn.</span>
+    </p>
+
+    <!-- evidence tier ladder -->
+    <h2 class="sectitle" id="gates-tiers" style="margin-top:48px">
+      <span class="en">Evidence ladder — T1 to T5</span>
+      <span class="vi">Thang bằng chứng — T1 đến T5</span>
+    </h2>
+    <p class="lead">
+      <span class="en">Every piece of source material is assigned an evidence tier at ingestion by <code>mat:loader</code>. The tier — derived from source category, not CRAAP score — determines what claims that material can ground in published content.</span>
+      <span class="vi">Mỗi tư liệu nguồn được gán bậc bằng chứng khi thu nhận bởi <code>mat:loader</code>. Bậc — được suy từ loại nguồn, không phải điểm CRAAP — xác định những claim nào tư liệu đó có thể làm nền tảng trong nội dung đăng.</span>
+    </p>
+    <div class="tree" style="margin-top:18px">
+      <div class="tnode lvl-v">
+        <span class="tg">T1</span>
+        <div>
+          <div class="tt"><span class="en">Primary — direct first-person material</span><span class="vi">Sơ cấp — tư liệu ngôi thứ nhất trực tiếp</span></div>
+          <div class="td"><span class="en">Personal letters, direct interviews, first-hand testimony · weight 1.0 · public: yes, may quote or paraphrase</span><span class="vi">Thư cá nhân, phỏng vấn trực tiếp, chứng nhân đích thân · weight 1.0 · công khai: có, được trích hoặc diễn đạt lại</span></div>
+        </div>
+        <span class="cnt">weight 1.0</span>
+      </div>
+      <div class="tconn"></div>
+      <div class="tnode lvl-b">
+        <span class="tg">T2</span>
+        <div>
+          <div class="tt"><span class="en">Secondary — corroborated assessment</span><span class="vi">Thứ cấp — đánh giá có xác nhận</span></div>
+          <div class="td"><span class="en">Clinical evaluations, professional assessments, formal observations · weight 0.9 · public: yes, cite context not raw observation</span><span class="vi">Đánh giá lâm sàng, thẩm định chuyên nghiệp, quan sát có cấu trúc · weight 0.9 · công khai: có, trích ngữ cảnh không phải quan sát thô</span></div>
+        </div>
+        <span class="cnt">weight 0.9</span>
+      </div>
+      <div class="tconn"></div>
+      <div class="tnode lvl-p">
+        <span class="tg">T3</span>
+        <div>
+          <div class="tt"><span class="en">Tertiary — single observer or social signal</span><span class="vi">Tam cấp — quan sát đơn lẻ hoặc tín hiệu mạng xã hội</span></div>
+          <div class="td"><span class="en">News articles, social media, chat logs · weight 0.7 · public: qualified — must frame as perspective, not fact ("theo quan sát…")</span><span class="vi">Bài báo, mạng xã hội, chat · weight 0.7 · công khai: có điều kiện — phải trình bày như góc nhìn, không phải sự thật ("theo quan sát…")</span></div>
+        </div>
+        <span class="cnt">weight 0.7</span>
+      </div>
+      <div class="tconn"></div>
+      <div class="tnode lvl-e">
+        <span class="tg">T4</span>
+        <div>
+          <div class="tt"><span class="en">Contextual — indirect or reported</span><span class="vi">Ngữ cảnh — gián tiếp hoặc thuật lại</span></div>
+          <div class="td"><span class="en">Third-party accounts, family testimony · weight 0.5 · public: restricted — may inspire angle only, cannot assert as fact</span><span class="vi">Thuật lại bên thứ ba, chứng thực từ gia đình · weight 0.5 · công khai: hạn chế — chỉ gợi ý góc độ, không thể khẳng định là sự thật</span></div>
+        </div>
+        <span class="cnt">weight 0.5</span>
+      </div>
+      <div class="tconn"></div>
+      <div class="tnode lvl-s">
+        <span class="tg">T5</span>
+        <div>
+          <div class="tt"><span class="en">Auxiliary — inference or metadata only</span><span class="vi">Phụ trợ — suy luận hoặc siêu dữ liệu</span></div>
+          <div class="td"><span class="en">Timestamps, structural metadata, system-derived inferences · weight 0.3 · public: <b>never</b> — internal framework only; below the floor for all published claims</span><span class="vi">Dấu thời gian, siêu dữ liệu cấu trúc, suy luận từ hệ thống · weight 0.3 · công khai: <b>không bao giờ</b> — chỉ dùng nội bộ; dưới ngưỡng sàn cho mọi claim công khai</span></div>
+        </div>
+        <span class="cnt">weight 0.3</span>
+      </div>
+    </div>
+
+    <div class="callout" style="--ac:var(--gold);margin-top:18px">
+      <span class="ci">📐</span>
+      <div>
+        <span class="en"><b>CRAAP is orthogonal to tier.</b> CRAAP (Currency · Relevance · Authority · Accuracy · Purpose, total 5–25, integration gate ≥15) measures source quality within its tier. A T3 article with CRAAP 22 does not become T2 — tier is fixed by <em>source category</em>. CRAAP below 15/25 blocks integration regardless of tier.</span>
+        <span class="vi"><b>CRAAP độc lập với bậc.</b> CRAAP (Currency · Relevance · Authority · Accuracy · Purpose, tổng 5–25, cổng tích hợp ≥15) đo chất lượng nguồn trong bậc của nó. Bài báo T3 với CRAAP 22 không trở thành T2 — bậc cố định theo <em>loại nguồn</em>. CRAAP dưới 15/25 chặn tích hợp bất kể bậc.</span>
+      </div>
+    </div>
+
+    <!-- three gates -->
+    <h2 class="sectitle" id="gates-three" style="margin-top:48px">
+      <span class="en">The three gates in order</span>
+      <span class="vi">Ba cổng theo thứ tự</span>
+    </h2>
+
+    <!-- Gate 1 -->
+    <div class="gate" style="margin-top:22px">
+      <b><span class="en">Gate 1 — MAT integration gate (blocks premature PSY)</span><span class="vi">Cổng 1 — Cổng tích hợp MAT (chặn PSY sớm)</span></b>
+      <p style="font-size:.9rem;color:var(--txt-dim);margin:.6em 0 .4em">
+        <span class="en">Material must reach <code>processing_status = "validated"</code> before PSY may consume it. The gate checks: (a) CRAAP total ≥ 15/25, (b) contradiction severity — high or critical stops all automation until human resolves. A material frozen at "analyzed" never feeds the profile. <code>mat:indexer</code> owns this gate; <code>orc:cascade</code> will not emit <code>PSY.refresh</code> until it passes.</span>
+        <span class="vi">Tư liệu phải đạt <code>processing_status = "validated"</code> trước khi PSY có thể dùng. Cổng kiểm: (a) tổng CRAAP ≥ 15/25, (b) mức mâu thuẫn — high hoặc critical dừng mọi tự động cho đến khi người dùng giải quyết. Tư liệu bị đóng băng ở "analyzed" không bao giờ nạp vào profile. <code>mat:indexer</code> sở hữu cổng này; <code>orc:cascade</code> sẽ không phát <code>PSY.refresh</code> cho đến khi qua.</span>
+      </p>
+      <div class="tri">
+        <span class="keep"><span class="en">PASS — CRAAP ≥15, no critical contradiction</span><span class="vi">PASS — CRAAP ≥15, không mâu thuẫn nghiêm trọng</span></span>
+        <span class="change"><span class="en">HOLD — contradiction medium: flag, log, continue</span><span class="vi">HOLD — mâu thuẫn medium: gắn cờ, ghi log, tiếp tục</span></span>
+        <span class="hybrid"><span class="en">BLOCK — contradiction high/critical or CRAAP &lt;15</span><span class="vi">BLOCK — mâu thuẫn high/critical hoặc CRAAP &lt;15</span></span>
+      </div>
+    </div>
+
+    <!-- Gate 2 -->
+    <div class="gate" style="margin-top:14px">
+      <b><span class="en">Gate 2 — cre:evidence-scanner (per-claim PASS / WARN / FAIL)</span><span class="vi">Cổng 2 — cre:evidence-scanner (PASS / WARN / FAIL từng claim)</span></b>
+      <p style="font-size:.9rem;color:var(--txt-dim);margin:.6em 0 .4em">
+        <span class="en">Every claim in the draft is checked against its cited MAT tier. Factual claims (dates, locations, actions) require T1 or T2. Emotional framing requires T1 or an explicit qualifier. A claim with no cited tier is <code>[UNVERIFIED]</code> — excluded from the draft, counted in the coverage report, never a silent pass. A claim citing a tier below its content type's minimum is <code>FAIL</code>. If coverage% drops below the rubric's floor, the entire draft is blocked.</span>
+        <span class="vi">Mỗi claim trong bản nháp được kiểm tra theo bậc MAT được trích dẫn. Claim thực tế (ngày, địa điểm, hành động) yêu cầu T1 hoặc T2. Diễn đạt cảm xúc yêu cầu T1 hoặc qualifier rõ ràng. Claim không có bậc trích dẫn là <code>[UNVERIFIED]</code> — bị loại khỏi bản nháp, được đếm trong báo cáo coverage, không bao giờ pass im lặng. Claim trích bậc thấp hơn ngưỡng tối thiểu của loại nội dung là <code>FAIL</code>. Nếu coverage% giảm dưới sàn rubric, toàn bộ bản nháp bị chặn.</span>
+      </p>
+      <div class="tri">
+        <span class="keep">PASS — <span class="en">tier ≥ content minimum, cited</span><span class="vi">bậc ≥ tối thiểu nội dung, có trích dẫn</span></span>
+        <span class="change">WARN — <span class="en">T3 framed as qualified perspective ("theo quan sát…")</span><span class="vi">T3 trình bày như quan điểm có điều kiện ("theo quan sát…")</span></span>
+        <span class="hybrid">FAIL — <span class="en">no citation [UNVERIFIED] or tier below minimum</span><span class="vi">không có trích dẫn [UNVERIFIED] hoặc bậc dưới tối thiểu</span></span>
+      </div>
+    </div>
+
+    <!-- Gate 3 -->
+    <div class="gate" style="margin-top:14px">
+      <b><span class="en">Gate 3 — cre:privacy-guard (Rule 09 leak scan)</span><span class="vi">Cổng 3 — cre:privacy-guard (quét rò rỉ Rule 09)</span></b>
+      <p style="font-size:.9rem;color:var(--txt-dim);margin:.6em 0 .4em">
+        <span class="en">Scans the draft for <code>[PRIVATE]</code> / <code>[CONFIDENTIAL: {person}]</code> tag leaks, raw clinical terms (diagnosis labels, DSM/ICD codes), third-party names marked confidential, specific location identifiers, and financial specifics. Any match → block, no publish. The scan is not advisory — a single match is a hard stop. This gate also runs on repurposed content: <code>cre:repurpose</code> always feeds into <code>orc:privacy-guard</code>.</span>
+        <span class="vi">Quét bản nháp tìm rò rỉ tag <code>[PRIVATE]</code> / <code>[CONFIDENTIAL: {người}]</code>, thuật ngữ lâm sàng thô (nhãn chẩn đoán, mã DSM/ICD), tên bên thứ ba được đánh dấu bảo mật, định danh địa điểm cụ thể, và thông tin tài chính cụ thể. Bất kỳ kết quả nào → chặn, không đăng. Quét này không mang tính tư vấn — một kết quả duy nhất là dừng cứng. Cổng này cũng chạy trên nội dung tái sử dụng: <code>cre:repurpose</code> luôn chạy qua <code>orc:privacy-guard</code>.</span>
+      </p>
+      <div class="tri">
+        <span class="keep"><span class="en">CLEAR — no private tag, no clinical label, no leak</span><span class="vi">CLEAR — không tag riêng tư, không nhãn lâm sàng, không rò rỉ</span></span>
+        <span class="hybrid"><span class="en">BLOCKED — any [PRIVATE] / [CONFIDENTIAL] / diagnosis / location leak detected</span><span class="vi">BLOCKED — phát hiện bất kỳ rò rỉ [PRIVATE] / [CONFIDENTIAL] / chẩn đoán / địa điểm</span></span>
+      </div>
+    </div>
+
+    <!-- fail-closed semantics -->
+    <h2 class="sectitle" id="gates-failclosed" style="margin-top:48px">
+      <span class="en">Fail-closed semantics &amp; [UNVERIFIED] accounting</span>
+      <span class="vi">Ngữ nghĩa fail-closed &amp; kế toán [UNVERIFIED]</span>
+    </h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin"></span><span class="en">No source → no claim</span><span class="vi">Không nguồn → không claim</span></h3>
+        <p>
+          <span class="en">A content angle with T5-only or zero backing is flagged as "MAT evidence gap" by <code>orc:classify</code>. Options: find supporting materials via <code>mat:loader</code>, reframe to supported territory, or mark as creative fiction explicitly. Presenting unsupported content as factual is not a path the pipeline offers.</span>
+          <span class="vi">Góc độ nội dung chỉ có T5 hoặc không có nền tảng được gắn cờ "MAT evidence gap" bởi <code>orc:classify</code>. Tùy chọn: tìm tư liệu hỗ trợ qua <code>mat:loader</code>, chuyển sang vùng có hỗ trợ, hoặc đánh dấu rõ ràng là hư cấu sáng tạo. Trình bày nội dung không có hỗ trợ như sự thật không phải con đường pipeline cung cấp.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin"></span><span class="en">[UNVERIFIED] is loud, counted, never silent</span><span class="vi">[UNVERIFIED] rõ ràng, được đếm, không bao giờ im lặng</span></h3>
+        <p>
+          <span class="en">Uncited rubric criterion scores carry <code>[UNVERIFIED]</code>, are excluded from the roll-up, and are counted in the <code>coverage%</code> headline. An <code>[UNVERIFIED]</code> claim is excluded from the draft — never silently included. The coverage number is always surfaced. This rule applies identically to scorecard criteria and to content claims.</span>
+          <span class="vi">Điểm tiêu chí rubric không trích nguồn mang <code>[UNVERIFIED]</code>, bị loại khỏi tổng hợp, và được đếm trong tiêu đề <code>coverage%</code>. Claim <code>[UNVERIFIED]</code> bị loại khỏi bản nháp — không bao giờ được đưa vào im lặng. Số coverage luôn được hiển thị. Quy tắc này áp dụng như nhau cho tiêu chí scorecard và claim nội dung.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- pipeline stage visual -->
+    <h2 class="sectitle" id="gates-flow" style="margin-top:48px">
+      <span class="en">Gates in the pipeline — where each fires</span>
+      <span class="vi">Cổng trong pipeline — mỗi cái kích ở đâu</span>
+    </h2>
+    <div class="pipe-stage" style="margin-top:18px">
+      <div class="pstation" style="--ac:var(--mat)">
+        <div class="num">MAT · mat:indexer</div>
+        <h4><span class="en">Gate 1 fires here</span><span class="vi">Cổng 1 kích ở đây</span></h4>
+        <p><span class="en">CRAAP check + contradiction severity. Blocks the cascade from advancing to PSY until evidence is validated.</span><span class="vi">Kiểm CRAAP + mức mâu thuẫn. Chặn cascade tiến đến PSY cho đến khi bằng chứng được xác thực.</span></p>
+        <span class="role"><span class="en">Integration gate — MAT → PSY</span><span class="vi">Cổng tích hợp — MAT → PSY</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--psy)">
+        <div class="num">PSY · psy:crossref</div>
+        <h4><span class="en">Profile freshness check</span><span class="vi">Kiểm độ tươi profile</span></h4>
+        <p><span class="en">Consistency ≥75% across 10 dimensions required. Stale-voice guard enforces recalibrate if last material integration &gt; last PSY refresh.</span><span class="vi">Nhất quán ≥75% trên 10 chiều là bắt buộc. Bảo vệ voice lỗi thời ép recalibrate nếu tích hợp tư liệu gần nhất &gt; refresh PSY gần nhất.</span></p>
+        <span class="role"><span class="en">Freshness gate — PSY → CRE</span><span class="vi">Cổng độ tươi — PSY → CRE</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--crit)">
+        <div class="num">CRE · cre:evidence-scanner</div>
+        <h4><span class="en">Gate 2 fires here</span><span class="vi">Cổng 2 kích ở đây</span></h4>
+        <p><span class="en">Per-claim tier check. PASS / WARN / FAIL per claim. [UNVERIFIED] claims excluded and counted. Draft blocked if coverage% drops below floor.</span><span class="vi">Kiểm bậc từng claim. PASS / WARN / FAIL từng claim. Claim [UNVERIFIED] bị loại và đếm. Bản nháp bị chặn nếu coverage% giảm dưới sàn.</span></p>
+        <span class="role"><span class="en">Evidence gate — draft → privacy</span><span class="vi">Cổng bằng chứng — bản nháp → bảo mật</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--crit)">
+        <div class="num">CRE · cre:privacy-guard</div>
+        <h4><span class="en">Gate 3 fires here</span><span class="vi">Cổng 3 kích ở đây</span></h4>
+        <p><span class="en">Rule 09 PII and clinical-leak scan. Any [PRIVATE] / [CONFIDENTIAL] / diagnosis leak → hard block. No publish without CLEAR status.</span><span class="vi">Quét PII và rò rỉ lâm sàng theo Rule 09. Bất kỳ rò rỉ [PRIVATE] / [CONFIDENTIAL] / chẩn đoán → chặn cứng. Không đăng nếu không có trạng thái CLEAR.</span></p>
+        <span class="role"><span class="en">Privacy gate — draft → assets/</span><span class="vi">Cổng bảo mật — bản nháp → assets/</span></span>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="stats" style="margin-top:32px">
+      <div class="stat"><div class="n" data-count="5">5</div><div class="l"><span class="en">evidence tiers T1–T5</span><span class="vi">bậc bằng chứng T1–T5</span></div></div>
+      <div class="stat"><div class="n" data-count="3">3</div><div class="l"><span class="en">sequential gates before publish</span><span class="vi">cổng tuần tự trước khi đăng</span></div></div>
+      <div class="stat"><div class="n" data-count="15">15</div><div class="l"><span class="en">CRAAP floor (out of 25)</span><span class="vi">ngưỡng sàn CRAAP (trên 25)</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">silent passes for [UNVERIFIED]</span><span class="vi">pass im lặng cho [UNVERIFIED]</span></div></div>
+    </div>
+
+    <!-- related cards -->
+    <div class="cards grid-2" style="margin-top:32px">
+      <a class="card" href="@mat" style="--ac:var(--mat)"><h3><span class="pin"></span><span class="en">MAT framework</span><span class="vi">Framework MAT</span></h3><p><span class="en">5-stage ingestion pipeline, CRAAP scoring, contradiction detection, and tier assignment — everything upstream of Gate 1.</span><span class="vi">Pipeline thu nhận 5 giai đoạn, chấm điểm CRAAP, phát hiện mâu thuẫn, và gán bậc — mọi thứ trước Cổng 1.</span></p></a>
+      <a class="card" href="@privacy" style="--ac:var(--crit)"><h3><span class="pin"></span><span class="en">Privacy &amp; confidentiality</span><span class="vi">Bảo mật &amp; bảo mật thông tin</span></h3><p><span class="en">Rule 09 in full — privacy tags, cache rules, and the distribution safety filter that drops all profile bytes after manifest globs.</span><span class="vi">Rule 09 đầy đủ — privacy tag, quy tắc cache, và safety filter phân phối loại bỏ mọi byte profile sau manifest glob.</span></p></a>
+      <a class="card" href="@rubrics" style="--ac:var(--evl)"><h3><span class="pin"></span><span class="en">Rubrics &amp; scoring</span><span class="vi">Rubric &amp; chấm điểm</span></h3><p><span class="en">How evidence tiers feed into rubric criterion scoring — and how [UNVERIFIED] propagates through the scorecard coverage headline.</span><span class="vi">Cách bậc bằng chứng nạp vào chấm điểm tiêu chí rubric — và cách [UNVERIFIED] lan qua tiêu đề coverage scorecard.</span></p></a>
+      <a class="card" href="@pipeline" style="--ac:var(--orc)"><h3><span class="pin"></span><span class="en">Event pipeline</span><span class="vi">Pipeline sự kiện</span></h3><p><span class="en">The full event catalog and how orc:cascade sequences the gates inside the domain-boundary-enforced bus.</span><span class="vi">Toàn bộ danh mục sự kiện và cách orc:cascade sắp xếp các cổng bên trong bus ép ranh giới miền.</span></p></a>
+    </div>
+  </div>
+</section>

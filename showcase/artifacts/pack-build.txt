@@ -1,0 +1,4 @@
+$ pytest -k 'pack and (determin or safety)'
+6 passed, 1128 deselected in 0.90s
+
+→ byte-identical tarball · per-file SHA256 MANIFEST · non-removable PII safety_filter

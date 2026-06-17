@@ -1,0 +1,239 @@
+<!-- ===================== CHEATSHEET ===================== -->
+<section id="cheatsheet">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--spec)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <rect x="7" y="6" width="26" height="28" rx="3" stroke="var(--spec)" stroke-width="2"/>
+          <path d="M12 13h16M12 18h16M12 23h11M12 28h8" stroke="var(--spec)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--spec)"><span class="en">Everything, in tables</span><span class="vi">Tất cả, trong bảng</span></div>
+        <h2 id="cheatsheet"><span class="en">Cheatsheet</span><span class="vi">Tra cứu nhanh</span></h2>
+      </div>
+      <div class="ver">scan &amp; go</div>
+    </div>
+    <div class="divider" style="--ac:var(--spec)"></div>
+
+    <p class="lead"><span class="en">Every skill, event, rule, rubric, and venv command in scannable tables. Need the <i>why</i> behind a row? See <a href="@catalog">catalog</a> (full skill descriptions) · <a href="@finder">finder</a> (pick by intent) · <a href="@glossary">glossary</a> (term definitions).</span><span class="vi">Mọi skill, sự kiện, quy tắc, rubric, lệnh venv trong bảng tra nhanh. Cần biết <i>tại sao</i> một dòng tồn tại? Xem <a href="@catalog">catalog</a> (mô tả đầy đủ) · <a href="@finder">finder</a> (chọn theo ý định) · <a href="@glossary">glossary</a> (định nghĩa thuật ngữ).</span></p>
+
+    <div class="callout" style="--ac:var(--spec);margin-top:18px;margin-bottom:8px">
+      <span class="ci">🔣</span>
+      <div><span class="en"><b>Reading a skill call:</b> <code>{fw}:{skill}</code> — framework prefix then skill name. Always start a deep-analysis session with <code>orc:bootstrap</code>. Skill count verified by audit:</span><span class="vi"><b>Đọc một lệnh skill:</b> <code>{fw}:{skill}</code> — tiền tố framework rồi tên skill. Luôn bắt đầu phiên phân tích sâu bằng <code>orc:bootstrap</code>. Số skill được xác minh bởi audit:</span>
+      <!--SKILL_STOCKTAKE-->
+      </div>
+    </div>
+
+    <!-- ── 1. All 68 skills by framework ── -->
+    <h2 class="sectitle" id="cs-skills"><span class="en">All 68 skills — by framework</span><span class="vi">Toàn bộ 68 skill — theo framework</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Full descriptions in the <a href="@catalog">catalog</a>. Invoke with <code>{fw}:{skill}</code>.</span><span class="vi">Mô tả đầy đủ trong <a href="@catalog">catalog</a>. Gọi với <code>{fw}:{skill}</code>.</span></p>
+
+    <div class="eyebrow"><span class="en">MAT — Materials (4)</span><span class="vi">MAT — Tư liệu (4)</span></div>
+    <table class="modetable" style="--ac:var(--mat)">
+      <tbody>
+        <tr><td><code>mat:loader</code></td><td><span class="en">Stage 1–2 ingest: classify, CRAAP-score, frontmatter</span><span class="vi">Giai đoạn 1–2 thu nhận: phân loại, chấm CRAAP, frontmatter</span></td></tr>
+        <tr><td><code>mat:indexer</code></td><td><span class="en">Stage 3–4 contradiction/gap detection + integration gate</span><span class="vi">Giai đoạn 3–4 phát hiện mâu thuẫn/khoảng trống + cổng tích hợp</span></td></tr>
+        <tr><td><code>mat:archive</code></td><td><span class="en">Soft-delete/archival with audit trail</span><span class="vi">Xóa-mềm/lưu trữ kèm vết kiểm toán</span></td></tr>
+        <tr><td><code>mat:rescore</code></td><td><span class="en">Flag materials needing CRAAP re-evaluation</span><span class="vi">Gắn cờ tư liệu cần chấm lại CRAAP</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="eyebrow" style="margin-top:18px"><span class="en">PSY — Psychology (16)</span><span class="vi">PSY — Tâm lý học (16)</span></div>
+    <table class="modetable" style="--ac:var(--psy)">
+      <tbody>
+        <tr><td><code>psy:wave</code></td><td><span class="en">3-wave full 5P clinical formulation</span><span class="vi">Formulation 5P lâm sàng 3-đợt đầy đủ</span></td></tr>
+        <tr><td><code>psy:crossref</code></td><td><span class="en">Cross-character 10-dimension consistency validation</span><span class="vi">Xác thực nhất quán 10 chiều liên nhân vật</span></td></tr>
+        <tr><td><code>psy:ref-audit</code></td><td><span class="en">Profile → reference accuracy check</span><span class="vi">Kiểm tra độ chính xác hồ sơ → reference</span></td></tr>
+        <tr><td><code>psy:ref-scan</code></td><td><span class="en">Reference → profile coverage sweep</span><span class="vi">Quét phạm vi bao phủ reference → hồ sơ</span></td></tr>
+        <tr><td><code>psy:ref-create</code></td><td><span class="en">Create reference files following the schema</span><span class="vi">Tạo file reference theo schema</span></td></tr>
+        <tr><td><code>psy:ref-maintain</code></td><td><span class="en">Reference library cleanup and maintenance</span><span class="vi">Dọn dẹp và bảo trì thư viện reference</span></td></tr>
+        <tr><td><code>psy:crisis-assess</code></td><td><span class="en">DSM-5/ICD-11 crisis + risk assessment — never cached</span><span class="vi">Đánh giá khủng hoảng + rủi ro DSM-5/ICD-11 — không bao giờ cache</span></td></tr>
+        <tr><td><code>psy:hypothesis</code></td><td><span class="en">Predict behavior under hypothetical scenarios</span><span class="vi">Dự đoán hành vi trong tình huống giả định</span></td></tr>
+        <tr><td><code>psy:arc-tracker</code></td><td><span class="en">Growth trajectories — hypothesis vs reality</span><span class="vi">Quỹ đạo tăng trưởng — giả thuyết vs thực tế</span></td></tr>
+        <tr><td><code>psy:narrative-twist</code></td><td><span class="en">Handle revealed falsehoods + cascade updates</span><span class="vi">Xử lý sự thật bị lộ + cập nhật cascade</span></td></tr>
+        <tr><td><code>psy:propagate</code></td><td><span class="en">Cross-character event cascade propagation</span><span class="vi">Lan truyền cascade sự kiện liên nhân vật</span></td></tr>
+        <tr><td><code>psy:timeline-sync</code></td><td><span class="en">Cross-character timeline consistency validation</span><span class="vi">Xác thực nhất quán dòng thời gian liên nhân vật</span></td></tr>
+        <tr><td><code>psy:profile-lite</code></td><td><span class="en">Compress profiles to ~5% of original size</span><span class="vi">Nén hồ sơ xuống ~5% kích thước gốc</span></td></tr>
+        <tr><td><code>psy:profile-compare</code></td><td><span class="en">Side-by-side dimension comparison across characters</span><span class="vi">So sánh chiều cạnh song song giữa các nhân vật</span></td></tr>
+        <tr><td><code>psy:health-check</code></td><td><span class="en">Profile completeness scoring (25-file schema)</span><span class="vi">Chấm điểm tính đầy đủ hồ sơ (schema 25-file)</span></td></tr>
+        <tr><td><code>psy:relation-intelligence</code></td><td><span class="en">Mine dyad graph for relationship-driven content angles</span><span class="vi">Khai thác đồ thị dyad để tìm góc nội dung theo quan hệ</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="eyebrow" style="margin-top:18px"><span class="en">CRE — Content Creation (10)</span><span class="vi">CRE — Sáng tạo nội dung (10)</span></div>
+    <table class="modetable" style="--ac:var(--cre)">
+      <tbody>
+        <tr><td><code>cre:post-writer</code></td><td><span class="en">End-to-end content pipeline — draft → scan → publish</span><span class="vi">Quy trình nội dung đầu-cuối — soạn → quét → xuất bản</span></td></tr>
+        <tr><td><code>cre:exploring</code></td><td><span class="en">7-question exploration → CONTEXT.md discovery brief</span><span class="vi">Khám phá 7-câu hỏi → CONTEXT.md discovery brief</span></td></tr>
+        <tr><td><code>cre:angle-discovery</code></td><td><span class="en">Mine 6 frameworks → ranked angles for content</span><span class="vi">Khai thác 6 framework → góc độ xếp hạng cho nội dung</span></td></tr>
+        <tr><td><code>cre:multiplatform</code></td><td><span class="en">1→N platform-native variants from one brief</span><span class="vi">1→N biến thể gốc-nền-tảng từ một brief</span></td></tr>
+        <tr><td><code>cre:repurpose</code></td><td><span class="en">Adapt existing content 1→1 across platforms</span><span class="vi">Tái sử dụng nội dung hiện có 1→1 qua các nền tảng</span></td></tr>
+        <tr><td><code>cre:prompt-leverage</code></td><td><span class="en">5-layer prompt strengthening for richer output</span><span class="vi">Tăng cường prompt 5 lớp cho đầu ra phong phú hơn</span></td></tr>
+        <tr><td><code>cre:evidence-scanner</code></td><td><span class="en">Per-claim evidence-tier check + Rule-09 privacy gate</span><span class="vi">Kiểm bậc bằng chứng từng claim + cổng bảo mật Rule-09</span></td></tr>
+        <tr><td><code>cre:humanize</code></td><td><span class="en">De-AI-slop scan (VN+EN) with optional rewrite</span><span class="vi">Quét AI-slop (VN+EN) với tùy chọn viết lại</span></td></tr>
+        <tr><td><code>cre:voice-audit</code></td><td><span class="en">Voice/tone consistency check across content</span><span class="vi">Kiểm tra nhất quán giọng/tông trong nội dung</span></td></tr>
+        <tr><td><code>cre:privacy-guard</code></td><td><span class="en">Pre-publish privacy and confidentiality scan</span><span class="vi">Quét bảo mật và bí mật trước khi đăng</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="eyebrow" style="margin-top:18px"><span class="en">GRO — Growth (8)</span><span class="vi">GRO — Tăng trưởng (8)</span></div>
+    <table class="modetable" style="--ac:var(--gro)">
+      <tbody>
+        <tr><td><code>gro:career-path</code></td><td><span class="en">Career trajectory mapping and stage analysis</span><span class="vi">Lập bản đồ quỹ đạo và phân tích giai đoạn sự nghiệp</span></td></tr>
+        <tr><td><code>gro:competency-map</code></td><td><span class="en">Skills/competency inventory + gap analysis</span><span class="vi">Kiểm kê kỹ năng/năng lực + phân tích khoảng trống</span></td></tr>
+        <tr><td><code>gro:learning-profile</code></td><td><span class="en">Learning style and knowledge acquisition patterns</span><span class="vi">Phong cách học tập và mẫu tiếp thu kiến thức</span></td></tr>
+        <tr><td><code>gro:mentoring-track</code></td><td><span class="en">Mentoring relationship documentation</span><span class="vi">Tài liệu hóa mối quan hệ cố vấn</span></td></tr>
+        <tr><td><code>gro:career-forecast</code></td><td><span class="en">LLM career projection — always <code>[FORECAST — NOT FACTUAL]</code></span><span class="vi">Dự báo sự nghiệp LLM — luôn <code>[FORECAST — NOT FACTUAL]</code></span></td></tr>
+        <tr><td><code>gro:compare</code></td><td><span class="en">Side-by-side career comparison across characters</span><span class="vi">So sánh sự nghiệp song song giữa các nhân vật</span></td></tr>
+        <tr><td><code>gro:milestone-tracker</code></td><td><span class="en">Career milestones — actual vs planned</span><span class="vi">Cột mốc sự nghiệp — thực tế vs kế hoạch</span></td></tr>
+        <tr><td><code>gro:validate</code></td><td><span class="en">Cross-check growth data for consistency</span><span class="vi">Kiểm tra chéo dữ liệu tăng trưởng về tính nhất quán</span></td></tr>
+      </tbody>
+    </table>
+
+    <details class="cs-more">
+      <summary><span class="en">EVL — Evaluation (8)</span><span class="vi">EVL — Đánh giá (8)</span></summary>
+      <table class="modetable" style="--ac:var(--evl)">
+        <tbody>
+          <tr><td><code>evl:score</code></td><td><span class="en">Generic rubric scoring engine — gather → judge → aggregate</span><span class="vi">Động cơ chấm rubric tổng quát — gom → phán → tổng hợp</span></td></tr>
+          <tr><td><code>evl:standardize</code></td><td><span class="en">Psychometric battery preset (Big Five + Dark Triad + attachment)</span><span class="vi">Preset bộ đo tâm lý (Big Five + Dark Triad + gắn bó)</span></td></tr>
+          <tr><td><code>evl:fit</code></td><td><span class="en">Role/casting-fit — CAST / CONDITIONAL / NO + veto</span><span class="vi">Phù hợp vai/diễn — CAST / CONDITIONAL / NO + veto</span></td></tr>
+          <tr><td><code>evl:compatibility</code></td><td><span class="en">Dyad compatibility scoring on the relationship rubric</span><span class="vi">Chấm điểm tương thích dyad trên rubric quan hệ</span></td></tr>
+          <tr><td><code>evl:compare</code></td><td><span class="en">Cross-character ranking on one rubric</span><span class="vi">Xếp hạng liên nhân vật trên một rubric</span></td></tr>
+          <tr><td><code>evl:track</code></td><td><span class="en">Score-over-time diff + event attribution</span><span class="vi">Diff điểm theo thời gian + quy trách nhiệm sự kiện</span></td></tr>
+          <tr><td><code>evl:validate</code></td><td><span class="en">Rubric + scorecard structural integrity checker</span><span class="vi">Kiểm tra tính toàn vẹn cấu trúc rubric + scorecard</span></td></tr>
+          <tr><td><code>evl:rubric-import</code></td><td><span class="en">Map external framework → canonical rubric draft</span><span class="vi">Ánh xạ framework ngoài → bản thảo rubric chuẩn</span></td></tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="cs-more">
+      <summary><span class="en">ORC — Orchestration (17)</span><span class="vi">ORC — Điều phối (17)</span></summary>
+      <table class="modetable" style="--ac:var(--orc)">
+        <tbody>
+          <tr><td><code>orc:bootstrap</code></td><td><span class="en">Load project context — the entry hub</span><span class="vi">Tải bối cảnh dự án — hub đầu vào</span></td></tr>
+          <tr><td><code>orc:session-state</code></td><td><span class="en">Track session state + event queue</span><span class="vi">Theo dõi trạng thái phiên + hàng đợi sự kiện</span></td></tr>
+          <tr><td><code>orc:intake</code></td><td><span class="en">Route work type → skill chain</span><span class="vi">Định tuyến loại công việc → chuỗi skill</span></td></tr>
+          <tr><td><code>orc:classify</code></td><td><span class="en">Risk classification + MAT gate triggers</span><span class="vi">Phân loại rủi ro + kích hoạt gate MAT</span></td></tr>
+          <tr><td><code>orc:domain-router</code></td><td><span class="en">Route domain events downstream</span><span class="vi">Định tuyến sự kiện miền xuôi dòng</span></td></tr>
+          <tr><td><code>orc:cascade</code></td><td><span class="en">Resolve multi-step cross-domain event cascades</span><span class="vi">Giải quyết cascade sự kiện đa-miền nhiều bước</span></td></tr>
+          <tr><td><code>orc:audit</code></td><td><span class="en">Cross-domain event consistency — declared vs ran</span><span class="vi">Nhất quán sự kiện liên miền — khai báo vs thực chạy</span></td></tr>
+          <tr><td><code>orc:event-log</code></td><td><span class="en">Persistent event audit trail (JSONL append-only)</span><span class="vi">Vết kiểm toán sự kiện bền vững (JSONL append-only)</span></td></tr>
+          <tr><td><code>orc:decisions</code></td><td><span class="en">Append-only decision records with evidence citations</span><span class="vi">Bản ghi quyết định append-only với trích dẫn bằng chứng</span></td></tr>
+          <tr><td><code>orc:compounding</code></td><td><span class="en">Extract session learnings → persistent memory</span><span class="vi">Rút học từ phiên → bộ nhớ bền vững</span></td></tr>
+          <tr><td><code>orc:dream</code></td><td><span class="en">Periodic memory consolidation across sessions</span><span class="vi">Củng cố bộ nhớ định kỳ qua các phiên</span></td></tr>
+          <tr><td><code>orc:agent-memory</code></td><td><span class="en">Per-agent calibration memory store</span><span class="vi">Kho bộ nhớ hiệu chỉnh theo từng agent</span></td></tr>
+          <tr><td><code>orc:observe</code></td><td><span class="en">Cross-framework passive telemetry → instinct signals</span><span class="vi">Đo từ xa thụ động liên framework → tín hiệu bản năng</span></td></tr>
+          <tr><td><code>orc:graph</code></td><td><span class="en">Knowledge-graph query/visualize/validate + analytics subcommands</span><span class="vi">Truy vấn/trực quan/xác thực đồ thị tri thức + lệnh con analytics</span></td></tr>
+          <tr><td><code>orc:santa</code></td><td><span class="en">Dual-reviewer quality gate</span><span class="vi">Cổng chất lượng hai reviewer</span></td></tr>
+          <tr><td><code>orc:council</code></td><td><span class="en">4-voice decision framework for contested choices</span><span class="vi">Framework quyết định 4 giọng cho các lựa chọn tranh cãi</span></td></tr>
+          <tr><td><code>orc:skill-stocktake</code></td><td><span class="en">Skill catalog count + CE-02 conformance audit</span><span class="vi">Đếm catalog skill + kiểm tra tuân thủ CE-02</span></td></tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="cs-more">
+      <summary><span class="en">COM — Common Utilities (5)</span><span class="vi">COM — Tiện ích chung (5)</span></summary>
+      <table class="modetable" style="--ac:var(--com)">
+        <tbody>
+          <tr><td><code>com:git</code></td><td><span class="en">Project-aware git operations with conventional commits</span><span class="vi">Git ops nhận biết dự án với conventional commit</span></td></tr>
+          <tr><td><code>com:health-check</code></td><td><span class="en">Session health monitoring and diagnostic report</span><span class="vi">Giám sát sức khỏe phiên và báo cáo chẩn đoán</span></td></tr>
+          <tr><td><code>com:rules</code></td><td><span class="en">Modular rules management — load/update domain rules</span><span class="vi">Quản lý rule mô-đun — tải/cập nhật rule miền</span></td></tr>
+          <tr><td><code>com:skill-analytics</code></td><td><span class="en">Skill/script observability — 11 read-only lenses + profile-drift gate</span><span class="vi">Quan sát skill/script — 11 lăng kính chỉ-đọc + cổng profile-drift</span></td></tr>
+          <tr><td><code>com:release</code></td><td><span class="en">Cut a versioned pack release — Keep a Changelog + manifest bump</span><span class="vi">Cắt phát hành gói có phiên bản — Keep a Changelog + bump manifest</span></td></tr>
+        </tbody>
+      </table>
+    </details>
+
+    <!-- ── 2. Event names ── -->
+    <h2 class="sectitle" id="cs-events"><span class="en">Event names</span><span class="vi">Tên sự kiện</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">The five named events that wire the pipeline. ORC routes them; no framework writes cross-domain. Full definitions in the <a href="@glossary">glossary</a>.</span><span class="vi">Năm sự kiện có tên nối quy trình. ORC định tuyến; không framework nào ghi chéo miền. Định nghĩa đầy đủ trong <a href="@glossary">glossary</a>.</span></p>
+    <table class="modetable" style="--ac:var(--orc)">
+      <thead><tr><th><span class="en">Event</span><span class="vi">Sự kiện</span></th><th><span class="en">Emitted by</span><span class="vi">Phát bởi</span></th><th><span class="en">Triggers</span><span class="vi">Kích hoạt</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>MAT.integrated</code></td><td>MAT · <code>mat:indexer</code></td><td><code>PSY.refresh</code></td></tr>
+        <tr><td><code>PSY.refresh</code></td><td>PSY · <code>psy:wave</code></td><td><code>CRE.recalibrate</code> · <code>EVL.rescore</code></td></tr>
+        <tr><td><code>GRO.assessed</code></td><td>GRO · any GRO skill</td><td><code>PSY.refresh</code> · <code>CRE.recalibrate</code> · <code>EVL.rescore</code></td></tr>
+        <tr><td><code>EVL.scored</code></td><td>EVL · <code>evl:score</code></td><td><code>CRE.recalibrate</code></td></tr>
+        <tr><td><code>CRE.recalibrate</code></td><td>CRE · <code>cre:post-writer</code></td><td><span class="en">Content strategy refresh</span><span class="vi">Làm mới chiến lược nội dung</span></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── 3. Rules index ── -->
+    <h2 class="sectitle" id="cs-rules"><span class="en">17 rules — index</span><span class="vi">17 quy tắc — chỉ mục</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Source: <code>docs/rules/01-17-*.md</code>. Rules are enforced at runtime — not style suggestions.</span><span class="vi">Nguồn: <code>docs/rules/01-17-*.md</code>. Quy tắc được cưỡng chế lúc runtime — không phải gợi ý phong cách.</span></p>
+    <table class="modetable" style="--ac:var(--spec)">
+      <thead><tr><th><span class="en">Rule</span><span class="vi">Quy tắc</span></th><th><span class="en">File</span><span class="vi">File</span></th><th><span class="en">Domain</span><span class="vi">Miền</span></th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td><code>01-profile-structure.md</code></td><td><span class="en">25-file schema, directory layout, naming</span><span class="vi">Schema 25-file, bố cục thư mục, đặt tên</span></td></tr>
+        <tr><td>02</td><td><code>02-clinical-reference-usage.md</code></td><td><span class="en">How to use DSM-5/ICD-11/attachment refs responsibly</span><span class="vi">Cách sử dụng ref DSM-5/ICD-11/gắn bó có trách nhiệm</span></td></tr>
+        <tr><td>03</td><td><code>03-evidence-tiers.md</code></td><td><span class="en">T1–T5 definitions, CRAAP, tier gate at MAT</span><span class="vi">Định nghĩa T1–T5, CRAAP, cổng bậc tại MAT</span></td></tr>
+        <tr><td>04</td><td><code>04-mat-pipeline.md</code></td><td><span class="en">Ingest stages, integration gate, contradiction handling</span><span class="vi">Các giai đoạn thu nhận, cổng tích hợp, xử lý mâu thuẫn</span></td></tr>
+        <tr><td>05</td><td><code>05-psy-formulation.md</code></td><td><span class="en">5P model, 3-wave protocol, wave sequence rules</span><span class="vi">Mô hình 5P, giao thức 3-đợt, quy tắc trình tự đợt</span></td></tr>
+        <tr><td>06</td><td><code>06-crisis-protocol.md</code></td><td><span class="en">Crisis assessment — no-cache invariant, escalation</span><span class="vi">Đánh giá khủng hoảng — bất biến không-cache, leo thang</span></td></tr>
+        <tr><td>07</td><td><code>07-hypothesis-forecast.md</code></td><td><span class="en">[FORECAST] labelling, T5 constraints, no-promote rule</span><span class="vi">Gán nhãn [FORECAST], ràng buộc T5, quy tắc không-thăng hạng</span></td></tr>
+        <tr><td>08</td><td><code>08-cre-content-standards.md</code></td><td><span class="en">Content quality, voice consistency, humanize requirements</span><span class="vi">Chất lượng nội dung, nhất quán giọng, yêu cầu humanize</span></td></tr>
+        <tr><td>09</td><td><code>09-confidentiality-privacy.md</code></td><td><span class="en">Publish gate, privacy tags, forbidden-in-publish list</span><span class="vi">Cổng xuất bản, nhãn bảo mật, danh sách cấm-trong-xuất-bản</span></td></tr>
+        <tr><td>10</td><td><code>10-gro-growth-standards.md</code></td><td><span class="en">Growth data quality, milestone evidence, forecast labelling</span><span class="vi">Chất lượng dữ liệu tăng trưởng, bằng chứng cột mốc, gán nhãn dự báo</span></td></tr>
+        <tr><td>11</td><td><code>11-cross-validation.md</code></td><td><span class="en">Multi-character consistency, timeline sync, propagation</span><span class="vi">Nhất quán đa nhân vật, đồng bộ dòng thời gian, lan truyền</span></td></tr>
+        <tr><td>12</td><td><code>12-domain-boundaries.md</code></td><td><span class="en">No cross-domain writes; event bus only; Rule 12 is the fence</span><span class="vi">Không ghi chéo miền; chỉ event bus; Rule 12 là hàng rào</span></td></tr>
+        <tr><td>13</td><td><code>13-orc-workflow.md</code></td><td><span class="en">Workflow tracks: MAT→PSY→CRE + GRO/EVL cascades</span><span class="vi">Mạch workflow: MAT→PSY→CRE + cascade GRO/EVL</span></td></tr>
+        <tr><td>14</td><td><code>14-cache-commit-standards.md</code></td><td><span class="en">Verdict-labels-only cache; no raw profile bytes committed</span><span class="vi">Cache chỉ nhãn phán quyết; không byte hồ sơ thô được commit</span></td></tr>
+        <tr><td>15</td><td><code>15-knowledge-graph.md</code></td><td><span class="en">Graph usage, advisory-only signals, authoritative:false tags</span><span class="vi">Sử dụng đồ thị, tín hiệu chỉ-tư vấn, nhãn authoritative:false</span></td></tr>
+        <tr><td>16</td><td><code>16-distribution.md</code></td><td><span class="en">No corpus in public pack; PII filter; character-agnostic</span><span class="vi">Không corpus trong gói công khai; lọc PII; character-agnostic</span></td></tr>
+        <tr><td>17</td><td><code>17-evl-framework.md</code></td><td><span class="en">EVL rubric schema, scorecard structure, verdict cache policy</span><span class="vi">Schema rubric EVL, cấu trúc scorecard, chính sách cache phán quyết</span></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── 4. The 4 rubrics ── -->
+    <h2 class="sectitle" id="cs-rubrics"><span class="en">The 4 built-in rubrics</span><span class="vi">4 rubric tích hợp sẵn</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Source: <code>docs/rubrics/</code>. Add your own to <code>docs/rubrics/imported/</code> via <code>evl:rubric-import</code>.</span><span class="vi">Nguồn: <code>docs/rubrics/</code>. Thêm rubric của bạn vào <code>docs/rubrics/imported/</code> qua <code>evl:rubric-import</code>.</span></p>
+    <table class="modetable" style="--ac:var(--evl)">
+      <thead><tr><th><span class="en">Rubric</span><span class="vi">Rubric</span></th><th><span class="en">Use case</span><span class="vi">Trường hợp dùng</span></th><th><span class="en">Skill</span><span class="vi">Skill</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>psychometric-big-five</code></td><td><span class="en">Big Five + Dark Triad + attachment battery</span><span class="vi">Bộ đo Big Five + Dark Triad + gắn bó</span></td><td><code>evl:standardize</code></td></tr>
+        <tr><td><code>role-casting-fit</code></td><td><span class="en">Casting / role suitability → CAST / CONDITIONAL / NO</span><span class="vi">Phù hợp vai diễn → CAST / CONDITIONAL / NO</span></td><td><code>evl:fit</code></td></tr>
+        <tr><td><code>clinical-risk-safety</code></td><td><span class="en">Risk level scoring for content safety decisions</span><span class="vi">Chấm mức rủi ro cho quyết định an toàn nội dung</span></td><td><code>evl:score</code></td></tr>
+        <tr><td><code>relationship-compatibility</code></td><td><span class="en">Dyad / pairing compatibility on key axes</span><span class="vi">Tương thích dyad / cặp đôi trên các trục chính</span></td><td><code>evl:compatibility</code></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── 5. venv + test commands ── -->
+    <h2 class="sectitle" id="cs-venv"><span class="en">venv &amp; script invocation</span><span class="vi">venv &amp; gọi script</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">All Python scripts under <code>.claude/skills/</code> use the project venv. Never use the system Python — packages (google-genai, pypdf, etc.) are installed into the venv by <code>install.sh</code>.</span><span class="vi">Mọi script Python dưới <code>.claude/skills/</code> dùng venv dự án. Không bao giờ dùng Python hệ thống — các gói (google-genai, pypdf, v.v.) được cài vào venv bởi <code>install.sh</code>.</span></p>
+    <table class="modetable" style="--ac:var(--spec)">
+      <thead><tr><th><span class="en">Command</span><span class="vi">Lệnh</span></th><th><span class="en">Purpose</span><span class="vi">Mục đích</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>.claude/skills/.venv/bin/python3 .claude/skills/{fw}-{skill}/scripts/{script}.py</code></td><td><span class="en">Standard venv invocation for any framework skill script</span><span class="vi">Gọi venv chuẩn cho bất kỳ script skill framework nào</span></td></tr>
+        <tr><td><code>bash .claude/skills/install.sh</code></td><td><span class="en">Bootstrap the venv and install all required packages</span><span class="vi">Khởi tạo venv và cài tất cả gói cần thiết</span></td></tr>
+        <tr><td><code>pytest -q -m 'not gemini'</code></td><td><span class="en">Run the test suite (skip Gemini API tests — requires key)</span><span class="vi">Chạy bộ test (bỏ qua test Gemini API — cần key)</span></td></tr>
+        <tr><td><code>python3 e2e/run-full-pipeline.py</code></td><td><span class="en">End-to-end pipeline smoke test (MAT→PSY→EVL→CRE)</span><span class="vi">Smoke test quy trình đầu-cuối (MAT→PSY→EVL→CRE)</span></td></tr>
+        <tr><td><code>python3 e2e/validate-all-against-schemas.py</code></td><td><span class="en">Validate all rubrics + scorecards against JSON schemas</span><span class="vi">Validate toàn bộ rubric + scorecard theo JSON schema</span></td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── 6. Troubleshooting matrix ── -->
+    <h2 class="sectitle" id="cs-troubleshoot"><span class="en">Troubleshooting</span><span class="vi">Khắc phục sự cố</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Common failure modes and their fixes.</span><span class="vi">Các chế độ lỗi phổ biến và cách sửa.</span></p>
+    <table class="modetable" style="--ac:var(--bad)">
+      <thead><tr><th><span class="en">Symptom</span><span class="vi">Triệu chứng</span></th><th><span class="en">Cause</span><span class="vi">Nguyên nhân</span></th><th><span class="en">Fix</span><span class="vi">Sửa</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>ModuleNotFoundError</code></td><td><span class="en">Running script with system Python, not venv</span><span class="vi">Chạy script với Python hệ thống, không phải venv</span></td><td><span class="en">Run <code>bash .claude/skills/install.sh</code> then use <code>.venv/bin/python3</code></span><span class="vi">Chạy <code>bash .claude/skills/install.sh</code> rồi dùng <code>.venv/bin/python3</code></span></td></tr>
+        <tr><td><span class="en">Skill count drift vs <code>CLAUDE.md</code></span><span class="vi">Lệch số skill vs <code>CLAUDE.md</code></span></td><td><span class="en">Skill added/renamed without updating the catalog</span><span class="vi">Skill được thêm/đổi tên mà không cập nhật catalog</span></td><td><span class="en">Run <code>orc:skill-stocktake</code>; update <code>docs/MODULES.md</code> + <code>CLAUDE.md</code></span><span class="vi">Chạy <code>orc:skill-stocktake</code>; cập nhật <code>docs/MODULES.md</code> + <code>CLAUDE.md</code></span></td></tr>
+        <tr><td><span class="en">Stale knowledge-graph cache</span><span class="vi">Cache đồ thị tri thức cũ</span></td><td><span class="en">Profile files updated but graph not rebuilt</span><span class="vi">File hồ sơ được cập nhật nhưng đồ thị chưa rebuild</span></td><td><span class="en">Run <code>orc:graph --rebuild</code> to refresh the SHA256 cache</span><span class="vi">Chạy <code>orc:graph --rebuild</code> để làm mới cache SHA256</span></td></tr>
+        <tr><td><span class="en">Publish gate blocking on <code>[UNVERIFIED]</code></span><span class="vi">Cổng xuất bản chặn vì <code>[UNVERIFIED]</code></span></td><td><span class="en">Claims without cited MAT-tier sources in the draft</span><span class="vi">Claim không có nguồn MAT-bậc trích dẫn trong bản thảo</span></td><td><span class="en">Run <code>cre:evidence-scanner</code> — add T1–T3 citations or remove the claims</span><span class="vi">Chạy <code>cre:evidence-scanner</code> — thêm trích dẫn T1–T3 hoặc bỏ claim</span></td></tr>
+        <tr><td><span class="en">Privacy-guard blocking publish</span><span class="vi">Privacy-guard chặn xuất bản</span></td><td><span class="en">Draft contains data above the permitted privacy tier</span><span class="vi">Bản thảo chứa dữ liệu vượt bậc bảo mật được phép</span></td><td><span class="en">Run <code>cre:privacy-guard</code> — strip clinical labels / DSM-ICD identifiers</span><span class="vi">Chạy <code>cre:privacy-guard</code> — tước nhãn lâm sàng / định danh DSM-ICD</span></td></tr>
+        <tr><td><span class="en">Character not found at runtime</span><span class="vi">Không tìm thấy nhân vật lúc runtime</span></td><td><span class="en"><code>characters.yaml</code> missing or path misconfigured</span><span class="vi"><code>characters.yaml</code> bị thiếu hoặc đường dẫn cấu hình sai</span></td><td><span class="en">Run <code>orc:bootstrap</code> — it resolves paths via <code>characters.yaml</code> + <code>paths.py</code></span><span class="vi">Chạy <code>orc:bootstrap</code> — nó phân giải đường dẫn qua <code>characters.yaml</code> + <code>paths.py</code></span></td></tr>
+        <tr><td><span class="en">e2e test fails on schema validation</span><span class="vi">Test e2e thất bại khi validate schema</span></td><td><span class="en">Rubric or scorecard structure does not match JSON schema</span><span class="vi">Cấu trúc rubric hoặc scorecard không khớp JSON schema</span></td><td><span class="en">Run <code>evl:validate</code> on the offending file; check <code>.claude/schemas/</code></span><span class="vi">Chạy <code>evl:validate</code> trên file lỗi; kiểm tra <code>.claude/schemas/</code></span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout" style="--ac:var(--txt-faint);margin-top:26px">
+      <span class="ci">💡</span>
+      <div>
+        <span class="en">Want the <i>why</i> behind a row? <a href="@glossary">Glossary</a> for term definitions · <a href="@catalog">Catalog</a> for full skill descriptions · <a href="@finder">Finder</a> to pick by intent · <a href="@gates">Gates &amp; privacy</a> for the publish gate model · <a href="@architecture">Architecture</a> for internals.</span>
+        <span class="vi">Muốn biết <i>tại sao</i> một dòng tồn tại? <a href="@glossary">Glossary</a> cho định nghĩa thuật ngữ · <a href="@catalog">Catalog</a> cho mô tả skill đầy đủ · <a href="@finder">Finder</a> để chọn theo ý định · <a href="@gates">Gates &amp; privacy</a> cho mô hình cổng xuất bản · <a href="@architecture">Architecture</a> cho nội bộ.</span>
+      </div>
+    </div>
+  </div>
+</section>

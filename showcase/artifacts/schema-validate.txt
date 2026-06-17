@@ -1,0 +1,3 @@
+Schema validation — 119 PASS, 0 FAIL, 3 SKIP
+  ✓ All covered files conform to their schema.
+PASS — exit 0

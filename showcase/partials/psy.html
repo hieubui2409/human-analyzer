@@ -1,0 +1,250 @@
+<!-- ===================== PSY ===================== -->
+<section id="psy">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--psy)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <path d="M20 6c-7 0-12 5-12 11 0 4 2 6 2 9 0 3 3 5 6 5h1v3h6v-7c4-1 7-5 7-10 0-6-5-11-10-11Z" stroke="var(--psy)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M16 16a4 4 0 0 1 8 0" stroke="var(--psy)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who"><span class="en">Clinical 5P formulation — defenses, attachment, trauma, diagnostics, consistency</span><span class="vi">Formulation 5P lâm sàng — phòng vệ, gắn bó, sang chấn, chẩn đoán, nhất quán</span></div>
+        <h2>PSY · Psychology</h2>
+      </div>
+      <div class="ver">16 skills · Rule 02</div>
+    </div>
+    <div class="divider" style="--ac:var(--psy)"></div>
+
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en">PSY is where raw evidence becomes a clinical character profile. It consumes validated MAT materials and builds a deep, multi-layered psychological formulation using the 5P model (Presenting, Predisposing, Precipitating, Perpetuating, Protective) — grounded in DSM-5, ICD-11, and 78 curated clinical theory references. Every claim must show the behavior, not announce the diagnosis. The framework emits <code>PSY.refresh</code> which feeds both EVL (re-score) and CRE (recalibrate content).</span>
+      <span class="vi">PSY là nơi bằng chứng thô trở thành hồ sơ nhân vật lâm sàng. Nó tiêu thụ tư liệu MAT đã xác nhận và xây dựng một formulation tâm lý sâu, đa tầng theo mô hình 5P (Biểu hiện, Tiền đề, Kích hoạt, Duy trì, Bảo vệ) — có nền tảng DSM-5, ICD-11, và 78 tài liệu tham chiếu lý thuyết lâm sàng được tuyển chọn. Mọi claim phải thể hiện hành vi, không thông báo chẩn đoán. Framework phát <code>PSY.refresh</code> nuôi cả EVL (chấm lại) và CRE (hiệu chỉnh nội dung).</span>
+    </p>
+
+    <!-- 3-WAVE BUILD -->
+    <h2 class="sectitle" id="psy-waves"><span class="en">The 3-wave build</span><span class="vi">Quy trình xây 3-wave</span></h2>
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en"><code>psy:wave</code> orchestrates three sequential passes — each wave can only start when the previous is complete and cross-validated. Skipping a wave is not possible; the orchestration gate enforces ordering.</span>
+      <span class="vi"><code>psy:wave</code> điều phối ba lượt tuần tự — mỗi wave chỉ có thể bắt đầu khi wave trước hoàn thành và đã tham chiếu chéo. Không thể bỏ qua wave; cổng điều phối ép thứ tự.</span>
+    </p>
+
+    <div class="cards" style="gap:14px;margin-top:4px">
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><span class="en">Wave 1 — Foundation</span><span class="vi">Wave 1 — Nền tảng</span></h3>
+        <p><span class="en">Identity, timeline, relationships, and source integration. Establishes who the character is before any clinical interpretation begins. Files: <code>identity/</code>, <code>timeline/</code>, <code>relationships/</code>. Every fact tagged with its MAT source citation.</span><span class="vi">Danh tính, dòng thời gian, các mối quan hệ, và tích hợp nguồn. Xác lập nhân vật là ai trước khi bất kỳ diễn giải lâm sàng nào bắt đầu. File: <code>identity/</code>, <code>timeline/</code>, <code>relationships/</code>. Mọi sự kiện được gắn thẻ trích dẫn nguồn MAT của nó.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><span class="en">Wave 2 — Deep Dive</span><span class="vi">Wave 2 — Đào sâu</span></h3>
+        <p><span class="en">Clinical psychology layers: defense mechanisms, attachment style, core wounds, trauma patterns, darkness / light duality, strengths-hope formulation. Invokes the 78-reference clinical library. Files: <code>psychology/</code>, <code>darkness/</code>, <code>light/</code>. Clinical terms are cited via <code>(See: docs/references/…)</code>.</span><span class="vi">Các tầng tâm lý lâm sàng: cơ chế phòng vệ, phong cách gắn bó, vết thương cốt lõi, mẫu sang chấn, tính đối lập tối / sáng, formulation điểm mạnh-hy vọng. Gọi thư viện lâm sàng 78 tài liệu tham chiếu. File: <code>psychology/</code>, <code>darkness/</code>, <code>light/</code>. Thuật ngữ lâm sàng được trích dẫn qua <code>(See: docs/references/…)</code>.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><span class="en">Wave 3 — Validation</span><span class="vi">Wave 3 — Xác nhận</span></h3>
+        <p><span class="en">Cross-character validation via <code>psy:crossref</code> — 10 consistency dimensions (4 automated + 6 LLM-judged). Health-check scoring on all 25 expected profile files. Any inconsistency surfaced as a named finding, not buried. <code>PSY.refresh</code> emits only after Wave 3 clears.</span><span class="vi">Xác nhận liên nhân vật qua <code>psy:crossref</code> — 10 chiều nhất quán (4 tự động + 6 do LLM phán xử). Chấm điểm health-check trên tất cả 25 file hồ sơ dự kiến. Mọi không nhất quán được đưa ra như một phát hiện được đặt tên, không bị chôn vùi. <code>PSY.refresh</code> chỉ phát sau khi Wave 3 thông qua.</span></p>
+      </div>
+    </div>
+
+    <!-- 25-FILE PROFILE SCHEMA -->
+    <h2 class="sectitle" id="psy-schema" style="margin-top:48px"><span class="en">The 25-file profile schema</span><span class="vi">Schema hồ sơ 25-file</span></h2>
+    <p class="lead" style="margin-bottom:16px">
+      <span class="en">Every character profile is exactly 25 files across 6 directories — no more, no fewer. <code>psy:health-check</code> scores completeness against this schema; missing files are named, not quietly assumed absent. Rule 01 defines the canonical layout.</span>
+      <span class="vi">Mọi hồ sơ nhân vật gồm đúng 25 file trên 6 thư mục — không nhiều hơn, không ít hơn. <code>psy:health-check</code> chấm điểm độ đầy đủ theo schema này; các file thiếu được đặt tên, không được ngầm giả định là vắng mặt. Rule 01 định nghĩa layout chính tắc.</span>
+    </p>
+
+    <div class="lenses" style="grid-template-columns:repeat(3,1fr)">
+      <div class="lens" style="--lc:var(--psy)">
+        <h4><code>identity/</code></h4>
+        <div class="fw"><span class="en">overview · backstory · timeline · cultural-context · self-concept</span><span class="vi">tổng quan · lý lịch · dòng thời gian · bối cảnh văn hóa · tự-nhận-thức</span></div>
+      </div>
+      <div class="lens" style="--lc:var(--psy)">
+        <h4><code>psychology/</code></h4>
+        <div class="fw"><span class="en">attachment-style · defense-mechanisms · core-wounds · emotional-patterns · cognitive-patterns · behavioral-patterns</span><span class="vi">phong cách gắn bó · cơ chế phòng vệ · vết thương cốt lõi · mẫu cảm xúc · mẫu nhận thức · mẫu hành vi</span></div>
+      </div>
+      <div class="lens" style="--lc:var(--psy)">
+        <h4><code>darkness/</code></h4>
+        <div class="fw"><span class="en">traumas · fears · shadow-patterns · destructive-cycles</span><span class="vi">sang chấn · nỗi sợ · mẫu bóng tối · chu kỳ hủy hoại</span></div>
+      </div>
+      <div class="lens" style="--lc:var(--psy)">
+        <h4><code>light/</code></h4>
+        <div class="fw"><span class="en">strengths · coping-strategies · hope-anchors · growth-capacity</span><span class="vi">điểm mạnh · chiến lược đối phó · neo hy vọng · năng lực phát triển</span></div>
+      </div>
+      <div class="lens" style="--lc:var(--psy)">
+        <h4><code>relationships/</code></h4>
+        <div class="fw"><span class="en">dyad-map · relationship-patterns · significant-others</span><span class="vi">bản đồ cặp · mẫu mối quan hệ · những người quan trọng</span></div>
+      </div>
+      <div class="lens" style="--lc:var(--psy)">
+        <h4><code>arc/</code></h4>
+        <div class="fw"><span class="en">growth-trajectory · hypothesis-log · arc-validation</span><span class="vi">quỹ đạo phát triển · nhật ký giả thuyết · xác nhận arc</span></div>
+      </div>
+    </div>
+
+    <!-- CROSSREF: 10 CONSISTENCY DIMENSIONS -->
+    <h2 class="sectitle" id="psy-crossref" style="margin-top:48px"><span class="en">crossref — 10 consistency dimensions</span><span class="vi">crossref — 10 chiều nhất quán</span></h2>
+    <p class="lead" style="margin-bottom:16px">
+      <span class="en"><code>psy:crossref</code> validates the profile against 4 dimensions deterministically (scripts can run them reliably) and submits 6 dimensions to LLM judgment (they require reading nuance across files). A profile with unresolved inconsistencies cannot emit <code>PSY.refresh</code>.</span>
+      <span class="vi"><code>psy:crossref</code> xác nhận hồ sơ theo 4 chiều một cách tất định (script có thể chạy đáng tin cậy) và gửi 6 chiều để LLM phán xử (chúng đòi hỏi đọc sắc thái qua các file). Hồ sơ có không nhất quán chưa giải quyết không thể phát <code>PSY.refresh</code>.</span>
+    </p>
+
+    <div class="cards grid-2" style="margin-top:12px">
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><span class="en">4 automated dimensions</span><span class="vi">4 chiều tự động</span></h3>
+        <div class="chips" style="margin-top:10px;flex-direction:column;gap:7px">
+          <div style="font-size:.84rem;color:var(--txt-dim)">1. <span class="en">Timeline date consistency across all files</span><span class="vi">Nhất quán ngày tháng dòng thời gian trên tất cả file</span></div>
+          <div style="font-size:.84rem;color:var(--txt-dim)">2. <span class="en">Profile file completeness (25-file schema)</span><span class="vi">Độ đầy đủ file hồ sơ (schema 25 file)</span></div>
+          <div style="font-size:.84rem;color:var(--txt-dim)">3. <span class="en">MAT source citation presence per claim</span><span class="vi">Có mặt trích dẫn nguồn MAT cho từng claim</span></div>
+          <div style="font-size:.84rem;color:var(--txt-dim)">4. <span class="en">Clinical reference link validity (file exists)</span><span class="vi">Hợp lệ liên kết tham chiếu lâm sàng (file tồn tại)</span></div>
+        </div>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><span class="en">6 LLM-judged dimensions</span><span class="vi">6 chiều LLM phán xử</span></h3>
+        <div class="chips" style="margin-top:10px;flex-direction:column;gap:7px">
+          <div style="font-size:.84rem;color:var(--txt-dim)">5. <span class="en">Attachment style coherence with behavioral patterns</span><span class="vi">Mạch lạc phong cách gắn bó với mẫu hành vi</span></div>
+          <div style="font-size:.84rem;color:var(--txt-dim)">6. <span class="en">Defense mechanisms ↔ core wound consistency</span><span class="vi">Nhất quán cơ chế phòng vệ ↔ vết thương cốt lõi</span></div>
+          <div style="font-size:.84rem;color:var(--txt-dim)">7. <span class="en">Darkness/light balance (not contradiction — complexity)</span><span class="vi">Cân bằng tối/sáng (không phải mâu thuẫn — phức tạp)</span></div>
+          <div style="font-size:.84rem;color:var(--txt-dim)">8. <span class="en">Cross-character relationship symmetry</span><span class="vi">Đối xứng mối quan hệ liên nhân vật</span></div>
+          <div style="font-size:.84rem;color:var(--txt-dim)">9. <span class="en">Arc trajectory plausibility vs. evidence base</span><span class="vi">Tính hợp lý quỹ đạo arc so với nền tảng bằng chứng</span></div>
+          <div style="font-size:.84rem;color:var(--txt-dim)">10. <span class="en">Narrative voice vs. profile clinical grounding</span><span class="vi">Giọng kể vs. nền tảng lâm sàng hồ sơ</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRISIS: NEVER CACHED -->
+    <h2 class="sectitle" id="psy-crisis" style="margin-top:48px"><span class="en">Crisis assessment — never cached</span><span class="vi">Đánh giá khủng hoảng — không bao giờ cache</span></h2>
+
+    <div class="callout" style="--ac:var(--crit)">
+      <span class="ci">⛔</span>
+      <div>
+        <span class="en"><b>Hard rule:</b> <code>psy:crisis-assess</code> results are <code>cache: never</code>. A stale risk verdict on a character's safety indicators is worse than no verdict — it creates false assurance. Every session that touches crisis-adjacent profile content must re-run the assessment from the current evidence, never from a stored snapshot. DSM-5/ICD-11 severity levels are applied fresh each time.</span>
+        <span class="vi"><b>Quy tắc cứng:</b> kết quả <code>psy:crisis-assess</code> là <code>cache: never</code>. Một phán quyết rủi ro cũ về chỉ số an toàn của nhân vật tệ hơn là không có phán quyết — nó tạo ra sự đảm bảo giả. Mọi phiên chạm đến nội dung hồ sơ liên quan khủng hoảng phải chạy lại đánh giá từ bằng chứng hiện tại, không bao giờ từ ảnh chụp đã lưu. Mức độ nghiêm trọng DSM-5/ICD-11 được áp dụng mới mỗi lần.</span>
+      </div>
+    </div>
+
+    <!-- SHOW DON'T TELL -->
+    <h2 class="sectitle" id="psy-show" style="margin-top:48px"><span class="en">Show-don't-tell evidence discipline (Rule 02)</span><span class="vi">Kỷ luật bằng chứng thể-hiện-không-tuyên-bố (Rule 02)</span></h2>
+    <p class="lead" style="margin-bottom:16px">
+      <span class="en">Clinical terms belong in profile files; they must not surface in published content. The discipline runs in both directions: every profile claim must point to a behavior observable in the evidence (not just label a construct), and every content piece derived from the profile must translate clinical insight into accessible human language without announcing the diagnosis.</span>
+      <span class="vi">Thuật ngữ lâm sàng thuộc về các file hồ sơ; chúng không được xuất hiện trong nội dung đăng tải. Kỷ luật chạy theo cả hai hướng: mọi claim hồ sơ phải chỉ đến hành vi quan sát được trong bằng chứng (không chỉ gắn nhãn cấu trúc), và mọi mảnh nội dung dẫn xuất từ hồ sơ phải dịch hiểu biết lâm sàng sang ngôn ngữ con người dễ tiếp cận mà không thông báo chẩn đoán.</span>
+    </p>
+
+    <div class="cards grid-2" style="margin-top:12px">
+      <div class="card" style="--ac:var(--bad)">
+        <h3 style="color:var(--bad)"><span class="en">✗ Tell (profile claim without behavior)</span><span class="vi">✗ Tuyên bố (claim hồ sơ thiếu hành vi)</span></h3>
+        <p><span class="en">"Subject displays anxious attachment." — No evidence citation. No behavioral manifestation. A label pasted over a blank.</span><span class="vi">"Đối tượng biểu hiện gắn bó lo âu." — Không trích dẫn bằng chứng. Không biểu hiện hành vi. Một nhãn dán lên chỗ trống.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--ok)">
+        <h3 style="color:var(--ok)"><span class="en">✓ Show (grounded in evidence)</span><span class="vi">✓ Thể hiện (có nền tảng trong bằng chứng)</span></h3>
+        <p><span class="en">"Craves connection but withdraws when intimacy deepens — the push-pull pattern across three documented conflicts maps to anxious-avoidant attachment (See: <code>docs/references/anxious-attachment.md</code>) [Source: T2 clinical eval]."</span><span class="vi">"Khao khát kết nối nhưng rút lui khi sự thân mật sâu hơn — mẫu đẩy-kéo qua ba xung đột được ghi nhận ánh xạ đến gắn bó lo âu-tránh né (See: <code>docs/references/anxious-attachment.md</code>) [Nguồn: đánh giá lâm sàng T2]."</span></p>
+      </div>
+    </div>
+
+    <!-- 78-REFERENCE CLINICAL LIBRARY -->
+    <h2 class="sectitle" id="psy-refs" style="margin-top:48px"><span class="en">The 78-theory clinical reference library</span><span class="vi">Thư viện tham chiếu lâm sàng 78 lý thuyết</span></h2>
+    <p class="lead" style="margin-bottom:16px">
+      <span class="en">Every clinical construct used in a profile must have a corresponding file in <code>docs/references/</code>. The library currently holds 78 entries spanning attachment theory, defense mechanisms, trauma models, personality frameworks, DSM-5 criteria, and ICD-11 categories. Unknown patterns must be added to the library <em>before</em> they are applied to a profile — not after.</span>
+      <span class="vi">Mọi cấu trúc lâm sàng dùng trong hồ sơ phải có file tương ứng trong <code>docs/references/</code>. Thư viện hiện giữ 78 mục bao gồm lý thuyết gắn bó, cơ chế phòng vệ, mô hình sang chấn, framework nhân cách, tiêu chí DSM-5, và phân loại ICD-11. Mẫu chưa biết phải được thêm vào thư viện <em>trước khi</em> áp dụng vào hồ sơ — không phải sau.</span>
+    </p>
+
+    <div class="cards grid-2" style="margin-top:12px">
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><span class="en">Reference file structure</span><span class="vi">Cấu trúc file tham chiếu</span></h3>
+        <p><span class="en">Each entry must include: theory name + originator · core concept (2–3 sentences) · observable behavioral indicators · application to specific characters · Vietnamese cultural context · accessible language mapping (clinical → colloquial). Validated by <code>psy:ref-audit</code>.</span><span class="vi">Mỗi mục phải gồm: tên lý thuyết + người khởi tạo · khái niệm cốt lõi (2–3 câu) · chỉ số hành vi quan sát được · áp dụng cho nhân vật cụ thể · bối cảnh văn hóa Việt Nam · ánh xạ ngôn ngữ dễ tiếp cận (lâm sàng → thông thường). Xác nhận bởi <code>psy:ref-audit</code>.</span></p>
+        <div class="chips" style="margin-top:10px">
+          <span class="chip">DSM-5</span>
+          <span class="chip">ICD-11</span>
+          <span class="chip"><span class="en">attachment theory</span><span class="vi">lý thuyết gắn bó</span></span>
+          <span class="chip"><span class="en">defense mechanisms</span><span class="vi">cơ chế phòng vệ</span></span>
+        </div>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><span class="en">4 reference-management skills</span><span class="vi">4 skill quản lý tham chiếu</span></h3>
+        <div class="chips" style="margin-top:10px;flex-direction:column;gap:8px">
+          <div><code>psy:ref-audit</code> <span style="font-size:.8rem;color:var(--txt-dim)"><span class="en">— bidirectional: profile→ref accuracy + ref→profile coverage</span><span class="vi">— hai chiều: độ chính xác profile→ref + độ phủ ref→profile</span></span></div>
+          <div><code>psy:ref-scan</code> <span style="font-size:.8rem;color:var(--txt-dim)"><span class="en">— scan library, find where theories apply in profiles</span><span class="vi">— quét thư viện, tìm nơi lý thuyết áp dụng trong hồ sơ</span></span></div>
+          <div><code>psy:ref-create</code> <span style="font-size:.8rem;color:var(--txt-dim)"><span class="en">— create new reference file following schema</span><span class="vi">— tạo file tham chiếu mới theo schema</span></span></div>
+          <div><code>psy:ref-maintain</code> <span style="font-size:.8rem;color:var(--txt-dim)"><span class="en">— library health audit: unused theories, count drift</span><span class="vi">— kiểm tra sức khỏe thư viện: lý thuyết không dùng, sai lệch số</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL 16 PSY SKILLS -->
+    <h2 class="sectitle" id="psy-skills" style="margin-top:48px"><span class="en">All 16 PSY skills</span><span class="vi">Toàn bộ 16 skill PSY</span></h2>
+
+    <div class="eyebrow" style="margin-top:8px"><span class="en">Core profiling</span><span class="vi">Lập hồ sơ cốt lõi</span></div>
+    <div class="cards grid-2" style="gap:12px;margin-top:8px">
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:wave</code></h3>
+        <p><span class="en">Orchestrates the 3-wave profile generation pipeline — the primary entry point for building or refreshing a character profile from integrated MAT materials.</span><span class="vi">Điều phối quy trình tạo hồ sơ 3-wave — điểm vào chính để xây dựng hoặc làm mới hồ sơ nhân vật từ tư liệu MAT đã tích hợp.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:hypothesis</code></h3>
+        <p><span class="en">Predict character behavior given hypothetical events — uses SOUL/DARKNESS/LIGHT/COPING lenses to generate evidence-grounded behavioral forecasts tagged <code>[FORECAST — NOT FACTUAL]</code>.</span><span class="vi">Dự đoán hành vi nhân vật trong sự kiện giả định — dùng lăng kính SOUL/DARKNESS/LIGHT/COPING để tạo dự báo hành vi có nền tảng bằng chứng, gắn thẻ <code>[FORECAST — NOT FACTUAL]</code>.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:arc-tracker</code></h3>
+        <p><span class="en">Track growth arcs over time — compare hypothesis predictions vs. actual behavior as new evidence arrives. Feeds both PSY and GRO frameworks.</span><span class="vi">Theo dõi arc phát triển theo thời gian — so sánh dự đoán giả thuyết với hành vi thực tế khi bằng chứng mới đến. Nuôi cả framework PSY và GRO.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:crisis-assess</code></h3>
+        <p><span class="en">DSM-5/ICD-11 crisis + risk level assessment. <code>cache: never</code> — always re-run from current evidence. Emits safety flags that block CRE content if triggered.</span><span class="vi">Đánh giá khủng hoảng + mức độ rủi ro DSM-5/ICD-11. <code>cache: never</code> — luôn chạy lại từ bằng chứng hiện tại. Phát cờ an toàn chặn nội dung CRE nếu kích hoạt.</span></p>
+      </div>
+    </div>
+
+    <div class="eyebrow" style="margin-top:24px"><span class="en">Validation &amp; consistency</span><span class="vi">Xác nhận &amp; nhất quán</span></div>
+    <div class="cards grid-2" style="gap:12px;margin-top:8px">
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:crossref</code></h3>
+        <p><span class="en">10-dimension cross-character consistency validation (4 automated + 6 LLM-judged). Required before <code>PSY.refresh</code> can emit.</span><span class="vi">Xác nhận nhất quán liên nhân vật 10 chiều (4 tự động + 6 LLM phán xử). Bắt buộc trước khi <code>PSY.refresh</code> có thể phát.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:health-check</code></h3>
+        <p><span class="en">Profile completeness scoring — checks all 25 expected files, surfaces gaps by name, and produces a completeness percentage.</span><span class="vi">Chấm điểm độ đầy đủ hồ sơ — kiểm tra tất cả 25 file dự kiến, đưa lỗ hổng ra theo tên, và tạo phần trăm độ đầy đủ.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:timeline-sync</code></h3>
+        <p><span class="en">Date validation and consistency check across timeline files — extracts dates, flags conflicts, optional KG advisory signal.</span><span class="vi">Xác nhận ngày tháng và kiểm tra nhất quán qua các file dòng thời gian — trích ngày, cờ xung đột, tín hiệu tư vấn KG tùy chọn.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:narrative-twist</code></h3>
+        <p><span class="en">Handle revealed falsehoods and narrative corrections in profiles — cascades changes through <code>psy:crossref</code> when a prior "fact" turns out to be unreliable.</span><span class="vi">Xử lý sự thật được tiết lộ và chỉnh sửa tường thuật trong hồ sơ — truyền thay đổi qua <code>psy:crossref</code> khi một "sự kiện" trước đó hóa ra không đáng tin.</span></p>
+      </div>
+    </div>
+
+    <div class="eyebrow" style="margin-top:24px"><span class="en">Relational &amp; utility</span><span class="vi">Quan hệ &amp; tiện ích</span></div>
+    <div class="cards grid-2" style="gap:12px;margin-top:8px">
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:propagate</code></h3>
+        <p><span class="en">Cross-character cascade — when one profile section changes, detect which other characters' profiles need updating and in what dimension.</span><span class="vi">Lan truyền liên nhân vật — khi một mục hồ sơ thay đổi, phát hiện hồ sơ nhân vật nào khác cần cập nhật và theo chiều nào.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:relation-intelligence</code></h3>
+        <p><span class="en">Mine the cross-character relationship graph for publishable content angles — optional KG signal input, advisory, never overrides profile source-of-truth.</span><span class="vi">Khai thác đồ thị mối quan hệ liên nhân vật để tìm góc độ nội dung có thể đăng — tín hiệu KG đầu vào tùy chọn, tư vấn, không bao giờ ghi đè nguồn sự thật hồ sơ.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:profile-compare</code></h3>
+        <p><span class="en">Side-by-side character comparison on a specific dimension — useful for dyad analysis before CRE content production.</span><span class="vi">So sánh nhân vật cạnh nhau theo một chiều cụ thể — hữu ích cho phân tích cặp đôi trước khi sản xuất nội dung CRE.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span><code>psy:profile-lite</code></h3>
+        <p><span class="en">Compress a full character profile into a token-efficient summary (~100–150 lines) for use in context-constrained downstream skills.</span><span class="vi">Nén hồ sơ nhân vật đầy đủ thành tóm tắt hiệu quả token (~100–150 dòng) để dùng trong skill hạ nguồn bị ràng buộc context.</span></p>
+      </div>
+    </div>
+
+    <!-- STATS + LINKS -->
+    <div class="stats" style="margin-top:36px">
+      <div class="stat"><div class="n" data-count="16">16</div><div class="l"><span class="en">PSY skills</span><span class="vi">skill PSY</span></div></div>
+      <div class="stat"><div class="n" data-count="25">25</div><div class="l"><span class="en">profile files per character</span><span class="vi">file hồ sơ mỗi nhân vật</span></div></div>
+      <div class="stat"><div class="n" data-count="78">78</div><div class="l"><span class="en">clinical reference entries</span><span class="vi">mục tham chiếu lâm sàng</span></div></div>
+      <div class="stat"><div class="n" data-count="10">10</div><div class="l"><span class="en">crossref consistency dimensions</span><span class="vi">chiều nhất quán crossref</span></div></div>
+    </div>
+
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@evl" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><span class="en">Next: EVL scores the profile</span><span class="vi">Tiếp: EVL chấm điểm hồ sơ</span></h3>
+        <p><span class="en"><code>PSY.refresh</code> triggers <code>EVL.rescore</code> — the evaluation engine picks up the refreshed profile and scores it against versioned rubrics.</span><span class="vi"><code>PSY.refresh</code> kích hoạt <code>EVL.rescore</code> — engine đánh giá lấy hồ sơ đã làm mới và chấm điểm theo rubric có phiên bản.</span></p>
+      </a>
+      <a class="card" href="@gates" style="--ac:var(--crit)">
+        <h3><span class="pin"></span><span class="en">Gates &amp; anti-rationalization</span><span class="vi">Cổng &amp; chống hợp lý hóa</span></h3>
+        <p><span class="en">How crisis flags block content, why forecasts are labelled, and the rules that prevent evidence-free claims from ever reaching a profile.</span><span class="vi">Cách cờ khủng hoảng chặn nội dung, tại sao dự báo được gắn nhãn, và các quy tắc ngăn claim không bằng chứng chạm được đến hồ sơ.</span></p>
+      </a>
+    </div>
+  </div>
+</section>

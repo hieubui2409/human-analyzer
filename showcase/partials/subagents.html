@@ -1,0 +1,163 @@
+<!-- ===================== SUBAGENTS ===================== -->
+<section id="subagents">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--orc)">
+      <div class="badge"><svg width="34" height="34" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="4" stroke="var(--orc)" stroke-width="2"/><circle cx="9" cy="9" r="3" stroke="var(--orc)" stroke-width="2"/><circle cx="31" cy="9" r="3" stroke="var(--orc)" stroke-width="2"/><circle cx="9" cy="31" r="3" stroke="var(--orc)" stroke-width="2"/><circle cx="31" cy="31" r="3" stroke="var(--orc)" stroke-width="2"/><path d="M12 11l5 6M28 11l-5 6M12 29l5-6M28 29l-5-6" stroke="var(--orc)" stroke-width="2"/></svg></div>
+      <div class="ttl">
+        <div class="who"><span class="en">The 20 specialized subagents and the skills that deploy them, with input isolation.</span><span class="vi">20 subagent chuyên biệt và các skill triển khai chúng, có cô lập đầu vào.</span></div>
+        <h2 id="subagents-title"><span class="en">Subagents</span><span class="vi">Subagent</span></h2>
+      </div>
+      <div class="ver">20 agents</div>
+    </div>
+    <div class="divider" style="--ac:var(--orc)"></div>
+
+    <p class="lead" style="margin-bottom:18px"><span class="en">Skills don't execute everything inline — they <b>deploy specialized subagents</b>, each receiving only the context it needs and writing only to files it owns. <b>20</b> of them: 7 framework-domain agents that ship inside the pack, plus 13 dev-engineer agents used during active development. Input isolation is structural — by design, no agent sees another's output within the same review pass.</span><span class="vi">Skill không chạy hết mọi thứ inline — chúng <b>triển khai subagent chuyên biệt</b>, mỗi cái chỉ nhận context cần thiết và chỉ ghi vào file nó sở hữu. <b>20</b> agent: 7 agent domain-framework ship cùng gói, cộng 13 agent dev-engineer dùng trong phát triển chủ động. Cô lập đầu vào là cấu trúc — theo thiết kế, không agent nào thấy đầu ra của agent khác trong cùng lượt review.</span></p>
+
+    <!-- SKILL vs AGENT -->
+    <h2 class="sectitle" id="sa-concept"><span class="en">Skill vs subagent</span><span class="vi">Skill vs subagent</span></h2>
+    <div class="cards grid-2">
+      <div class="card" style="--ac:var(--orc)"><h3><span class="pin"></span><span class="en">A skill is the workflow</span><span class="vi">Skill là quy trình</span></h3><p><span class="en">Prose guidance that orchestrates a task — it decides <i>when</i> to spawn an agent, what to hand it, and how to merge its findings back into the session.</span><span class="vi">Hướng dẫn prose điều phối một task — nó quyết <i>khi nào</i> sinh agent, trao gì, và gộp phát hiện lại vào phiên.</span></p></div>
+      <div class="card" style="--ac:var(--orc)"><h3><span class="pin"></span><span class="en">An agent is the specialist</span><span class="vi">Agent là chuyên gia</span></h3><p><span class="en">A focused worker with a sharp remit, isolated context, and strict file-ownership. It returns a report; the controlling session holds merge and approval decisions.</span><span class="vi">Thợ tập trung với phạm vi sắc, context cách ly, và quyền sở hữu file nghiêm. Nó trả về báo cáo; phiên điều khiển giữ quyền gộp và duyệt.</span></p></div>
+    </div>
+
+    <!-- FRAMEWORK-DOMAIN AGENTS -->
+    <h2 class="sectitle" id="sa-domain"><span class="en">7 framework-domain agents (shipped in the pack)</span><span class="vi">7 agent domain-framework (ship trong gói)</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">These are listed in <code>pack.manifest.yaml</code> and exported with the public toolkit. Each owns exactly one domain's data and communicates via events — no cross-domain writes.</span><span class="vi">Các agent này được liệt kê trong <code>pack.manifest.yaml</code> và xuất cùng bộ toolkit công khai. Mỗi agent sở hữu đúng một miền dữ liệu và giao tiếp qua sự kiện — không ghi chéo miền.</span></p>
+    <div class="cards grid-3" style="margin-top:10px">
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin"></span>psychologist</h3>
+        <p><span class="en">PSY domain specialist — clinical profiling, 5P formulation, defense mechanisms, attachment styles, crisis assessment. Invoked by <code>psy:wave</code>, <code>psy:crisis-assess</code>, <code>psy:hypothesis</code>.</span><span class="vi">Chuyên gia miền PSY — hồ sơ lâm sàng, formulation 5P, cơ chế phòng vệ, kiểu gắn bó, đánh giá khủng hoảng. Gọi bởi <code>psy:wave</code>, <code>psy:crisis-assess</code>, <code>psy:hypothesis</code>.</span></p>
+        <div class="chips"><span class="chip">psy:wave</span><span class="chip">psy:crisis-assess</span><span class="chip">psy:hypothesis</span></div>
+      </div>
+      <div class="card" style="--ac:var(--mat)">
+        <h3><span class="pin"></span>material-analyst</h3>
+        <p><span class="en">MAT domain specialist — evidence ingestion, CRAAP scoring, tier T1–T5 classification, integration gate. Invoked by <code>mat:loader</code> and <code>mat:indexer</code>.</span><span class="vi">Chuyên gia miền MAT — thu nhận bằng chứng, chấm CRAAP, phân bậc T1–T5, cổng tích hợp. Gọi bởi <code>mat:loader</code> và <code>mat:indexer</code>.</span></p>
+        <div class="chips"><span class="chip">mat:loader</span><span class="chip">mat:indexer</span><span class="chip">mat:rescore</span></div>
+      </div>
+      <div class="card" style="--ac:var(--cre)">
+        <h3><span class="pin"></span>content-strategist</h3>
+        <p><span class="en">CRE domain specialist — platform content creation, voice consistency, evidence-tier gating, privacy guard before publish. Invoked by <code>cre:post-writer</code>, <code>cre:multiplatform</code>.</span><span class="vi">Chuyên gia miền CRE — tạo nội dung gốc nền tảng, nhất quán giọng, gate bậc bằng chứng, bảo mật trước đăng. Gọi bởi <code>cre:post-writer</code>, <code>cre:multiplatform</code>.</span></p>
+        <div class="chips"><span class="chip">cre:post-writer</span><span class="chip">cre:multiplatform</span><span class="chip">cre:voice-audit</span></div>
+      </div>
+      <div class="card" style="--ac:var(--gro)">
+        <h3><span class="pin"></span>growth-analyst</h3>
+        <p><span class="en">GRO domain specialist — career trajectory analysis, competency mapping, learning-profile assessment, mentoring documentation. Writes only to <code>docs/profiles/*/growth/</code>.</span><span class="vi">Chuyên gia miền GRO — phân tích quỹ đạo sự nghiệp, lập bản đồ năng lực, đánh giá hồ sơ học tập, ghi chép cố vấn. Chỉ ghi vào <code>docs/profiles/*/growth/</code>.</span></p>
+        <div class="chips"><span class="chip">gro:career-path</span><span class="chip">gro:competency-map</span><span class="chip">gro:mentoring-track</span></div>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span>cross-validator</h3>
+        <p><span class="en">Cross-domain validator — multi-character consistency, timeline sync, inter-character relationship validation. Writes only to <code>plans/reports/</code>. Never edits profile files directly.</span><span class="vi">Validator đa-miền — nhất quán nhiều nhân vật, đồng bộ timeline, kiểm quan hệ liên-nhân-vật. Chỉ ghi vào <code>plans/reports/</code>. Không bao giờ sửa trực tiếp file hồ sơ.</span></p>
+        <div class="chips"><span class="chip">psy:crossref</span><span class="chip">psy:timeline-sync</span><span class="chip">psy:propagate</span></div>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span>profile-manager</h3>
+        <p><span class="en">Profile CRUD — new character scaffolding, 25-file schema health checks, profile comparisons, and status reports. Invoked by <code>orc:bootstrap</code>.</span><span class="vi">CRUD hồ sơ — dàn giáo nhân vật mới, kiểm sức khỏe schema 25-file, so sánh hồ sơ, báo cáo trạng thái. Gọi bởi <code>orc:bootstrap</code>.</span></p>
+        <div class="chips"><span class="chip">orc:bootstrap</span><span class="chip">psy:health-check</span></div>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span>evl-rubric-importer</h3>
+        <p><span class="en">Maps an external evaluation framework (psychometric instrument, casting brief, competency model) onto the canonical EVL rubric schema. Proposes a mapping — never writes files, never invents weights. Invoked by <code>evl:rubric-import</code>.</span><span class="vi">Ánh xạ framework đánh giá bên ngoài (công cụ đo lường tâm lý, hồ sơ casting, mô hình năng lực) lên schema rubric EVL chuẩn. Đề xuất ánh xạ — không bao giờ ghi file, không tạo ra trọng số. Gọi bởi <code>evl:rubric-import</code>.</span></p>
+        <div class="chips"><span class="chip">evl:rubric-import</span><span class="chip">evl:validate</span></div>
+      </div>
+    </div>
+
+    <!-- DEV/ENGINEER AGENTS -->
+    <h2 class="sectitle" id="sa-dev"><span class="en">13 dev-engineer agents (development toolkit)</span><span class="vi">13 agent dev-engineer (bộ công cụ phát triển)</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">These are not shipped in the distribution pack — they are the engineering layer used when building and maintaining the framework itself. They follow strict file-ownership rules defined in task descriptions.</span><span class="vi">Các agent này không ship trong gói phân phối — chúng là lớp kỹ thuật dùng khi xây và bảo trì bản thân framework. Chúng tuân theo quy tắc sở hữu file nghiêm được định nghĩa trong mô tả task.</span></p>
+
+    <h3 style="font-size:1rem;margin:18px 0 10px;color:var(--txt-faint)"><span class="en">Plan &amp; research</span><span class="vi">Lập kế hoạch &amp; nghiên cứu</span></h3>
+    <div class="cards grid-3">
+      <div class="card" style="--ac:var(--spec)"><h3><span class="pin"></span>planner</h3><p><span class="en">Researches and writes a comprehensive, phased implementation plan. Spawns <code>researcher</code> subagents in parallel for each topic domain.</span><span class="vi">Nghiên cứu và viết kế hoạch triển khai đầy đủ, chia phase. Sinh <code>researcher</code> song song theo từng miền.</span></p></div>
+      <div class="card" style="--ac:var(--spec)"><h3><span class="pin"></span>researcher</h3><p><span class="en">Surveys multiple sources, weighs evidence, and returns a ranked, cited research report. Often run in parallel by <code>planner</code>.</span><span class="vi">Khảo nhiều nguồn, cân bằng chứng, trả về báo cáo nghiên cứu xếp hạng có trích dẫn. Thường chạy song song bởi <code>planner</code>.</span></p></div>
+      <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>brainstormer</h3><p><span class="en">Explores solution space and debates architectural trade-offs with honest caveats. Invoked for open-ended design questions.</span><span class="vi">Khám phá không gian giải pháp và tranh luận đánh đổi kiến trúc với cảnh báo trung thực. Gọi cho câu hỏi thiết kế mở.</span></p></div>
+    </div>
+
+    <h3 style="font-size:1rem;margin:18px 0 10px;color:var(--txt-faint)"><span class="en">Build, verify &amp; maintain</span><span class="vi">Xây, kiểm &amp; bảo trì</span></h3>
+    <div class="cards grid-3">
+      <div class="card" style="--ac:var(--ok)"><h3><span class="pin"></span>fullstack-developer</h3><p><span class="en">Executes implementation phases from parallel plans with strict file-ownership boundaries. Handles backend, frontend, and infra tasks.</span><span class="vi">Thực thi các phase triển khai từ plan song song với ranh giới sở hữu file nghiêm. Xử lý backend, frontend, và infra.</span></p></div>
+      <div class="card" style="--ac:var(--bad)"><h3><span class="pin"></span>debugger</h3><p><span class="en">Investigates a failure to its root cause — logs, system behavior, performance — before any fix attempt.</span><span class="vi">Điều tra lỗi đến tận gốc — log, hành vi hệ thống, hiệu năng — trước mọi lần thử sửa.</span></p></div>
+      <div class="card" style="--ac:var(--crit)"><h3><span class="pin"></span>code-reviewer</h3><p><span class="en">Comprehensive review with scout-based edge-case detection — bugs, regressions, security. Fires after every implementation pass.</span><span class="vi">Review toàn diện với dò edge-case kiểu scout — bug, regression, bảo mật. Kích hoạt sau mỗi lượt implement.</span></p></div>
+      <div class="card" style="--ac:var(--crit)"><h3><span class="pin"></span>tester</h3><p><span class="en">Validates through unit / integration tests, coverage, and error-handling checks. Run before any push; failing tests are never skipped.</span><span class="vi">Validate qua test unit / integration, coverage, và kiểm xử-lý-lỗi. Chạy trước mọi push; test thất bại không bao giờ bỏ qua.</span></p></div>
+      <div class="card" style="--ac:var(--ok)"><h3><span class="pin"></span>code-simplifier</h3><p><span class="en">Refines recently-changed code for clarity and consistency while preserving every behavior. A distinct simplification pass after implementation.</span><span class="vi">Tinh chỉnh code vừa đổi cho rõ và nhất quán mà giữ nguyên mọi hành vi. Lượt rút gọn riêng biệt sau implement.</span></p></div>
+      <div class="card" style="--ac:var(--spec)"><h3><span class="pin"></span>docs-manager</h3><p><span class="en">Manages <code>docs/</code> — codebase-summary, scripts-infrastructure, architecture — keeping documentation in sync after code changes.</span><span class="vi">Quản lý <code>docs/</code> — codebase-summary, scripts-infrastructure, architecture — giữ tài liệu đồng bộ sau thay đổi code.</span></p></div>
+      <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>project-manager</h3><p><span class="en">Tracks progress against the plan, consolidates agent reports, and surfaces status at milestone boundaries.</span><span class="vi">Theo dõi tiến độ theo plan, gộp báo cáo agent, và hiển thị trạng thái tại các mốc milestone.</span></p></div>
+      <div class="card" style="--ac:var(--txt-dim)"><h3><span class="pin"></span>git-manager</h3><p><span class="en">Stages, commits, and pushes with conventional commits. Never commits <code>.env</code>, credentials, or corpus. Pre-commit secret scan is mandatory.</span><span class="vi">Stage, commit, push với conventional commit. Không bao giờ commit <code>.env</code>, credentials, hay corpus. Quét secret trước commit là bắt buộc.</span></p></div>
+      <div class="card" style="--ac:var(--bad)"><h3><span class="pin"></span>journal-writer</h3><p><span class="en">Documents technical decisions and post-mortems with deliberate brutal-honesty candor — fixed independent of session voice level.</span><span class="vi">Ghi quyết định kỹ thuật và post-mortem với độ thẳng tàn nhẫn có chủ đích — cố định độc lập với cấp giọng phiên.</span></p></div>
+    </div>
+
+    <!-- INPUT ISOLATION -->
+    <h2 class="sectitle" id="sa-isolation"><span class="en">Anti-anchoring: structural input isolation</span><span class="vi">Chống neo: cô lập đầu vào cấu trúc</span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">The most dangerous failure mode in multi-agent review is anchoring — where one agent's verdict primes the next. Two ORC skills enforce structural prevention rather than relying on prompt instructions.</span><span class="vi">Lỗi nguy hiểm nhất trong review đa-agent là neo — khi phán quyết của agent này dẫn dắt agent kế. Hai skill ORC ép ngăn chặn cấu trúc thay vì dựa vào chỉ dẫn prompt.</span></p>
+
+    <div class="cards grid-2">
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:council</code> — 4-voice framework</h3>
+        <p><span class="en">Frames a decision through <b>four independent voices</b> (Analyst · Devil's Advocate · Pragmatist · Synthesizer) that each receive only the raw question and original evidence — never each other's output. The Synthesizer reads all four only at the merge step. This prevents a single confident voice from anchoring the result.</span><span class="vi">Đặt khung quyết định qua <b>bốn giọng độc lập</b> (Phân tích · Phản biện · Thực dụng · Tổng hợp) mỗi cái chỉ nhận câu hỏi thô và bằng chứng gốc — không bao giờ thấy đầu ra của nhau. Tổng hợp đọc cả bốn chỉ ở bước gộp. Điều này ngăn một giọng tự tin đơn neo kết quả.</span></p>
+        <div class="chips"><span class="chip">orc:decisions</span><span class="chip x">→ 4 isolated voices</span></div>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:santa</code> — dual-reviewer gate</h3>
+        <p><span class="en">Runs <b>two independent reviewers</b> (Maker · Checker) in sequence: the Maker drafts a score; the Checker sees only the original artefact and pre-check criteria — <b>never</b> the Maker's score. Divergence above a threshold escalates to the user. The pattern is directly analogous to a two-person rule for high-stakes decisions.</span><span class="vi">Chạy <b>hai reviewer độc lập</b> (Người làm · Người kiểm) theo thứ tự: Người làm phác điểm; Người kiểm chỉ thấy artefact gốc và tiêu chí kiểm trước — <b>không bao giờ</b> thấy điểm của Người làm. Phân kỳ vượt ngưỡng thì leo thang lên người dùng. Mẫu này tương tự trực tiếp quy tắc hai người cho quyết định quan trọng.</span></p>
+        <div class="chips"><span class="chip">orc:classify</span><span class="chip x">→ 2 isolated reviewers</span></div>
+      </div>
+    </div>
+
+    <!-- HOW ISOLATION IS ENFORCED -->
+    <div class="callout" style="--ac:var(--orc);margin-top:18px">
+      <span class="ci">🔒</span>
+      <div>
+        <span class="en"><b>How isolation is enforced:</b> each subagent receives a freshly-scoped prompt containing only the target artefact + its pre-check criteria. No prior agent's output is passed in the context window. The controlling skill withholds intermediate results until all independent agents have responded — only then does it synthesize. This is structural isolation, not prompt instruction.</span>
+        <span class="vi"><b>Cách cô lập được ép:</b> mỗi subagent nhận prompt có phạm vi mới chứa chỉ artefact đích + tiêu chí kiểm trước. Không có đầu ra của agent trước nào được truyền vào cửa sổ context. Skill điều khiển giữ lại kết quả trung gian đến khi tất cả agent độc lập đã trả lời — chỉ sau đó mới tổng hợp. Đây là cô lập cấu trúc, không phải chỉ dẫn prompt.</span>
+      </div>
+    </div>
+
+    <!-- PER-AGENT MEMORY -->
+    <h2 class="sectitle" id="sa-memory"><span class="en">Per-agent persistent memory: <code>orc:agent-memory</code></span><span class="vi">Bộ nhớ lâu dài theo agent: <code>orc:agent-memory</code></span></h2>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">Each agent accumulates calibration memory across sessions — <b>not</b> per-session scratchpad, but cross-session learnings stored in atomic JSONL via <code>instinct_store.py</code>. When an agent is deployed, <code>orc:agent-memory</code> loads its prior findings and feeds them as calibrated priors, preventing the same reasoning from being re-derived from scratch every invocation.</span><span class="vi">Mỗi agent tích lũy bộ nhớ hiệu chỉnh xuyên phiên — <b>không phải</b> nháp theo phiên, mà là học từ nhiều phiên lưu dạng JSONL atomic qua <code>instinct_store.py</code>. Khi agent được triển khai, <code>orc:agent-memory</code> nạp các phát hiện trước và đưa vào như prior đã hiệu chỉnh, ngăn cùng một lập luận phải suy lại từ đầu mỗi lần gọi.</span></p>
+
+    <div class="rig" style="margin-top:10px">
+      <div class="rcell">
+        <div class="rt">orc:compounding<span class="rn">cross-session</span></div>
+        <ul>
+          <li><span class="en">Extracts session learnings → memory after each session.</span><span class="vi">Trích học phiên → bộ nhớ sau mỗi phiên.</span></li>
+          <li><span class="en">Feeds <code>orc:dream</code> for periodic consolidation.</span><span class="vi">Cung cấp cho <code>orc:dream</code> để hợp nhất định kỳ.</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">orc:agent-memory<span class="rn">per-agent priors</span></div>
+        <ul>
+          <li><span class="en">Loads calibrated priors on spawn.</span><span class="vi">Nạp prior đã hiệu chỉnh khi sinh.</span></li>
+          <li><span class="en">Confidence-scored JSONL via <code>instinct_store.py</code>.</span><span class="vi">JSONL chấm độ tự tin qua <code>instinct_store.py</code>.</span></li>
+        </ul>
+      </div>
+      <div class="rcell">
+        <div class="rt">orc:dream<span class="rn">consolidation</span></div>
+        <ul>
+          <li><span class="en">Periodic merge of compounded learnings.</span><span class="vi">Gộp định kỳ các học đã cộng dồn.</span></li>
+          <li><span class="en">Prunes stale or superseded entries.</span><span class="vi">Tỉa các mục lỗi thời hoặc đã thay thế.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STATS + LINKS -->
+    <div class="stats" style="margin-top:30px">
+      <div class="stat"><div class="n" data-count="20">20</div><div class="l"><span class="en">total subagents</span><span class="vi">tổng subagent</span></div></div>
+      <div class="stat"><div class="n" data-count="7">7</div><div class="l"><span class="en">framework-domain agents in pack</span><span class="vi">agent domain-framework trong gói</span></div></div>
+      <div class="stat"><div class="n" data-count="2">2</div><div class="l"><span class="en">isolation patterns (council · santa)</span><span class="vi">mẫu cô lập (council · santa)</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">cross-agent output leaks by design</span><span class="vi">rò đầu ra liên-agent theo thiết kế</span></div></div>
+    </div>
+
+    <div class="cta-row" style="margin-top:24px">
+      <a class="btn-cta ghost" href="@orc"><span class="en">ORC framework →</span><span class="vi">Framework ORC →</span></a>
+      <a class="btn-cta ghost" href="@architecture"><span class="en">Architecture internals</span><span class="vi">Bên trong kiến trúc</span></a>
+      <a class="btn-cta ghost" href="@catalog"><span class="en">Full skill catalog</span><span class="vi">Catalog skill đầy đủ</span></a>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq" style="--ac:var(--orc);margin-top:32px">
+      <details><summary><span class="en">Do framework agents change profile files on their own?</span><span class="vi">Agent framework có tự sửa file hồ sơ không?</span></summary><div class="fa"><span class="en">Domain agents (psychologist, growth-analyst, etc.) write only to their own framework's data root — <code>docs/profiles/*/</code> for PSY, <code>docs/profiles/*/growth/</code> for GRO. cross-validator writes only to <code>plans/reports/</code>. No agent writes cross-domain. The event bus carries signals; direct cross-domain writes are blocked by Rule 12.</span><span class="vi">Agent domain (psychologist, growth-analyst, …) chỉ ghi vào write-root của framework mình — <code>docs/profiles/*/</code> cho PSY, <code>docs/profiles/*/growth/</code> cho GRO. cross-validator chỉ ghi vào <code>plans/reports/</code>. Không agent nào ghi chéo miền. Event bus mang tín hiệu; ghi chéo miền trực tiếp bị chặn bởi Rule 12.</span></div></details>
+      <details><summary><span class="en">Why is input isolation structural rather than prompt-based?</span><span class="vi">Tại sao cô lập đầu vào là cấu trúc thay vì dựa vào prompt?</span></summary><div class="fa"><span class="en">Prompt instructions can be overridden by sufficiently detailed context bleeding into the system prompt. Structural isolation — where the prior agent's output is physically absent from the next agent's context window — cannot be "forgotten." <code>orc:council</code> and <code>orc:santa</code> enforce this by withholding intermediate results until all independent passes complete.</span><span class="vi">Chỉ dẫn prompt có thể bị ghi đè bởi context đủ chi tiết rỉ vào system prompt. Cô lập cấu trúc — khi đầu ra của agent trước vật lý vắng mặt trong cửa sổ context của agent kế — không thể bị "quên." <code>orc:council</code> và <code>orc:santa</code> ép điều này bằng cách giữ lại kết quả trung gian cho đến khi tất cả lượt độc lập hoàn thành.</span></div></details>
+      <details><summary><span class="en">Which agents ship in the public distribution pack?</span><span class="vi">Agent nào ship trong gói phân phối công khai?</span></summary><div class="fa"><span class="en">The 7 framework-domain agents listed in <code>pack.manifest.yaml</code>: psychologist, material-analyst, content-strategist, growth-analyst, cross-validator, profile-manager, evl-rubric-importer. Dev-engineer agents (planner, researcher, tester, etc.) are development tools — they are not part of the character toolkit and are excluded from the pack.</span><span class="vi">7 agent domain-framework liệt kê trong <code>pack.manifest.yaml</code>: psychologist, material-analyst, content-strategist, growth-analyst, cross-validator, profile-manager, evl-rubric-importer. Agent dev-engineer (planner, researcher, tester, …) là công cụ phát triển — chúng không phải bộ toolkit nhân vật và bị loại khỏi gói.</span></div></details>
+    </div>
+  </div>
+</section>

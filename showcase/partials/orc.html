@@ -1,0 +1,301 @@
+<!-- ===================== ORC — Orchestration ===================== -->
+<section id="orc">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--orc)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="4" stroke="var(--orc)" stroke-width="2"/>
+          <circle cx="9"  cy="9"  r="3" stroke="var(--orc)" stroke-width="2"/>
+          <circle cx="31" cy="9"  r="3" stroke="var(--orc)" stroke-width="2"/>
+          <circle cx="9"  cy="31" r="3" stroke="var(--orc)" stroke-width="2"/>
+          <circle cx="31" cy="31" r="3" stroke="var(--orc)" stroke-width="2"/>
+          <path d="M12 11l5 6M28 11l-5 6M12 29l5-6M28 29l-5-6" stroke="var(--orc)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--orc)"><span class="en">The event bus — routes, cascades, audits, and owns memory, decisions, the graph</span><span class="vi">Event bus — định tuyến, cascade, kiểm toán, sở hữu bộ nhớ, quyết định, đồ thị</span></div>
+        <h2 id="orc">ORC</h2>
+      </div>
+      <div class="ver">17 skills · Rules 12·13·16</div>
+    </div>
+    <div class="divider" style="--ac:var(--orc)"></div>
+
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en">ORC is the meta-framework: it routes events between MAT, PSY, CRE, GRO, and EVL but <b>never owns domain content</b>. Its write-root is exclusively <code>.claude/</code> — skills, session state, config, cache, the event log, and the knowledge graph. Every session starts with ORC (<code>orc:intake</code>), every multi-step cascade is resolved by ORC (<code>orc:cascade</code>), and every declared event is verified by ORC (<code>orc:audit</code>). ORC is the bus; it routes, it does not own the data.</span>
+      <span class="vi">ORC là meta-framework: định tuyến sự kiện giữa MAT, PSY, CRE, GRO và EVL nhưng <b>không bao giờ sở hữu nội dung miền</b>. Write-root của nó chỉ là <code>.claude/</code> — skill, session state, config, cache, event log và đồ thị tri thức. Mỗi phiên bắt đầu bằng ORC (<code>orc:intake</code>), mỗi cascade nhiều bước được giải quyết bởi ORC (<code>orc:cascade</code>), và mỗi sự kiện khai báo được xác minh bởi ORC (<code>orc:audit</code>). ORC là bus; định tuyến, không sở hữu dữ liệu.</span>
+    </p>
+
+    <!-- ===== ENTRY SKILLS ===== -->
+    <h2 class="sectitle" id="orc-entry"><span class="en">Entry skills — every session starts here</span><span class="vi">Skill nhập — mọi phiên bắt đầu ở đây</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:bootstrap</code></h3>
+        <p>
+          <span class="en">Bootstrap project context for human-analyzer sessions. Loads character context (profiles + recent git delta + session state) and reinjects the <code>compact-digest.json</code> snapshot after a context compaction. Run at session start and any time the context goes stale. Quick mode (<code>--quick</code>) reloads config and event log only; full mode reloads all profile trees.</span>
+          <span class="vi">Bootstrap ngữ cảnh dự án cho các phiên human-analyzer. Tải ngữ cảnh nhân vật (hồ sơ + git delta gần đây + session state) và tái-inject snapshot <code>compact-digest.json</code> sau khi compaction ngữ cảnh. Chạy lúc bắt đầu phiên và bất kỳ khi nào ngữ cảnh trở nên cũ. Chế độ nhanh (<code>--quick</code>) chỉ tải lại config và event log; chế độ đầy đủ tải lại toàn bộ cây hồ sơ.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:intake</code> + <code>orc:classify</code></h3>
+        <p>
+          <span class="en"><code>orc:intake</code> — classify incoming work type (materials ingestion / profile update / content creation / growth analysis) and route to the optimal skill chain. Always runs first on every new task.<br><code>orc:classify</code> — classify task risk level (tiny / normal / high_risk) before content creation begins. Must run before <code>cre:post-writer</code>. Risk level determines ceremony: tiny tasks skip the plan gate; high-risk tasks require <code>orc:council</code> or <code>orc:santa</code> review.</span>
+          <span class="vi"><code>orc:intake</code> — phân loại loại việc đến (thu nhận tư liệu / cập nhật hồ sơ / tạo nội dung / phân tích tăng trưởng) và định tuyến đến chuỗi skill tối ưu. Luôn chạy đầu tiên ở mỗi nhiệm vụ mới.<br><code>orc:classify</code> — phân loại mức rủi ro nhiệm vụ (tiny / normal / high_risk) trước khi tạo nội dung. Phải chạy trước <code>cre:post-writer</code>. Mức rủi ro quyết định nghi lễ: nhiệm vụ tiny bỏ qua gate plan; nhiệm vụ high-risk yêu cầu review <code>orc:council</code> hoặc <code>orc:santa</code>.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== ROUTING CHAIN ===== -->
+    <h2 class="sectitle" id="orc-routing"><span class="en">The routing chain</span><span class="vi">Chuỗi định tuyến</span></h2>
+    <p class="lead" style="margin-bottom:14px">
+      <span class="en">Three skills resolve multi-step cascades. Together they form the bus backbone: classify → route → cascade → audit.</span>
+      <span class="vi">Ba skill giải quyết cascade nhiều bước. Cùng nhau chúng tạo thành xương sống bus: phân loại → định tuyến → cascade → kiểm toán.</span>
+    </p>
+    <div class="pipe-stage" style="grid-template-columns:repeat(3,1fr);margin-top:14px">
+      <div class="pstation" style="--ac:var(--orc)">
+        <div class="num">orc:domain-router</div>
+        <h4><span class="en">Route domain events</span><span class="vi">Định tuyến sự kiện miền</span></h4>
+        <p><span class="en">Given a git diff or explicit event name, resolves which downstream skills should activate. The router is the authoritative source for which framework owns a changed file; if a file's write-root is ambiguous the router flags it rather than guessing.</span><span class="vi">Cho một git diff hoặc tên sự kiện tường minh, giải quyết skill nào ở downstream nên kích hoạt. Router là nguồn quyền uy xác định framework nào sở hữu một file đã thay đổi; nếu write-root của file mơ hồ thì router gắn cờ thay vì đoán.</span></p>
+        <span class="role"><span class="en">input: diff or event name</span><span class="vi">đầu vào: diff hoặc tên sự kiện</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--orc)">
+        <div class="num">orc:cascade</div>
+        <h4><span class="en">Resolve multi-domain chain</span><span class="vi">Giải chuỗi đa-miền</span></h4>
+        <p><span class="en">Orchestrate multi-step event cascades across domains. Enforces ordering (MAT before PSY before CRE), checks event idempotency (same event twice must not double-process), and clears <code>pending_events</code> in session state before marking a session complete. Cannot proceed if any pending event is unresolved.</span><span class="vi">Điều phối cascade sự kiện nhiều bước trên các miền. Ép thứ tự (MAT trước PSY trước CRE), kiểm idempotency sự kiện (cùng sự kiện hai lần không được xử lý gấp đôi) và xóa <code>pending_events</code> trong session state trước khi đánh dấu phiên hoàn thành. Không thể tiếp tục nếu có sự kiện đang chờ chưa giải quyết.</span></p>
+        <span class="role"><span class="en">emits resolved chain</span><span class="vi">phát chuỗi đã giải</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--orc)">
+        <div class="num">orc:audit</div>
+        <h4><span class="en">Verify event consistency</span><span class="vi">Xác minh nhất quán sự kiện</span></h4>
+        <p><span class="en">Audit cross-domain event consistency — verify all declared events match what actually ran. Reads the <code>event-log.jsonl</code> and compares declared vs actual workflow. Flags divergences without auto-correcting. The audit token below shows a real run.</span><span class="vi">Kiểm toán nhất quán sự kiện liên miền — xác minh tất cả sự kiện khai báo khớp với thực chạy. Đọc <code>event-log.jsonl</code> và so sánh workflow khai báo vs thực tế. Gắn cờ phân kỳ mà không tự sửa. Token audit bên dưới hiển thị một lần chạy thật.</span></p>
+        <span class="role"><span class="en">reads event-log.jsonl</span><span class="vi">đọc event-log.jsonl</span></span>
+      </div>
+    </div>
+
+    <!-- ===== AUDIT TOKEN ===== -->
+    <h2 class="sectitle" id="orc-audit-output"><span class="en">Live audit output — declared vs actual</span><span class="vi">Đầu ra audit trực tiếp — khai báo vs thực tế</span></h2>
+    <div class="hero-ex" style="--ac:var(--orc);margin-top:14px">
+      <div class="xlabel"><span class="en">Real audit run</span><span class="vi">Lần chạy audit thật</span></div>
+      <h3 style="margin:2px 0 6px"><span class="en">orc:audit — every declared event verified against event-log.jsonl</span><span class="vi">orc:audit — mỗi sự kiện khai báo được xác minh với event-log.jsonl</span></h3>
+      <p class="muted" style="font-size:.9rem">
+        <span class="en">The audit reads what ORC declared should run and what <code>orc:event-log</code> recorded actually ran. Divergences are flagged — never silently resolved. <span class="realtag">real output</span></span>
+        <span class="vi">Audit đọc những gì ORC khai báo nên chạy và những gì <code>orc:event-log</code> ghi lại đã thực sự chạy. Phân kỳ được gắn cờ — không bao giờ giải quyết im lặng. <span class="realtag">đầu ra thật</span></span>
+      </p>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">orc:audit --domain all</span></div>
+        <!--ORC_AUDIT-->
+      </div>
+      <p class="faint" style="font-size:.76rem;margin-top:10px">
+        <span class="en">The audit never auto-corrects. A divergence between declared and actual is surfaced to the user for judgment — the LLM judges, scripts only gather. Removing a divergence from the log without resolving its root cause is a Rule 12 violation.</span>
+        <span class="vi">Audit không bao giờ tự sửa. Phân kỳ giữa khai báo và thực tế được đưa lên cho người dùng phán xử — LLM phán xử, script chỉ thu thập. Xóa phân kỳ khỏi log mà không giải quyết nguyên nhân gốc là vi phạm Rule 12.</span>
+      </p>
+    </div>
+
+    <!-- ===== PERSISTENCE: SESSION STATE + EVENT LOG ===== -->
+    <h2 class="sectitle" id="orc-persistence"><span class="en">Persistence — session state &amp; event log</span><span class="vi">Lưu trữ — session state &amp; event log</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:session-state</code></h3>
+        <p>
+          <span class="en">Tracks multi-step workflow state in <code>.claude/session-state/state.json</code> — exclusively owned by ORC. Key fields: <code>active_character</code>, <code>current_phase</code>, <code>pending_events</code>, <code>materials_in_flight</code>, <code>last_psy_refresh</code>, <code>open_contradictions</code>, <code>session_mode</code>. State transitions: <code>idle → mat-ingestion → psy-refresh → cre-recalibrate → idle</code>. ORC must clear <code>pending_events</code> before marking a session complete. The <code>--compact-digest</code> flag snapshots a bounded per-framework delta; <code>orc:bootstrap</code> re-injects it on resume after compaction.</span>
+          <span class="vi">Theo dõi trạng thái workflow nhiều bước trong <code>.claude/session-state/state.json</code> — chỉ ORC sở hữu. Trường chính: <code>active_character</code>, <code>current_phase</code>, <code>pending_events</code>, <code>materials_in_flight</code>, <code>last_psy_refresh</code>, <code>open_contradictions</code>, <code>session_mode</code>. Chuyển trạng thái: <code>idle → mat-ingestion → psy-refresh → cre-recalibrate → idle</code>. ORC phải xóa <code>pending_events</code> trước khi đánh dấu phiên hoàn thành. Flag <code>--compact-digest</code> snapshot delta giới hạn mỗi framework; <code>orc:bootstrap</code> tái-inject khi tiếp tục sau compaction.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:event-log</code> — JSONL append-only</h3>
+        <p>
+          <span class="en">Persistent event log at <code>.claude/session-state/event-log.jsonl</code>. Every core framework event is appended via <code>orc:event-log --append</code>. Each record carries: <code>timestamp</code>, <code>event</code>, <code>source</code>, <code>character</code>, <code>reason</code>. Query examples: <code>orc:event-log --query --event-type PSY.refresh --since 2026-05-01</code>. The log never rotates — it is the authoritative audit trail. <code>orc:audit</code> reads it to verify declared vs actual. Scripts: <code>orc-event-log/scripts/append-event-to-log.py</code> and <code>query-event-log-with-filters.py</code>.</span>
+          <span class="vi">Event log lưu trữ tại <code>.claude/session-state/event-log.jsonl</code>. Mỗi sự kiện framework cốt lõi được append qua <code>orc:event-log --append</code>. Mỗi record mang: <code>timestamp</code>, <code>event</code>, <code>source</code>, <code>character</code>, <code>reason</code>. Ví dụ query: <code>orc:event-log --query --event-type PSY.refresh --since 2026-05-01</code>. Log không bao giờ xoay vòng — đây là vết audit quyền uy. <code>orc:audit</code> đọc nó để xác minh khai báo vs thực tế. Script: <code>orc-event-log/scripts/append-event-to-log.py</code> và <code>query-event-log-with-filters.py</code>.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== DECISION TOOLING ===== -->
+    <h2 class="sectitle" id="orc-decisions"><span class="en">Decision tooling — council, santa, decisions</span><span class="vi">Công cụ quyết định — council, santa, decisions</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:council</code> — <span class="en">4-voice deliberation</span><span class="vi">thảo luận 4 giọng</span></h3>
+        <p>
+          <span class="en">A 4-voice decision framework for ambiguous situations. Each voice takes a distinct epistemic stance — analyst, critic, integrator, advocate — and deliberates independently before synthesis. Used for high-risk content decisions, ethical edge cases, and multi-character arc conflicts. Council outputs are recorded via <code>orc:decisions</code>. Input is isolated per voice so no voice anchors on another's framing (prevents groupthink).</span>
+          <span class="vi">Khung quyết định 4 giọng cho các tình huống mơ hồ. Mỗi giọng giữ lập trường nhận thức riêng — nhà phân tích, nhà phê bình, nhà tích hợp, người ủng hộ — và thảo luận độc lập trước khi tổng hợp. Dùng cho các quyết định nội dung rủi ro cao, trường hợp biên đạo đức và xung đột arc đa nhân vật. Đầu ra council được ghi lại qua <code>orc:decisions</code>. Đầu vào được cô lập mỗi giọng để không giọng nào neo vào đóng khung của giọng khác (ngăn tư duy nhóm).</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:santa</code> — <span class="en">dual-reviewer gate</span><span class="vi">gate hai reviewer</span></h3>
+        <p>
+          <span class="en">Dual-reviewer quality gate for high-risk changes. Two reviewers (Santa = approves / Anti-Santa = challenges) independently assess the change and must reach consensus before it proceeds. Used pre-commit on profile changes that touch multiple characters or crisis-sensitive sections. Input isolation prevents anchor bias — Anti-Santa never sees Santa's verdict first.</span>
+          <span class="vi">Gate chất lượng hai reviewer cho các thay đổi rủi ro cao. Hai reviewer (Santa = chấp thuận / Anti-Santa = thách thức) đánh giá độc lập thay đổi và phải đạt đồng thuận trước khi tiếp tục. Dùng trước commit trên các thay đổi hồ sơ chạm nhiều nhân vật hoặc các mục liên quan đến khủng hoảng. Cô lập đầu vào ngăn thiên kiến neo — Anti-Santa không bao giờ thấy phán quyết của Santa trước.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:decisions</code></h3>
+        <p>
+          <span class="en">Record and retrieve character arc decisions — append-only log of meaningful choices made about a character's trajectory, content arc, or clinical interpretation. Each decision entry carries rationale, evidence basis, and the skills/events that informed it. Queried during <code>orc:council</code> to surface prior art before deliberating the same question twice.</span>
+          <span class="vi">Ghi lại và tra cứu các quyết định arc nhân vật — log chỉ-append của các lựa chọn có ý nghĩa về quỹ đạo, arc nội dung hoặc diễn giải lâm sàng của nhân vật. Mỗi mục quyết định mang lý do, cơ sở bằng chứng và các skill/sự kiện đã thông tin. Được truy vấn trong <code>orc:council</code> để đưa ra tiền lệ trước khi thảo luận cùng câu hỏi lần thứ hai.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><code>orc:graph</code></h3>
+        <p>
+          <span class="en">Search the character-corpus knowledge graph — a plain markdown-derived adjacency structure under <code>docs/graph/</code> (PSY owns graph writes; ORC queries read-only). Edges represent documented relationships between characters, events, and clinical constructs. <code>orc:graph</code> answers questions like "what is the documented relationship between character A and character B in the grief arc?" without reading entire profile trees. Governed by Rule 16.</span>
+          <span class="vi">Tìm kiếm đồ thị tri thức corpus nhân vật — cấu trúc adjacency thuần markdown được dẫn xuất dưới <code>docs/graph/</code> (PSY sở hữu ghi đồ thị; ORC chỉ-đọc khi truy vấn). Các cạnh đại diện cho các mối quan hệ được tài liệu hóa giữa nhân vật, sự kiện và các cấu trúc lâm sàng. <code>orc:graph</code> trả lời các câu hỏi như "mối quan hệ được tài liệu hóa giữa nhân vật A và nhân vật B trong arc đau buồn là gì?" mà không đọc toàn bộ cây hồ sơ. Được điều chỉnh bởi Rule 16.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== MEMORY LOOP ===== -->
+    <h2 class="sectitle" id="orc-memory"><span class="en">The memory loop — compounding, dream, observe, agent-memory</span><span class="vi">Vòng bộ nhớ — compounding, dream, observe, agent-memory</span></h2>
+    <div class="callout" style="--ac:var(--orc);margin-top:14px">
+      <span class="ci">🧠</span>
+      <div>
+        <span class="en">
+          <code>orc:compounding</code> — extract durable learnings after content or profile work. Captures patterns that compound across sessions: what voice choices worked on which platform, which clinical refs surfaced most often, which evidence gaps recur. Feeds <code>orc:dream</code> for full consolidation.<br>
+          <code>orc:dream</code> — periodic consolidation of character insights and storytelling patterns across all sessions. Synthesises compounding extracts into durable principles. Run at natural breakpoints (end of major arc, after multiple sessions on same character).<br>
+          <code>orc:observe</code> — emit a cross-framework observation signal (passive telemetry). Complemented by the automatic <code>observe-framework-signal.cjs</code> hook (PostToolUse on Edit|Write) which appends a deterministic <code>{fw}-touched</code> signal to <code>observations.jsonl</code>. Observations are passive — they never trip a cascade.<br>
+          <code>orc:agent-memory</code> — persistent memory for CK-domain agents (psychologist, content-strategist, growth-analyst). Agents load their memory at the start of a session and update it at the end; memory never lives in the session context alone.
+        </span>
+        <span class="vi">
+          <code>orc:compounding</code> — trích xuất các học hỏi bền vững sau công việc nội dung hoặc hồ sơ. Nắm bắt các mô hình tích lũy qua các phiên: lựa chọn giọng nào hoạt động trên nền tảng nào, ref lâm sàng nào xuất hiện thường xuyên nhất, khoảng trống bằng chứng nào tái phát. Nuôi <code>orc:dream</code> để tổng hợp đầy đủ.<br>
+          <code>orc:dream</code> — tổng hợp định kỳ các insight nhân vật và mô hình kể chuyện qua tất cả phiên. Tổng hợp các trích xuất compounding thành các nguyên tắc bền vững. Chạy ở các điểm giao cắt tự nhiên (kết thúc arc lớn, sau nhiều phiên về cùng nhân vật).<br>
+          <code>orc:observe</code> — phát tín hiệu quan sát liên framework (telemetry thụ động). Được bổ sung bởi hook tự động <code>observe-framework-signal.cjs</code> (PostToolUse trên Edit|Write) append tín hiệu <code>{fw}-touched</code> tất định vào <code>observations.jsonl</code>. Quan sát là thụ động — không bao giờ kích hoạt cascade.<br>
+          <code>orc:agent-memory</code> — bộ nhớ liên tục cho các agent CK-domain (psychologist, content-strategist, growth-analyst). Agent tải bộ nhớ lúc bắt đầu phiên và cập nhật lúc kết thúc; bộ nhớ không bao giờ chỉ tồn tại trong ngữ cảnh phiên.
+        </span>
+      </div>
+    </div>
+
+    <!-- ===== THE BUS BOUNDARY (Rule 12) ===== -->
+    <h2 class="sectitle" id="orc-boundary"><span class="en">ORC is the bus — not a domain (Rule 12)</span><span class="vi">ORC là bus — không phải miền (Rule 12)</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">What ORC writes to</span><span class="vi">ORC ghi vào đâu</span></h3>
+        <p>
+          <span class="en">Exclusively <code>.claude/</code> — skills, session-state, config, cache. ORC never writes to <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>assets/</code>, or <code>docs/graph/</code>. Those belong to domain frameworks. ORC reads everything for orchestration; it edits nothing outside its write-root. A cross-boundary write from ORC is a Rule 12 violation and a bug — not a shortcut.</span>
+          <span class="vi">Chỉ <code>.claude/</code> — skill, session-state, config, cache. ORC không bao giờ ghi vào <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>assets/</code> hay <code>docs/graph/</code>. Những thứ đó thuộc về các framework miền. ORC đọc mọi thứ để điều phối; không chỉnh sửa gì ngoài write-root của mình. Một lần ghi qua ranh giới từ ORC là vi phạm Rule 12 và một lỗi — không phải phím tắt.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">What ORC routes (never owns)</span><span class="vi">ORC định tuyến gì (không bao giờ sở hữu)</span></h3>
+        <p>
+          <span class="en">Materials → MAT. Profiles → PSY. Assets → CRE. Growth files → GRO. Rubric scorecards → EVL. The knowledge graph is written by PSY (<code>docs/graph/</code>) and queried read-only by ORC (<code>orc:graph</code>). Domain boundaries are the single source of truth for per-domain write roots — the <code>platform_lib/fs_guard</code> write-jail derives its allowed roots from exactly these rows. If a file's ownership is unclear, <code>orc:domain-router</code> flags it — never guesses.</span>
+          <span class="vi">Tư liệu → MAT. Hồ sơ → PSY. Asset → CRE. File tăng trưởng → GRO. Scorecard rubric → EVL. Đồ thị tri thức được ghi bởi PSY (<code>docs/graph/</code>) và được truy vấn chỉ-đọc bởi ORC (<code>orc:graph</code>). Ranh giới miền là nguồn sự thật duy nhất cho write-root mỗi miền — write-jail <code>platform_lib/fs_guard</code> dẫn xuất các root được phép từ chính xác những hàng này. Nếu quyền sở hữu file chưa rõ, <code>orc:domain-router</code> gắn cờ — không bao giờ đoán.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== AUTOMATIC HOOKS ===== -->
+    <h2 class="sectitle" id="orc-hooks"><span class="en">Two automatic project hooks</span><span class="vi">Hai hook dự án tự động</span></h2>
+    <div class="card" style="margin-top:14px;--ac:var(--orc)">
+      <p class="muted" style="margin-bottom:14px">
+        <span class="en">Two project-authored hooks run automatically — neither depends on the CK CLI (<code>ck</code>). Both fail-open: an error never blocks a tool. They record deterministic baseline telemetry that <code>orc:observe</code> and <code>orc:session-state</code> can read.</span>
+        <span class="vi">Hai hook do dự án tạo chạy tự động — không cái nào phụ thuộc vào CK CLI (<code>ck</code>). Cả hai fail-open: một lỗi không bao giờ chặn một tool. Chúng ghi telemetry baseline tất định mà <code>orc:observe</code> và <code>orc:session-state</code> có thể đọc.</span>
+      </p>
+      <div class="tiers">
+        <div class="tier" style="--tc:var(--orc)">
+          <div class="tn">observe-framework-signal.cjs</div>
+          <span class="tdf"><span class="en">PostToolUse · Edit|Write</span><span class="vi">PostToolUse · Edit|Write</span></span>
+          <div class="tx">
+            <span class="en">Maps the edited path to its framework, appends a deterministic <code>{fw}-touched</code> signal to <code>observations.jsonl</code>. Passive telemetry only — never trips a cascade. Manual entry: <code>orc:observe</code> (semantic signals beyond what the hook detects). Controlled by <code>hooks.observeFrameworkSignal</code> in <code>framework-config.json</code> (default on).</span>
+            <span class="vi">Ánh xạ đường path đã chỉnh sửa đến framework của nó, append tín hiệu <code>{fw}-touched</code> tất định vào <code>observations.jsonl</code>. Chỉ telemetry thụ động — không bao giờ kích cascade. Mục nhập thủ công: <code>orc:observe</code> (tín hiệu ngữ nghĩa ngoài những gì hook phát hiện). Kiểm soát bởi <code>hooks.observeFrameworkSignal</code> trong <code>framework-config.json</code> (mặc định bật).</span>
+          </div>
+        </div>
+        <div class="tier" style="--tc:var(--orc)">
+          <div class="tn">write-framework-delta-compact-digest.cjs</div>
+          <span class="tdf"><span class="en">PreCompact</span><span class="vi">PreCompact</span></span>
+          <div class="tx">
+            <span class="en">Snapshots a bounded per-framework delta to <code>compact-digest.json</code> before context is compacted. <code>orc:bootstrap</code> re-injects this snapshot on resume so the new context window knows what changed. Controlled by <code>hooks.compactDigest</code> (default on). Manual entry: <code>orc:session-state --compact-digest</code>.</span>
+            <span class="vi">Snapshot một delta giới hạn mỗi framework vào <code>compact-digest.json</code> trước khi ngữ cảnh bị compact. <code>orc:bootstrap</code> tái-inject snapshot này khi tiếp tục để cửa sổ ngữ cảnh mới biết điều gì đã thay đổi. Kiểm soát bởi <code>hooks.compactDigest</code> (mặc định bật). Mục nhập thủ công: <code>orc:session-state --compact-digest</code>.</span>
+          </div>
+        </div>
+      </div>
+      <div class="gate" style="margin-top:14px">
+        <b><span class="en">Observation stream vs event bus:</span><span class="vi">Luồng quan sát vs event bus:</span></b>
+        <span class="en"> <code>observations.jsonl</code> is passive telemetry — it never drives a cascade. Domain events (the framework streams) drive the cascade. The hook guarantees a deterministic baseline trail; <code>orc:observe</code> adds LLM-judged signals on top.</span>
+        <span class="vi"> <code>observations.jsonl</code> là telemetry thụ động — không bao giờ điều khiển cascade. Sự kiện miền (các luồng framework) điều khiển cascade. Hook đảm bảo một vết baseline tất định; <code>orc:observe</code> thêm các tín hiệu do LLM phán xử lên trên.</span>
+      </div>
+    </div>
+
+    <!-- ===== 17 ORC SKILLS ===== -->
+    <h2 class="sectitle" id="orc-skills"><span class="en">All 17 ORC skills</span><span class="vi">Toàn bộ 17 skill ORC</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">Entry &amp; classification</span><span class="vi">Nhập &amp; phân loại</span></h3>
+        <p><span class="en"><code>orc:bootstrap</code> · <code>orc:intake</code> · <code>orc:classify</code></span><span class="vi"><code>orc:bootstrap</code> · <code>orc:intake</code> · <code>orc:classify</code></span><br><span class="en">Start every session. Classify work type. Determine risk level before any content gate. The trilogy that sets up all downstream routing.</span><span class="vi">Bắt đầu mỗi phiên. Phân loại loại việc. Xác định mức rủi ro trước mọi content gate. Bộ ba thiết lập tất cả định tuyến downstream.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">Routing &amp; cascade</span><span class="vi">Định tuyến &amp; cascade</span></h3>
+        <p><span class="en"><code>orc:domain-router</code> · <code>orc:cascade</code> · <code>orc:audit</code></span><span class="vi"><code>orc:domain-router</code> · <code>orc:cascade</code> · <code>orc:audit</code></span><br><span class="en">The bus backbone. Route events to domains, resolve multi-step chains, audit declared vs actual. The audit output is injected via <code>&lt;!--ORC_AUDIT--&gt;</code>.</span><span class="vi">Xương sống bus. Định tuyến sự kiện đến miền, giải chuỗi nhiều bước, kiểm toán khai báo vs thực tế. Đầu ra audit được inject qua <code>&lt;!--ORC_AUDIT--&gt;</code>.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">Persistence</span><span class="vi">Lưu trữ</span></h3>
+        <p><span class="en"><code>orc:session-state</code> · <code>orc:event-log</code></span><span class="vi"><code>orc:session-state</code> · <code>orc:event-log</code></span><br><span class="en">Session workflow state (JSON) + JSONL append-only event trail. Together they make multi-session workflows resumable and auditable.</span><span class="vi">Trạng thái workflow phiên (JSON) + vết sự kiện JSONL chỉ-append. Cùng nhau chúng làm cho các workflow nhiều phiên có thể tiếp tục và kiểm toán.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">Decision tooling</span><span class="vi">Công cụ quyết định</span></h3>
+        <p><span class="en"><code>orc:council</code> · <code>orc:santa</code> · <code>orc:decisions</code></span><span class="vi"><code>orc:council</code> · <code>orc:santa</code> · <code>orc:decisions</code></span><br><span class="en">4-voice deliberation, dual-reviewer gate, and append-only decision log. Input-isolated to prevent anchor bias. Council and santa outputs always flow into decisions.</span><span class="vi">Thảo luận 4 giọng, gate hai reviewer và log quyết định chỉ-append. Cô lập đầu vào để ngăn thiên kiến neo. Đầu ra council và santa luôn đổ vào decisions.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">Memory loop</span><span class="vi">Vòng bộ nhớ</span></h3>
+        <p><span class="en"><code>orc:compounding</code> · <code>orc:dream</code> · <code>orc:observe</code> · <code>orc:agent-memory</code></span><span class="vi"><code>orc:compounding</code> · <code>orc:dream</code> · <code>orc:observe</code> · <code>orc:agent-memory</code></span><br><span class="en">Extract durable learnings → consolidate across sessions → record passive observations → persist agent-specific memory across conversations.</span><span class="vi">Trích xuất học hỏi bền vững → tổng hợp qua các phiên → ghi quan sát thụ động → lưu bộ nhớ theo agent qua các cuộc trò chuyện.</span></p>
+      </div>
+      <div class="card" style="--ac:var(--orc)">
+        <h3><span class="pin"></span><span class="en">Knowledge graph + stocktake</span><span class="vi">Đồ thị tri thức + stocktake</span></h3>
+        <p><span class="en"><code>orc:graph</code> · <code>orc:skill-stocktake</code></span><span class="vi"><code>orc:graph</code> · <code>orc:skill-stocktake</code></span><br><span class="en">Query the character-corpus adjacency graph (read-only; PSY owns writes). Audit the project skill catalog — quick scan (counts per framework vs declared) or deep scan (per-skill conformance). The <code>SKILL_STOCKTAKE</code> token on the pipeline page shows a real run.</span><span class="vi">Truy vấn đồ thị adjacency corpus nhân vật (chỉ-đọc; PSY sở hữu ghi). Kiểm toán danh mục skill dự án — quick scan (số lượng mỗi framework vs khai báo) hoặc deep scan (conformance mỗi skill). Token <code>SKILL_STOCKTAKE</code> trên trang pipeline hiển thị một lần chạy thật.</span></p>
+      </div>
+    </div>
+
+    <!-- ===== WORKFLOW TRACKS ===== -->
+    <h2 class="sectitle" id="orc-tracks"><span class="en">Four workflow tracks — ORC entry, domain execution</span><span class="vi">Bốn workflow track — ORC nhập, miền thực thi</span></h2>
+    <div class="card" style="margin-top:14px;--ac:var(--orc)">
+      <div class="flowline" style="--ac:var(--orc)">
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="9" stroke="var(--orc)" stroke-width="2"/><path d="M12 16h8M16 12v8" stroke="var(--orc)" stroke-width="2" stroke-linecap="round"/></svg>
+          <div class="fn"><span class="en">orc:intake</span><span class="vi">orc:intake</span></div>
+          <div class="fd"><span class="en">classify work type</span><span class="vi">phân loại việc</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--orc)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><rect x="7" y="8" width="18" height="16" rx="3" stroke="var(--mat)" stroke-width="2"/><path d="M11 14h10M11 18h6" stroke="var(--mat)" stroke-width="2" stroke-linecap="round"/></svg>
+          <div class="fn" style="color:var(--mat)"><span class="en">MAT track</span><span class="vi">MAT track</span></div>
+          <div class="fd"><span class="en">loader → indexer → gate</span><span class="vi">loader → indexer → gate</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--orc)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M16 7c-5 0-9 4-9 8 0 3 2 5 2 7 0 2 2 4 5 4h1v2h4v-5c3-1 5-4 5-8 0-4-4-8-8-8Z" stroke="var(--psy)" stroke-width="2" stroke-linejoin="round"/></svg>
+          <div class="fn" style="color:var(--psy)"><span class="en">PSY track</span><span class="vi">PSY track</span></div>
+          <div class="fd"><span class="en">bootstrap → crossref → edit</span><span class="vi">bootstrap → crossref → edit</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--orc)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M22 6l5 5-13 13-6 1 1-6L22 6Z" stroke="var(--cre)" stroke-width="2" stroke-linejoin="round"/></svg>
+          <div class="fn" style="color:var(--cre)"><span class="en">CRE track</span><span class="vi">CRE track</span></div>
+          <div class="fd"><span class="en">classify → write → gates</span><span class="vi">phân loại → viết → gate</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--orc)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none"><path d="M8 24c2-6 4-10 8-13" stroke="var(--gro)" stroke-width="2" stroke-linecap="round"/><path d="M16 11l5 4-5 1V11Z" stroke="var(--gro)" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <div class="fn" style="color:var(--gro)"><span class="en">GRO track</span><span class="vi">GRO track</span></div>
+          <div class="fd"><span class="en">career · competency</span><span class="vi">sự nghiệp · năng lực</span></div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.85rem;margin-top:14px">
+        <span class="en"><code>orc:cascade</code> resolves which tracks fire and in what order. Three inter-track quality gates enforce dependencies: MAT→PSY (integration gate), PSY→CRE (profile freshness gate), CRE→Publish (privacy + voice gate). A gate failure STOPS the chain and surfaces to the user — ORC never silently advances past a failed gate.</span>
+        <span class="vi"><code>orc:cascade</code> giải quyết track nào bắn và theo thứ tự nào. Ba gate chất lượng liên-track ép các phụ thuộc: MAT→PSY (integration gate), PSY→CRE (profile freshness gate), CRE→Publish (privacy + voice gate). Lỗi gate DỪNG chuỗi và đưa lên cho người dùng — ORC không bao giờ tiến qua một gate đã fail im lặng.</span>
+      </p>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <div class="stats" style="margin-top:28px">
+      <div class="stat"><div class="n" data-count="17">17</div><div class="l"><span class="en">ORC skills</span><span class="vi">skill ORC</span></div></div>
+      <div class="stat"><div class="n" data-count="4">4</div><div class="l"><span class="en">workflow tracks routed</span><span class="vi">workflow track được định tuyến</span></div></div>
+      <div class="stat"><div class="n" data-count="3">3</div><div class="l"><span class="en">inter-track quality gates</span><span class="vi">gate chất lượng liên-track</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">domain content owned by ORC</span><span class="vi">nội dung miền ORC sở hữu</span></div></div>
+    </div>
+
+    <!-- ===== SEE ALSO ===== -->
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@pipeline" style="--ac:var(--orc)"><h3><span class="pin"></span><span class="en">The full pipeline</span><span class="vi">Pipeline đầy đủ</span></h3><p><span class="en">MAT → PSY → EVL → CRE with all ORC-orchestrated gates and cascade edges visualised end-to-end.</span><span class="vi">MAT → PSY → EVL → CRE với tất cả gate do ORC điều phối và các cạnh cascade được trực quan hóa end-to-end.</span></p></a>
+      <a class="card" href="@subagents" style="--ac:var(--orc)"><h3><span class="pin"></span><span class="en">Subagents</span><span class="vi">Subagent</span></h3><p><span class="en">The 20 domain subagents ORC coordinates — psychologist, content-strategist, growth-analyst and more. Input-isolated for council/santa reviews.</span><span class="vi">20 domain subagent mà ORC điều phối — psychologist, content-strategist, growth-analyst và nhiều hơn. Cô lập đầu vào cho các review council/santa.</span></p></a>
+      <a class="card" href="@catalog" style="--ac:var(--gold)"><h3><span class="pin" style="background:var(--gold)"></span><span class="en">Full skill catalog</span><span class="vi">Danh mục skill đầy đủ</span></h3><p><span class="en">All 17 ORC skills with trigger keywords, routing table entries, and GUIDE links.</span><span class="vi">Toàn bộ 17 skill ORC với từ khóa trigger, mục bảng định tuyến và liên kết GUIDE.</span></p></a>
+      <a class="card" href="@architecture" style="--ac:var(--tel)"><h3><span class="pin" style="background:var(--tel)"></span><span class="en">Architecture &amp; domain boundaries</span><span class="vi">Kiến trúc &amp; ranh giới miền</span></h3><p><span class="en">The write-root table, fs_guard jail, and how the toolkit ships with no character corpus.</span><span class="vi">Bảng write-root, write-jail fs_guard và cách toolkit phân phối không corpus nhân vật.</span></p></a>
+    </div>
+  </div>
+</section>

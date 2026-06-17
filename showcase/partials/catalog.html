@@ -1,0 +1,217 @@
+<!-- ===================== CATALOG ===================== -->
+<section id="catalog">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--gold)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <rect x="6" y="6" width="12" height="12" rx="3" stroke="var(--gold)" stroke-width="2"/>
+          <rect x="22" y="6" width="12" height="12" rx="3" stroke="var(--gold)" stroke-width="2"/>
+          <rect x="6" y="22" width="12" height="12" rx="3" stroke="var(--gold)" stroke-width="2"/>
+          <rect x="22" y="22" width="12" height="12" rx="3" stroke="var(--gold)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--gold)"><span class="en">The full framework suite — grouped by framework with deps</span><span class="vi">Toàn bộ bộ framework — nhóm theo framework kèm phụ thuộc</span></div>
+        <h2 id="catalog"><span class="en">All 68 skills</span><span class="vi">Toàn bộ 68 skill</span></h2>
+      </div>
+      <div class="ver">68 skills · 7 frameworks</div>
+    </div>
+    <div class="divider" style="--ac:var(--gold)"></div>
+
+    <p class="lead"><span class="en">Browse the entire framework catalog, grouped by framework with deps. Invoke any skill with <code>{fw}:{skill}</code> — e.g. <code>mat:loader</code>, <code>psy:wave</code>. The entry hub is <code>orc:bootstrap</code>.</span><span class="vi">Duyệt toàn bộ catalog framework, nhóm theo framework kèm phụ thuộc. Gọi bất kỳ skill với <code>{fw}:{skill}</code> — ví dụ <code>mat:loader</code>, <code>psy:wave</code>. Hub đầu vào là <code>orc:bootstrap</code>.</span></p>
+
+    <div class="callout" style="--ac:var(--gold);margin-top:18px;margin-bottom:24px">
+      <span class="ci">📊</span>
+      <div>
+        <span class="en"><b>Skill count — live from the audit (no hand-typed numbers):</b></span>
+        <span class="vi"><b>Số lượng skill — thẳng từ audit (không số gõ tay):</b></span>
+        <!--SKILL_STOCKTAKE-->
+      </div>
+    </div>
+
+    <div class="callout" style="--ac:var(--txt-faint);margin-bottom:30px">
+      <span class="ci">💡</span>
+      <div>
+        <span class="en">Count reconciles with <code>CLAUDE.md</code>: <b>ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 5 · EVL 8 = 68</b>. ck-origin skills (<code>cook</code>, <code>plan</code>, <code>scout</code>, <code>skill-creator</code>) are excluded — they are dev tools, not framework catalog. Not sure which skill to run? See <a href="@finder">finder</a>. Quick-scan tables? See <a href="@cheatsheet">cheatsheet</a>. System internals? See <a href="@architecture">architecture</a>.</span>
+        <span class="vi">Số đối chiếu với <code>CLAUDE.md</code>: <b>ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 5 · EVL 8 = 68</b>. Skill ck-origin (<code>cook</code>, <code>plan</code>, <code>scout</code>, <code>skill-creator</code>) bị loại — đây là dev tool, không thuộc catalog framework. Chưa biết skill nào? Xem <a href="@finder">finder</a>. Bảng tra nhanh? Xem <a href="@cheatsheet">cheatsheet</a>. Nội bộ hệ thống? Xem <a href="@architecture">architecture</a>.</span>
+      </div>
+    </div>
+
+    <!-- ── MAT — Materials (4) ── -->
+    <div class="eyebrow" style="margin-top:8px"><span class="en">MAT — Materials</span><span class="vi">MAT — Tư liệu</span></div>
+    <h2 class="sectitle" id="cat-mat" style="font-size:1.15rem;margin-bottom:4px">
+      <span class="en">Evidence ingestion, classification, CRAAP scoring, tiers T1–T5</span>
+      <span class="vi">Thu nhận bằng chứng, phân loại, chấm CRAAP, bậc T1–T5</span>
+    </h2>
+    <p class="muted" style="margin:0 0 12px;font-size:.88rem"><span class="en">Data location: <code>docs/materials/</code> · emits <code>MAT.integrated</code></span><span class="vi">Vị trí dữ liệu: <code>docs/materials/</code> · phát <code>MAT.integrated</code></span></p>
+    <table class="modetable" style="--ac:var(--mat)">
+      <thead><tr><th><span class="en">Skill ID</span><span class="vi">ID skill</span></th><th><span class="en">Purpose</span><span class="vi">Mục đích</span></th><th><span class="en">Depends on</span><span class="vi">Phụ thuộc</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>mat:loader</code></td><td><span class="en">Stage 1–2 ingest: classify, CRAAP-score, frontmatter</span><span class="vi">Giai đoạn 1–2 thu nhận: phân loại, chấm CRAAP, frontmatter</span></td><td>—</td></tr>
+        <tr><td><code>mat:indexer</code></td><td><span class="en">Stage 3–4 contradiction/gap detection + integration gate</span><span class="vi">Giai đoạn 3–4 phát hiện mâu thuẫn/khoảng trống + cổng tích hợp</span></td><td><code>mat:loader</code></td></tr>
+        <tr><td><code>mat:archive</code></td><td><span class="en">Soft-delete/archival with audit trail</span><span class="vi">Xóa-mềm/lưu trữ kèm vết kiểm toán</span></td><td>—</td></tr>
+        <tr><td><code>mat:rescore</code></td><td><span class="en">Flag materials needing CRAAP re-evaluation</span><span class="vi">Gắn cờ tư liệu cần chấm lại CRAAP</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── PSY — Psychology (16) ── -->
+    <div class="eyebrow" style="margin-top:30px"><span class="en">PSY — Psychology</span><span class="vi">PSY — Tâm lý học</span></div>
+    <h2 class="sectitle" id="cat-psy" style="font-size:1.15rem;margin-bottom:4px">
+      <span class="en">Clinical profiling, 5P formulation, cross-reference validation, arc tracking</span>
+      <span class="vi">Lập hồ sơ lâm sàng, formulation 5P, xác thực chéo, theo dõi arc</span>
+    </h2>
+    <p class="muted" style="margin:0 0 12px;font-size:.88rem"><span class="en">Data location: <code>docs/profiles/</code> + <code>docs/references/</code> + <code>docs/graph/</code> · emits <code>PSY.refresh</code></span><span class="vi">Vị trí dữ liệu: <code>docs/profiles/</code> + <code>docs/references/</code> + <code>docs/graph/</code> · phát <code>PSY.refresh</code></span></p>
+    <table class="modetable" style="--ac:var(--psy)">
+      <thead><tr><th><span class="en">Skill ID</span><span class="vi">ID skill</span></th><th><span class="en">Purpose</span><span class="vi">Mục đích</span></th><th><span class="en">Depends on</span><span class="vi">Phụ thuộc</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>psy:wave</code></td><td><span class="en">3-wave orchestration of the full 5P clinical formulation</span><span class="vi">Điều phối 3 đợt formulation 5P lâm sàng đầy đủ</span></td><td><code>orc:bootstrap</code>, <code>psy:crossref</code>, <code>psy:ref-audit</code>, <code>mat:loader</code></td></tr>
+        <tr><td><code>psy:crossref</code></td><td><span class="en">Cross-character 10-dimension consistency validation</span><span class="vi">Xác thực nhất quán 10 chiều liên nhân vật</span></td><td>—</td></tr>
+        <tr><td><code>psy:ref-audit</code></td><td><span class="en">Profile → reference accuracy check</span><span class="vi">Kiểm tra độ chính xác hồ sơ → reference</span></td><td>—</td></tr>
+        <tr><td><code>psy:ref-scan</code></td><td><span class="en">Reference → profile coverage sweep</span><span class="vi">Quét phạm vi bao phủ reference → hồ sơ</span></td><td><code>psy:ref-audit</code></td></tr>
+        <tr><td><code>psy:ref-create</code></td><td><span class="en">Create reference files following the schema</span><span class="vi">Tạo file reference theo schema</span></td><td><code>psy:ref-audit</code>, <code>psy:ref-scan</code></td></tr>
+        <tr><td><code>psy:ref-maintain</code></td><td><span class="en">Reference library cleanup and maintenance</span><span class="vi">Dọn dẹp và bảo trì thư viện reference</span></td><td>—</td></tr>
+        <tr><td><code>psy:crisis-assess</code></td><td><span class="en">DSM-5/ICD-11 crisis + risk level assessment (never cached)</span><span class="vi">Đánh giá khủng hoảng + mức rủi ro DSM-5/ICD-11 (không bao giờ cache)</span></td><td><code>orc:bootstrap</code>, <code>psy:ref-audit</code></td></tr>
+        <tr><td><code>psy:hypothesis</code></td><td><span class="en">Predict behavior given hypothetical scenarios</span><span class="vi">Dự đoán hành vi trong tình huống giả định</span></td><td><code>orc:bootstrap</code>, <code>psy:ref-audit</code></td></tr>
+        <tr><td><code>psy:arc-tracker</code></td><td><span class="en">Growth trajectories — hypothesis vs reality tracking</span><span class="vi">Quỹ đạo tăng trưởng — theo dõi giả thuyết so với thực tế</span></td><td><code>orc:bootstrap</code>, <code>psy:hypothesis</code></td></tr>
+        <tr><td><code>psy:narrative-twist</code></td><td><span class="en">Handle revealed falsehoods + cascade updates</span><span class="vi">Xử lý sự thật được tiết lộ + cập nhật cascade</span></td><td><code>psy:crossref</code></td></tr>
+        <tr><td><code>psy:propagate</code></td><td><span class="en">Cross-character event cascade propagation</span><span class="vi">Lan truyền cascade sự kiện liên nhân vật</span></td><td>—</td></tr>
+        <tr><td><code>psy:timeline-sync</code></td><td><span class="en">Cross-character timeline consistency validation</span><span class="vi">Xác thực nhất quán dòng thời gian liên nhân vật</span></td><td>—</td></tr>
+        <tr><td><code>psy:profile-lite</code></td><td><span class="en">Compress profiles to ~5% of original size</span><span class="vi">Nén hồ sơ xuống ~5% kích thước gốc</span></td><td><code>orc:bootstrap</code></td></tr>
+        <tr><td><code>psy:profile-compare</code></td><td><span class="en">Side-by-side dimension comparison across characters</span><span class="vi">So sánh chiều cạnh song song giữa các nhân vật</span></td><td>—</td></tr>
+        <tr><td><code>psy:health-check</code></td><td><span class="en">Profile completeness scoring (25-file schema)</span><span class="vi">Chấm điểm tính đầy đủ hồ sơ (schema 25-file)</span></td><td>—</td></tr>
+        <tr><td><code>psy:relation-intelligence</code></td><td><span class="en">Mine dyad graph for relationship-driven content angles</span><span class="vi">Khai thác đồ thị dyad để tìm góc nội dung theo quan hệ</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── CRE — Content Creation (10) ── -->
+    <div class="eyebrow" style="margin-top:30px"><span class="en">CRE — Content Creation</span><span class="vi">CRE — Sáng tạo nội dung</span></div>
+    <h2 class="sectitle" id="cat-cre" style="font-size:1.15rem;margin-bottom:4px">
+      <span class="en">Platform-native asset creation, evidence-gated publishing, voice + privacy</span>
+      <span class="vi">Tạo asset gốc nền tảng, xuất bản có cổng bằng chứng, giọng + bảo mật</span>
+    </h2>
+    <p class="muted" style="margin:0 0 12px;font-size:.88rem"><span class="en">Data location: <code>assets/</code> · emits <code>CRE.recalibrate</code> · double gate: evidence-scanner + privacy-guard</span><span class="vi">Vị trí dữ liệu: <code>assets/</code> · phát <code>CRE.recalibrate</code> · cổng đôi: evidence-scanner + privacy-guard</span></p>
+    <table class="modetable" style="--ac:var(--cre)">
+      <thead><tr><th><span class="en">Skill ID</span><span class="vi">ID skill</span></th><th><span class="en">Purpose</span><span class="vi">Mục đích</span></th><th><span class="en">Depends on</span><span class="vi">Phụ thuộc</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>cre:post-writer</code></td><td><span class="en">End-to-end content pipeline — draft → scan → publish</span><span class="vi">Quy trình nội dung đầu-cuối — soạn → quét → xuất bản</span></td><td><code>cre:humanize</code>, <code>cre:evidence-scanner</code></td></tr>
+        <tr><td><code>cre:exploring</code></td><td><span class="en">7-question exploration → CONTEXT.md discovery brief</span><span class="vi">Khám phá 7-câu hỏi → CONTEXT.md discovery brief</span></td><td>—</td></tr>
+        <tr><td><code>cre:angle-discovery</code></td><td><span class="en">Mine 6 frameworks → ranked angles for content</span><span class="vi">Khai thác 6 framework → góc độ xếp hạng cho nội dung</span></td><td>—</td></tr>
+        <tr><td><code>cre:multiplatform</code></td><td><span class="en">1→N platform-native variants from one brief</span><span class="vi">1→N biến thể gốc-nền-tảng từ một brief</span></td><td><code>cre:humanize</code>, <code>cre:evidence-scanner</code>, <code>cre:voice-audit</code>, <code>cre:privacy-guard</code></td></tr>
+        <tr><td><code>cre:repurpose</code></td><td><span class="en">Adapt existing content 1→1 across platforms</span><span class="vi">Tái sử dụng nội dung hiện có 1→1 qua các nền tảng</span></td><td>—</td></tr>
+        <tr><td><code>cre:prompt-leverage</code></td><td><span class="en">5-layer prompt strengthening for richer output</span><span class="vi">Tăng cường prompt 5 lớp cho đầu ra phong phú hơn</span></td><td><code>cre:exploring</code></td></tr>
+        <tr><td><code>cre:evidence-scanner</code></td><td><span class="en">Per-claim evidence-tier check + Rule-09 privacy gate</span><span class="vi">Kiểm bậc bằng chứng từng claim + cổng bảo mật Rule-09</span></td><td>—</td></tr>
+        <tr><td><code>cre:humanize</code></td><td><span class="en">De-AI-slop scan (VN+EN) with optional rewrite</span><span class="vi">Quét AI-slop (VN+EN) với tùy chọn viết lại</span></td><td>—</td></tr>
+        <tr><td><code>cre:voice-audit</code></td><td><span class="en">Voice/tone consistency check across content</span><span class="vi">Kiểm tra nhất quán giọng/tông trong nội dung</span></td><td><code>orc:bootstrap</code></td></tr>
+        <tr><td><code>cre:privacy-guard</code></td><td><span class="en">Pre-publish privacy and confidentiality scan</span><span class="vi">Quét bảo mật và bí mật trước khi đăng</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── GRO — Growth (8) ── -->
+    <div class="eyebrow" style="margin-top:30px"><span class="en">GRO — Growth</span><span class="vi">GRO — Tăng trưởng</span></div>
+    <h2 class="sectitle" id="cat-gro" style="font-size:1.15rem;margin-bottom:4px">
+      <span class="en">Career trajectory, competency mapping, learning profile, mentoring intelligence</span>
+      <span class="vi">Quỹ đạo sự nghiệp, lập bản đồ năng lực, hồ sơ học tập, tình báo cố vấn</span>
+    </h2>
+    <p class="muted" style="margin:0 0 12px;font-size:.88rem"><span class="en">Data location: <code>docs/profiles/*/growth/</code> · emits <code>GRO.assessed</code></span><span class="vi">Vị trí dữ liệu: <code>docs/profiles/*/growth/</code> · phát <code>GRO.assessed</code></span></p>
+    <table class="modetable" style="--ac:var(--gro)">
+      <thead><tr><th><span class="en">Skill ID</span><span class="vi">ID skill</span></th><th><span class="en">Purpose</span><span class="vi">Mục đích</span></th><th><span class="en">Depends on</span><span class="vi">Phụ thuộc</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>gro:career-path</code></td><td><span class="en">Career trajectory mapping and stage analysis</span><span class="vi">Lập bản đồ quỹ đạo và phân tích giai đoạn sự nghiệp</span></td><td>—</td></tr>
+        <tr><td><code>gro:competency-map</code></td><td><span class="en">Skills/competency inventory + gap analysis</span><span class="vi">Kiểm kê kỹ năng/năng lực + phân tích khoảng trống</span></td><td>—</td></tr>
+        <tr><td><code>gro:learning-profile</code></td><td><span class="en">Learning style and knowledge acquisition patterns</span><span class="vi">Phong cách học tập và mẫu tiếp thu kiến thức</span></td><td>—</td></tr>
+        <tr><td><code>gro:mentoring-track</code></td><td><span class="en">Mentoring relationship documentation</span><span class="vi">Tài liệu hóa mối quan hệ cố vấn</span></td><td>—</td></tr>
+        <tr><td><code>gro:career-forecast</code></td><td><span class="en">LLM career projection — always labelled <code>[FORECAST]</code></span><span class="vi">Dự báo sự nghiệp LLM — luôn gán nhãn <code>[FORECAST]</code></span></td><td>—</td></tr>
+        <tr><td><code>gro:compare</code></td><td><span class="en">Side-by-side career comparison across characters</span><span class="vi">So sánh sự nghiệp song song giữa các nhân vật</span></td><td>—</td></tr>
+        <tr><td><code>gro:milestone-tracker</code></td><td><span class="en">Career milestones — actual vs planned tracking</span><span class="vi">Cột mốc sự nghiệp — theo dõi thực tế vs kế hoạch</span></td><td>—</td></tr>
+        <tr><td><code>gro:validate</code></td><td><span class="en">Cross-check growth data for consistency</span><span class="vi">Kiểm tra chéo dữ liệu tăng trưởng về tính nhất quán</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── EVL — Evaluation (8) ── -->
+    <div class="eyebrow" style="margin-top:30px"><span class="en">EVL — Evaluation</span><span class="vi">EVL — Đánh giá</span></div>
+    <h2 class="sectitle" id="cat-evl" style="font-size:1.15rem;margin-bottom:4px">
+      <span class="en">Rubric scoring engine, scorecards, verdicts, casting fit, compatibility</span>
+      <span class="vi">Động cơ chấm rubric, scorecard, phán quyết, phù hợp vai diễn, tương thích</span>
+    </h2>
+    <p class="muted" style="margin:0 0 12px;font-size:.88rem"><span class="en">Data location: <code>docs/rubrics/</code> + <code>docs/profiles/*/eval/</code> · emits <code>EVL.scored</code></span><span class="vi">Vị trí dữ liệu: <code>docs/rubrics/</code> + <code>docs/profiles/*/eval/</code> · phát <code>EVL.scored</code></span></p>
+    <table class="modetable" style="--ac:var(--evl)">
+      <thead><tr><th><span class="en">Skill ID</span><span class="vi">ID skill</span></th><th><span class="en">Purpose</span><span class="vi">Mục đích</span></th><th><span class="en">Depends on</span><span class="vi">Phụ thuộc</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>evl:score</code></td><td><span class="en">Generic rubric scoring engine — gather → judge → aggregate</span><span class="vi">Động cơ chấm rubric tổng quát — gom → phán → tổng hợp</span></td><td>—</td></tr>
+        <tr><td><code>evl:standardize</code></td><td><span class="en">Psychometric battery preset (Big Five + Dark Triad + attachment)</span><span class="vi">Preset bộ đo tâm lý (Big Five + Dark Triad + gắn bó)</span></td><td><code>evl:score</code></td></tr>
+        <tr><td><code>evl:fit</code></td><td><span class="en">Role/casting-fit decision — CAST / CONDITIONAL / NO + veto</span><span class="vi">Quyết định phù hợp vai/diễn — CAST / CONDITIONAL / NO + veto</span></td><td><code>evl:score</code></td></tr>
+        <tr><td><code>evl:compatibility</code></td><td><span class="en">Dyad compatibility scoring on the relationship rubric</span><span class="vi">Chấm điểm tương thích dyad trên rubric quan hệ</span></td><td><code>evl:score</code></td></tr>
+        <tr><td><code>evl:compare</code></td><td><span class="en">Cross-character ranking on one rubric using written scorecards</span><span class="vi">Xếp hạng liên nhân vật trên một rubric qua scorecard đã viết</span></td><td>—</td></tr>
+        <tr><td><code>evl:track</code></td><td><span class="en">Score-over-time diff + deterministic event attribution</span><span class="vi">Diff điểm theo thời gian + quy trách nhiệm sự kiện tất định</span></td><td>—</td></tr>
+        <tr><td><code>evl:validate</code></td><td><span class="en">Rubric + scorecard structural integrity checker</span><span class="vi">Kiểm tra tính toàn vẹn cấu trúc rubric + scorecard</span></td><td>—</td></tr>
+        <tr><td><code>evl:rubric-import</code></td><td><span class="en">Map external framework → canonical rubric draft</span><span class="vi">Ánh xạ framework ngoài → bản thảo rubric chuẩn</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── ORC — Orchestration (17) ── -->
+    <div class="eyebrow" style="margin-top:30px"><span class="en">ORC — Orchestration</span><span class="vi">ORC — Điều phối</span></div>
+    <h2 class="sectitle" id="cat-orc" style="font-size:1.15rem;margin-bottom:4px">
+      <span class="en">Event bus, session state, routing, memory, knowledge graph, dual-review gates</span>
+      <span class="vi">Event bus, trạng thái phiên, định tuyến, bộ nhớ, đồ thị tri thức, cổng review đôi</span>
+    </h2>
+    <p class="muted" style="margin:0 0 12px;font-size:.88rem"><span class="en">Data location: <code>.claude/</code> · hub entry: <code>orc:bootstrap</code> · routes events — never owns domain data</span><span class="vi">Vị trí dữ liệu: <code>.claude/</code> · hub đầu vào: <code>orc:bootstrap</code> · định tuyến sự kiện — không bao giờ sở hữu dữ liệu miền</span></p>
+    <table class="modetable" style="--ac:var(--orc)">
+      <thead><tr><th><span class="en">Skill ID</span><span class="vi">ID skill</span></th><th><span class="en">Purpose</span><span class="vi">Mục đích</span></th><th><span class="en">Depends on</span><span class="vi">Phụ thuộc</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>orc:bootstrap</code></td><td><span class="en">Load project context — the entry hub for all deep-analysis skills</span><span class="vi">Tải bối cảnh dự án — hub đầu vào cho mọi skill phân tích sâu</span></td><td><code>orc:session-state</code></td></tr>
+        <tr><td><code>orc:session-state</code></td><td><span class="en">Track session state + event queue</span><span class="vi">Theo dõi trạng thái phiên + hàng đợi sự kiện</span></td><td>—</td></tr>
+        <tr><td><code>orc:intake</code></td><td><span class="en">Route work type → skill chain</span><span class="vi">Định tuyến loại công việc → chuỗi skill</span></td><td><code>orc:classify</code></td></tr>
+        <tr><td><code>orc:classify</code></td><td><span class="en">Risk classification + MAT gate triggers</span><span class="vi">Phân loại rủi ro + kích hoạt gate MAT</span></td><td>—</td></tr>
+        <tr><td><code>orc:domain-router</code></td><td><span class="en">Route domain events downstream to the right framework</span><span class="vi">Định tuyến sự kiện miền xuôi tới đúng framework</span></td><td>—</td></tr>
+        <tr><td><code>orc:cascade</code></td><td><span class="en">Resolve multi-step cross-domain event cascades</span><span class="vi">Giải quyết cascade sự kiện đa-miền nhiều bước</span></td><td>—</td></tr>
+        <tr><td><code>orc:audit</code></td><td><span class="en">Cross-domain event consistency check — declared vs actually ran</span><span class="vi">Kiểm tra nhất quán sự kiện liên miền — khai báo vs thực chạy</span></td><td>—</td></tr>
+        <tr><td><code>orc:event-log</code></td><td><span class="en">Persistent event audit trail (JSONL append-only)</span><span class="vi">Vết kiểm toán sự kiện bền vững (JSONL append-only)</span></td><td>—</td></tr>
+        <tr><td><code>orc:decisions</code></td><td><span class="en">Append-only decision records with evidence citations</span><span class="vi">Bản ghi quyết định append-only với trích dẫn bằng chứng</span></td><td>—</td></tr>
+        <tr><td><code>orc:compounding</code></td><td><span class="en">Extract session learnings → persistent memory</span><span class="vi">Rút học từ phiên → bộ nhớ bền vững</span></td><td><code>orc:session-state</code></td></tr>
+        <tr><td><code>orc:dream</code></td><td><span class="en">Periodic memory consolidation across sessions</span><span class="vi">Củng cố bộ nhớ định kỳ qua các phiên</span></td><td><code>orc:compounding</code></td></tr>
+        <tr><td><code>orc:agent-memory</code></td><td><span class="en">Per-agent calibration memory store</span><span class="vi">Kho bộ nhớ hiệu chỉnh theo từng agent</span></td><td><code>orc:compounding</code></td></tr>
+        <tr><td><code>orc:observe</code></td><td><span class="en">Cross-framework passive telemetry → instinct signals</span><span class="vi">Đo từ xa thụ động liên framework → tín hiệu bản năng</span></td><td>—</td></tr>
+        <tr><td><code>orc:graph</code></td><td><span class="en">Knowledge-graph query/visualize/validate + analytics/centrality/community/path subcommands</span><span class="vi">Truy vấn/trực quan/xác thực đồ thị tri thức + lệnh con analytics/centrality/community/path</span></td><td><code>platform_lib.knowledge_graph</code></td></tr>
+        <tr><td><code>orc:santa</code></td><td><span class="en">Dual-reviewer quality gate — two-voice adversarial check</span><span class="vi">Cổng chất lượng hai reviewer — kiểm tra đối nghịch hai giọng</span></td><td><code>orc:classify</code></td></tr>
+        <tr><td><code>orc:council</code></td><td><span class="en">4-voice decision framework for contested choices</span><span class="vi">Framework quyết định 4 giọng cho các lựa chọn tranh cãi</span></td><td><code>orc:decisions</code></td></tr>
+        <tr><td><code>orc:skill-stocktake</code></td><td><span class="en">Skill catalog count + CE-02 conformance audit</span><span class="vi">Đếm catalog skill + kiểm tra tuân thủ CE-02</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── COM — Common (5) ── -->
+    <div class="eyebrow" style="margin-top:30px"><span class="en">COM — Common Utilities</span><span class="vi">COM — Tiện ích chung</span></div>
+    <h2 class="sectitle" id="cat-com" style="font-size:1.15rem;margin-bottom:4px">
+      <span class="en">Git ops, session health, rules management, skill observability, release pipeline</span>
+      <span class="vi">Git ops, sức khỏe phiên, quản lý rule, quan sát skill, quy trình phát hành</span>
+    </h2>
+    <p class="muted" style="margin:0 0 12px;font-size:.88rem"><span class="en">Data location: <code>.claude/</code> · cross-cutting utilities shared by all frameworks</span><span class="vi">Vị trí dữ liệu: <code>.claude/</code> · tiện ích cắt ngang dùng chung cho mọi framework</span></p>
+    <table class="modetable" style="--ac:var(--com)">
+      <thead><tr><th><span class="en">Skill ID</span><span class="vi">ID skill</span></th><th><span class="en">Purpose</span><span class="vi">Mục đích</span></th><th><span class="en">Depends on</span><span class="vi">Phụ thuộc</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>com:git</code></td><td><span class="en">Project-aware git operations with conventional commits</span><span class="vi">Git ops nhận biết dự án với conventional commit</span></td><td>—</td></tr>
+        <tr><td><code>com:health-check</code></td><td><span class="en">Session health monitoring and diagnostic report</span><span class="vi">Giám sát sức khỏe phiên và báo cáo chẩn đoán</span></td><td>—</td></tr>
+        <tr><td><code>com:rules</code></td><td><span class="en">Modular rules management — load/update domain rules</span><span class="vi">Quản lý rule mô-đun — tải/cập nhật rule miền</span></td><td><code>orc:classify</code></td></tr>
+        <tr><td><code>com:skill-analytics</code></td><td><span class="en">Skill/script observability — 11 read-only lenses + profile-drift gate</span><span class="vi">Quan sát skill/script — 11 lăng kính chỉ-đọc + cổng profile-drift</span></td><td>—</td></tr>
+        <tr><td><code>com:release</code></td><td><span class="en">Cut a versioned pack release — Keep a Changelog lock + manifest bump</span><span class="vi">Cắt phát hành gói có phiên bản — khóa Keep a Changelog + bump manifest</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="honest" style="margin-top:30px">
+      <div class="h">⚖️ <span class="en">Catalog accuracy</span><span class="vi">Độ chính xác catalog</span></div>
+      <ul>
+        <li><span class="en">Source of truth: <code>SKILL.md</code> frontmatter per skill + <code>docs/MODULES.md</code> derived view. Count drift is flagged by <code>orc:skill-stocktake</code>.</span><span class="vi">Nguồn chuẩn: frontmatter <code>SKILL.md</code> của từng skill + view dẫn xuất <code>docs/MODULES.md</code>. Lệch số bị <code>orc:skill-stocktake</code> gắn cờ.</span></li>
+        <li><span class="en">Optional graph dependencies (marked <code>~></code> in <code>MODULES.md</code>) are default-off — the skill functions correctly without them; <code>dependencies:[]</code> in frontmatter remains accurate.</span><span class="vi">Phụ thuộc đồ thị tùy chọn (đánh dấu <code>~></code> trong <code>MODULES.md</code>) mặc định tắt — skill vẫn hoạt động đúng mà không cần; <code>dependencies:[]</code> trong frontmatter vẫn chính xác.</span></li>
+        <li><span class="en">Asset package convention: <code>assets/{platform}/{YYMMDD}-{slug}/</code> → <code>post.txt</code>, <code>image-prompts.txt</code>, <code>images/</code>, <code>README.txt</code>.</span><span class="vi">Quy ước gói asset: <code>assets/{platform}/{YYMMDD}-{slug}/</code> → <code>post.txt</code>, <code>image-prompts.txt</code>, <code>images/</code>, <code>README.txt</code>.</span></li>
+      </ul>
+    </div>
+
+    <!-- FAQ -->
+    <h3 class="sectitle" style="font-size:1.25rem;margin:34px 0 0"><span class="en">FAQ</span><span class="vi">Hỏi đáp</span></h3>
+    <div class="faq" style="--ac:var(--gold)">
+      <details><summary><span class="en">How do I invoke a skill?</span><span class="vi">Gọi một skill thế nào?</span></summary><div class="fa"><span class="en">Type <code>{fw}:{skill}</code> in Claude Code — e.g. <code>psy:wave</code> or <code>evl:score</code>. Always start a deep-analysis session with <code>orc:bootstrap</code> to load project context.</span><span class="vi">Gõ <code>{fw}:{skill}</code> trong Claude Code — ví dụ <code>psy:wave</code> hoặc <code>evl:score</code>. Luôn bắt đầu phiên phân tích sâu bằng <code>orc:bootstrap</code> để tải bối cảnh dự án.</span></div></details>
+      <details><summary><span class="en">What is orc:bootstrap and why does it appear so often?</span><span class="vi">orc:bootstrap là gì và vì sao nó xuất hiện nhiều?</span></summary><div class="fa"><span class="en"><code>orc:bootstrap</code> is the hub entry for all deep-analysis skills — it loads the project context, resolves character paths via <code>characters.yaml</code>, and initialises session state. 5 skills have hard inbound cross-framework dependencies on it.</span><span class="vi"><code>orc:bootstrap</code> là hub đầu vào cho mọi skill phân tích sâu — nó tải bối cảnh dự án, phân giải đường dẫn nhân vật qua <code>characters.yaml</code>, và khởi tạo trạng thái phiên. 5 skill có phụ thuộc cứng liên framework vào nó.</span></div></details>
+      <details><summary><span class="en">Is the count verified?</span><span class="vi">Số lượng có được xác minh không?</span></summary><div class="fa"><span class="en">Yes — <b>68 skills</b> across 7 frameworks (ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 5 · EVL 8). The <!--SKILL_STOCKTAKE--> token above renders the live count; <code>orc:skill-stocktake</code> reconciles drift vs <code>CLAUDE.md</code> at any time.</span><span class="vi">Có — <b>68 skill</b> trên 7 framework (ORC 17 · PSY 16 · CRE 10 · GRO 8 · MAT 4 · COM 5 · EVL 8). Token <!--SKILL_STOCKTAKE--> ở trên render số đếm trực tiếp; <code>orc:skill-stocktake</code> đối chiếu lệch số với <code>CLAUDE.md</code> bất cứ lúc nào.</span></div></details>
+      <details><summary><span class="en">I don't know which skill to use — what now?</span><span class="vi">Tôi không biết dùng skill nào — làm sao?</span></summary><div class="fa"><span class="en">See the <a href="@finder">skill finder</a> — match your intent ("I want to…") to the exact skill chain to run. For scannable tables, use the <a href="@cheatsheet">cheatsheet</a>.</span><span class="vi">Xem <a href="@finder">skill finder</a> — khớp ý định ("Tôi muốn…") với đúng chuỗi skill cần chạy. Để xem bảng tra nhanh, dùng <a href="@cheatsheet">cheatsheet</a>.</span></div></details>
+    </div>
+  </div>
+</section>

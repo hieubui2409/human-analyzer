@@ -1,0 +1,222 @@
+<!-- ===================== GRO — Growth Intelligence ===================== -->
+<section id="gro">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--gro)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <path d="M8 32c4-8 8-14 12-18s6-6 6-6" stroke="var(--gro)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M26 8l6 6-6 1-1-7Z" stroke="var(--gro)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M10 22c2-1 5-2 8-1" stroke="var(--gro)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 36h24" stroke="var(--gro)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--gro)"><span class="en">Career, competency, learning, and mentoring intelligence feeding PSY + CRE</span><span class="vi">Tình báo sự nghiệp, năng lực, học tập, cố vấn — nuôi PSY + CRE</span></div>
+        <h2 id="gro">GRO</h2>
+      </div>
+      <div class="ver">8 skills · Rule 15</div>
+    </div>
+    <div class="divider" style="--ac:var(--gro)"></div>
+
+    <p class="lead" style="margin-bottom:18px">
+      <span class="en">GRO (Growth) covers career development, professional skills, learning profiles, and mentoring dynamics for each character. It reads identity and psychology read-only, owns exactly one write-root — <code>docs/profiles/{char}/growth/</code> — and emits events that cascade into PSY and CRE. Factual career data only: psychological interpretation stays in PSY. Forecasts are always labelled <code>[FORECAST — NOT FACTUAL]</code>; thin data sections are labelled <code>[LIMITED DATA]</code> — never fabricated.</span>
+      <span class="vi">GRO (Tăng trưởng) bao gồm phát triển sự nghiệp, kỹ năng nghề nghiệp, hồ sơ học tập và động lực cố vấn cho từng nhân vật. Nó đọc identity và psychology chỉ-đọc, sở hữu đúng một write-root — <code>docs/profiles/{char}/growth/</code> — và phát sự kiện cascade vào PSY và CRE. Chỉ dữ liệu sự nghiệp thực tế: diễn giải tâm lý ở lại PSY. Dự báo luôn gắn nhãn <code>[FORECAST — NOT FACTUAL]</code>; các mục dữ liệu mỏng được gắn nhãn <code>[LIMITED DATA]</code> — không bao giờ bịa đặt.</span>
+    </p>
+
+    <!-- ===== FOUR FRAMEWORKS ===== -->
+    <h2 class="sectitle" id="gro-frameworks"><span class="en">Four theoretical frameworks, four files per character</span><span class="vi">Bốn khung lý thuyết, bốn file mỗi nhân vật</span></h2>
+    <div class="pipe-stage" style="grid-template-columns:repeat(4,1fr);margin-top:14px">
+      <div class="pstation" style="--ac:var(--gro)">
+        <div class="num">career-path.md</div>
+        <h4><span class="en">Super's Life-Career Rainbow + SCCT</span><span class="vi">Cầu vồng sự nghiệp của Super + SCCT</span></h4>
+        <p><span class="en">Career history, trajectory, decisions, self-efficacy beliefs. Maps to Super's five growth stages: Growth → Exploration → Establishment → Maintenance → Disengagement. SCCT adds social-cognitive factors shaping career choice.</span><span class="vi">Lịch sử sự nghiệp, quỹ đạo, quyết định, niềm tin tự hiệu quả. Ánh xạ năm giai đoạn của Super: Tăng trưởng → Khám phá → Thiết lập → Bảo trì → Rút lui. SCCT thêm các yếu tố nhận thức xã hội định hình lựa chọn nghề nghiệp.</span></p>
+        <span class="role"><span class="en">skill: gro:career-path</span><span class="vi">skill: gro:career-path</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--gro)">
+        <div class="num">competencies.md</div>
+        <h4><span class="en">Dreyfus + SFIA hybrid (7-level)</span><span class="vi">Kết hợp Dreyfus + SFIA (7 cấp)</span></h4>
+        <p><span class="en">Skill inventory: technical, soft, domain — all rated on the Dreyfus 7-level scale (Novice → Beginner → Competent → Proficient → Expert → Master → Visionary). SFIA adds industry-standard responsibility levels. T3+ evidence required per rating.</span><span class="vi">Kiểm kê kỹ năng: kỹ thuật, mềm, miền — tất cả được đánh giá trên thang 7 cấp Dreyfus (Người mới → Bắt đầu → Có năng lực → Thành thạo → Chuyên gia → Bậc thầy → Tầm nhìn). SFIA thêm cấp trách nhiệm tiêu chuẩn ngành. Bằng chứng T3+ cần cho mỗi đánh giá.</span></p>
+        <span class="role"><span class="en">skill: gro:competency-map</span><span class="vi">skill: gro:competency-map</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--gro)">
+        <div class="num">learning-profile.md</div>
+        <h4><span class="en">Kolb's Experiential Learning Cycle</span><span class="vi">Chu kỳ học tập trải nghiệm của Kolb</span></h4>
+        <p><span class="en">Cognitive style, learning patterns, problem-solving approach. Mapped to Kolb's four modes: Concrete Experience → Reflective Observation → Abstract Conceptualization → Active Experimentation. Learning style preference drives content framing when <code>GRO.profiled</code> fires.</span><span class="vi">Phong cách nhận thức, mô hình học tập, cách tiếp cận giải quyết vấn đề. Ánh xạ bốn chế độ của Kolb: Trải nghiệm cụ thể → Quan sát phản chiếu → Khái niệm hóa trừu tượng → Thử nghiệm tích cực. Sở thích phong cách học tập định hướng đóng khung nội dung khi <code>GRO.profiled</code> bắn.</span></p>
+        <span class="role"><span class="en">skill: gro:learning-profile</span><span class="vi">skill: gro:learning-profile</span></span>
+      </div>
+      <div class="pstation" style="--ac:var(--gro)">
+        <div class="num">mentoring-map.md</div>
+        <h4><span class="en">Kram's Developmental Networks</span><span class="vi">Mạng phát triển của Kram</span></h4>
+        <p><span class="en">Mentor/mentee relationships, dual functions (psychosocial + career). Kram distinguishes sponsorship, coaching, protection, exposure, and challenging assignment. Cross-character only when T2+ evidence supports both parties. <code>GRO.mentored</code> → <code>PSY.refresh</code>.</span><span class="vi">Quan hệ cố vấn/được cố vấn, hai chức năng (tâm lý xã hội + sự nghiệp). Kram phân biệt bảo trợ, huấn luyện, bảo vệ, tiếp xúc và phân công thách thức. Liên nhân vật chỉ khi bằng chứng T2+ hỗ trợ cả hai bên. <code>GRO.mentored</code> → <code>PSY.refresh</code>.</span></p>
+        <span class="role"><span class="en">skill: gro:mentoring-track</span><span class="vi">skill: gro:mentoring-track</span></span>
+      </div>
+    </div>
+
+    <!-- ===== GRO ↔ PSY BOUNDARY ===== -->
+    <h2 class="sectitle" id="gro-boundary"><span class="en">The GRO ↔ PSY boundary (Rule 15)</span><span class="vi">Ranh giới GRO ↔ PSY (Rule 15)</span></h2>
+    <p class="lead" style="margin-bottom:14px">
+      <span class="en">Cross-reference between GRO and PSY is allowed and encouraged. Cross-write is forbidden. GRO owns factual; PSY owns interpretive.</span>
+      <span class="vi">Tham chiếu chéo giữa GRO và PSY được phép và khuyến khích. Ghi chéo bị cấm. GRO sở hữu thực tế; PSY sở hữu diễn giải.</span>
+    </p>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--gro)">
+        <h3><span class="pin"></span><span class="en">GRO owns — factual</span><span class="vi">GRO sở hữu — thực tế</span></h3>
+        <p>
+          <span class="en">Career history, job titles, dates. Skill levels (Dreyfus 1–7). Learning style preference. Mentoring relationships (who, when, what functions). Career trajectory milestones. All grounded in MAT evidence tiers T1–T4. T5-only inferences marked <code>[UNVERIFIED]</code>. Thin data sections marked <code>[LIMITED DATA]</code> — never filled with fabrication.</span>
+          <span class="vi">Lịch sử sự nghiệp, chức danh, ngày tháng. Cấp độ kỹ năng (Dreyfus 1–7). Sở thích phong cách học tập. Quan hệ cố vấn (ai, khi nào, chức năng gì). Cột mốc quỹ đạo sự nghiệp. Tất cả được căn cứ vào bậc bằng chứng MAT T1–T4. Suy luận chỉ-T5 đánh dấu <code>[UNVERIFIED]</code>. Mục dữ liệu mỏng đánh dấu <code>[LIMITED DATA]</code> — không bao giờ lấp đầy bằng bịa đặt.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--psy)">
+        <h3><span class="pin" style="background:var(--psy)"></span><span class="en">PSY owns — interpretive</span><span class="vi">PSY sở hữu — diễn giải</span></h3>
+        <p>
+          <span class="en">Why career choices were made (defense mechanisms at play). Growth-edges and therapeutic windows. Cognitive patterns as personality indicators. Attachment dynamics in mentoring relationships. Life Architecture meaning-making. If GRO reads something that reveals a psychological dynamic, GRO records the factual observation; PSY interprets it on next <code>PSY.refresh</code>.</span>
+          <span class="vi">Tại sao các lựa chọn sự nghiệp được thực hiện (cơ chế phòng vệ đang hoạt động). Cạnh tăng trưởng và cửa sổ trị liệu. Mô hình nhận thức như chỉ báo tính cách. Động lực gắn bó trong quan hệ cố vấn. Kiến trúc cuộc sống tạo ý nghĩa. Nếu GRO đọc điều gì tiết lộ một động lực tâm lý, GRO ghi lại quan sát thực tế; PSY diễn giải nó vào lần <code>PSY.refresh</code> tiếp theo.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== FORECASTS AND EVIDENCE ===== -->
+    <h2 class="sectitle" id="gro-evidence"><span class="en">Evidence requirements &amp; forecast labelling</span><span class="vi">Yêu cầu bằng chứng &amp; gắn nhãn dự báo</span></h2>
+    <div class="callout" style="--ac:var(--warn);margin-top:14px">
+      <span class="ci">⚠️</span>
+      <div>
+        <span class="en"><b>Forecasts ALWAYS labelled <code>[FORECAST — NOT FACTUAL]</code>.</b> <code>gro:career-forecast</code> uses LLM-powered trajectory projection — probabilistic extrapolations, not statements of fact. Emits <code>GRO.forecast</code> (log only, no cascade). The forecast event never triggers <code>CRE.recalibrate</code> or <code>PSY.refresh</code> on its own. Every forecast cell in a growth file carries the label. Removing the label is a Rule 15 violation.</span>
+        <span class="vi"><b>Dự báo LUÔN gắn nhãn <code>[FORECAST — NOT FACTUAL]</code>.</b> <code>gro:career-forecast</code> dùng chiếu quỹ đạo bằng LLM — ngoại suy xác suất, không phải tuyên bố thực tế. Phát <code>GRO.forecast</code> (chỉ ghi log, không cascade). Sự kiện forecast không bao giờ tự kích hoạt <code>CRE.recalibrate</code> hay <code>PSY.refresh</code>. Mỗi ô dự báo trong file tăng trưởng mang nhãn. Xóa nhãn là vi phạm Rule 15.</span>
+      </div>
+    </div>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--gro)">
+        <h3><span class="pin"></span><span class="en">Evidence tier → GRO usage</span><span class="vi">Bậc bằng chứng → sử dụng GRO</span></h3>
+        <p>
+          <span class="en"><b>T1</b> — direct career data from character: dates, roles, stated goals.<br><b>T2</b> — corroborated skill assessments from multiple sources.<br><b>T3</b> — single-observer competency ratings; use Dreyfus level with qualifier.<br><b>T4</b> — reported career information; note source distance.<br><b>T5</b> — framework-only inferences; always marked <code>[UNVERIFIED]</code>. Never asserted as fact.</span>
+          <span class="vi"><b>T1</b> — dữ liệu sự nghiệp trực tiếp từ nhân vật: ngày tháng, vai trò, mục tiêu đã nêu.<br><b>T2</b> — đánh giá kỹ năng được xác nhận từ nhiều nguồn.<br><b>T3</b> — đánh giá năng lực từ người quan sát đơn; dùng cấp Dreyfus kèm điều kiện.<br><b>T4</b> — thông tin sự nghiệp được báo cáo; ghi chú khoảng cách nguồn.<br><b>T5</b> — suy luận chỉ-framework; luôn đánh dấu <code>[UNVERIFIED]</code>. Không bao giờ khẳng định là sự thật.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--gro)">
+        <h3><span class="pin"></span><span class="en">Life stage adaptation</span><span class="vi">Thích nghi giai đoạn cuộc đời</span></h3>
+        <p>
+          <span class="en">Characters are at different career stages — GRO templates adapt, never force a schema. A professional gets a full career trajectory with established competency matrix. A Grade-12 student gets academic path and emerging aspirations. A university freshman gets academic-to-early-career with volunteer and student skills. All three share the same 4-file schema — depth differs, not structure. Data absent = <code>[LIMITED DATA]</code>, not invented.</span>
+          <span class="vi">Các nhân vật ở các giai đoạn sự nghiệp khác nhau — GRO templates thích nghi, không ép schema. Nhân vật chuyên nghiệp có quỹ đạo đầy đủ với ma trận năng lực đã thiết lập. Học sinh lớp 12 có lộ trình học tập và nguyện vọng đang nổi. Sinh viên năm nhất có học tập đến sự nghiệp sớm với kỹ năng tình nguyện và sinh viên. Cả ba chia cùng schema 4-file — độ sâu khác, không phải cấu trúc. Dữ liệu vắng = <code>[LIMITED DATA]</code>, không bịa đặt.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== 8 GRO SKILLS ===== -->
+    <h2 class="sectitle" id="gro-skills"><span class="en">8 GRO skills</span><span class="vi">8 skill GRO</span></h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--gro)">
+        <h3><span class="pin"></span><span class="en">Career intelligence</span><span class="vi">Tình báo sự nghiệp</span></h3>
+        <p>
+          <span class="en"><code>gro:career-path</code> — analyze career trajectory, decisions, inflection points using Super's stages + SCCT. Reads <code>growth/career-path.md</code>.<br><code>gro:career-forecast</code> — LLM-powered trajectory projection; output always carries <code>[FORECAST — NOT FACTUAL]</code>; emits <code>GRO.forecast</code> (log only, no cascade).<br><code>gro:milestone-tracker</code> — track career milestones and progression across <code>career-path.md</code> and related growth files.</span>
+          <span class="vi"><code>gro:career-path</code> — phân tích quỹ đạo sự nghiệp, quyết định, điểm uốn dùng các giai đoạn của Super + SCCT. Đọc <code>growth/career-path.md</code>.<br><code>gro:career-forecast</code> — chiếu quỹ đạo bằng LLM; đầu ra luôn mang <code>[FORECAST — NOT FACTUAL]</code>; phát <code>GRO.forecast</code> (chỉ log, không cascade).<br><code>gro:milestone-tracker</code> — theo dõi cột mốc sự nghiệp và tiến triển trên <code>career-path.md</code> và các file tăng trưởng liên quan.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--gro)">
+        <h3><span class="pin"></span><span class="en">Competency &amp; learning</span><span class="vi">Năng lực &amp; học tập</span></h3>
+        <p>
+          <span class="en"><code>gro:competency-map</code> — inventory and assess skills at Dreyfus 7-level; SFIA hybrid for responsibility levels. Emits <code>GRO.assessed</code> → <code>CRE.recalibrate</code> + <code>EVL.rescore</code>.<br><code>gro:learning-profile</code> — map cognitive style and learning patterns using Kolb's cycle. Emits <code>GRO.profiled</code> → <code>CRE.recalibrate</code> (learning style affects content framing).</span>
+          <span class="vi"><code>gro:competency-map</code> — kiểm kê và đánh giá kỹ năng ở cấp 7 Dreyfus; kết hợp SFIA cho cấp độ trách nhiệm. Phát <code>GRO.assessed</code> → <code>CRE.recalibrate</code> + <code>EVL.rescore</code>.<br><code>gro:learning-profile</code> — ánh xạ phong cách nhận thức và mô hình học tập bằng chu kỳ Kolb. Phát <code>GRO.profiled</code> → <code>CRE.recalibrate</code> (phong cách học tập ảnh hưởng đến đóng khung nội dung).</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--gro)">
+        <h3><span class="pin"></span><span class="en">Mentoring &amp; cross-character comparison</span><span class="vi">Cố vấn &amp; so sánh liên nhân vật</span></h3>
+        <p>
+          <span class="en"><code>gro:mentoring-track</code> — map mentor/mentee relationships using Kram's Developmental Networks; documents psychosocial + career functions. Emits <code>GRO.mentored</code> → <code>PSY.refresh</code> (mentoring reveals attachment dynamics).<br><code>gro:compare</code> — cross-character career/growth comparison; gathers growth data from all characters; identifies divergent trajectories and competency gaps.</span>
+          <span class="vi"><code>gro:mentoring-track</code> — ánh xạ quan hệ cố vấn/được cố vấn bằng Mạng Phát triển của Kram; tài liệu hóa chức năng tâm lý xã hội + sự nghiệp. Phát <code>GRO.mentored</code> → <code>PSY.refresh</code> (cố vấn tiết lộ động lực gắn bó).<br><code>gro:compare</code> — so sánh sự nghiệp/tăng trưởng liên nhân vật; thu thập dữ liệu tăng trưởng từ tất cả nhân vật; xác định quỹ đạo phân kỳ và khoảng trống năng lực.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--gro)">
+        <h3><span class="pin"></span><span class="en">Validation</span><span class="vi">Kiểm định</span></h3>
+        <p>
+          <span class="en"><code>gro:validate</code> — cross-check growth data consistency across all four growth files. Flags internal contradictions (e.g., a skill rated Expert with only T5 evidence). Validation output goes back to the growth files or flags for human review; never writes to PSY or CRE.</span>
+          <span class="vi"><code>gro:validate</code> — kiểm tra chéo tính nhất quán dữ liệu tăng trưởng trên cả bốn file tăng trưởng. Gắn cờ mâu thuẫn nội bộ (ví dụ: kỹ năng được đánh giá Chuyên gia chỉ với bằng chứng T5). Đầu ra kiểm định quay lại các file tăng trưởng hoặc gắn cờ để con người xem xét; không bao giờ ghi vào PSY hay CRE.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== GRO EVENTS & CASCADE ===== -->
+    <h2 class="sectitle" id="gro-events"><span class="en">GRO events &amp; the cascade</span><span class="vi">Sự kiện GRO &amp; cascade</span></h2>
+    <div class="callout" style="--ac:var(--gro);margin-top:14px">
+      <span class="ci">📡</span>
+      <div>
+        <span class="en">
+          <code>GRO.assessed</code> — competency/skill assessment completed → <code>CRE.recalibrate</code> (career data informs content angle) + <code>EVL.rescore</code> (if active rubric scorecards exist).<br>
+          <code>GRO.mentored</code> — mentoring interaction documented → <code>PSY.refresh</code> (mentoring reveals psychological insights, attachment patterns).<br>
+          <code>GRO.profiled</code> — learning profile updated → <code>CRE.recalibrate</code> (learning style changes content framing).<br>
+          <code>GRO.forecast</code> — career forecast generated → log only. No cascade. Label <code>[FORECAST — NOT FACTUAL]</code> required.
+        </span>
+        <span class="vi">
+          <code>GRO.assessed</code> — đánh giá năng lực/kỹ năng hoàn thành → <code>CRE.recalibrate</code> (dữ liệu sự nghiệp thông báo góc nội dung) + <code>EVL.rescore</code> (nếu có scorecard rubric đang hoạt động).<br>
+          <code>GRO.mentored</code> — tương tác cố vấn được tài liệu hóa → <code>PSY.refresh</code> (cố vấn tiết lộ insight tâm lý, mô hình gắn bó).<br>
+          <code>GRO.profiled</code> — hồ sơ học tập được cập nhật → <code>CRE.recalibrate</code> (phong cách học tập thay đổi đóng khung nội dung).<br>
+          <code>GRO.forecast</code> — dự báo sự nghiệp được tạo → chỉ log. Không cascade. Nhãn <code>[FORECAST — NOT FACTUAL]</code> bắt buộc.
+        </span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;--ac:var(--gro)">
+      <h4 style="margin-bottom:12px"><span class="en">The full GRO cascade</span><span class="vi">Cascade GRO đầy đủ</span></h4>
+      <div class="flowline" style="--ac:var(--gro)">
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none">
+            <path d="M8 24c2-6 4-10 8-13" stroke="var(--gro)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16 11l5 4-5 1V11Z" stroke="var(--gro)" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+          <div class="fn"><span class="en">GRO skill runs</span><span class="vi">GRO skill chạy</span></div>
+          <div class="fd"><span class="en">writes growth/</span><span class="vi">ghi growth/</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--gro)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="8" stroke="var(--gro)" stroke-width="2"/>
+            <path d="M12 16h8M16 12v8" stroke="var(--gro)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div class="fn"><span class="en">GRO event</span><span class="vi">Sự kiện GRO</span></div>
+          <div class="fd">assessed · mentored · profiled</div>
+        </div>
+        <div class="farrow" style="--ac:var(--gro)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none">
+            <path d="M7 16a9 9 0 1 0 18 0" stroke="var(--psy)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16 7v9" stroke="var(--psy)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div class="fn" style="color:var(--psy)">PSY.refresh</div>
+          <div class="fd"><span class="en">via GRO.mentored</span><span class="vi">qua GRO.mentored</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--gro)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none">
+            <path d="M8 22l7-7 4 4 6-8" stroke="var(--cre)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="fn" style="color:var(--cre)">CRE.recalibrate</div>
+          <div class="fd"><span class="en">via assessed + profiled</span><span class="vi">qua assessed + profiled</span></div>
+        </div>
+        <div class="farrow" style="--ac:var(--gro)">→</div>
+        <div class="fstep">
+          <svg class="fi" viewBox="0 0 32 32" fill="none">
+            <rect x="7" y="8" width="18" height="16" rx="3" stroke="var(--evl)" stroke-width="2"/>
+            <path d="M11 16h10M11 20h6" stroke="var(--evl)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div class="fn" style="color:var(--evl)">EVL.rescore</div>
+          <div class="fd"><span class="en">via GRO.assessed</span><span class="vi">qua GRO.assessed</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <div class="stats" style="margin-top:28px">
+      <div class="stat"><div class="n" data-count="8">8</div><div class="l"><span class="en">GRO skills</span><span class="vi">skill GRO</span></div></div>
+      <div class="stat"><div class="n" data-count="4">4</div><div class="l"><span class="en">theory frameworks (Super · Dreyfus · Kolb · Kram)</span><span class="vi">khung lý thuyết (Super · Dreyfus · Kolb · Kram)</span></div></div>
+      <div class="stat"><div class="n" data-count="4">4</div><div class="l"><span class="en">growth files per character</span><span class="vi">file tăng trưởng mỗi nhân vật</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">fabricated data — thin = [LIMITED DATA]</span><span class="vi">dữ liệu bịa — mỏng = [LIMITED DATA]</span></div></div>
+    </div>
+
+    <!-- ===== SEE ALSO ===== -->
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@psy" style="--ac:var(--psy)"><h3><span class="pin" style="background:var(--psy)"></span><span class="en">PSY — receives GRO.mentored</span><span class="vi">PSY — nhận GRO.mentored</span></h3><p><span class="en">GRO's mentoring events cascade into PSY.refresh — the psychology framework interprets what the growth data observed factually.</span><span class="vi">Sự kiện cố vấn của GRO cascade vào PSY.refresh — framework tâm lý diễn giải những gì dữ liệu tăng trưởng quan sát thực tế.</span></p></a>
+      <a class="card" href="@evl" style="--ac:var(--evl)"><h3><span class="pin" style="background:var(--evl)"></span><span class="en">EVL — receives GRO.assessed</span><span class="vi">EVL — nhận GRO.assessed</span></h3><p><span class="en">Competency assessments trigger EVL rescore — updated skill data may change rubric verdicts on role-casting or psychometric dimensions.</span><span class="vi">Đánh giá năng lực kích hoạt EVL rescore — dữ liệu kỹ năng cập nhật có thể thay đổi phán quyết rubric về chọn vai hoặc chiều tâm trắc.</span></p></a>
+      <a class="card" href="@catalog" style="--ac:var(--gold)"><h3><span class="pin" style="background:var(--gold)"></span><span class="en">Full skill catalog</span><span class="vi">Danh mục skill đầy đủ</span></h3><p><span class="en">All 8 GRO skills with trigger keywords, Dreyfus level references, and GUIDE links.</span><span class="vi">Toàn bộ 8 skill GRO với từ khóa trigger, tham chiếu cấp Dreyfus và liên kết GUIDE.</span></p></a>
+      <a class="card" href="@finder" style="--ac:var(--gold)"><h3><span class="pin" style="background:var(--gold)"></span><span class="en">Use-case finder</span><span class="vi">Bộ chọn use-case</span></h3><p><span class="en">"Which GRO skill for this?" — the finder maps user intent to the right skill and trigger keyword.</span><span class="vi">"GRO skill nào cho việc này?" — bộ chọn ánh xạ ý định người dùng thành skill đúng và từ khóa trigger.</span></p></a>
+    </div>
+  </div>
+</section>

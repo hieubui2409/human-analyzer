@@ -1,0 +1,2 @@
+Skill catalog — 68 project-owned skills
+  orc=17  psy=16  cre=10  gro=8  mat=4  com=5  evl=8

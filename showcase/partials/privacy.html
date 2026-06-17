@@ -1,0 +1,253 @@
+<!-- ===================== PRIVACY ===================== -->
+<section id="privacy">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="color:var(--crit)"><span class="en">Rule 09 · Confidentiality</span><span class="vi">Rule 09 · Bảo mật thông tin</span></div>
+    <h2 class="sectitle" id="privacy-title">
+      <span class="en">Clinical-grade confidentiality — privacy tags, caches, and the safe distribution pack</span>
+      <span class="vi">Bảo mật cấp lâm sàng — privacy tag, cache, và gói phân phối an toàn</span>
+    </h2>
+    <p class="lead">
+      <span class="en">Rule 09 governs what information may travel from profiles and materials into published assets. Three mechanisms enforce it: inline <b>privacy tags</b> that cascade through a section, committed <b>caches that store verdict labels only</b> (never raw text), and a distribution <b>safety filter</b> that drops all corpus data after manifest globs. Together they ensure the toolkit ships with zero PII even when the private corpus is present during development.</span>
+      <span class="vi">Rule 09 quy định thông tin nào được phép đi từ profile và tư liệu vào asset đã đăng. Ba cơ chế thi hành: <b>privacy tag</b> nội tuyến lan xuống qua một mục, <b>cache commit chỉ lưu nhãn phán quyết</b> (không bao giờ text thô), và <b>safety filter</b> phân phối loại bỏ mọi dữ liệu corpus sau manifest glob. Cùng nhau đảm bảo toolkit ship không có PII ngay cả khi corpus riêng tư có mặt trong quá trình phát triển.</span>
+    </p>
+
+    <!-- privacy tags -->
+    <h2 class="sectitle" id="privacy-tags" style="margin-top:48px">
+      <span class="en">Privacy tags — what they mean and how they cascade</span>
+      <span class="vi">Privacy tag — ý nghĩa và cách chúng lan xuống</span>
+    </h2>
+    <div style="overflow-x:auto;margin-top:14px">
+      <table class="modetable">
+        <thead>
+          <tr>
+            <th><span class="en">Tag</span><span class="vi">Tag</span></th>
+            <th><span class="en">Meaning</span><span class="vi">Ý nghĩa</span></th>
+            <th><span class="en">Where allowed</span><span class="vi">Cho phép ở đâu</span></th>
+            <th><span class="en">Gate 3 effect</span><span class="vi">Hiệu lực Cổng 3</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>[PRIVATE]</code></td>
+            <td><span class="en">Internal reference only — never surface in any content</span><span class="vi">Chỉ tham chiếu nội bộ — không bao giờ xuất hiện trong nội dung nào</span></td>
+            <td><span class="en">Profiles, materials</span><span class="vi">Profile, tư liệu</span></td>
+            <td><span class="en">Hard block on any match in draft</span><span class="vi">Chặn cứng khi có kết quả trong bản nháp</span></td>
+          </tr>
+          <tr>
+            <td><code>[CONFIDENTIAL: {person}]</code></td>
+            <td><span class="en">Do not reference this person by name in public content about {subject}</span><span class="vi">Không đề cập người này bằng tên thật trong nội dung công khai về {đối tượng}</span></td>
+            <td><span class="en">Profiles, materials</span><span class="vi">Profile, tư liệu</span></td>
+            <td><span class="en">Hard block; use role description instead ("người mentor")</span><span class="vi">Chặn cứng; dùng mô tả vai thay thế ("người mentor")</span></td>
+          </tr>
+          <tr>
+            <td><code>[ANONYMIZE]</code></td>
+            <td><span class="en">Use pseudonym or role description in content</span><span class="vi">Dùng bút danh hoặc mô tả vai trong nội dung</span></td>
+            <td><span class="en">Profiles → content translation</span><span class="vi">Profile → dịch sang nội dung</span></td>
+            <td><span class="en">WARN — must confirm pseudonym substituted</span><span class="vi">WARN — phải xác nhận đã thay bút danh</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="--ac:var(--crit);margin-top:16px">
+      <span class="ci">⚠️</span>
+      <div>
+        <span class="en"><b>Tags cascade.</b> A <code>[PRIVATE]</code> section header means <em>all facts within that section</em> are private — even if individual sentences are not tagged. When content contains both private and non-private facts, each is tagged separately. The scanner checks section-level cascades, not only inline matches.</span>
+        <span class="vi"><b>Tag lan xuống.</b> Tiêu đề mục <code>[PRIVATE]</code> nghĩa là <em>mọi sự kiện trong mục đó</em> đều riêng tư — ngay cả khi từng câu không được tag. Khi nội dung chứa cả sự kiện riêng tư và không riêng tư, mỗi loại được tag riêng. Scanner kiểm tra lan xuống cấp mục, không chỉ kết quả nội tuyến.</span>
+      </div>
+    </div>
+
+    <!-- what never reaches assets/ -->
+    <h2 class="sectitle" id="privacy-boundary" style="margin-top:48px">
+      <span class="en">What the privacy gate blocks — hard-stop list</span>
+      <span class="vi">Những gì cổng bảo mật chặn — danh sách dừng cứng</span>
+    </h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin"></span><span class="en">Clinical information — never published</span><span class="vi">Thông tin lâm sàng — không bao giờ đăng</span></h3>
+        <ul style="margin:.4em 0 0;padding-left:1.1em;font-size:.86rem;color:var(--txt-dim);line-height:1.75">
+          <li><span class="en">Raw clinical terms and diagnosis labels</span><span class="vi">Thuật ngữ lâm sàng thô và nhãn chẩn đoán</span></li>
+          <li><span class="en">DSM-5 / ICD-11 codes in any form</span><span class="vi">Mã DSM-5 / ICD-11 ở bất kỳ dạng nào</span></li>
+          <li><span class="en">Crisis details without explicit consent</span><span class="vi">Chi tiết khủng hoảng không có sự đồng ý rõ ràng</span></li>
+          <li><span class="en">Psychological severity ratings</span><span class="vi">Đánh giá mức độ nghiêm trọng tâm lý</span></li>
+        </ul>
+      </div>
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin"></span><span class="en">Identity &amp; relationship details</span><span class="vi">Chi tiết danh tính &amp; quan hệ</span></h3>
+        <ul style="margin:.4em 0 0;padding-left:1.1em;font-size:.86rem;color:var(--txt-dim);line-height:1.75">
+          <li><span class="en">Third-party real names marked [CONFIDENTIAL]</span><span class="vi">Tên thật bên thứ ba được đánh dấu [CONFIDENTIAL]</span></li>
+          <li><span class="en">Secret relationships marked [PRIVATE]</span><span class="vi">Quan hệ bí mật được đánh dấu [PRIVATE]</span></li>
+          <li><span class="en">Specific location identifiers that could endanger</span><span class="vi">Định danh địa điểm cụ thể có thể gây nguy hiểm</span></li>
+          <li><span class="en">Financial specifics (debt amounts, exact income)</span><span class="vi">Thông tin tài chính cụ thể (số nợ, thu nhập chính xác)</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- cache rules -->
+    <h2 class="sectitle" id="privacy-cache" style="margin-top:48px">
+      <span class="en">Committed caches — verdict labels only, never raw profile text</span>
+      <span class="vi">Cache đã commit — chỉ nhãn phán quyết, không bao giờ text profile thô</span>
+    </h2>
+    <p class="lead">
+      <span class="en">The system caches intermediate results in <code>.claude/</code> for session resumption efficiency. Cache entries store only verdict labels, coverage percentages, and skill-run timestamps. Raw profile text, clinical observations, and material excerpts are <b>never written to committed cache files</b>. Crisis flags are never cached at all — <code>psy:crisis-assess</code> must re-run fresh every session.</span>
+      <span class="vi">Hệ thống cache kết quả trung gian trong <code>.claude/</code> để hiệu quả tiếp tục phiên. Các entry cache chỉ lưu nhãn phán quyết, phần trăm coverage, và dấu thời gian chạy skill. Text profile thô, quan sát lâm sàng, và trích đoạn tư liệu <b>không bao giờ được ghi vào file cache đã commit</b>. Cờ khủng hoảng không bao giờ được cache — <code>psy:crisis-assess</code> phải chạy mới mỗi phiên.</span>
+    </p>
+    <div class="strip" style="margin-top:16px">
+      <div class="striprow kept">
+        <span class="fn">EVL scorecard verdict label (e.g. "CAST", "PASS_WITH_RISK")</span>
+        <span class="rule"><span class="en">cache: allow</span><span class="vi">cache: allow</span></span>
+        <span class="vb"><span class="en">STORED</span><span class="vi">LƯU</span></span>
+      </div>
+      <div class="striprow kept">
+        <span class="fn">coverage% + [UNVERIFIED] count</span>
+        <span class="rule"><span class="en">metric only</span><span class="vi">chỉ số đo</span></span>
+        <span class="vb"><span class="en">STORED</span><span class="vi">LƯU</span></span>
+      </div>
+      <div class="striprow kept">
+        <span class="fn">skill run timestamp + session state</span>
+        <span class="rule"><span class="en">workflow state</span><span class="vi">trạng thái workflow</span></span>
+        <span class="vb"><span class="en">STORED</span><span class="vi">LƯU</span></span>
+      </div>
+      <div class="striprow drop">
+        <span class="fn">raw profile text / clinical observations</span>
+        <span class="rule"><span class="en">Rule 09 — never cache</span><span class="vi">Rule 09 — không bao giờ cache</span></span>
+        <span class="vb"><span class="en">DROPPED</span><span class="vi">BỎ</span></span>
+      </div>
+      <div class="striprow drop">
+        <span class="fn">material excerpts / source quotes</span>
+        <span class="rule"><span class="en">Rule 09 — never cache</span><span class="vi">Rule 09 — không bao giờ cache</span></span>
+        <span class="vb"><span class="en">DROPPED</span><span class="vi">BỎ</span></span>
+      </div>
+      <div class="striprow drop">
+        <span class="fn">crisis / PSY.crisis assessment output</span>
+        <span class="rule"><span class="en">cache: never — always re-run</span><span class="vi">cache: never — luôn chạy lại</span></span>
+        <span class="vb"><span class="en">NEVER CACHED</span><span class="vi">KHÔNG BAO GIỜ CACHE</span></span>
+      </div>
+    </div>
+
+    <!-- distribution pack -->
+    <h2 class="sectitle" id="privacy-distribution" style="margin-top:48px">
+      <span class="en">Distribution pack — the non-removable safety filter</span>
+      <span class="vi">Gói phân phối — safety filter không thể gỡ</span>
+    </h2>
+    <p class="lead">
+      <span class="en">The public distribution of the toolkit is built by a <b>safety filter that runs after manifest globs</b>. It unconditionally drops any file matching: <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>docs/graph/</code>, <code>docs/references/</code>, <code>assets/</code>, and any <code>.env</code> / secret files. The filter is not a .gitignore — it is a build-time enforcement step that cannot be bypassed by adding entries to any config. The toolkit ships <b>no character corpus</b> and still imports, compiles, and runs its test suite (corpus-dependent tests skip cleanly).</span>
+      <span class="vi">Bản phân phối công khai của toolkit được xây bởi <b>safety filter chạy sau manifest glob</b>. Nó vô điều kiện loại bỏ mọi file khớp với: <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>docs/graph/</code>, <code>docs/references/</code>, <code>assets/</code>, và mọi file <code>.env</code> / bí mật. Filter này không phải .gitignore — đây là bước thi hành lúc build không thể bỏ qua bằng cách thêm entry vào bất kỳ config nào. Toolkit ship <b>không có corpus nhân vật</b> và vẫn import, compile, và chạy bộ kiểm thử (các test phụ thuộc corpus bỏ qua một cách sạch sẽ).</span>
+    </p>
+
+    <div class="strip" style="margin-top:16px">
+      <div class="striprow kept">
+        <span class="fn">.claude/skills/**</span>
+        <span class="rule"><span class="en">toolkit core</span><span class="vi">lõi toolkit</span></span>
+        <span class="vb"><span class="en">KEPT</span><span class="vi">GIỮ</span></span>
+      </div>
+      <div class="striprow kept">
+        <span class="fn">docs/rules/**  ·  docs/rubrics/**  ·  platform_lib/**</span>
+        <span class="rule"><span class="en">framework rules + schemas</span><span class="vi">rule framework + schema</span></span>
+        <span class="vb"><span class="en">KEPT</span><span class="vi">GIỮ</span></span>
+      </div>
+      <div class="striprow kept">
+        <span class="fn">tests/**  ·  README.md  ·  CLAUDE.md</span>
+        <span class="rule"><span class="en">tests + docs</span><span class="vi">kiểm thử + tài liệu</span></span>
+        <span class="vb"><span class="en">KEPT</span><span class="vi">GIỮ</span></span>
+      </div>
+      <div class="striprow drop">
+        <span class="fn">docs/profiles/**</span>
+        <span class="rule"><span class="en">safety_filter — corpus</span><span class="vi">safety_filter — corpus</span></span>
+        <span class="vb"><span class="en">DROPPED</span><span class="vi">BỎ</span></span>
+      </div>
+      <div class="striprow drop">
+        <span class="fn">docs/materials/**</span>
+        <span class="rule"><span class="en">safety_filter — corpus</span><span class="vi">safety_filter — corpus</span></span>
+        <span class="vb"><span class="en">DROPPED</span><span class="vi">BỎ</span></span>
+      </div>
+      <div class="striprow drop">
+        <span class="fn">docs/graph/**  ·  docs/references/**  ·  assets/**</span>
+        <span class="rule"><span class="en">safety_filter — corpus</span><span class="vi">safety_filter — corpus</span></span>
+        <span class="vb"><span class="en">DROPPED</span><span class="vi">BỎ</span></span>
+      </div>
+      <div class="striprow drop">
+        <span class="fn">.env  ·  **/*secret*  ·  **/*credential*</span>
+        <span class="rule"><span class="en">safety_filter — secrets</span><span class="vi">safety_filter — bí mật</span></span>
+        <span class="vb"><span class="en">DROPPED</span><span class="vi">BỎ</span></span>
+      </div>
+    </div>
+
+    <!-- e2e fixture + license -->
+    <h2 class="sectitle" id="privacy-e2e-license" style="margin-top:48px">
+      <span class="en">Synthetic e2e fixtures &amp; AGPL-3.0</span>
+      <span class="vi">Fixture e2e tổng hợp &amp; AGPL-3.0</span>
+    </h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin"></span><span class="en">Synthetic e2e fixtures — zero PII</span><span class="vi">Fixture e2e tổng hợp — không PII</span></h3>
+        <p>
+          <span class="en">The end-to-end test harness runs against <b>synthetic fixtures only</b> — fabricated characters with invented names, dates, and events. No real person's material is used in any test. The golden outputs in <code>tests/golden/</code> are generated from these synthetic inputs. A corpus-present run and a corpus-absent run produce identical test results for the deterministic legs.</span>
+          <span class="vi">Bộ kiểm thử đầu-cuối chạy trên <b>chỉ fixture tổng hợp</b> — nhân vật được tạo ra với tên, ngày, và sự kiện giả định. Không có tư liệu của người thật nào được dùng trong bất kỳ kiểm thử nào. Đầu ra vàng trong <code>tests/golden/</code> được tạo từ các đầu vào tổng hợp này. Chạy có corpus và chạy không có corpus tạo kết quả kiểm thử giống hệt nhau cho các nhánh xác định.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--crit)">
+        <h3><span class="pin"></span><span class="en">AGPL-3.0 · ships no corpus by design</span><span class="vi">AGPL-3.0 · thiết kế không ship corpus</span></h3>
+        <p>
+          <span class="en">Licensed <b>AGPL-3.0</b>: network or SaaS use of a modified version must release full source. The license does not require the operator's character corpus — only the framework source. The toolkit is character-agnostic: bring your own <code>docs/profiles/characters.yaml</code> and all tooling resolves subjects dynamically. The public repository is the proof: it imports, tests, and passes CI with no corpus present.</span>
+          <span class="vi">Cấp phép <b>AGPL-3.0</b>: sử dụng mạng hoặc SaaS của phiên bản sửa đổi phải công bố mã nguồn đầy đủ. Giấy phép không yêu cầu corpus nhân vật của người vận hành — chỉ nguồn framework. Toolkit character-agnostic: mang <code>docs/profiles/characters.yaml</code> của riêng bạn và mọi công cụ sẽ resolve đối tượng động. Kho công khai là bằng chứng: nó import, kiểm thử, và vượt CI mà không có corpus.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- privacy level table -->
+    <h2 class="sectitle" id="privacy-levels" style="margin-top:48px">
+      <span class="en">Content privacy levels — what each unlocks</span>
+      <span class="vi">Cấp độ bảo mật nội dung — mỗi cấp mở khóa gì</span>
+    </h2>
+    <div style="overflow-x:auto;margin-top:14px">
+      <table class="modetable">
+        <thead>
+          <tr>
+            <th><span class="en">Level</span><span class="vi">Cấp độ</span></th>
+            <th><span class="en">Definition</span><span class="vi">Định nghĩa</span></th>
+            <th><span class="en">Accessible facts</span><span class="vi">Sự kiện có thể truy cập</span></th>
+            <th><span class="en">Use case</span><span class="vi">Trường hợp dùng</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b><span class="en">Public / Persona</span><span class="vi">Công khai / Persona</span></b></td>
+            <td><span class="en">Public-facing, maintains front image</span><span class="vi">Hướng công chúng, duy trì hình ảnh bề ngoài</span></td>
+            <td><span class="en">Non-tagged facts only; no [PRIVATE] section content</span><span class="vi">Chỉ sự kiện không tag; không có nội dung mục [PRIVATE]</span></td>
+            <td><span class="en">Social media posts, LinkedIn, Facebook</span><span class="vi">Bài đăng mạng xã hội, LinkedIn, Facebook</span></td>
+          </tr>
+          <tr>
+            <td><b><span class="en">Private / Hidden</span><span class="vi">Riêng tư / Ẩn</span></b></td>
+            <td><span class="en">Inner voice, restricted contexts only</span><span class="vi">Tiếng lòng, chỉ ngữ cảnh hạn chế</span></td>
+            <td><span class="en">[PRIVATE] content accessible; still no [CONFIDENTIAL] leaks</span><span class="vi">Nội dung [PRIVATE] có thể truy cập; vẫn không rò rỉ [CONFIDENTIAL]</span></td>
+            <td><span class="en">Private group posts, personal letters, internal notes</span><span class="vi">Bài đăng nhóm riêng, thư cá nhân, ghi chú nội bộ</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout" style="--ac:var(--crit);margin-top:16px">
+      <span class="ci">🔒</span>
+      <div>
+        <span class="en"><b>Content creators must declare the privacy level before drafting.</b> The level determines which facts Gate 3 will allow through. Switching level after draft is done requires a full re-scan — <code>orc:privacy-guard</code> does not inherit the previous scan result.</span>
+        <span class="vi"><b>Người tạo nội dung phải khai báo cấp độ bảo mật trước khi soạn thảo.</b> Cấp độ xác định sự kiện nào Cổng 3 sẽ cho qua. Đổi cấp độ sau khi bản nháp xong đòi hỏi quét lại hoàn toàn — <code>orc:privacy-guard</code> không kế thừa kết quả quét trước.</span>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="stats" style="margin-top:40px">
+      <div class="stat"><div class="n" data-count="3">3</div><div class="l"><span class="en">inline privacy tag types</span><span class="vi">loại privacy tag nội tuyến</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">raw profile bytes in committed caches</span><span class="vi">byte profile thô trong cache commit</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">corpus files in public distribution</span><span class="vi">file corpus trong phân phối công khai</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">PII in synthetic e2e fixtures</span><span class="vi">PII trong fixture e2e tổng hợp</span></div></div>
+    </div>
+
+    <!-- related cards -->
+    <div class="cards grid-2" style="margin-top:32px">
+      <a class="card" href="@gates" style="--ac:var(--crit)"><h3><span class="pin"></span><span class="en">Gates &amp; evidence</span><span class="vi">Cổng &amp; bằng chứng</span></h3><p><span class="en">Gate 3 (cre:privacy-guard) in full — how the Rule 09 scan integrates with the evidence-tier gate before publish.</span><span class="vi">Cổng 3 (cre:privacy-guard) đầy đủ — cách quét Rule 09 tích hợp với cổng bậc bằng chứng trước khi đăng.</span></p></a>
+      <a class="card" href="@distribution" style="--ac:var(--tel)"><h3><span class="pin"></span><span class="en">Distribution &amp; packaging</span><span class="vi">Phân phối &amp; đóng gói</span></h3><p><span class="en">How the safety filter is built into the pack script, what the AGPL-3.0 source-release obligation covers, and how to bring your own corpus.</span><span class="vi">Cách safety filter được tích hợp vào script đóng gói, nghĩa vụ công bố nguồn AGPL-3.0 bao gồm gì, và cách mang corpus của riêng bạn.</span></p></a>
+      <a class="card" href="@cre" style="--ac:var(--cre)"><h3><span class="pin"></span><span class="en">CRE framework</span><span class="vi">Framework CRE</span></h3><p><span class="en">How cre:post-writer, cre:evidence-scanner, and cre:privacy-guard chain together inside the content-creation track.</span><span class="vi">Cách cre:post-writer, cre:evidence-scanner, và cre:privacy-guard xâu chuỗi trong mạch tạo nội dung.</span></p></a>
+      <a class="card" href="@pipeline" style="--ac:var(--orc)"><h3><span class="pin"></span><span class="en">Event pipeline</span><span class="vi">Pipeline sự kiện</span></h3><p><span class="en">Where the privacy gate sits in the full MAT→PSY→EVL→CRE event cascade and how orc:cascade sequences it.</span><span class="vi">Cổng bảo mật nằm ở đâu trong cascade sự kiện MAT→PSY→EVL→CRE đầy đủ và cách orc:cascade sắp xếp nó.</span></p></a>
+    </div>
+  </div>
+</section>

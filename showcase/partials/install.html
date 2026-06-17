@@ -1,0 +1,121 @@
+<!-- ===================== INSTALL ===================== -->
+<section id="install">
+  <div class="wrap reveal">
+    <div class="skill-head" style="--ac:var(--ok)">
+      <div class="badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <path d="M20 5v18M13 17l7 7 7-7" stroke="var(--ok)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 27v5a2 2 0 0 0 2 2h22a2 2 0 0 0 2-2v-5" stroke="var(--ok)" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ttl">
+        <div class="who" style="color:var(--ok)"><span class="en">Provision the project-local interpreter and verify the toolkit imports cleanly</span><span class="vi">Dựng trình thông dịch nội bộ và xác minh toolkit import sạch</span></div>
+        <h2><span class="en">Install</span><span class="vi">Cài đặt</span></h2>
+      </div>
+      <div class="ver">Linux · Python ≥3.9 · git</div>
+    </div>
+    <div class="divider" style="--ac:var(--ok)"></div>
+
+    <p class="lead"><span class="en">Installing is <b>one command</b> that creates a project-local virtualenv under <code>.claude/skills/.venv/</code>, installs three packages (<code>pyyaml</code> · <code>jsonschema</code> · <code>pytest</code>), and leaves the system Python entirely untouched. Requirements: <b>Linux</b>, <b>Python ≥ 3.9</b>, <b>git</b>. No build step, no bundler, no global side effects.</span><span class="vi">Cài đặt là <b>một lệnh</b> tạo virtualenv nội bộ dưới <code>.claude/skills/.venv/</code>, cài ba gói (<code>pyyaml</code> · <code>jsonschema</code> · <code>pytest</code>), và không đụng Python hệ thống. Yêu cầu: <b>Linux</b>, <b>Python ≥ 3.9</b>, <b>git</b>. Không bước build, không bundler, không tác dụng phụ toàn cục.</span></p>
+
+    <!-- one-liner -->
+    <h2 class="sectitle" id="install-oneshot"><span class="en">Install in one command</span><span class="vi">Cài trong một lệnh</span></h2>
+    <p class="muted" style="margin:-2px 0 14px"><span class="en">Run from the repo root after cloning. The script: <b>① create</b> <code>.claude/skills/.venv/</code> → <b>② pip install</b> pyyaml · jsonschema · pytest into it → <b>③ verify</b> the three imports resolve. No follow-up steps. The canonical invocation path is established by the script and locked for the lifetime of the project.</span><span class="vi">Chạy từ gốc repo sau khi clone. Script: <b>① tạo</b> <code>.claude/skills/.venv/</code> → <b>② pip install</b> pyyaml · jsonschema · pytest vào đó → <b>③ xác minh</b> ba import resolve được. Không có bước nối tiếp. Đường gọi chuẩn được thiết lập bởi script và khóa cho suốt vòng đời dự án.</span></p>
+    <div class="cmdline"><code>bash .claude/scripts/install.sh</code></div>
+
+    <div class="callout" style="--ac:var(--crit);margin-top:18px">
+      <span class="ci">🐍</span>
+      <div><span class="en"><b>The venv rule is absolute.</b> Every skill script across all 7 frameworks must be invoked as <code>.claude/skills/.venv/bin/python3 .claude/skills/{fw}-{skill}/scripts/{script}.py</code> — never bare <code>python3</code>. The system interpreter does not have the installed packages. This path is not configurable; it is the canonical invocation for the entire project.</span><span class="vi"><b>Quy tắc venv là tuyệt đối.</b> Mọi script skill trên cả 7 framework phải được gọi là <code>.claude/skills/.venv/bin/python3 .claude/skills/{fw}-{skill}/scripts/{script}.py</code> — không bao giờ dùng <code>python3</code> trần. Trình thông dịch hệ thống thiếu gói cài. Đường dẫn này không thể cấu hình; đây là cách gọi chuẩn cho toàn dự án.</span></div>
+    </div>
+
+    <!-- verify with schema validator -->
+    <h2 class="sectitle" id="install-verify" style="margin-top:30px"><span class="en">Verify — schema validation</span><span class="vi">Xác minh — kiểm tra schema</span></h2>
+    <p class="muted" style="margin:-2px 0 14px"><span class="en">After installing, run the schema validator to confirm 119 files (rubrics, scorecards, references) parse cleanly against their JSON schemas. This is the structural proof that the toolkit imported, resolved its paths, and validated its data layer — with or without a character corpus. <span class="realtag">real output</span></span><span class="vi">Sau khi cài, chạy bộ kiểm tra schema để xác nhận 119 file (rubric, scorecard, tài liệu tham khảo) parse sạch theo schema JSON. Đây là bằng chứng cấu trúc rằng toolkit đã import, phân giải đường dẫn, và xác minh tầng dữ liệu — có hay không có corpus nhân vật. <span class="realtag">đầu ra thật</span></span></p>
+    <div class="cmdline"><code>.claude/skills/.venv/bin/python3 .claude/scripts/validate-all-against-schemas.py</code></div>
+    <div class="term">
+      <div class="tbar"><i></i><i></i><i></i><span class="tcmd">python3 .claude/scripts/validate-all-against-schemas.py</span></div>
+      <!--SCHEMA_VALIDATE-->
+    </div>
+
+    <!-- degrade-clean -->
+    <h2 class="sectitle" id="install-degrade" style="margin-top:30px"><span class="en">Degrade-clean — no corpus required</span><span class="vi">Xuống cấp êm — không cần corpus</span></h2>
+    <p class="muted" style="margin:-2px 0 14px"><span class="en">The public toolkit ships no character corpus — <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>docs/graph/</code>, <code>docs/references/</code>, and <code>assets/</code> are absent by design. The system resolves subjects dynamically via <code>paths.py</code> reading <code>docs/profiles/characters.yaml</code>. Without that file:</span><span class="vi">Toolkit công khai không kèm corpus nhân vật — <code>docs/profiles/</code>, <code>docs/materials/</code>, <code>docs/graph/</code>, <code>docs/references/</code>, và <code>assets/</code> vắng mặt theo thiết kế. Hệ thống phân giải nhân vật động qua <code>paths.py</code> đọc <code>docs/profiles/characters.yaml</code>. Không có file đó:</span></p>
+
+    <div class="cards grid-2" style="margin-top:12px">
+      <div class="card" style="padding:16px;--ac:var(--ok)">
+        <h4 style="color:var(--ok);margin-bottom:8px"><span class="en">Still passes</span><span class="vi">Vẫn pass</span></h4>
+        <ul style="font-size:.84rem;margin:0;padding-left:1.2em">
+          <li><span class="en">All imports and module compilation</span><span class="vi">Tất cả import và biên dịch module</span></li>
+          <li><span class="en">Schema validation (119 files)</span><span class="vi">Xác minh schema (119 file)</span></li>
+          <li><span class="en">e2e synthetic pipeline (19 steps)</span><span class="vi">Pipeline giả lập e2e (19 bước)</span></li>
+          <li><span class="en">All deterministic unit tests</span><span class="vi">Tất cả test unit tất định</span></li>
+          <li><span class="en"><code>platform_lib</code> cache + preferences CLI</span><span class="vi"><code>platform_lib</code> cache + preferences CLI</span></li>
+        </ul>
+      </div>
+      <div class="card" style="padding:16px;--ac:var(--txt-faint)">
+        <h4 style="color:var(--txt-faint);margin-bottom:8px"><span class="en">Skips gracefully</span><span class="vi">Bỏ qua một cách khéo léo</span></h4>
+        <ul style="font-size:.84rem;margin:0;padding-left:1.2em">
+          <li><span class="en">Character-specific unit tests (<code>-m roster</code>)</span><span class="vi">Test unit theo nhân vật (<code>-m roster</code>)</span></li>
+          <li><span class="en">Profile completeness scoring (<code>psy:health-check</code>)</span><span class="vi">Chấm điểm đầy đủ hồ sơ (<code>psy:health-check</code>)</span></li>
+          <li><span class="en">MAT pipeline on real materials</span><span class="vi">Pipeline MAT trên tư liệu thật</span></li>
+          <li><span class="en">CRE gates on live assets</span><span class="vi">Cổng CRE trên asset thật</span></li>
+          <li><span class="en">Live-LLM tests (<code>GEMINI_API_KEY</code> required)</span><span class="vi">Test LLM thật (cần <code>GEMINI_API_KEY</code>)</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="muted" style="font-size:.88rem;margin-top:14px"><span class="en">To add your own corpus: create <code>docs/profiles/characters.yaml</code> with a list of character slugs. The tooling resolves all paths dynamically — no hardcoding needed. The private repo pattern places the full corpus in the same directory structure; the public toolkit is structurally identical.</span><span class="vi">Để thêm corpus của bạn: tạo <code>docs/profiles/characters.yaml</code> với danh sách slug nhân vật. Công cụ phân giải tất cả đường dẫn động — không hardcode. Mô hình repo riêng đặt corpus đầy đủ trong cùng cấu trúc thư mục; toolkit công khai giống hệt về cấu trúc.</span></p>
+
+    <!-- full deterministic suite -->
+    <h2 class="sectitle" id="install-suite" style="margin-top:30px"><span class="en">Run the full deterministic suite</span><span class="vi">Chạy bộ kiểm thử tất định đầy đủ</span></h2>
+    <p class="muted" style="margin:-2px 0 14px"><span class="en">After installing and validating, run the complete deterministic gate. No API key. No external calls. The <code>-m 'not gemini'</code> marker excludes the 34 live-LLM tests. Without a roster: ~665 pass, ~175 skip. <span class="realtag">real output</span></span><span class="vi">Sau khi cài và xác minh, chạy cổng tất định đầy đủ. Không API key. Không gọi mạng. Tham số <code>-m 'not gemini'</code> loại trừ 34 test LLM thật. Không có roster: ~665 đạt, ~175 bỏ qua. <span class="realtag">đầu ra thật</span></span></p>
+    <div class="cmdline"><code>.claude/skills/.venv/bin/python3 -m pytest tests/ -q -m 'not gemini'</code></div>
+    <div class="term">
+      <div class="tbar"><i></i><i></i><i></i><span class="tcmd">pytest tests/ -q -m 'not gemini'</span></div>
+      <!--PYTEST-->
+    </div>
+
+    <!-- CI gates table -->
+    <h2 class="sectitle" id="install-ci" style="margin-top:30px"><span class="en">CI gates</span><span class="vi">Cổng CI</span></h2>
+    <p class="muted" style="margin:-2px 0 14px"><span class="en">Three GitHub Actions workflows run on every push. All deterministic — no API key needed in CI.</span><span class="vi">Ba workflow GitHub Actions chạy mỗi lần push. Tất cả tất định — không cần API key trong CI.</span></p>
+    <table class="modetable" style="--ac:var(--ok);margin-top:4px">
+      <thead><tr><th><span class="en">Workflow</span><span class="vi">Workflow</span></th><th><span class="en">Gate</span><span class="vi">Cổng</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>frameworks-ci.yml</code></td><td><span class="en">py_compile · import sweep · schema validation · <code>orc:audit</code> exit-0 · pytest · eval</span><span class="vi">py_compile · quét import · xác minh schema · <code>orc:audit</code> exit-0 · pytest · eval</span></td></tr>
+        <tr><td><code>cross-framework-bug-class.yml</code></td><td><span class="en"><code>pytest -m bug_class</code> — guards orphan import, centralized-constant redefinition, non-recursive glob, skill-count drift</span><span class="vi"><code>pytest -m bug_class</code> — chặn import mồ côi, tái định nghĩa hằng số tập trung, glob không đệ quy, lệch số skill</span></td></tr>
+        <tr><td><code>public-ci-guard.yml</code></td><td><span class="en">Fail-closed perimeter — blocks any private-corpus or CK path from re-entering the public repo</span><span class="vi">Vành đai fail-closed — chặn mọi đường corpus riêng hoặc CK tái nhập repo công khai</span></td></tr>
+      </tbody>
+    </table>
+
+    <!-- AGPL + distribution -->
+    <h2 class="sectitle" id="install-license" style="margin-top:30px"><span class="en">License + distribution</span><span class="vi">Giấy phép + phân phối</span></h2>
+    <div class="callout" style="--ac:var(--gold);margin-top:4px">
+      <span class="ci">📦</span>
+      <div><span class="en"><b>AGPL-3.0.</b> Network or SaaS use of a modified version must release its full source under AGPL-3.0. The distribution pack bundles <b>only the toolkit</b> — never the live character corpus. A non-removable <code>safety_filter.py</code> drops <code>docs/profiles/</code> · <code>docs/materials/</code> · <code>docs/graph/</code> · secrets · telemetry · runtime caches <i>after</i> the manifest include-globs, so a misconfigured include can never leak clinical data. Build + verify locally: <code>.claude/skills/.venv/bin/python3 .claude/skills/_framework-shared/scripts/build_pack.py</code>. Release builds are <b>CI-only</b> — a hand-built tarball's SHA won't match the recipient's verified SHA. Full distribution walkthrough: <a href="@distribution">Distribution</a>.</span><span class="vi"><b>AGPL-3.0.</b> Dùng mạng hoặc SaaS bản sửa đổi phải công bố toàn bộ mã nguồn theo AGPL-3.0. Gói phân phối chỉ đóng gói <b>toolkit</b> — không bao giờ corpus nhân vật thật. Một <code>safety_filter.py</code> không-thể-gỡ loại bỏ <code>docs/profiles/</code> · <code>docs/materials/</code> · <code>docs/graph/</code> · secrets · telemetry · cache runtime <i>sau</i> các include-glob, nên include cấu hình sai cũng không rò rỉ dữ liệu lâm sàng. Build + xác minh cục bộ: <code>.claude/skills/.venv/bin/python3 .claude/skills/_framework-shared/scripts/build_pack.py</code>. Bản release build <b>chỉ trên CI</b> — tarball build tay có SHA không khớp SHA người nhận xác minh. Hướng dẫn phân phối đầy đủ: <a href="@distribution">Phân phối</a>.</span></div>
+    </div>
+
+    <!-- after install callout -->
+    <div class="callout" style="--ac:var(--ok);margin-top:14px">
+      <span class="ci">✅</span>
+      <div><span class="en"><b>After installing:</b> validate schemas, run the deterministic suite, then follow the first material end-to-end in <a href="@journey">Journey</a>. Re-verify imports any time: <code>.claude/skills/.venv/bin/python3 -c "import yaml, jsonschema, pytest; print('ok')"</code>. Five-step walkthrough: <a href="@quickstart">Quick start</a>.</span><span class="vi"><b>Sau khi cài:</b> xác minh schema, chạy bộ test tất định, rồi theo một tư liệu từ đầu đến cuối trong <a href="@journey">Hành trình</a>. Xác minh lại import bất cứ lúc nào: <code>.claude/skills/.venv/bin/python3 -c "import yaml, jsonschema, pytest; print('ok')"</code>. Hướng dẫn năm bước: <a href="@quickstart">Bắt đầu nhanh</a>.</span></div>
+    </div>
+
+    <!-- FAQ -->
+    <h3 class="sectitle" style="font-size:1.25rem;margin:34px 0 0"><span class="en">FAQ</span><span class="vi">Hỏi đáp</span></h3>
+    <div class="faq" style="--ac:var(--ok)">
+      <details><summary><span class="en">What if <code>install.sh</code> says Python is missing?</span><span class="vi">Nếu <code>install.sh</code> báo thiếu Python thì sao?</span></summary><div class="fa"><span class="en">Install Python ≥ 3.9 first: <code>apt install python3 python3-venv</code> (Debian/Ubuntu) or from <a href="https://www.python.org/downloads/" target="_blank">python.org</a>. Then re-run <code>bash .claude/scripts/install.sh</code>. Python is a runtime requirement — every skill script needs the venv interpreter, not just the install step.</span><span class="vi">Cài Python ≥ 3.9 trước: <code>apt install python3 python3-venv</code> (Debian/Ubuntu) hoặc từ <a href="https://www.python.org/downloads/" target="_blank">python.org</a>. Sau đó chạy lại <code>bash .claude/scripts/install.sh</code>. Python là yêu cầu lúc chạy — mọi script skill cần trình thông dịch venv, không chỉ bước cài.</span></div></details>
+      <details><summary><span class="en">Why not bundle a venv in the distribution pack?</span><span class="vi">Vì sao không đóng gói venv trong gói phân phối?</span></summary><div class="fa"><span class="en">A venv references a base interpreter on the machine that built it — it does not contain Python and is not portable across machines or OS versions. A hand-built venv would break on a different OS. The whole dependency surface is three pure-Python packages; requiring Python and running <code>install.sh</code> is the honest, lighter trade.</span><span class="vi">Venv tham chiếu tới interpreter gốc trên máy tạo ra nó — không chứa Python và không di động giữa máy/phiên bản OS. Venv build tay sẽ vỡ trên OS khác. Toàn bộ phụ thuộc chỉ là ba gói Python thuần; yêu cầu Python và chạy <code>install.sh</code> là đánh đổi trung thực, nhẹ hơn.</span></div></details>
+      <details><summary><span class="en">Can I install into a different venv path?</span><span class="vi">Có thể cài vào đường venv khác không?</span></summary><div class="fa"><span class="en">The venv path <code>.claude/skills/.venv/</code> is canonical and embedded in every skill script via the project's invocation convention. Changing it would break all 68 skills. The path was chosen deliberately to keep everything self-contained under <code>.claude/</code>.</span><span class="vi">Đường venv <code>.claude/skills/.venv/</code> là chuẩn và nhúng trong mọi script skill qua quy ước gọi dự án. Thay đổi nó sẽ phá vỡ cả 68 skill. Đường được chọn có chủ đích để giữ tất cả tự đóng gói dưới <code>.claude/</code>.</span></div></details>
+      <details><summary><span class="en">The schema validator flags a file — is it a blocker?</span><span class="vi">Bộ kiểm tra schema đánh cờ một file — có bị chặn không?</span></summary><div class="fa"><span class="en">Schema failures are structural errors in rubric or scorecard YAML/JSON. The CI gate treats them as blockers (<code>frameworks-ci.yml</code> runs schema validation as a required step). Fix the shape error first — the error message names the file, the field, and the expected type.</span><span class="vi">Lỗi schema là lỗi cấu trúc trong YAML/JSON rubric hoặc scorecard. Cổng CI coi chúng là blocker (<code>frameworks-ci.yml</code> chạy xác minh schema như bước bắt buộc). Sửa lỗi hình dạng trước — thông báo lỗi nêu file, trường, và kiểu mong đợi.</span></div></details>
+      <details><summary><span class="en">Does distribution strip the private corpus automatically?</span><span class="vi">Phân phối có tự động bỏ corpus riêng không?</span></summary><div class="fa"><span class="en">Yes — <code>safety_filter.py</code> is non-removable and runs <i>after</i> the manifest include-globs. Even if you accidentally write a glob that matches <code>docs/profiles/</code>, the filter drops it. Committed caches store verdict labels only — never raw profile text.</span><span class="vi">Có — <code>safety_filter.py</code> không-thể-gỡ và chạy <i>sau</i> các include-glob. Kể cả khi bạn vô tình viết glob khớp <code>docs/profiles/</code>, filter vẫn loại bỏ. Cache commit chỉ lưu nhãn phán quyết — không bao giờ text hồ sơ thô.</span></div></details>
+    </div>
+
+    <!-- next cards -->
+    <div class="cards grid-2" style="margin-top:28px">
+      <a class="card" href="@quickstart" style="--ac:var(--ok)"><h3><span class="pin"></span><span class="en">Quick start</span><span class="vi">Bắt đầu nhanh</span></h3><p><span class="en">Clone → install → run suite → invoke your first skill. The five-step walkthrough.</span><span class="vi">Clone → cài → chạy bộ test → gọi skill đầu tiên. Hướng dẫn năm bước.</span></p></a>
+      <a class="card" href="@architecture" style="--ac:var(--tel)"><h3><span class="pin"></span><span class="en">Architecture &amp; platform_lib</span><span class="vi">Kiến trúc &amp; platform_lib</span></h3><p><span class="en">The 10 shared modules, subagents, schemas, and how the toolkit stays self-contained.</span><span class="vi">10 module chung, subagent, schema, và cách toolkit giữ tự đóng gói.</span></p></a>
+      <a class="card" href="@distribution" style="--ac:var(--tel)"><h3><span class="pin"></span><span class="en">Distribution</span><span class="vi">Phân phối</span></h3><p><span class="en">Deterministic pack build, the safety filter, CI-only release, and SHA verification.</span><span class="vi">Build pack tất định, safety filter, bản release chỉ trên CI, và xác minh SHA.</span></p></a>
+      <a class="card" href="@journey" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Journey — end-to-end</span><span class="vi">Hành trình — đầu đến cuối</span></h3><p><span class="en">Follow one synthetic material from ingest through the two CRE gates to a published asset.</span><span class="vi">Theo một tư liệu giả lập từ thu nhận qua hai cổng CRE đến asset đã đăng.</span></p></a>
+    </div>
+  </div>
+</section>

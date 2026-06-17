@@ -1,0 +1,285 @@
+<!-- ===================== RUBRICS ===================== -->
+<section id="rubrics">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="color:var(--evl)"><span class="en">EVL · Scoring Engine</span><span class="vi">EVL · Bộ Máy Chấm Điểm</span></div>
+    <h2 class="sectitle" id="rubrics-title">
+      <span class="en">The 4 versioned rubrics, the JSON-schema, and how a scorecard is built</span>
+      <span class="vi">4 rubric có phiên bản, JSON-schema, và cách dựng scorecard</span>
+    </h2>
+    <p class="lead">
+      <span class="en">EVL is a generic, pluggable rubric scoring engine. It consumes a character's existing profile (MAT materials + PSY clinical profile + GRO growth — <b>never CRE</b>) and scores against a versioned rubric, emitting a structured scorecard + verdict. Every criterion must cite a MAT evidence tier; an uncited score is <code>[UNVERIFIED]</code> — excluded from the roll-up and counted, never a silent pass. Four reference rubrics ship as exemplars; external frameworks slot in under <code>docs/rubrics/imported/</code> via <code>evl:rubric-import</code>.</span>
+      <span class="vi">EVL là bộ máy chấm điểm rubric chung, có thể cắm thêm. Nó tiêu thụ profile hiện có của nhân vật (tư liệu MAT + profile lâm sàng PSY + tăng trưởng GRO — <b>không bao giờ CRE</b>) và chấm theo rubric có phiên bản, phát ra scorecard có cấu trúc + phán quyết. Mỗi tiêu chí phải trích dẫn bậc bằng chứng MAT; điểm không trích là <code>[UNVERIFIED]</code> — bị loại khỏi tổng hợp và được đếm, không bao giờ pass im lặng. Bốn rubric tham chiếu được ship như mẫu; framework bên ngoài vào dưới <code>docs/rubrics/imported/</code> qua <code>evl:rubric-import</code>.</span>
+    </p>
+
+    <!-- four rubrics overview -->
+    <h2 class="sectitle" id="rubrics-four" style="margin-top:48px">
+      <span class="en">The four reference rubrics</span>
+      <span class="vi">Bốn rubric tham chiếu</span>
+    </h2>
+
+    <!-- psychometric-big-five -->
+    <div class="card" style="--ac:var(--evl);margin-top:18px">
+      <h3><span class="pin"></span><code>psychometric-big-five</code> · <span class="en">v1.0.0 · kind: psychometric · subject: single</span><span class="vi">v1.0.0 · loại: tâm trắc · đối tượng: đơn</span></h3>
+      <p style="margin:.5em 0 .8em;font-size:.9rem;color:var(--txt-dim)">
+        <span class="en">Big Five (OCEAN via BFI-2 / NEO PI-R) + Dark Triad (SD3) + Attachment (ECR-R two-dimensional). Anchors transcribed from the instruments' behavioural descriptors (BARS). Scale 0–5. Three domain blocks with renormalized weights so all domains sum to 1.0.</span>
+        <span class="vi">Big Five (OCEAN qua BFI-2 / NEO PI-R) + Dark Triad (SD3) + Gắn kết (ECR-R hai chiều). Neo từ bộ mô tả hành vi của công cụ (BARS). Thang 0–5. Ba khối domain với trọng số tái chuẩn hóa để tổng các domain bằng 1.0.</span>
+      </p>
+      <div style="overflow-x:auto">
+        <table class="modetable" style="margin-top:0">
+          <thead>
+            <tr>
+              <th><span class="en">Domain</span><span class="vi">Domain</span></th>
+              <th><span class="en">Weight</span><span class="vi">Trọng số</span></th>
+              <th><span class="en">Criteria (instrument)</span><span class="vi">Tiêu chí (công cụ)</span></th>
+              <th><span class="en">Min tier</span><span class="vi">Bậc tối thiểu</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><b><span class="en">Big Five (OCEAN)</span><span class="vi">Big Five (OCEAN)</span></b></td><td>0.70</td><td><span class="en">Openness · Conscientiousness · Extraversion · Agreeableness · Neuroticism (BFI-2)</span><span class="vi">Cởi mở · Tận tâm · Hướng ngoại · Dễ chịu · Bất ổn cảm xúc (BFI-2)</span></td><td>T3</td></tr>
+            <tr><td><b><span class="en">Dark Triad (SD3)</span><span class="vi">Dark Triad (SD3)</span></b></td><td>0.10</td><td><span class="en">Narcissism · Machiavellianism · Psychopathy</span><span class="vi">Tự ái · Machiavelli · Tâm thần</span></td><td>T3</td></tr>
+            <tr><td><b><span class="en">Attachment (ECR-R)</span><span class="vi">Gắn kết (ECR-R)</span></b></td><td>0.20</td><td><span class="en">Attachment-Anxiety · Attachment-Avoidance</span><span class="vi">Lo lắng gắn kết · Né tránh gắn kết</span></td><td>T3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout" style="--ac:var(--evl);margin-top:12px">
+        <span class="ci">ℹ️</span>
+        <div style="font-size:.84rem">
+          <span class="en"><b>Verdict: scalar.</b> The single <code>overall</code> averages orthogonal constructs — it is NOT a psychometric quantity. Read domain-level scores for meaning; use overall only for coarse cohort ranking. Normalization: z_score. Cache: allow.</span>
+          <span class="vi"><b>Phán quyết: scalar.</b> <code>overall</code> đơn lẻ trung bình hóa các cấu trúc trực giao — KHÔNG phải chỉ số tâm trắc. Đọc điểm cấp domain để hiểu ý nghĩa; dùng overall chỉ cho xếp hạng nhóm thô. Chuẩn hóa: z_score. Cache: allow.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- role-casting-fit -->
+    <div class="card" style="--ac:var(--evl);margin-top:14px">
+      <h3><span class="pin"></span><code>role-casting-fit</code> · <span class="en">v1.0.0 · kind: decision · subject: single · high_stakes: true</span><span class="vi">v1.0.0 · loại: quyết định · đối tượng: đơn · high_stakes: true</span></h3>
+      <p style="margin:.5em 0 .8em;font-size:.9rem;color:var(--txt-dim)">
+        <span class="en">Scores a character against a <code>target_profile</code> (e.g. a role spec under <code>docs/references/role-profiles/</code>). Five criteria with weights drawn from role-fit research: trait-match (0.25) &gt; competency-match (0.20) = motivational-fit (0.20) = safety-clearance (0.20) &gt; growth-trajectory (0.15). <b>Requires 2 independent judges</b> (min_judges: 2). Safety-clearance is a <b>red flag</b> — a score of 0 on that criterion is a hard veto regardless of overall score.</span>
+        <span class="vi">Chấm điểm nhân vật theo <code>target_profile</code> (vd. spec vai dưới <code>docs/references/role-profiles/</code>). Năm tiêu chí với trọng số từ nghiên cứu phù hợp vai: trait-match (0.25) &gt; competency-match (0.20) = motivational-fit (0.20) = safety-clearance (0.20) &gt; growth-trajectory (0.15). <b>Cần 2 judge độc lập</b> (min_judges: 2). Safety-clearance là <b>cờ đỏ</b> — điểm 0 ở tiêu chí đó là phủ quyết cứng bất kể điểm tổng.</span>
+      </p>
+      <div class="tri" style="margin-top:8px">
+        <span class="keep"><span class="en">CAST — overall ≥ 4.0</span><span class="vi">CAST — overall ≥ 4.0</span></span>
+        <span class="change"><span class="en">CONDITIONAL — 3.0 ≤ overall &lt; 4.0</span><span class="vi">CONDITIONAL — 3.0 ≤ overall &lt; 4.0</span></span>
+        <span class="hybrid"><span class="en">NO — overall &lt; 3.0 · or safety-clearance = 0 (veto)</span><span class="vi">NO — overall &lt; 3.0 · hoặc safety-clearance = 0 (phủ quyết)</span></span>
+      </div>
+      <p style="font-size:.8rem;color:var(--txt-faint);margin-top:10px">
+        <span class="en">Min tier T2 for trait-match, competency-match, safety-clearance. Min tier T3 for motivational-fit, growth-trajectory. Normalization: min_max. Cache: allow.</span>
+        <span class="vi">Bậc tối thiểu T2 cho trait-match, competency-match, safety-clearance. Bậc tối thiểu T3 cho motivational-fit, growth-trajectory. Chuẩn hóa: min_max. Cache: allow.</span>
+      </p>
+    </div>
+
+    <!-- clinical-risk-safety -->
+    <div class="card" style="--ac:var(--crit);margin-top:14px">
+      <h3><span class="pin"></span><code>clinical-risk-safety</code> · <span class="en">v1.0.0 · kind: clinical · high_stakes: true · cache: never</span><span class="vi">v1.0.0 · loại: lâm sàng · high_stakes: true · cache: never</span></h3>
+      <p style="margin:.5em 0 .8em;font-size:.9rem;color:var(--txt-dim)">
+        <span class="en">DSM-5 dimensional severity + ICD-11 + C-SSRS suicide screen. The strictest configuration in the system: <b>2 independent judges</b>, tri-state verdict, <b>never cached</b> (suicidality fluctuates — re-assess every run). <b>Inverted orientation</b>: a HIGH score = MORE risk = worse. Two hard-block red flags: <code>c-ssrs-ideation</code> and <code>c-ssrs-behavior</code> — a high score on either forces BLOCKED regardless of the weighted overall.</span>
+        <span class="vi">Mức độ nghiêm trọng theo chiều DSM-5 + ICD-11 + màn hình tự tử C-SSRS. Cấu hình nghiêm ngặt nhất trong hệ thống: <b>2 judge độc lập</b>, phán quyết ba trạng thái, <b>không bao giờ cache</b> (xu hướng tự tử biến động — đánh giá lại mỗi lần chạy). <b>Hướng đảo ngược</b>: điểm CAO = RỦI RO NHIỀU HƠN = tệ hơn. Hai cờ đỏ chặn cứng: <code>c-ssrs-ideation</code> và <code>c-ssrs-behavior</code> — điểm cao ở một trong hai ép BLOCKED bất kể tổng có trọng số.</span>
+      </p>
+      <div style="overflow-x:auto">
+        <table class="modetable" style="margin-top:0">
+          <thead>
+            <tr>
+              <th><span class="en">Criterion (weight)</span><span class="vi">Tiêu chí (trọng số)</span></th>
+              <th><span class="en">Instrument</span><span class="vi">Công cụ</span></th>
+              <th><span class="en">Red flag?</span><span class="vi">Cờ đỏ?</span></th>
+              <th><span class="en">Min tier</span><span class="vi">Bậc tối thiểu</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>c-ssrs-ideation (0.35)</td><td>C-SSRS</td><td style="color:var(--bad);font-weight:700">YES — hard veto</td><td>T2</td></tr>
+            <tr><td>c-ssrs-behavior (0.25)</td><td>C-SSRS</td><td style="color:var(--bad);font-weight:700">YES — hard veto</td><td>T2</td></tr>
+            <tr><td>depressive-severity (0.20)</td><td>DSM-5 / ICD-11</td><td style="color:var(--txt-faint)">no</td><td>T2</td></tr>
+            <tr><td>anxiety-severity (0.20)</td><td>DSM-5 / ICD-11</td><td style="color:var(--txt-faint)">no</td><td>T2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tri" style="margin-top:10px">
+        <span class="keep"><span class="en">PASS — overall &lt; 1.25 (low risk)</span><span class="vi">PASS — overall &lt; 1.25 (nguy cơ thấp)</span></span>
+        <span class="change"><span class="en">PASS_WITH_RISK — 1.25 ≤ overall &lt; 2.75</span><span class="vi">PASS_WITH_RISK — 1.25 ≤ overall &lt; 2.75</span></span>
+        <span class="hybrid"><span class="en">BLOCKED — overall ≥ 2.75 · or any red flag elevated</span><span class="vi">BLOCKED — overall ≥ 2.75 · hoặc cờ đỏ nào bị nâng cao</span></span>
+      </div>
+      <div class="floor" style="margin-top:12px">
+        <span class="en"><b>Hard-block invariant:</b> A RED flag on <code>c-ssrs-ideation</code> or <code>c-ssrs-behavior</code> forces verdict = BLOCKED regardless of overall score. This is enforced by <code>evl:fit</code> at scoring time — it cannot be overridden by rubric config. Crisis details are <b>never cached</b> (<code>cache: never</code>) and the rubric is stamped <code>reassess_required</code> — a stale risk verdict is never reused.</span>
+        <span class="vi"><b>Bất biến chặn cứng:</b> Cờ ĐỎ trên <code>c-ssrs-ideation</code> hoặc <code>c-ssrs-behavior</code> ép phán quyết = BLOCKED bất kể điểm tổng. Điều này được thi hành bởi <code>evl:fit</code> lúc chấm điểm — không thể ghi đè bởi config rubric. Chi tiết khủng hoảng <b>không bao giờ được cache</b> (<code>cache: never</code>) và rubric được đóng dấu <code>reassess_required</code> — phán quyết rủi ro lỗi thời không bao giờ được tái sử dụng.</span>
+      </div>
+    </div>
+
+    <!-- relationship-compatibility -->
+    <div class="card" style="--ac:var(--evl);margin-top:14px">
+      <h3><span class="pin"></span><code>relationship-compatibility</code> · <span class="en">v1.0.0 · kind: dyad · subject: dyad</span><span class="vi">v1.0.0 · loại: cặp đôi · đối tượng: cặp đôi</span></h3>
+      <p style="margin:.5em 0 .8em;font-size:.9rem;color:var(--txt-dim)">
+        <span class="en">Scores a <b>pair</b> of characters (subject: dyad). Gottman Four Horsemen absence + repair attempts + 5:1 positivity ratio + ECR-R attachment pairing + similarity/complementarity. All criteria oriented "higher = better" — horsemen-absence is inverted so 5 = no horsemen, 0 = all four pervasive. Scale 0–5.</span>
+        <span class="vi">Chấm điểm một <b>cặp</b> nhân vật (subject: dyad). Vắng mặt Bốn Kỵ sĩ Gottman + nỗ lực sửa chữa + tỷ lệ tích cực 5:1 + ghép nối gắn kết ECR-R + tương đồng/bổ sung. Tất cả tiêu chí hướng "cao hơn = tốt hơn" — horsemen-absence bị đảo ngược nên 5 = không có kỵ sĩ nào, 0 = cả bốn phổ biến. Thang 0–5.</span>
+      </p>
+      <div style="overflow-x:auto">
+        <table class="modetable" style="margin-top:0">
+          <thead>
+            <tr>
+              <th><span class="en">Criterion (weight)</span><span class="vi">Tiêu chí (trọng số)</span></th>
+              <th><span class="en">Theory</span><span class="vi">Lý thuyết</span></th>
+              <th><span class="en">Key anchor (score 0)</span><span class="vi">Neo chính (điểm 0)</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>horsemen-absence (0.25)</td><td><span class="en">Gottman Four Horsemen</span><span class="vi">Bốn Kỵ Sĩ Gottman</span></td><td><span class="en">All four pervasive; contempt present</span><span class="vi">Cả bốn phổ biến; khinh thường hiện diện</span></td></tr>
+            <tr><td>repair-attempts (0.20)</td><td><span class="en">Gottman — softened start-ups, influence</span><span class="vi">Gottman — khởi đầu mềm mại, tiếp nhận ảnh hưởng</span></td><td><span class="en">No repair; conflict escalates unabated</span><span class="vi">Không sửa chữa; xung đột leo thang</span></td></tr>
+            <tr><td>positivity-ratio (0.20)</td><td><span class="en">Gottman 5:1 rule</span><span class="vi">Quy tắc 5:1 Gottman</span></td><td><span class="en">Below 3:1; breakup likely</span><span class="vi">Dưới 3:1; khả năng chia tay</span></td></tr>
+            <tr><td>attachment-pairing (0.20)</td><td><span class="en">ECR-R attachment pairing stability</span><span class="vi">Ổn định ghép nối gắn kết ECR-R</span></td><td><span class="en">Very-low-stability (Preoccupied×Dismissing)</span><span class="vi">Ổn định rất thấp (Lo lắng×Né tránh)</span></td></tr>
+            <tr><td>similarity-complementarity (0.15)</td><td><span class="en">Moderate similarity + offset strengths</span><span class="vi">Tương đồng vừa phải + bù đắp điểm mạnh</span></td><td><span class="en">Opposite on most domains AND reinforce dysfunction</span><span class="vi">Đối lập trên hầu hết domain VÀ củng cố rối loạn</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tri" style="margin-top:10px">
+        <span class="hybrid"><span class="en">Incompatible — overall &lt; 2.0</span><span class="vi">Không tương thích — overall &lt; 2.0</span></span>
+        <span class="change"><span class="en">At-Risk — 2.0 ≤ overall &lt; 3.0</span><span class="vi">Có nguy cơ — 2.0 ≤ overall &lt; 3.0</span></span>
+        <span class="keep"><span class="en">Compatible — 3.0–4.0 · Highly-Compatible — ≥ 4.0</span><span class="vi">Tương thích — 3.0–4.0 · Rất tương thích — ≥ 4.0</span></span>
+      </div>
+    </div>
+
+    <!-- scorecard anatomy + JSON schema -->
+    <h2 class="sectitle" id="rubrics-schema" style="margin-top:48px">
+      <span class="en">Scorecard anatomy &amp; JSON-schema validation</span>
+      <span class="vi">Cấu trúc scorecard &amp; xác thực JSON-schema</span>
+    </h2>
+    <p class="lead">
+      <span class="en">Each scoring run writes two files under <code>docs/profiles/{char}/eval/</code>: a JSON scorecard (machine source of truth) and a derived markdown. Prior runs snapshot to <code>eval/history/</code>. JSON is authoritative — the markdown is never the source of truth. The schema (<code>.claude/schemas/evl-rubric.schema.json</code>, Draft-7) validates both the rubric definition and the scorecard; a malformed rubric or tampered scorecard fails <code>evl:validate</code> and cannot be scored or trusted.</span>
+      <span class="vi">Mỗi lần chạy chấm điểm ghi hai file dưới <code>docs/profiles/{char}/eval/</code>: scorecard JSON (nguồn sự thật máy) và markdown dẫn xuất. Các lần chạy trước snapshot vào <code>eval/history/</code>. JSON là chuẩn mực — markdown không bao giờ là nguồn sự thật. Schema (<code>.claude/schemas/evl-rubric.schema.json</code>, Draft-7) xác thực cả định nghĩa rubric và scorecard; rubric không đúng định dạng hoặc scorecard bị sửa sẽ fail <code>evl:validate</code> và không thể chấm hoặc tin tưởng.</span>
+    </p>
+
+    <div class="hero-ex" style="--ac:var(--evl);margin-top:18px">
+      <div class="xlabel"><span class="en">Scorecard frontmatter (JSON source of truth)</span><span class="vi">Frontmatter scorecard (JSON nguồn sự thật)</span></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">docs/profiles/{char}/eval/{rubric-id}.json</span></div>
+        <pre>{
+  <b>"character"</b>: "{ char-slug }",
+  <b>"domain"</b>: "eval",
+  <b>"type"</b>: "data",
+  <b>"rubric"</b>: "{ rubric-id }",
+  <b>"rubric_version"</b>: "X.Y.Z",
+  <b>"verdict"</b>: "{ scalar | band-label | tri_state }",
+  <b>"overall"</b>: { number },
+  <b>"coverage"</b>: { 0-100 },
+  <b>"confidence"</b>: "high | medium | low",
+  <b>"cache"</b>: "allow | never",
+  <b>"last_updated"</b>: "YYYY-MM-DD",
+  <b>"updated_by"</b>: "evl:{ skill }",
+  <b>"criteria"</b>: [
+    {
+      <b>"id"</b>: "criterion-id",
+      <b>"score"</b>: { 0-5 },
+      <b>"evidence_tier"</b>: "T1 | T2 | T3 | [UNVERIFIED]",
+      <b>"evidence_files"</b>: ["psychology/*.md"],
+      <b>"note"</b>: "..."
+    }
+  ]
+}</pre>
+      </div>
+    </div>
+
+    <!-- EVL_SCORECARD token -->
+    <div class="hero-ex" style="--ac:var(--evl);margin-top:18px">
+      <div class="xlabel"><span class="en">Live scorecard output</span><span class="vi">Đầu ra scorecard thật</span></div>
+      <div class="cmdline"><span class="en">Run in Claude Code:</span><span class="vi">Chạy trong Claude Code:</span><code>/evl:score --rubric psychometric-big-five --character {char}</code></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">evl:score --rubric psychometric-big-five</span></div>
+        <!--EVL_SCORECARD-->
+      </div>
+    </div>
+
+    <!-- honesty contract -->
+    <h2 class="sectitle" id="rubrics-honesty" style="margin-top:48px">
+      <span class="en">Honesty contract — the rigor rails</span>
+      <span class="vi">Hợp đồng trung thực — thanh ray nghiêm ngặt</span>
+    </h2>
+    <div class="cards grid-2" style="margin-top:14px">
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><span class="en">Uncited ⇒ [UNVERIFIED], excluded + counted</span><span class="vi">Không trích ⇒ [UNVERIFIED], bị loại + đếm</span></h3>
+        <p>
+          <span class="en">A criterion score without a MAT evidence tier citation is marked <code>[UNVERIFIED]</code>, excluded from the weighted roll-up, and increments the unverified counter. The <code>coverage%</code> field in the scorecard headline always shows how many criteria were verifiable vs. not. There is no way to hide an uncited score.</span>
+          <span class="vi">Điểm tiêu chí không có trích dẫn bậc bằng chứng MAT được đánh dấu <code>[UNVERIFIED]</code>, bị loại khỏi tổng hợp có trọng số, và tăng bộ đếm chưa xác minh. Trường <code>coverage%</code> trong tiêu đề scorecard luôn hiển thị bao nhiêu tiêu chí có thể xác minh vs. không. Không có cách nào ẩn điểm không trích dẫn.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><span class="en">High-stakes rubrics need ≥2 independent judges</span><span class="vi">Rubric high-stakes cần ≥2 judge độc lập</span></h3>
+        <p>
+          <span class="en"><code>role-casting-fit</code> and <code>clinical-risk-safety</code> both set <code>min_judges: 2</code>. Judges are input-isolated — they cannot see each other's scores before submitting. A disagreement above the convergence threshold produces verdict <code>DIVERGED</code> + <code>manual_review_required: true</code>. Diverged scorecards are never auto-averaged; a human must adjudicate before any verdict is used.</span>
+          <span class="vi"><code>role-casting-fit</code> và <code>clinical-risk-safety</code> đều đặt <code>min_judges: 2</code>. Các judge được cô lập đầu vào — họ không thể thấy điểm của nhau trước khi nộp. Bất đồng vượt ngưỡng hội tụ tạo ra phán quyết <code>DIVERGED</code> + <code>manual_review_required: true</code>. Scorecard DIVERGED không bao giờ được tự động trung bình; người phải phán quyết trước khi phán quyết nào được sử dụng.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><span class="en">Below min_tier ⇒ below_min_tier (excluded)</span><span class="vi">Dưới min_tier ⇒ below_min_tier (bị loại)</span></h3>
+        <p>
+          <span class="en">If a criterion's cited evidence tier is weaker than its <code>min_tier</code> (e.g. T4 evidence for a T2-minimum criterion), the score is marked <code>below_min_tier</code> and excluded from the roll-up. This is distinct from <code>[UNVERIFIED]</code> — the evidence exists, but it is too weak to ground this criterion. Both states are loud, both are counted in coverage.</span>
+          <span class="vi">Nếu bậc bằng chứng được trích dẫn của tiêu chí yếu hơn <code>min_tier</code> của nó (vd. bằng chứng T4 cho tiêu chí yêu cầu tối thiểu T2), điểm được đánh dấu <code>below_min_tier</code> và bị loại khỏi tổng hợp. Điều này khác với <code>[UNVERIFIED]</code> — bằng chứng tồn tại, nhưng quá yếu để làm nền tảng cho tiêu chí này. Cả hai trạng thái đều rõ ràng, cả hai đều được đếm trong coverage.</span>
+        </p>
+      </div>
+      <div class="card" style="--ac:var(--evl)">
+        <h3><span class="pin"></span><span class="en">Tampered scorecard fails evl:validate</span><span class="vi">Scorecard bị sửa thất bại evl:validate</span></h3>
+        <p>
+          <span class="en"><code>evl:validate</code> checks every scorecard against the JSON schema and the rubric it references. A field mismatch, a missing required key, an out-of-range score, or a rubric version mismatch all produce a validation error that blocks the scorecard from being used in downstream cascade steps. Validation runs automatically before any <code>EVL.scored</code> event is emitted.</span>
+          <span class="vi"><code>evl:validate</code> kiểm tra mọi scorecard theo JSON schema và rubric mà nó tham chiếu. Không khớp trường, thiếu key bắt buộc, điểm ngoài phạm vi, hoặc không khớp phiên bản rubric đều tạo ra lỗi xác thực chặn scorecard được sử dụng trong các bước cascade phía sau. Xác thực chạy tự động trước khi bất kỳ sự kiện <code>EVL.scored</code> nào được phát.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- imported/ slot -->
+    <h2 class="sectitle" id="rubrics-import" style="margin-top:48px">
+      <span class="en">imported/ — bringing in external frameworks</span>
+      <span class="vi">imported/ — đưa framework bên ngoài vào</span>
+    </h2>
+    <p class="lead">
+      <span class="en">External evaluation frameworks (psychometric instruments, casting briefs, competency models, clinical batteries) are converted to canonical draft rubrics under <code>docs/rubrics/imported/</code> by <code>evl:rubric-import</code>. The import skill proposes a structured mapping — domains, criteria, weights, anchors, min_tier — but never invents psychometric content or weights. A human reviewer validates the draft before it is used for scoring. Once accepted, imported rubrics are schema-validated and versioned identically to the built-in four.</span>
+      <span class="vi">Các framework đánh giá bên ngoài (công cụ tâm trắc, brief tuyển vai, mô hình năng lực, bộ lâm sàng) được chuyển đổi thành rubric nháp chuẩn dưới <code>docs/rubrics/imported/</code> bởi <code>evl:rubric-import</code>. Skill import đề xuất một ánh xạ có cấu trúc — domain, tiêu chí, trọng số, neo, min_tier — nhưng không bao giờ tự tạo nội dung tâm trắc hoặc trọng số. Người đánh giá xác nhận nháp trước khi nó được dùng để chấm. Sau khi chấp nhận, rubric được nhập được xác thực schema và đặt phiên bản giống hệt bốn rubric tích hợp.</span>
+    </p>
+    <div class="callout" style="--ac:var(--evl);margin-top:16px">
+      <span class="ci">📥</span>
+      <div>
+        <span class="en"><b>Import does not = auto-trust.</b> <code>evl:rubric-import</code> is a translation aid. The resulting draft carries <code>status: draft</code> and <code>human_reviewed: false</code> until a qualified reviewer signs off. A draft rubric cannot be used for scoring — <code>evl:score</code> rejects any rubric where <code>human_reviewed</code> is false. This prevents an adversarial import from influencing a scorecard.</span>
+        <span class="vi"><b>Import không = tự động tin tưởng.</b> <code>evl:rubric-import</code> là công cụ hỗ trợ dịch thuật. Nháp kết quả mang <code>status: draft</code> và <code>human_reviewed: false</code> cho đến khi người đánh giá có đủ năng lực ký duyệt. Rubric nháp không thể dùng để chấm — <code>evl:score</code> từ chối bất kỳ rubric nào có <code>human_reviewed</code> là false. Điều này ngăn một import thù địch ảnh hưởng đến scorecard.</span>
+      </div>
+    </div>
+
+    <!-- EVL skills -->
+    <h2 class="sectitle" id="rubrics-skills" style="margin-top:48px">
+      <span class="en">EVL skills — 8 in the framework</span>
+      <span class="vi">Skill EVL — 8 trong framework</span>
+    </h2>
+    <div style="overflow-x:auto;margin-top:14px">
+      <table class="modetable">
+        <thead>
+          <tr>
+            <th><span class="en">Skill</span><span class="vi">Skill</span></th>
+            <th><span class="en">Purpose</span><span class="vi">Mục đích</span></th>
+            <th><span class="en">Emits</span><span class="vi">Phát</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>evl:score</code></td><td><span class="en">Generic rubric scoring engine (all four kinds)</span><span class="vi">Bộ máy chấm rubric chung (cả bốn loại)</span></td><td><code>EVL.scored</code></td></tr>
+          <tr><td><code>evl:standardize</code></td><td><span class="en">Psychometric battery preset (Big Five + Dark Triad + attachment)</span><span class="vi">Preset bộ tâm trắc (Big Five + Dark Triad + gắn kết)</span></td><td><code>EVL.scored</code></td></tr>
+          <tr><td><code>evl:fit</code></td><td><span class="en">Role / casting-fit decision (CAST / CONDITIONAL / NO + veto)</span><span class="vi">Quyết định phù hợp vai / casting (CAST / CONDITIONAL / NO + phủ quyết)</span></td><td><code>EVL.scored</code></td></tr>
+          <tr><td><code>evl:compatibility</code></td><td><span class="en">Dyad compatibility scoring (Gottman + ECR-R)</span><span class="vi">Chấm điểm tương thích cặp đôi (Gottman + ECR-R)</span></td><td><code>EVL.scored</code></td></tr>
+          <tr><td><code>evl:compare</code></td><td><span class="en">Cross-character ranking on one rubric</span><span class="vi">Xếp hạng chéo nhân vật trên một rubric</span></td><td><span class="en">report only</span><span class="vi">chỉ báo cáo</span></td></tr>
+          <tr><td><code>evl:track</code></td><td><span class="en">Score-over-time diff + event attribution</span><span class="vi">Diff điểm theo thời gian + quy kết sự kiện</span></td><td><span class="en">report only</span><span class="vi">chỉ báo cáo</span></td></tr>
+          <tr><td><code>evl:validate</code></td><td><span class="en">Rubric + scorecard structural checker (schema + version)</span><span class="vi">Kiểm tra cấu trúc rubric + scorecard (schema + phiên bản)</span></td><td><span class="en">pass / fail</span><span class="vi">pass / fail</span></td></tr>
+          <tr><td><code>evl:rubric-import</code></td><td><span class="en">External framework → canonical rubric draft (human review required)</span><span class="vi">Framework bên ngoài → nháp rubric chuẩn (cần đánh giá người)</span></td><td><code>docs/rubrics/imported/</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- stats -->
+    <div class="stats" style="margin-top:40px">
+      <div class="stat"><div class="n" data-count="4">4</div><div class="l"><span class="en">versioned reference rubrics</span><span class="vi">rubric tham chiếu có phiên bản</span></div></div>
+      <div class="stat"><div class="n" data-count="8">8</div><div class="l"><span class="en">EVL framework skills</span><span class="vi">skill framework EVL</span></div></div>
+      <div class="stat"><div class="n" data-count="2">2</div><div class="l"><span class="en">rubrics requiring ≥2 independent judges</span><span class="vi">rubric yêu cầu ≥2 judge độc lập</span></div></div>
+      <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">silent [UNVERIFIED] passes</span><span class="vi">pass im lặng [UNVERIFIED]</span></div></div>
+    </div>
+
+    <!-- related cards -->
+    <div class="cards grid-2" style="margin-top:32px">
+      <a class="card" href="@evl" style="--ac:var(--evl)"><h3><span class="pin"></span><span class="en">EVL framework guide</span><span class="vi">Hướng dẫn framework EVL</span></h3><p><span class="en">Full EVL operating guide — skill triggers, GUIDE routing, the EVL↔other-domain boundary, and the EVL.rescore cascade.</span><span class="vi">Hướng dẫn vận hành EVL đầy đủ — trigger skill, định tuyến GUIDE, ranh giới EVL↔miền khác, và cascade EVL.rescore.</span></p></a>
+      <a class="card" href="@gates" style="--ac:var(--crit)"><h3><span class="pin"></span><span class="en">Gates &amp; evidence</span><span class="vi">Cổng &amp; bằng chứng</span></h3><p><span class="en">How the T1–T5 evidence ladder connects to the per-criterion min_tier requirement and the coverage% headline in every scorecard.</span><span class="vi">Cách thang bằng chứng T1–T5 kết nối với yêu cầu min_tier từng tiêu chí và tiêu đề coverage% trong mọi scorecard.</span></p></a>
+      <a class="card" href="@catalog" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Skill catalog</span><span class="vi">Danh mục skill</span></h3><p><span class="en">All 8 EVL skills in the catalog with trigger conditions, examples, and links to their GUIDE-EN/VI walkthroughs.</span><span class="vi">Tất cả 8 skill EVL trong danh mục với điều kiện kích, ví dụ, và liên kết đến hướng dẫn GUIDE-EN/VI của chúng.</span></p></a>
+      <a class="card" href="@pipeline" style="--ac:var(--orc)"><h3><span class="pin"></span><span class="en">Event pipeline</span><span class="vi">Pipeline sự kiện</span></h3><p><span class="en">How EVL.rescore and EVL.scored sit in the PSY.refresh → EVL.rescore → EVL.scored → CRE.recalibrate cascade.</span><span class="vi">Cách EVL.rescore và EVL.scored nằm trong cascade PSY.refresh → EVL.rescore → EVL.scored → CRE.recalibrate.</span></p></a>
+    </div>
+  </div>
+</section>

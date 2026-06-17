@@ -1,0 +1,7 @@
+$ evl:validate --all
+[PASS] clinical-risk-safety
+[PASS] psychometric-big-five
+[PASS] relationship-compatibility
+[PASS] role-casting-fit
+
+PASS — 4 rubric(s) valid · exit 0
