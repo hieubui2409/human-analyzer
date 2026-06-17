@@ -4,7 +4,7 @@ A clinical-grade system that turns deep, evidence-backed psychological profiles 
 platform-native content. Built to **scale from a handful of characters to many** — tooling is
 character-agnostic and resolves subjects dynamically via `paths.py`.
 
-**🌐 Live showcase:** [**hieubui2409.github.io/human-analyzer**](https://hieubui2409.github.io/human-analyzer/) — a standalone, bilingual (EN/VI) 3D tour of the 7 frameworks, 68 skills, the event pipeline, gates, and distribution. System-only: it ships **no** character corpus. Also mirrored at [human-analyzer-showcase](https://hieubui2409.github.io/human-analyzer-showcase/). Source + generator live in [`showcase/`](./showcase/) (`python3 showcase/build.py` — stdlib only, no build step to view).
+**🌐 Live showcase:** [**hieubui2409.github.io/human-analyzer**](https://hieubui2409.github.io/human-analyzer/) — a standalone, bilingual (EN/VI) 3D tour of the 7 frameworks, 68 skills, the event pipeline, gates, and distribution. System-only: it ships **no** character corpus. Source + generator live in [`showcase/`](./showcase/) (`python3 showcase/build.py` — stdlib only, no build step to view).
 
 > **This is the public framework toolkit — it ships with _no_ real-person profiles, materials, or
 > roster.** The character corpus is private by design; `docs/profiles/`, `docs/materials/`,
