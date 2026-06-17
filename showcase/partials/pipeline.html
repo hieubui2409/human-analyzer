@@ -14,24 +14,94 @@
     <!-- sequence diagram (ASCII) -->
     <div class="hero-ex" style="--ac:var(--orc);margin-top:28px">
       <div class="xlabel"><span class="en">Sequence — ORC as bus, not owner</span><span class="vi">Trình tự — ORC là bus, không phải chủ</span></div>
-      <div class="term">
-        <div class="tbar"><i></i><i></i><i></i><span class="tcmd">orc:cascade --trigger MAT.integrated</span></div>
-        <pre>
- MAT          ORC (bus)        PSY           EVL           CRE
-  │                │            │             │             │
-  │── MAT.integrated ──────────▶│             │             │
-  │                │──PSY.refresh ──────────▶│             │
-  │                │────────────────────────────EVL.rescore▶│             │
-  │                │            │──PSY.refresh────────────▶│             │
-  │                │            │             │──EVL.scored▶│             │
-  │                │────────────────────────────────────────CRE.recalibrate
-  │                │            │             │             │
-  │       GRO ─ GRO.assessed ──▶│             │             │
-  │                │            │── PSY.refresh ──────────▶│             │
-  │                │────────────────────────── EVL.rescore ▶│             │
-  │                │            │             │── EVL.scored▶│            │
-  │                │────────────────────────────────────────CRE.recalibrate
-  │                │            │             │             │</pre>
+      <div class="cmdline" style="margin-bottom:12px"><code>orc:cascade --trigger MAT.integrated</code></div>
+      <!-- hand-drawn UML sequence diagram (inline SVG, no chart library) -->
+      <div class="seqbox" style="background:var(--panel-solid);border:1px solid rgba(148,163,184,.14);border-radius:var(--radius);padding:18px 12px;overflow-x:auto">
+        <svg viewBox="0 0 880 520" role="img" aria-label="Sequence: MAT.integrated and GRO.assessed cascades routed by ORC to PSY, EVL, CRE" style="min-width:680px;width:100%;height:auto;display:block">
+          <defs>
+            <marker id="seq-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#9aa6c4"/>
+            </marker>
+            <style>
+              .ll{stroke-dasharray:3 6;stroke-width:1.4}
+              .hb{font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace;text-anchor:middle}
+              .msg{stroke:#9aa6c4;stroke-width:1.7;fill:none;marker-end:url(#seq-ah)}
+              .ret{stroke:#9aa6c4;stroke-width:1.4;fill:none;stroke-dasharray:5 4;opacity:.75;marker-end:url(#seq-ah)}
+              .lbl{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;fill:var(--txt);text-anchor:middle}
+              .leg{font:600 11px ui-sans-serif,system-ui;fill:var(--txt-dim);letter-spacing:.06em}
+            </style>
+          </defs>
+
+          <!-- leg group bands -->
+          <rect x="18" y="54"  width="844" height="198" rx="8" fill="#6366f1" fill-opacity=".045"/>
+          <rect x="18" y="268" width="844" height="198" rx="8" fill="#10b981" fill-opacity=".045"/>
+          <text class="leg" x="32" y="74">❶  MAT.integrated</text>
+          <text class="leg" x="32" y="288">❷  GRO.assessed</text>
+
+          <!-- lifeline headers + dashed lifelines -->
+          <g>
+            <rect x="24"  y="12" width="92" height="30" rx="7" fill="#d97706" fill-opacity=".16" stroke="#d97706" stroke-width="1.5"/>
+            <text class="hb" x="70"  y="32" fill="#d97706">MAT</text>
+            <line class="ll" x1="70"  y1="42" x2="70"  y2="500" stroke="#d97706" opacity=".32"/>
+
+            <rect x="172" y="12" width="92" height="30" rx="7" fill="#10b981" fill-opacity=".16" stroke="#10b981" stroke-width="1.5"/>
+            <text class="hb" x="218" y="32" fill="#10b981">GRO</text>
+            <line class="ll" x1="218" y1="42" x2="218" y2="500" stroke="#10b981" opacity=".32"/>
+
+            <rect x="320" y="12" width="92" height="30" rx="7" fill="#6366f1" fill-opacity=".18" stroke="#6366f1" stroke-width="1.5"/>
+            <text class="hb" x="366" y="32" fill="#818cf8">ORC</text>
+            <text class="leg" x="366" y="510" text-anchor="middle" fill="#6b779a">the bus — routes, never owns</text>
+            <line class="ll" x1="366" y1="42" x2="366" y2="494" stroke="#6366f1" opacity=".45" stroke-width="1.8" stroke-dasharray="none"/>
+
+            <rect x="468" y="12" width="92" height="30" rx="7" fill="#8b5cf6" fill-opacity=".16" stroke="#8b5cf6" stroke-width="1.5"/>
+            <text class="hb" x="514" y="32" fill="#a78bfa">PSY</text>
+            <line class="ll" x1="514" y1="42" x2="514" y2="500" stroke="#8b5cf6" opacity=".32"/>
+
+            <rect x="616" y="12" width="92" height="30" rx="7" fill="#0ea5e9" fill-opacity=".16" stroke="#0ea5e9" stroke-width="1.5"/>
+            <text class="hb" x="662" y="32" fill="#38bdf8">EVL</text>
+            <line class="ll" x1="662" y1="42" x2="662" y2="500" stroke="#0ea5e9" opacity=".32"/>
+
+            <rect x="764" y="12" width="92" height="30" rx="7" fill="#ec4899" fill-opacity=".16" stroke="#ec4899" stroke-width="1.5"/>
+            <text class="hb" x="810" y="32" fill="#f472b6">CRE</text>
+            <line class="ll" x1="810" y1="42" x2="810" y2="500" stroke="#ec4899" opacity=".32"/>
+          </g>
+
+          <!-- leg ❶ : MAT.integrated -->
+          <g>
+            <text class="lbl" x="218" y="89">MAT.integrated</text>
+            <circle cx="70" cy="96" r="3.2" fill="#d97706"/><line class="msg" x1="70"  y1="96"  x2="362" y2="96"/>
+
+            <text class="lbl" x="440" y="125">PSY.refresh</text>
+            <circle cx="366" cy="132" r="3.2" fill="#6366f1"/><line class="msg" x1="366" y1="132" x2="510" y2="132"/>
+
+            <text class="lbl" x="514" y="161">EVL.rescore</text>
+            <circle cx="366" cy="168" r="3.2" fill="#6366f1"/><line class="msg" x1="366" y1="168" x2="658" y2="168"/>
+
+            <text class="lbl" x="514" y="197">EVL.scored</text>
+            <circle cx="662" cy="204" r="3.2" fill="#0ea5e9"/><line class="ret" x1="662" y1="204" x2="370" y2="204"/>
+
+            <text class="lbl" x="588" y="233">CRE.recalibrate</text>
+            <circle cx="366" cy="240" r="3.2" fill="#6366f1"/><line class="msg" x1="366" y1="240" x2="806" y2="240"/>
+          </g>
+
+          <!-- leg ❷ : GRO.assessed -->
+          <g>
+            <text class="lbl" x="292" y="305">GRO.assessed</text>
+            <circle cx="218" cy="312" r="3.2" fill="#10b981"/><line class="msg" x1="218" y1="312" x2="362" y2="312"/>
+
+            <text class="lbl" x="440" y="341">PSY.refresh</text>
+            <circle cx="366" cy="348" r="3.2" fill="#6366f1"/><line class="msg" x1="366" y1="348" x2="510" y2="348"/>
+
+            <text class="lbl" x="514" y="377">EVL.rescore</text>
+            <circle cx="366" cy="384" r="3.2" fill="#6366f1"/><line class="msg" x1="366" y1="384" x2="658" y2="384"/>
+
+            <text class="lbl" x="514" y="413">EVL.scored</text>
+            <circle cx="662" cy="420" r="3.2" fill="#0ea5e9"/><line class="ret" x1="662" y1="420" x2="370" y2="420"/>
+
+            <text class="lbl" x="588" y="449">CRE.recalibrate</text>
+            <circle cx="366" cy="456" r="3.2" fill="#6366f1"/><line class="msg" x1="366" y1="456" x2="806" y2="456"/>
+          </g>
+        </svg>
       </div>
       <p class="faint" style="font-size:.76rem;margin-top:10px">
         <span class="en">ORC routes — it never writes to profiles, materials, or assets. Each arrow is a convention (named event), not a code call.</span>
