@@ -6,7 +6,7 @@ docs/references/
 **/characters.yaml
 **/pii-tokens.yaml
 .claude/.env
-assets/
+/assets/
 plans/
 
 # --- Non-framework / proprietary tooling ---
