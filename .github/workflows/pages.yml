@@ -1,11 +1,9 @@
 name: pages
 
-# Single source → two GitHub Pages sites (SSOT). Builds the showcase ONCE from
-# showcase/, then (1) deploys it to THIS repo's Pages and (2) mirrors the built
-# output to the dedicated human-analyzer-showcase repo's gh-pages branch.
+# Build the showcase from showcase/ and deploy it to THIS repo's GitHub Pages.
 #
 # Guarded to the PUBLIC repo: the same file is synced into the private mirror,
-# where the job is skipped (no Pages there, no SHOWCASE_DEPLOY_TOKEN secret).
+# where the job is skipped (no Pages there).
 
 on:
   push:
@@ -32,11 +30,6 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    # Site 2 (cross-repo mirror) is gated on this: the mirror step runs only once the
-    # SHOWCASE_DEPLOY_TOKEN secret is present, so the run stays green before the token
-    # is added and Site 2 auto-activates on the next run afterwards.
-    env:
-      HAS_SHOWCASE_TOKEN: ${{ secrets.SHOWCASE_DEPLOY_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -47,7 +40,6 @@ jobs:
       - name: Build the showcase (stdlib only)
         run: python3 showcase/build.py
 
-      # ---- Site 1: this repo's GitHub Pages (source = GitHub Actions) ----
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -56,15 +48,3 @@ jobs:
       - name: Deploy to human-analyzer Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      # ---- Site 2: mirror to the dedicated human-analyzer-showcase repo ----
-      - name: Mirror built site to human-analyzer-showcase (gh-pages)
-        if: env.HAS_SHOWCASE_TOKEN == 'true'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          personal_token: ${{ secrets.SHOWCASE_DEPLOY_TOKEN }}
-          external_repository: hieubui2409/human-analyzer-showcase
-          publish_branch: gh-pages
-          publish_dir: ./showcase
-          force_orphan: true
-          commit_message: "deploy: sync showcase from ${{ github.sha }}"

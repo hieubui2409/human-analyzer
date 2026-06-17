@@ -12,6 +12,15 @@ Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versioning: 
 > auto-derived from git at build time — this file is the human-curated truth of record.
 
 ## [Unreleased]
+### Added
+- **Bilingual 3D showcase site (`showcase/`).** A standalone, dependency-free static site — a stdlib-Python
+  generator (`showcase/build.py`) assembles hand-authored EN/VI partials into a multipage docs site plus one
+  portable single-file, with a Three.js network hero and a shadcn-inspired token system. 20 guides cover all
+  7 frameworks, 68 skills, the event pipeline, gates, privacy, rubrics, subagents, internals, and distribution;
+  honest-telemetry panels embed real stdout captured on the synthetic e2e fixture (no character corpus).
+- **GitHub Pages deploy (`.github/workflows/pages.yml`).** A guarded workflow (runs only on the public toolkit
+  repo) builds `showcase/` and deploys it to the repo's own GitHub Pages. Manifest globs project `showcase/**/*`
+  + the workflow into the public mirror.
 
 ## [1.4.0] — 2026-06-14
 ### Added
